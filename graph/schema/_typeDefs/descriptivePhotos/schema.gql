@@ -1,0 +1,24 @@
+enum OrganizationDescriptivePhotoType {
+  FRONT_FACING
+  PRODUCTS_OVERVIEW
+  LOCATION_MARK_DETAIL
+  LOCATION_MARK_OVERVIEW
+}
+
+input NewOrganizationDescriptivePhoto {
+  photo: Upload!
+  description: String
+  type: OrganizationDescriptivePhotoType!
+}
+
+input UpdateOrganizationDescriptivePhoto {
+  photo: Upload
+  description: String
+  type: OrganizationDescriptivePhotoType!
+}
+
+type DescriptivePhoto {
+  photoUrl: String
+  description: String
+  type: String
+}

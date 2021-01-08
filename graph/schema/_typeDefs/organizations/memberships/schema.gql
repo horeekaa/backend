@@ -1,0 +1,23 @@
+enum OrganizationMembershipRole {
+  STAFF
+  MANAGER
+  OWNER
+}
+
+enum OrganizationMembershipStatus {
+  ACTIVE
+  INACTIVE
+}
+
+input CreateOrganizationMember {
+  person: ObjectId
+  role: OrganizationMembershipRole
+  status: OrganizationMembershipStatus
+}
+
+type OrganizationMember {
+  _id: ID!
+  person: Person
+  role: OrganizationMembershipRole
+  status: OrganizationMembershipStatus
+}

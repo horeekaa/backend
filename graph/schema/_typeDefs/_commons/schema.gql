@@ -1,0 +1,5 @@
+scalar Upload
+
+input ObjectId {
+  _id: ID!
+}
