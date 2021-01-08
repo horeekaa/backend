@@ -1,0 +1,28 @@
+enum IDCardType {
+  CITIZEN_ID
+  COMPANY_TAX_ID
+}
+
+input NewIDCard {
+  name: String!
+  number: String!
+  photo: Upload!
+  type: IDCardType!
+}
+
+input UpdateIDCard {
+  name: String
+  number: String
+  photo: Upload
+  type: IDCardType
+}
+
+type IDCard {
+  name: String
+  number: String
+  photoUrl: String
+  type: IDCardType
+  submitter: Person
+  approvalDate: String
+  createdAt: String
+}
