@@ -18,6 +18,21 @@ input UpdateOtherAccount {
   idCard: NewIDCard
 }
 
+input CreateAccount {
+  status: AccountStatus
+  statusReason: String
+  type: AccountType!
+  person: ObjectId!
+}
+
+input UpdateAccount {
+  _id: ID!
+  status: AccountStatus
+  statusReason: String
+  type: AccountType
+  person: ObjectId
+}
+
 type Account {
   _id: ID!
   status: AccountStatus!
