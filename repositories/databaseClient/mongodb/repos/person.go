@@ -2,8 +2,8 @@ package mongorepos
 
 import (
 	model "github.com/horeekaa/backend/model"
-	databaseclient "github.com/horeekaa/backend/repositories/databaseClient"
-	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/operations"
+	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongodb"
+	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongodb/operations"
 )
 
 type PersonRepoMongo struct {
