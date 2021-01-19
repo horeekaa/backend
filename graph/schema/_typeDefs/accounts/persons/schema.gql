@@ -4,12 +4,21 @@ enum Gender {
 }
 
 input UpdatePerson {
+  _id: ID
   firstName: String
   lastName: String
   gender: Gender
   phoneNumber: String
   email: String
-  idCard: NewIDCard
+  noOfRecentTransactionToKeep: Int
+}
+
+input CreatePerson {
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String!
+  email: String!
   noOfRecentTransactionToKeep: Int
 }
 
