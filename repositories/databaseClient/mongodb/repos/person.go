@@ -1,6 +1,8 @@
 package mongorepos
 
 import (
+	"time"
+
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongodb"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongodb/operations"
@@ -136,7 +138,9 @@ func (prsnRepoMongo *PersonRepoMongo) setDefaultValues(input interface{}, option
 			Gender:                      createInput.Gender,
 			PhoneNumber:                 createInput.PhoneNumber,
 			Email:                       createInput.Email,
+			DeviceTokens:                []*string{},
 			NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
+			CreatedAt:                   time.Now(),
 		},
 	}, nil
 }

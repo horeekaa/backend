@@ -10,6 +10,7 @@ input UpdatePerson {
   gender: Gender
   phoneNumber: String
   email: String
+  deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
 }
 
@@ -19,7 +20,9 @@ input CreatePerson {
   gender: Gender
   phoneNumber: String!
   email: String!
+  deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
+  createdAt: String
 }
 
 interface iPerson {
