@@ -26,6 +26,8 @@ const (
 	SendGridConfigTemplateResetPassword string = "SENDGRIDCONFIG_TEMPLATES_RESET_PASSWORD"
 	SendGridConfigTemplateVerifyEmail   string = "SENDGRIDCONFIG_TEMPLATES_VERIFY_EMAIL"
 	SendGridConfigDefaultEmailSender    string = "SENDGRIDCONFIG_DEFAULT_EMAIL_SENDER"
+
+	SystemWideTimeFormat string = "SYSTEM_WIDE_TIME_FORMAT"
 )
 
 // GetEnvVariable will retrieve the value of the environment variable based on the input key
