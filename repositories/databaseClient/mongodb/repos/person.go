@@ -4,8 +4,8 @@ import (
 	"time"
 
 	model "github.com/horeekaa/backend/model"
-	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongodb"
-	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongodb/operations"
+	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
 type PersonRepoMongo struct {
@@ -29,13 +29,13 @@ func (prsnRepoMongo *PersonRepoMongo) FindByID(id string, operationOptions *mong
 	return ((*object).(*model.Person)), err
 }
 
-func (prsnRepoMongo *PersonRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *PersonRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	object, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
 
 	return ((*object).(*model.Person)), err
 }
 
-func (prsnRepoMongo *PersonRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
+func (prsnRepoMongo *PersonRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
 	objects, err := prsnRepoMongo.basicOperation.Find(query, operationOptions)
 
 	var persons = []*model.Person{}
@@ -131,6 +131,7 @@ func (prsnRepoMongo *PersonRepoMongo) setDefaultValues(input interface{}, option
 		noOfRecentTransactionToKeep = 15
 	}
 
+	var currentTime = time.Now()
 	return &setPersonDefaultValuesOutput{
 		CreatePerson: &model.CreatePerson{
 			FirstName:                   createInput.FirstName,
@@ -140,7 +141,7 @@ func (prsnRepoMongo *PersonRepoMongo) setDefaultValues(input interface{}, option
 			Email:                       createInput.Email,
 			DeviceTokens:                []*string{},
 			NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
-			CreatedAt:                   time.Now(),
+			CreatedAt:                   &currentTime,
 		},
 	}, nil
 }
