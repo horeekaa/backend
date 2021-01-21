@@ -22,7 +22,7 @@ input NewOrganization {
 }
 
 input UpdateOrganization {
-  _id: ID!
+  _id: ObjectID!
   name: String
   phoneNumber: String
   status: OrganizationStatus
@@ -38,7 +38,7 @@ input UpdateOrganization {
 }
 
 type Organization {
-  _id: ID!
+  _id: ObjectID!
   name: String!
   phoneNumber: String!
   status: OrganizationStatus!
@@ -52,5 +52,5 @@ type Organization {
   bankAccount: BankAccountType
   profilePhotos: [DescriptivePhoto]!
   taxIdentification: IDCard
-  createdAt: String!
+  createdAt: Time!
 }

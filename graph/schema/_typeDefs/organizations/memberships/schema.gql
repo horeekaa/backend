@@ -10,13 +10,13 @@ enum OrganizationMembershipStatus {
 }
 
 input CreateOrganizationMember {
-  person: ObjectId
+  person: ObjectIDOnly
   role: OrganizationMembershipRole
   status: OrganizationMembershipStatus
 }
 
 type OrganizationMember {
-  _id: ID!
+  _id: ObjectID!
   person: Person
   role: OrganizationMembershipRole
   status: OrganizationMembershipStatus

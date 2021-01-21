@@ -4,7 +4,7 @@ enum Gender {
 }
 
 input UpdatePerson {
-  _id: ID
+  _id: ObjectID
   firstName: String
   lastName: String
   gender: Gender
@@ -22,11 +22,11 @@ input CreatePerson {
   email: String!
   deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
-  createdAt: String
+  createdAt: Time
 }
 
 interface iPerson {
-  _id: ID!
+  _id: ObjectID!
   firstName: String!
   lastName: String!
   gender: Gender!
@@ -35,11 +35,11 @@ interface iPerson {
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
   organizationMembership: OrganizationMember
-  createdAt: String!
+  createdAt: Time!
 }
 
 type Person implements iPerson {
-  _id: ID!
+  _id: ObjectID!
   firstName: String!
   lastName: String!
   gender: Gender!
@@ -48,11 +48,11 @@ type Person implements iPerson {
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
   organizationMembership: OrganizationMember
-  createdAt: String!
+  createdAt: Time!
 }
 
 type PersonDetailed implements iPerson {
-  _id: ID!
+  _id: ObjectID!
   firstName: String!
   lastName: String!
   gender: Gender!
@@ -62,5 +62,5 @@ type PersonDetailed implements iPerson {
   noOfRecentTransactionToKeep: Int!
   organizationMembership: OrganizationMember
   deviceTokens: [String]!
-  createdAt: String!
+  createdAt: Time!
 }

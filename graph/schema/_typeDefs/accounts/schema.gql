@@ -10,7 +10,7 @@ enum AccountType {
 }
 
 input UpdateOtherAccount {
-  _id: ID!
+  _id: ObjectID!
   status: AccountStatus
   statusReason: String
   email: String
@@ -22,19 +22,19 @@ input CreateAccount {
   status: AccountStatus
   statusReason: String
   type: AccountType!
-  person: ObjectId!
+  person: ObjectIDOnly!
 }
 
 input UpdateAccount {
-  _id: ID!
+  _id: ObjectID!
   status: AccountStatus
   statusReason: String
   type: AccountType
-  person: ObjectId
+  person: ObjectIDOnly
 }
 
 type Account {
-  _id: ID!
+  _id: ObjectID!
   status: AccountStatus!
   statusReason: String
   type: AccountType!
