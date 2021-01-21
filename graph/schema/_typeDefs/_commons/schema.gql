@@ -1,5 +1,8 @@
 scalar Upload
+scalar Time
 
-input ObjectId {
-  _id: ID!
+scalar ObjectID
+
+input ObjectIDOnly {
+    _id: ObjectID
 }
