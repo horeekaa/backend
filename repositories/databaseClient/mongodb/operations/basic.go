@@ -45,7 +45,7 @@ func (bscOperation *BasicOperation) FindByID(id string, operationOptions *Operat
 	return object, nil
 }
 
-func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *BasicOperation) FindOne(query OperationQueryType, operationOptions *OperationOptions) (*interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -62,7 +62,7 @@ func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operat
 	return object, nil
 }
 
-func (bscOperation *BasicOperation) Find(query map[string]interface{}, operationOptions *OperationOptions) ([]*interface{}, error) {
+func (bscOperation *BasicOperation) Find(query OperationQueryType, operationOptions *OperationOptions) ([]*interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*2*time.Second)
 	defer cancel()
 
