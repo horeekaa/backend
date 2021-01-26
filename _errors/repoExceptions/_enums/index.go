@@ -6,6 +6,7 @@ const (
 	DecodingAuthTokenFailed string = "DECODING_AUTH_TOKEN_FAILED"
 	GetAuthDataFailed       string = "GET_AUTH_DATA_FAILED"
 	SetAuthDataFailed       string = "SET_AUTH_DATA_FAILED"
+	UpstreamException       string = "UPSTREAM_EXCEPTION"
 
 	CreateObjectFailed              string = "CREATE_OBJECT_FAILED"
 	DuplicateDataCreationNotAllowed string = "DUPLICATE_DATA_CREATION_NOT_ALLOWED"
