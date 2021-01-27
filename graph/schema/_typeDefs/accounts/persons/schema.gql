@@ -4,7 +4,7 @@ enum Gender {
 }
 
 input UpdatePerson {
-  _id: ObjectID
+  _id: ObjectID!
   firstName: String
   lastName: String
   gender: Gender

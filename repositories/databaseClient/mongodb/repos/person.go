@@ -23,16 +23,16 @@ func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) *PersonRepoMo
 	}
 }
 
-func (prsnRepoMongo *PersonRepoMongo) FindByID(id string, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
-	object, err := prsnRepoMongo.basicOperation.FindByID(id, operationOptions)
-
-	return ((*object).(*model.Person)), err
+func (prsnRepoMongo *PersonRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+	object, err := prsnRepoMongo.basicOperation.FindByID(ID, operationOptions)
+	output := (*object).(model.Person)
+	return &output, err
 }
 
 func (prsnRepoMongo *PersonRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	object, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
-
-	return ((*object).(*model.Person)), err
+	output := (*object).(model.Person)
+	return &output, err
 }
 
 func (prsnRepoMongo *PersonRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
@@ -40,15 +40,11 @@ func (prsnRepoMongo *PersonRepoMongo) Find(query mongooperations.OperationQueryT
 
 	var persons = []*model.Person{}
 	for _, obj := range objects {
-		persons = append(persons, (*obj).(*model.Person))
+		person := (*obj).(model.Person)
+		persons = append(persons, &person)
 	}
 
 	return persons, err
-}
-
-type personCreateOutput struct {
-	ID     string
-	Object model.Person
 }
 
 func (prsnRepoMongo *PersonRepoMongo) Create(input *model.CreateAccount, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
@@ -60,27 +56,27 @@ func (prsnRepoMongo *PersonRepoMongo) Create(input *model.CreateAccount, operati
 		return nil, err
 	}
 
-	object, err := prsnRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
+	output, err := prsnRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	createOutputObject := (*object).(*personCreateOutput)
+	personOutput := output.Object.(model.Person)
 
 	person := &model.Person{
-		ID:                          createOutputObject.ID,
-		FirstName:                   createOutputObject.Object.FirstName,
-		LastName:                    createOutputObject.Object.LastName,
-		Gender:                      createOutputObject.Object.Gender,
-		PhoneNumber:                 createOutputObject.Object.PhoneNumber,
-		Email:                       createOutputObject.Object.Email,
-		NoOfRecentTransactionToKeep: createOutputObject.Object.NoOfRecentTransactionToKeep,
+		ID:                          output.ID,
+		FirstName:                   personOutput.FirstName,
+		LastName:                    personOutput.LastName,
+		Gender:                      personOutput.Gender,
+		PhoneNumber:                 personOutput.PhoneNumber,
+		Email:                       personOutput.Email,
+		NoOfRecentTransactionToKeep: personOutput.NoOfRecentTransactionToKeep,
 	}
 
 	return person, err
 }
 
-func (prsnRepoMongo *PersonRepoMongo) Update(ID string, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *PersonRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnRepoMongo.setDefaultValues(*updateData,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
 		operationOptions,
@@ -90,8 +86,9 @@ func (prsnRepoMongo *PersonRepoMongo) Update(ID string, updateData *model.Update
 	}
 
 	object, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput, operationOptions)
+	output := (*object).(model.Person)
 
-	return ((*object).(*model.Person)), err
+	return &output, err
 }
 
 type setPersonDefaultValuesOutput struct {
@@ -104,7 +101,7 @@ func (prsnRepoMongo *PersonRepoMongo) setDefaultValues(input interface{}, option
 
 	updateInput := input.(model.UpdatePerson)
 	if (*options).DefaultValuesType == DefaultValuesUpdateType {
-		existingObject, err := prsnRepoMongo.FindByID(*updateInput.ID, operationOptions)
+		existingObject, err := prsnRepoMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
 		}

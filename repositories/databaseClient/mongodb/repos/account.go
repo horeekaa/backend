@@ -21,32 +21,28 @@ func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *AccountRepo
 	}
 }
 
-func (accRepoMongo *AccountRepoMongo) FindByID(id string, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
-	object, err := accRepoMongo.basicOperation.FindByID(id, operationOptions)
-
-	return ((*object).(*model.Account)), err
+func (accRepoMongo *AccountRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+	object, err := accRepoMongo.basicOperation.FindByID(ID, operationOptions)
+	output := (*object).(model.Account)
+	return &output, err
 }
 
-func (accRepoMongo *AccountRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *AccountRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	object, err := accRepoMongo.basicOperation.FindOne(query, operationOptions)
-
-	return ((*object).(*model.Account)), err
+	output := (*object).(model.Account)
+	return &output, err
 }
 
-func (accRepoMongo *AccountRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
+func (accRepoMongo *AccountRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
 	objects, err := accRepoMongo.basicOperation.Find(query, operationOptions)
 
 	var accounts = []*model.Account{}
 	for _, obj := range objects {
-		accounts = append(accounts, (*obj).(*model.Account))
+		account := (*obj).(model.Account)
+		accounts = append(accounts, &account)
 	}
 
 	return accounts, err
-}
-
-type createOutput struct {
-	ID     string
-	Object model.Account
 }
 
 func (accRepoMongo *AccountRepoMongo) Create(input *model.CreateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
@@ -58,25 +54,25 @@ func (accRepoMongo *AccountRepoMongo) Create(input *model.CreateAccount, operati
 		return nil, err
 	}
 
-	object, err := accRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
+	output, err := accRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	createOutputObject := (*object).(*createOutput)
+	accountOutput := output.Object.(model.Account)
 
 	account := &model.Account{
-		ID:           createOutputObject.ID,
-		Status:       createOutputObject.Object.Status,
-		StatusReason: createOutputObject.Object.StatusReason,
-		Type:         createOutputObject.Object.Type,
-		Person:       createOutputObject.Object.Person,
+		ID:           output.ID,
+		Status:       accountOutput.Status,
+		StatusReason: accountOutput.StatusReason,
+		Type:         accountOutput.Type,
+		Person:       accountOutput.Person,
 	}
 
 	return account, err
 }
 
-func (accRepoMongo *AccountRepoMongo) Update(ID string, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *AccountRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	defaultedInput, err := accRepoMongo.setDefaultValues(*updateData,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
 		operationOptions,
@@ -86,8 +82,9 @@ func (accRepoMongo *AccountRepoMongo) Update(ID string, updateData *model.Update
 	}
 
 	object, err := accRepoMongo.basicOperation.Update(ID, *defaultedInput, operationOptions)
+	output := (*object).(model.Account)
 
-	return ((*object).(*model.Account)), err
+	return &output, err
 }
 
 type setDefaultValuesOutput struct {
