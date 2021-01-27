@@ -20,15 +20,8 @@ type BasicOperation struct {
 	CollectionName string
 }
 
-func (bscOperation *BasicOperation) FindByID(id string, operationOptions *OperationOptions) (*interface{}, error) {
-	objectID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.QueryObjectFailed,
-			fmt.Sprintf("/%s/findById", bscOperation.CollectionName),
-			err,
-		)
-	}
+func (bscOperation *BasicOperation) FindByID(ID interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -99,7 +92,7 @@ func (bscOperation *BasicOperation) Find(query OperationQueryType, operationOpti
 	return objects, err
 }
 
-func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *OperationOptions) (*CreateOperationOutput, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -119,15 +112,14 @@ func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *
 		)
 	}
 
-	return map[string]interface{}{
-		"Return": &struct {
-			ID     string
-			Object interface{}
-		}{res.InsertedID.(primitive.ObjectID).Hex(), input},
-	}["Return"].(*interface{}), nil
+	return &CreateOperationOutput{
+		ID:     res.InsertedID.(primitive.ObjectID),
+		Object: input,
+	}, nil
 }
 
-func (bscOperation *BasicOperation) Update(id string, updateData interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *BasicOperation) Update(ID interface{}, updateData interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -135,13 +127,13 @@ func (bscOperation *BasicOperation) Update(id string, updateData interface{}, op
 	if &(*operationOptions).session != nil {
 		_, err = bscOperation.CollectionRef.UpdateOne(
 			*operationOptions.session,
-			bson.M{"_id": id},
+			bson.M{"_id": objectID},
 			updateData,
 		)
 	} else {
 		_, err = bscOperation.CollectionRef.UpdateOne(
 			ctx,
-			bson.M{"_id": id},
+			bson.M{"_id": objectID},
 			updateData,
 		)
 	}
@@ -153,7 +145,7 @@ func (bscOperation *BasicOperation) Update(id string, updateData interface{}, op
 			err,
 		)
 	}
-	objectOutput, errOutput := bscOperation.FindByID(id, operationOptions)
+	objectOutput, errOutput := bscOperation.FindByID(objectID, operationOptions)
 
 	return objectOutput, errOutput
 }
