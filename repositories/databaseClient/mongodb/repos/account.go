@@ -54,7 +54,7 @@ func (accRepoMongo *AccountRepoMongo) Create(input *model.CreateAccount, operati
 		return nil, err
 	}
 
-	output, err := accRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
+	output, err := accRepoMongo.basicOperation.Create(*defaultedInput.CreateAccount, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (accRepoMongo *AccountRepoMongo) Update(ID interface{}, updateData *model.U
 		return nil, err
 	}
 
-	object, err := accRepoMongo.basicOperation.Update(ID, *defaultedInput, operationOptions)
+	object, err := accRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
 	output := (*object).(model.Account)
 
 	return &output, err

@@ -56,7 +56,7 @@ func (prsnRepoMongo *PersonRepoMongo) Create(input *model.CreateAccount, operati
 		return nil, err
 	}
 
-	output, err := prsnRepoMongo.basicOperation.Create(*defaultedInput, operationOptions)
+	output, err := prsnRepoMongo.basicOperation.Create(*defaultedInput.CreatePerson, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (prsnRepoMongo *PersonRepoMongo) Update(ID interface{}, updateData *model.U
 		return nil, err
 	}
 
-	object, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput, operationOptions)
+	object, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
 	output := (*object).(model.Person)
 
 	return &output, err
