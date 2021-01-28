@@ -3,15 +3,16 @@ package mongorepos
 import (
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interface"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
-type AccountRepoMongo struct {
+type accountRepoMongo struct {
 	basicOperation *mongooperations.BasicOperation
 }
 
-func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *AccountRepoMongo {
-	return &AccountRepoMongo{
+func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *mongorepointerface.AccountRepoMongo {
+	return &accountRepoMongo{
 		basicOperation: &mongooperations.BasicOperation{
 			Client:         (*mongoRepo).Client,
 			CollectionRef:  (*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("accounts"),
@@ -21,19 +22,19 @@ func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *AccountRepo
 	}
 }
 
-func (accRepoMongo *AccountRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	object, err := accRepoMongo.basicOperation.FindByID(ID, operationOptions)
 	output := (*object).(model.Account)
 	return &output, err
 }
 
-func (accRepoMongo *AccountRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	object, err := accRepoMongo.basicOperation.FindOne(query, operationOptions)
 	output := (*object).(model.Account)
 	return &output, err
 }
 
-func (accRepoMongo *AccountRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
 	objects, err := accRepoMongo.basicOperation.Find(query, operationOptions)
 
 	var accounts = []*model.Account{}
@@ -45,7 +46,7 @@ func (accRepoMongo *AccountRepoMongo) Find(query mongooperations.OperationQueryT
 	return accounts, err
 }
 
-func (accRepoMongo *AccountRepoMongo) Create(input *model.CreateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) Create(input *model.CreateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	defaultedInput, err := accRepoMongo.setDefaultValues(*input,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesCreateType},
 		operationOptions,
@@ -72,7 +73,7 @@ func (accRepoMongo *AccountRepoMongo) Create(input *model.CreateAccount, operati
 	return account, err
 }
 
-func (accRepoMongo *AccountRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	defaultedInput, err := accRepoMongo.setDefaultValues(*updateData,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
 		operationOptions,
@@ -92,7 +93,7 @@ type setDefaultValuesOutput struct {
 	UpdateAccount *model.UpdateAccount
 }
 
-func (accRepoMongo *AccountRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperations.OperationOptions) (*setDefaultValuesOutput, error) {
+func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperations.OperationOptions) (*setDefaultValuesOutput, error) {
 	var accountStatus model.AccountStatus
 	var accountType model.AccountType
 
