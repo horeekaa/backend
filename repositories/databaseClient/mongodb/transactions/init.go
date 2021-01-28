@@ -31,7 +31,7 @@ func NewMongoTransaction(transactionComponent *MongoTransactionComponent, reposi
 }
 
 func (mongoTrx *MongoTransaction) runTransaction(input interface{}) (interface{}, error) {
-	if mongoTrx.TransactionTitle != nil {
+	if mongoTrx.TransactionTitle == nil {
 		*mongoTrx.TransactionTitle = strconv.Itoa(
 			int(math.Floor(rand.Float64()*900000+100000) + 1),
 		)
