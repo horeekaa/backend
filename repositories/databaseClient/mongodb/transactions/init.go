@@ -21,13 +21,13 @@ type MongoTransaction struct {
 	TransactionTitle     *string
 }
 
-func NewMongoTransaction(transactionComponent *MongoTransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) *MongoTransaction {
+func NewMongoTransaction(transactionComponent *MongoTransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (*MongoTransaction, error) {
 	return &MongoTransaction{
 		TransactionComponent: transactionComponent,
 		Repository:           repository,
 		RetryCounter:         0,
 		TransactionTitle:     transactionTitle,
-	}
+	}, nil
 }
 
 func (mongoTrx *MongoTransaction) runTransaction(input interface{}) (interface{}, error) {

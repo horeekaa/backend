@@ -5,6 +5,7 @@ import (
 
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interface"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
@@ -12,7 +13,7 @@ type personRepoMongo struct {
 	basicOperation *mongooperations.BasicOperation
 }
 
-func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) *mongorepointerface.PersonRepoMongo {
+func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerface.PersonRepoMongo, error) {
 	return &personRepoMongo{
 		basicOperation: &mongooperations.BasicOperation{
 			Client:         (*mongoRepo).Client,
@@ -20,7 +21,7 @@ func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) *mongorepoint
 			Timeout:        (*mongoRepo).Timeout,
 			CollectionName: "persons",
 		},
-	}
+	}, nil
 }
 
 func (prsnRepoMongo *personRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
@@ -47,7 +48,7 @@ func (prsnRepoMongo *personRepoMongo) Find(query mongooperations.OperationQueryT
 	return persons, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Create(input *model.CreateAccount, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnRepoMongo.setDefaultValues(*input,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesCreateType},
 		operationOptions,
@@ -76,7 +77,7 @@ func (prsnRepoMongo *personRepoMongo) Create(input *model.CreateAccount, operati
 	return person, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnRepoMongo.setDefaultValues(*updateData,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
 		operationOptions,

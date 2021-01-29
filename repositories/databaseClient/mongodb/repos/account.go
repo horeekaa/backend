@@ -11,7 +11,7 @@ type accountRepoMongo struct {
 	basicOperation *mongooperations.BasicOperation
 }
 
-func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *mongorepointerface.AccountRepoMongo {
+func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerface.AccountRepoMongo, error) {
 	return &accountRepoMongo{
 		basicOperation: &mongooperations.BasicOperation{
 			Client:         (*mongoRepo).Client,
@@ -19,7 +19,7 @@ func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) *mongorepoin
 			Timeout:        (*mongoRepo).Timeout,
 			CollectionName: "accounts",
 		},
-	}
+	}, nil
 }
 
 func (accRepoMongo *accountRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
