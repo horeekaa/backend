@@ -28,13 +28,13 @@ func (accRepoMongo *accountRepoMongo) FindByID(ID interface{}, operationOptions 
 	return &output, err
 }
 
-func (accRepoMongo *accountRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) (*model.Account, error) {
 	object, err := accRepoMongo.basicOperation.FindOne(query, operationOptions)
 	output := (*object).(model.Account)
 	return &output, err
 }
 
-func (accRepoMongo *accountRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
+func (accRepoMongo *accountRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) ([]*model.Account, error) {
 	objects, err := accRepoMongo.basicOperation.Find(query, operationOptions)
 
 	var accounts = []*model.Account{}
