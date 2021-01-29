@@ -38,8 +38,13 @@ var badGatewayError = map[string]bool{
 }
 
 // ConvertFailure helps convert failures coming from the service layer to be an error in usecase layer
-func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaabaseerror.Error {
-	if authenticationError[failure.Message] {
+func ConvertFailure(path string, failure *error) *horeekaabaseerror.Error {
+	errMsg := ""
+	if &failure.Message != nil {
+		errMsg := *failure.Message
+	}
+
+	if authenticationError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			401,
@@ -48,7 +53,7 @@ func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaa
 		)
 	}
 
-	if forbiddenError[failure.Message] {
+	if forbiddenError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			403,
@@ -57,7 +62,7 @@ func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaa
 		)
 	}
 
-	if resourceNotFoundError[failure.Message] {
+	if resourceNotFoundError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			404,
@@ -66,7 +71,7 @@ func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaa
 		)
 	}
 
-	if conflictWithCurrentError[failure.Message] {
+	if conflictWithCurrentError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			409,
@@ -75,7 +80,7 @@ func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaa
 		)
 	}
 
-	if invalidInputError[failure.Message] {
+	if invalidInputError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			422,
@@ -84,7 +89,7 @@ func ConvertFailure(path string, failure *horeekaabasefailure.Failure) *horeekaa
 		)
 	}
 
-	if badGatewayError[failure.Message] {
+	if badGatewayError[errMsg] {
 		return horeekaaerror.NewErrorObject(
 			(*failure).Message,
 			503,

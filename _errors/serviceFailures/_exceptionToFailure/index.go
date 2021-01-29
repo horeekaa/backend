@@ -33,8 +33,13 @@ var objectNotFoundFailure = map[string]bool{
 }
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
-func ConvertException(path string, exception *horeekaabaseexception.Exception) *horeekaabasefailure.Failure {
-	if authenticationFailure[exception.Message] {
+func ConvertException(path string, exception *error) *horeekaabasefailure.Failure {
+	errMsg := ""
+	if &exception.Message != nil {
+		errMsg = *exception.Message
+	}
+
+	if authenticationFailure[errMsg] {
 		return horeekaafailure.NewFailureObject(
 			horeekaafailureenums.AuthenticationTokenFailed,
 			path,
@@ -42,7 +47,7 @@ func ConvertException(path string, exception *horeekaabaseexception.Exception) *
 		)
 	}
 
-	if upstreamDuplicateFailure[exception.Message] {
+	if upstreamDuplicateFailure[errMsg] {
 		return horeekaafailure.NewFailureObject(
 			horeekaafailureenums.DuplicateObjectExist,
 			path,
@@ -50,7 +55,7 @@ func ConvertException(path string, exception *horeekaabaseexception.Exception) *
 		)
 	}
 
-	if objectNotFoundFailure[exception.Message] {
+	if objectNotFoundFailure[errMsg] {
 		return horeekaafailure.NewFailureObject(
 			horeekaafailureenums.ObjectNotFound,
 			path,
@@ -58,7 +63,7 @@ func ConvertException(path string, exception *horeekaabaseexception.Exception) *
 		)
 	}
 
-	if upstreamFailure[exception.Message] {
+	if upstreamFailure[errMsg] {
 		return horeekaafailure.NewFailureObject(
 			horeekaafailureenums.UpstreamFailures,
 			path,
