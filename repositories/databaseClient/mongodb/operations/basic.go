@@ -2,6 +2,7 @@ package mongooperations
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -38,15 +39,19 @@ func (bscOperation *BasicOperation) FindByID(ID interface{}, operationOptions *O
 	return object, nil
 }
 
-func (bscOperation *BasicOperation) FindOne(query OperationQueryType, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operationOptions *OperationOptions) (*interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
+	var bsonObject bson.M
+	encodedJSON, _ := json.Marshal(query)
+	_ = bson.Unmarshal(encodedJSON, &bsonObject)
+
 	var res *mongo.SingleResult
 	if &(*operationOptions).session != nil {
-		res = bscOperation.CollectionRef.FindOne(*operationOptions.session, query)
+		res = bscOperation.CollectionRef.FindOne(*operationOptions.session, bsonObject)
 	} else {
-		res = bscOperation.CollectionRef.FindOne(ctx, query)
+		res = bscOperation.CollectionRef.FindOne(ctx, bsonObject)
 	}
 
 	var object *interface{}
@@ -55,16 +60,20 @@ func (bscOperation *BasicOperation) FindOne(query OperationQueryType, operationO
 	return object, nil
 }
 
-func (bscOperation *BasicOperation) Find(query OperationQueryType, operationOptions *OperationOptions) ([]*interface{}, error) {
+func (bscOperation *BasicOperation) Find(query map[string]interface{}, operationOptions *OperationOptions) ([]*interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*2*time.Second)
 	defer cancel()
+
+	var bsonObject bson.M
+	encodedJSON, _ := json.Marshal(query)
+	_ = bson.Unmarshal(encodedJSON, &bsonObject)
 
 	var curr *mongo.Cursor
 	var err error
 	if &(*operationOptions).session != nil {
-		curr, err = bscOperation.CollectionRef.Find(*operationOptions.session, query)
+		curr, err = bscOperation.CollectionRef.Find(*operationOptions.session, bsonObject)
 	} else {
-		curr, err = bscOperation.CollectionRef.Find(ctx, query)
+		curr, err = bscOperation.CollectionRef.Find(ctx, bsonObject)
 	}
 
 	if err != nil {

@@ -30,13 +30,13 @@ func (prsnRepoMongo *personRepoMongo) FindByID(ID interface{}, operationOptions 
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) FindOne(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
 	object, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
 	output := (*object).(model.Person)
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Find(query mongooperations.OperationQueryType, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
 	objects, err := prsnRepoMongo.basicOperation.Find(query, operationOptions)
 
 	var persons = []*model.Person{}
