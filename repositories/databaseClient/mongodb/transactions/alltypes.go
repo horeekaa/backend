@@ -1,10 +1,10 @@
 package mongotransaction
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
+	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
 type MongoTransactionComponent interface {
 	preTransaction(input interface{}) (interface{}, error)
-	transactionBody(session *mongo.SessionContext, preOutput interface{}) (interface{}, error)
+	transactionBody(session *mongooperations.OperationOptions, preOutput interface{}) (interface{}, error)
 }

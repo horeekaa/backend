@@ -6,7 +6,7 @@ import (
 )
 
 type OperationOptions struct {
-	session *mongo.SessionContext
+	Session *mongo.SessionContext
 }
 
 type CreateOperationOutput struct {

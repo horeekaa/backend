@@ -27,8 +27,8 @@ func (bscOperation *BasicOperation) FindByID(ID interface{}, operationOptions *O
 	defer cancel()
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).session != nil {
-		res = bscOperation.CollectionRef.FindOne(*operationOptions.session, bson.M{"_id": objectID})
+	if &(*operationOptions).Session != nil {
+		res = bscOperation.CollectionRef.FindOne(*operationOptions.Session, bson.M{"_id": objectID})
 	} else {
 		res = bscOperation.CollectionRef.FindOne(ctx, bson.M{"_id": objectID})
 	}
@@ -48,8 +48,8 @@ func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operat
 	_ = bson.Unmarshal(encodedJSON, &bsonObject)
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).session != nil {
-		res = bscOperation.CollectionRef.FindOne(*operationOptions.session, bsonObject)
+	if &(*operationOptions).Session != nil {
+		res = bscOperation.CollectionRef.FindOne(*operationOptions.Session, bsonObject)
 	} else {
 		res = bscOperation.CollectionRef.FindOne(ctx, bsonObject)
 	}
@@ -70,8 +70,8 @@ func (bscOperation *BasicOperation) Find(query map[string]interface{}, operation
 
 	var curr *mongo.Cursor
 	var err error
-	if &(*operationOptions).session != nil {
-		curr, err = bscOperation.CollectionRef.Find(*operationOptions.session, bsonObject)
+	if &(*operationOptions).Session != nil {
+		curr, err = bscOperation.CollectionRef.Find(*operationOptions.Session, bsonObject)
 	} else {
 		curr, err = bscOperation.CollectionRef.Find(ctx, bsonObject)
 	}
@@ -107,8 +107,8 @@ func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *
 
 	var res *mongo.InsertOneResult
 	var err error
-	if &(*operationOptions).session != nil {
-		res, err = bscOperation.CollectionRef.InsertOne(*operationOptions.session, input)
+	if &(*operationOptions).Session != nil {
+		res, err = bscOperation.CollectionRef.InsertOne(*operationOptions.Session, input)
 	} else {
 		res, err = bscOperation.CollectionRef.InsertOne(ctx, input)
 	}
@@ -133,9 +133,9 @@ func (bscOperation *BasicOperation) Update(ID interface{}, updateData interface{
 	defer cancel()
 
 	var err error
-	if &(*operationOptions).session != nil {
+	if &(*operationOptions).Session != nil {
 		_, err = bscOperation.CollectionRef.UpdateOne(
-			*operationOptions.session,
+			*operationOptions.Session,
 			bson.M{"_id": objectID},
 			updateData,
 		)
