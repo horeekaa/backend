@@ -11,34 +11,35 @@ import (
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongotransactioninterface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoTransaction struct {
-	TransactionComponent *MongoTransactionComponent
-	Repository           *databaseclient.MongoRepository
-	RetryCounter         int
-	TransactionTitle     *string
+type mongoRepoTransaction struct {
+	Component        *mongotransactioninterface.TransactionComponent
+	Repository       *databaseclient.MongoRepository
+	RetryCounter     int
+	TransactionTitle *string
 }
 
-func NewMongoTransaction(transactionComponent *MongoTransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (*MongoTransaction, error) {
-	return &MongoTransaction{
-		TransactionComponent: transactionComponent,
-		Repository:           repository,
-		RetryCounter:         0,
-		TransactionTitle:     transactionTitle,
+func NewMongoTransaction(component *mongotransactioninterface.TransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (mongotransactioninterface.MongoRepoTransaction, error) {
+	return &mongoRepoTransaction{
+		Component:        component,
+		Repository:       repository,
+		RetryCounter:     0,
+		TransactionTitle: transactionTitle,
 	}, nil
 }
 
-func (mongoTrx *MongoTransaction) runTransaction(input interface{}) (interface{}, error) {
+func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interface{}, error) {
 	if mongoTrx.TransactionTitle == nil {
 		*mongoTrx.TransactionTitle = strconv.Itoa(
 			int(math.Floor(rand.Float64()*900000+100000) + 1),
 		)
 	}
 
-	preTransactOutput, err := (*mongoTrx.TransactionComponent).preTransaction(input)
+	preTransactOutput, err := (*mongoTrx.Component).PreTransaction(input)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +65,7 @@ func (mongoTrx *MongoTransaction) runTransaction(input interface{}) (interface{}
 	defer cancel()
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		result, err := (*mongoTrx.TransactionComponent).transactionBody(&mongooperations.OperationOptions{
+		result, err := (*mongoTrx.Component).TransactionBody(&mongooperations.OperationOptions{
 			Session: &sc,
 		}, preTransactOutput)
 		if err != nil {
@@ -79,7 +80,7 @@ func (mongoTrx *MongoTransaction) runTransaction(input interface{}) (interface{}
 			if (*mongoTrx).RetryCounter < 10 {
 				log.Printf("Retrying Transaction %s in 50ms", *mongoTrx.TransactionTitle)
 				time.Sleep(50 * time.Millisecond)
-				result, err = (*mongoTrx).runTransaction(input)
+				result, err = (*mongoTrx).RunTransaction(input)
 				if err != nil {
 					return err
 				}
