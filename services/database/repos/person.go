@@ -4,7 +4,7 @@ import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
 	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
-	databaseserviceinterface "github.com/horeekaa/backend/services/database/interface"
+	databaseserviceinterface "github.com/horeekaa/backend/services/database/interfaces/repos"
 )
 
 type personService struct {
