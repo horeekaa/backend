@@ -5,7 +5,7 @@ import (
 
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interface"
+	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
