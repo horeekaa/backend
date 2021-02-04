@@ -1,4 +1,4 @@
-package databaseservicetransaction
+package databaseservicetransactions
 
 import (
 	"strconv"
@@ -8,14 +8,14 @@ import (
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
 	mongotransactioninterface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
 	mongotransaction "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/transactions"
-	databaseservicetransactioninterface "github.com/horeekaa/backend/services/database/interfaces/transaction"
+	databaseservicetransactioninterfaces "github.com/horeekaa/backend/services/database/interfaces/transaction"
 )
 
 type databaseServiceTransaction struct {
 	MongoTransaction *mongotransactioninterface.MongoRepoTransaction
 }
 
-func NewDatabaseServiceTransaction(component *databaseservicetransactioninterface.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterface.DatabaseServiceTransaction, error) {
+func NewDatabaseServiceTransaction(component *databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
 	mongoTransactionComponent, _ := NewMongoTransactionComponent(component)
 
 	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))

@@ -1,23 +1,24 @@
-package databaseservice
+package databasereposervices
 
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
 	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
-	databaseserviceinterface "github.com/horeekaa/backend/services/database/interfaces/repos"
+	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
+	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type accountService struct {
 	accountRepo *mongorepointerface.AccountRepoMongo
 }
 
-func NewAccountService(accountRepo *mongorepointerface.AccountRepoMongo) (databaseserviceinterface.AccountService, error) {
+func NewAccountService(accountRepo *mongorepointerface.AccountRepoMongo) (databaseservicerepointerfaces.AccountService, error) {
 	return &accountService{
 		accountRepo,
 	}, nil
 }
 
-func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *databaseserviceinterface.ServiceOptions) (chan<- *model.Account, chan<- error) {
+func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
 	accountChn := make(chan<- *model.Account)
 	errorChn := make(chan<- error)
 
@@ -38,7 +39,7 @@ func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *datab
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceinterface.ServiceOptions) (chan<- *model.Account, chan<- error) {
+func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
 	accountChn := make(chan<- *model.Account)
 	errorChn := make(chan<- error)
 
@@ -59,7 +60,7 @@ func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceO
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) Find(query map[string]interface{}, serviceOptions *databaseserviceinterface.ServiceOptions) (chan<- []*model.Account, chan<- error) {
+func (accountSvc *accountService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.Account, chan<- error) {
 	accountsChn := make(chan<- []*model.Account)
 	errorChn := make(chan<- error)
 
@@ -80,7 +81,7 @@ func (accountSvc *accountService) Find(query map[string]interface{}, serviceOpti
 	return accountsChn, errorChn
 }
 
-func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOptions *databaseserviceinterface.ServiceOptions) (chan<- *model.Account, chan<- error) {
+func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
 	accountChn := make(chan<- *model.Account)
 	errorChn := make(chan<- error)
 
@@ -101,7 +102,7 @@ func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOpti
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) Update(ID interface{}, updateData *model.UpdateAccount, serviceOptions *databaseserviceinterface.ServiceOptions) (chan<- *model.Account, chan<- error) {
+func (accountSvc *accountService) Update(ID interface{}, updateData *model.UpdateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
 	accountChn := make(chan<- *model.Account)
 	errorChn := make(chan<- error)
 
