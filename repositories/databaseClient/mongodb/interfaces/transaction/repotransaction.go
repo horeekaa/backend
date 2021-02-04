@@ -6,7 +6,7 @@ import (
 
 type TransactionComponent interface {
 	PreTransaction(input interface{}) (interface{}, error)
-	TransactionBody(session *mongooperations.OperationOptions, preOutput interface{}) (interface{}, error)
+	TransactionBody(operationOptions *mongooperations.OperationOptions, preOutput interface{}) (interface{}, error)
 }
 
 type MongoRepoTransaction interface {
