@@ -1,4 +1,4 @@
-package databaseserviceinterface
+package databaseserviceoperations
 
 import (
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
