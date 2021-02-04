@@ -10,15 +10,17 @@ import (
 	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	firebaseauthenticationinterface "github.com/horeekaa/backend/repositories/authentication/firebase/interfaces"
+	firebaseauthenticationmodel "github.com/horeekaa/backend/repositories/authentication/firebase/models"
 )
 
-type FirebaseAuthentication struct {
+type firebaseAuthentication struct {
 	App     *firebase.App
 	Client  *auth.Client
 	Context *context.Context
 }
 
-func NewFirebaseAuthentication(context *context.Context) (*FirebaseAuthentication, error) {
+func NewFirebaseAuthentication(context *context.Context) (firebaseauthenticationinterface.FirebaseAuthentication, error) {
 	opt := option.WithCredentialsFile(configs.GetEnvVariable(configs.FirebaseServiceAccountPath))
 	config := &firebase.Config{ProjectID: configs.GetEnvVariable(configs.FirebaseConfigProjectID)}
 	app, err := firebase.NewApp(*context, config, opt)
@@ -31,14 +33,14 @@ func NewFirebaseAuthentication(context *context.Context) (*FirebaseAuthenticatio
 	}
 
 	client, err := app.Auth(*context)
-	return &FirebaseAuthentication{
+	return &firebaseAuthentication{
 		App:     app,
 		Client:  client,
 		Context: context,
 	}, nil
 }
 
-func (fbAuth *FirebaseAuthentication) VerifyAndDecodeToken(authToken string) (*auth.Token, error) {
+func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*auth.Token, error) {
 	token, err := (*fbAuth).Client.VerifyIDToken(*fbAuth.Context, authToken)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -50,7 +52,7 @@ func (fbAuth *FirebaseAuthentication) VerifyAndDecodeToken(authToken string) (*a
 	return token, nil
 }
 
-func (fbAuth *FirebaseAuthentication) GetAuthUserDataByEmail(email string) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*auth.UserRecord, error) {
 	user, err := (*fbAuth).Client.GetUserByEmail(*fbAuth.Context, email)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -62,7 +64,7 @@ func (fbAuth *FirebaseAuthentication) GetAuthUserDataByEmail(email string) (*aut
 	return user, nil
 }
 
-func (fbAuth *FirebaseAuthentication) GetAuthUserDataById(uid string) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*auth.UserRecord, error) {
 	user, err := (*fbAuth).Client.GetUser(*fbAuth.Context, uid)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -74,7 +76,7 @@ func (fbAuth *FirebaseAuthentication) GetAuthUserDataById(uid string) (*auth.Use
 	return user, nil
 }
 
-func (fbAuth *FirebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecord, accountRole string, dbId string) (bool, error) {
+func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecord, accountRole string, dbId string) (bool, error) {
 	claims := map[string]interface{}{"type": accountRole, "_id": dbId}
 	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, (*user).UID, claims); err != nil {
 		return false, horeekaaexception.NewExceptionObject(
@@ -87,7 +89,7 @@ func (fbAuth *FirebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecor
 	return true, nil
 }
 
-func (fbAuth *FirebaseAuthentication) UpdateAuthUserData(user *UpdateAuthUserData) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthenticationmodel.UpdateAuthUserData) (*auth.UserRecord, error) {
 	params := (&auth.UserToUpdate{})
 	if &user.Email != nil {
 		params = params.Email((*user).Email)
@@ -122,7 +124,7 @@ func (fbAuth *FirebaseAuthentication) UpdateAuthUserData(user *UpdateAuthUserDat
 	return updatedUser, nil
 }
 
-func (fbAuth *FirebaseAuthentication) GenerateEmailVerificationLink(email string) (string, error) {
+func (fbAuth *firebaseAuthentication) GenerateEmailVerificationLink(email string) (string, error) {
 	link, err := (*fbAuth).Client.EmailVerificationLinkWithSettings(
 		*fbAuth.Context,
 		email,
@@ -138,7 +140,7 @@ func (fbAuth *FirebaseAuthentication) GenerateEmailVerificationLink(email string
 	return link, nil
 }
 
-func (fbAuth *FirebaseAuthentication) PasswordResetLinkWithSettings(email string) (string, error) {
+func (fbAuth *firebaseAuthentication) GeneratePasswordResetLink(email string) (string, error) {
 	link, err := (*fbAuth).Client.PasswordResetLinkWithSettings(
 		*fbAuth.Context,
 		email,
