@@ -3,16 +3,16 @@ package databasereposervices
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
-	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type personService struct {
-	personRepo *mongorepointerface.PersonRepoMongo
+	personRepo *mongorepointerfaces.PersonRepoMongo
 }
 
-func NewPersonService(personRepo *mongorepointerface.PersonRepoMongo) (databaseservicerepointerfaces.PersonService, error) {
+func NewPersonService(personRepo *mongorepointerfaces.PersonRepoMongo) (databaseservicerepointerfaces.PersonService, error) {
 	return &personService{
 		personRepo,
 	}, nil

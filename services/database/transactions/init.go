@@ -5,21 +5,21 @@ import (
 
 	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
-	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongotransactioninterface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
-	mongotransaction "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/transactions"
+	mongodbclients "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongotransactioninterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
+	mongotransactions "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/transactions"
 	databaseservicetransactioninterfaces "github.com/horeekaa/backend/services/database/interfaces/transaction"
 )
 
 type databaseServiceTransaction struct {
-	MongoTransaction *mongotransactioninterface.MongoRepoTransaction
+	MongoTransaction *mongotransactioninterfaces.MongoRepoTransaction
 }
 
 func NewDatabaseServiceTransaction(component *databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
 	mongoTransactionComponent, _ := NewMongoTransactionComponent(component)
 
 	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
-	repository, err := databaseclient.NewMongoClientRef(
+	repository, err := mongodbclients.NewMongoClientRef(
 		configs.GetEnvVariable(configs.DbConfigURL),
 		configs.GetEnvVariable(configs.DbConfigDBName),
 		timeout,
@@ -28,7 +28,7 @@ func NewDatabaseServiceTransaction(component *databaseservicetransactioninterfac
 		return nil, err
 	}
 
-	mongoTransaction, _ := mongotransaction.NewMongoTransaction(
+	mongoTransaction, _ := mongotransactions.NewMongoTransaction(
 		&mongoTransactionComponent,
 		repository,
 		transactionTitle,
