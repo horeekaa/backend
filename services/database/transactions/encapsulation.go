@@ -1,7 +1,7 @@
 package databaseservicetransactions
 
 import (
-	mongotransactioninterface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
+	mongotransactioninterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 	databaseservicetransactioninterfaces "github.com/horeekaa/backend/services/database/interfaces/transaction"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
@@ -11,7 +11,7 @@ type mongoTransactionComponent struct {
 	serviceComponent *databaseservicetransactioninterfaces.TransactionComponent
 }
 
-func NewMongoTransactionComponent(serviceComponent *databaseservicetransactioninterfaces.TransactionComponent) (mongotransactioninterface.TransactionComponent, error) {
+func NewMongoTransactionComponent(serviceComponent *databaseservicetransactioninterfaces.TransactionComponent) (mongotransactioninterfaces.TransactionComponent, error) {
 	return &mongoTransactionComponent{
 		serviceComponent: serviceComponent,
 	}, nil
