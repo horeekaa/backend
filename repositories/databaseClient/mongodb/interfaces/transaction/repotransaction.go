@@ -1,4 +1,4 @@
-package mongotransactioninterface
+package mongotransactioninterfaces
 
 import (
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"

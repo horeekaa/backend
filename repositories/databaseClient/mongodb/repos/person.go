@@ -5,7 +5,7 @@ import (
 
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
@@ -13,7 +13,7 @@ type personRepoMongo struct {
 	basicOperation *mongooperations.BasicOperation
 }
 
-func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerface.PersonRepoMongo, error) {
+func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerfaces.PersonRepoMongo, error) {
 	return &personRepoMongo{
 		basicOperation: &mongooperations.BasicOperation{
 			Client:         (*mongoRepo).Client,
