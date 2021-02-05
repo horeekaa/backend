@@ -11,19 +11,19 @@ import (
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongotransactioninterface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
+	mongotransactioninterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type mongoRepoTransaction struct {
-	Component        *mongotransactioninterface.TransactionComponent
+	Component        *mongotransactioninterfaces.TransactionComponent
 	Repository       *databaseclient.MongoRepository
 	RetryCounter     int
 	TransactionTitle *string
 }
 
-func NewMongoTransaction(component *mongotransactioninterface.TransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (mongotransactioninterface.MongoRepoTransaction, error) {
+func NewMongoTransaction(component *mongotransactioninterfaces.TransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (mongotransactioninterfaces.MongoRepoTransaction, error) {
 	return &mongoRepoTransaction{
 		Component:        component,
 		Repository:       repository,

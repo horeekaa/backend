@@ -1,4 +1,4 @@
-package mongorepointerface
+package mongorepointerfaces
 
 import (
 	model "github.com/horeekaa/backend/model"

@@ -3,7 +3,7 @@ package mongorepos
 import (
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongorepointerface "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
 )
 
@@ -11,7 +11,7 @@ type accountRepoMongo struct {
 	basicOperation *mongooperations.BasicOperation
 }
 
-func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerface.AccountRepoMongo, error) {
+func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerfaces.AccountRepoMongo, error) {
 	return &accountRepoMongo{
 		basicOperation: &mongooperations.BasicOperation{
 			Client:         (*mongoRepo).Client,

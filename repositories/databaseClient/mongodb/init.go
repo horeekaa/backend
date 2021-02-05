@@ -1,4 +1,4 @@
-package databaseclient
+package mongodbclients
 
 import (
 	"context"
