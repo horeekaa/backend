@@ -1,4 +1,4 @@
-package firebaseauthentication
+package firebaseauthclients
 
 import (
 	"context"
@@ -10,8 +10,9 @@ import (
 	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
-	firebaseauthenticationinterface "github.com/horeekaa/backend/repositories/authentication/firebase/interfaces"
-	firebaseauthenticationmodel "github.com/horeekaa/backend/repositories/authentication/firebase/models"
+	firebaseauthinterfaces "github.com/horeekaa/backend/repositories/authentication/firebase/interfaces"
+	firebaseauthmodels "github.com/horeekaa/backend/repositories/authentication/firebase/models"
+	firebaseauthutilities "github.com/horeekaa/backend/repositories/authentication/firebase/utilities"
 )
 
 type firebaseAuthentication struct {
@@ -20,7 +21,7 @@ type firebaseAuthentication struct {
 	Context *context.Context
 }
 
-func NewFirebaseAuthentication(context *context.Context) (firebaseauthenticationinterface.FirebaseAuthentication, error) {
+func NewFirebaseAuthentication(context *context.Context) (firebaseauthinterfaces.FirebaseAuthentication, error) {
 	opt := option.WithCredentialsFile(configs.GetEnvVariable(configs.FirebaseServiceAccountPath))
 	config := &firebase.Config{ProjectID: configs.GetEnvVariable(configs.FirebaseConfigProjectID)}
 	app, err := firebase.NewApp(*context, config, opt)
@@ -89,7 +90,7 @@ func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecor
 	return true, nil
 }
 
-func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthenticationmodel.UpdateAuthUserData) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodels.UpdateAuthUserData) (*auth.UserRecord, error) {
 	params := (&auth.UserToUpdate{})
 	if &user.Email != nil {
 		params = params.Email((*user).Email)
@@ -128,7 +129,7 @@ func (fbAuth *firebaseAuthentication) GenerateEmailVerificationLink(email string
 	link, err := (*fbAuth).Client.EmailVerificationLinkWithSettings(
 		*fbAuth.Context,
 		email,
-		GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
+		firebaseauthutilities.GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
 	)
 	if err != nil {
 		return "", horeekaaexception.NewExceptionObject(
@@ -144,7 +145,7 @@ func (fbAuth *firebaseAuthentication) GeneratePasswordResetLink(email string) (s
 	link, err := (*fbAuth).Client.PasswordResetLinkWithSettings(
 		*fbAuth.Context,
 		email,
-		GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
+		firebaseauthutilities.GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
 	)
 	if err != nil {
 		return "", horeekaaexception.NewExceptionObject(
