@@ -1,4 +1,4 @@
-package firebaseauthentication
+package firebaseauthutilities
 
 import (
 	configs "github.com/horeekaa/backend/_commons/configs"
