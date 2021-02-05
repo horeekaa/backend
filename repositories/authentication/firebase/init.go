@@ -41,7 +41,7 @@ func NewFirebaseAuthentication(context *context.Context) (firebaseauthinterfaces
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*auth.Token, error) {
+func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*firebaseauthmodels.FirebaseAuthToken, error) {
 	token, err := (*fbAuth).Client.VerifyIDToken(*fbAuth.Context, authToken)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -50,10 +50,12 @@ func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*a
 			err,
 		)
 	}
-	return token, nil
+	return &firebaseauthmodels.FirebaseAuthToken{
+		Token: token,
+	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*firebaseauthmodels.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUserByEmail(*fbAuth.Context, email)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -62,10 +64,12 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*aut
 			err,
 		)
 	}
-	return user, nil
+	return &firebaseauthmodels.FirebaseUserRecord{
+		User: user,
+	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebaseauthmodels.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUser(*fbAuth.Context, uid)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
@@ -74,12 +78,14 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*auth.Use
 			err,
 		)
 	}
-	return user, nil
+	return &firebaseauthmodels.FirebaseUserRecord{
+		User: user,
+	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecord, accountRole string, dbId string) (bool, error) {
+func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *firebaseauthmodels.FirebaseUserRecord, accountRole string, dbId string) (bool, error) {
 	claims := map[string]interface{}{"type": accountRole, "_id": dbId}
-	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, (*user).UID, claims); err != nil {
+	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, (*user).User.UID, claims); err != nil {
 		return false, horeekaaexception.NewExceptionObject(
 			horeekaaexceptionenums.SetAuthDataFailed,
 			"/authentication/setRoleInAuthUserData",
@@ -90,7 +96,7 @@ func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *auth.UserRecor
 	return true, nil
 }
 
-func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodels.UpdateAuthUserData) (*auth.UserRecord, error) {
+func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodels.UpdateAuthUserData) (*firebaseauthmodels.FirebaseUserRecord, error) {
 	params := (&auth.UserToUpdate{})
 	if &user.Email != nil {
 		params = params.Email((*user).Email)
@@ -122,7 +128,9 @@ func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodel
 			err,
 		)
 	}
-	return updatedUser, nil
+	return &firebaseauthmodels.FirebaseUserRecord{
+		User: updatedUser,
+	}, nil
 }
 
 func (fbAuth *firebaseAuthentication) GenerateEmailVerificationLink(email string) (string, error) {
