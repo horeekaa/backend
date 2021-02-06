@@ -1,9 +1,5 @@
 package firebaseauthmodels
 
-import (
-	auth "firebase.google.com/go/v4/auth"
-)
-
 type UpdateAuthUserData struct {
 	UID           string
 	Email         string
@@ -13,12 +9,4 @@ type UpdateAuthUserData struct {
 	DisplayName   string
 	PhotoURL      string
 	Disabled      bool
-}
-
-type FirebaseAuthToken struct {
-	Token *auth.Token
-}
-
-type FirebaseUserRecord struct {
-	User *auth.UserRecord
 }
