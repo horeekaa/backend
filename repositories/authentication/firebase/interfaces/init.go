@@ -2,14 +2,15 @@ package firebaseauthinterfaces
 
 import (
 	firebaseauthmodels "github.com/horeekaa/backend/repositories/authentication/firebase/models"
+	firebaseauthoperations "github.com/horeekaa/backend/repositories/authentication/firebase/operations"
 )
 
 type FirebaseAuthentication interface {
-	VerifyAndDecodeToken(authToken string) (*firebaseauthmodels.FirebaseAuthToken, error)
-	GetAuthUserDataByEmail(email string) (*firebaseauthmodels.FirebaseUserRecord, error)
-	GetAuthUserDataById(uid string) (*firebaseauthmodels.FirebaseUserRecord, error)
-	SetRoleInAuthUserData(user *firebaseauthmodels.FirebaseUserRecord, accountRole string, dbId string) (bool, error)
-	UpdateAuthUserData(user *firebaseauthmodels.UpdateAuthUserData) (*firebaseauthmodels.FirebaseUserRecord, error)
+	VerifyAndDecodeToken(authToken string) (*firebaseauthoperations.FirebaseAuthToken, error)
+	GetAuthUserDataByEmail(email string) (*firebaseauthoperations.FirebaseUserRecord, error)
+	GetAuthUserDataById(uid string) (*firebaseauthoperations.FirebaseUserRecord, error)
+	SetRoleInAuthUserData(user *firebaseauthoperations.FirebaseUserRecord, accountRole string, dbId string) (bool, error)
+	UpdateAuthUserData(user *firebaseauthmodels.UpdateAuthUserData) (*firebaseauthoperations.FirebaseUserRecord, error)
 	GenerateEmailVerificationLink(email string) (string, error)
 	GeneratePasswordResetLink(email string) (string, error)
 }
