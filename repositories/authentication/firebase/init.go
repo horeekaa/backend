@@ -84,9 +84,9 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebase
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(user *firebaseauthoperations.FirebaseUserRecord, accountRole string, dbId string) (bool, error) {
-	claims := map[string]interface{}{"type": accountRole, "_id": dbId}
-	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, (*user).User.UID, claims); err != nil {
+func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountRole string, dbID string) (bool, error) {
+	claims := map[string]interface{}{"type": accountRole, "_id": dbID}
+	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, uid, claims); err != nil {
 		return false, horeekaaexception.NewExceptionObject(
 			horeekaaexceptionenums.SetAuthDataFailed,
 			"/authentication/setRoleInAuthUserData",
