@@ -33,7 +33,6 @@ func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *datab
 		}
 
 		accountChn <- account
-		errorChn <- err
 	}()
 
 	return accountChn, errorChn
@@ -54,7 +53,6 @@ func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceO
 		}
 
 		accountChn <- account
-		errorChn <- err
 	}()
 
 	return accountChn, errorChn
@@ -75,7 +73,6 @@ func (accountSvc *accountService) Find(query map[string]interface{}, serviceOpti
 		}
 
 		accountsChn <- accounts
-		errorChn <- err
 	}()
 
 	return accountsChn, errorChn
@@ -96,7 +93,6 @@ func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOpti
 		}
 
 		accountChn <- account
-		errorChn <- err
 	}()
 
 	return accountChn, errorChn
@@ -117,7 +113,6 @@ func (accountSvc *accountService) Update(ID interface{}, updateData *model.Updat
 		}
 
 		accountChn <- account
-		errorChn <- err
 	}()
 
 	return accountChn, errorChn
