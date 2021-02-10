@@ -33,7 +33,6 @@ func (personSvc *personService) FindByID(ID interface{}, serviceOptions *databas
 		}
 
 		personChn <- person
-		errorChn <- err
 	}()
 
 	return personChn, errorChn
@@ -54,7 +53,6 @@ func (personSvc *personService) FindOne(query map[string]interface{}, serviceOpt
 		}
 
 		personChn <- person
-		errorChn <- err
 	}()
 
 	return personChn, errorChn
@@ -75,7 +73,6 @@ func (personSvc *personService) Find(query map[string]interface{}, serviceOption
 		}
 
 		personsChn <- persons
-		errorChn <- err
 	}()
 
 	return personsChn, errorChn
@@ -96,7 +93,6 @@ func (personSvc *personService) Create(input *model.CreatePerson, serviceOptions
 		}
 
 		personChn <- person
-		errorChn <- err
 	}()
 
 	return personChn, errorChn
@@ -117,7 +113,6 @@ func (personSvc *personService) Update(ID interface{}, updateData *model.UpdateP
 		}
 
 		personChn <- person
-		errorChn <- err
 	}()
 
 	return personChn, errorChn

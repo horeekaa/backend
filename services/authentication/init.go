@@ -44,7 +44,6 @@ func (authService *authenticationService) VerifyTokenAndGetUser(authToken string
 		authServiceUserRecordChn <- &authserviceoperations.AuthenticationServiceUserRecord{
 			ServiceUser: authUserRecord,
 		}
-		errorChn <- err
 	}()
 
 	return authServiceUserRecordChn, errorChn
@@ -67,7 +66,6 @@ func (authService *authenticationService) GetUserFromEmail(email string) (chan<-
 		authServiceUserRecordChn <- &authserviceoperations.AuthenticationServiceUserRecord{
 			ServiceUser: authUserRecord,
 		}
-		errorChn <- err
 	}()
 
 	return authServiceUserRecordChn, errorChn
@@ -99,7 +97,6 @@ func (authService *authenticationService) SetRoleInAuthUserData(uid string, acco
 		authServiceUserRecordChn <- &authserviceoperations.AuthenticationServiceUserRecord{
 			ServiceUser: authUserRecord,
 		}
-		errorChn <- err
 	}()
 
 	return authServiceUserRecordChn, errorChn
@@ -122,7 +119,6 @@ func (authService *authenticationService) UpdateAuthUserData(updatedUser *authse
 		authServiceUserRecordChn <- &authserviceoperations.AuthenticationServiceUserRecord{
 			ServiceUser: authUserRecord,
 		}
-		errorChn <- err
 	}()
 
 	return authServiceUserRecordChn, errorChn
