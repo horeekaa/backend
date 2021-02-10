@@ -12,16 +12,27 @@ import (
 
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	mongooperationinterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/operations"
+	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
 )
 
-type BasicOperation struct {
+type basicOperation struct {
 	Client         *mongo.Client
 	CollectionRef  *mongo.Collection
 	Timeout        time.Duration
 	CollectionName string
 }
 
-func (bscOperation *BasicOperation) FindByID(ID interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func NewBasicOperation(client *mongo.Client, collectionRef *mongo.Collection, timeout time.Duration, collectionName string) (mongooperationinterfaces.BasicOperation, error) {
+	return &basicOperation{
+		Client:         client,
+		CollectionRef:  collectionRef,
+		Timeout:        timeout,
+		CollectionName: collectionName,
+	}, nil
+}
+
+func (bscOperation *basicOperation) FindByID(ID interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
 	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
@@ -32,14 +43,10 @@ func (bscOperation *BasicOperation) FindByID(ID interface{}, operationOptions *O
 	} else {
 		res = bscOperation.CollectionRef.FindOne(ctx, bson.M{"_id": objectID})
 	}
-
-	var object *interface{}
-	res.Decode(object)
-
-	return object, nil
+	return res, nil
 }
 
-func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -54,13 +61,10 @@ func (bscOperation *BasicOperation) FindOne(query map[string]interface{}, operat
 		res = bscOperation.CollectionRef.FindOne(ctx, bsonObject)
 	}
 
-	var object *interface{}
-	res.Decode(object)
-
-	return object, nil
+	return res, nil
 }
 
-func (bscOperation *BasicOperation) Find(query map[string]interface{}, operationOptions *OperationOptions) ([]*interface{}, error) {
+func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDecoder func(cursorObject *mongooperationmodels.CursorObject) (interface{}, error), operationOptions *mongooperationmodels.OperationOptions) (*bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*2*time.Second)
 	defer cancel()
 
@@ -84,10 +88,12 @@ func (bscOperation *BasicOperation) Find(query map[string]interface{}, operation
 		)
 	}
 
-	var objects []*interface{}
 	for curr.Next(ctx) {
-		var object *interface{}
-		err := curr.Decode(object)
+		_, err := cursorDecoder(
+			&mongooperationmodels.CursorObject{
+				MongoFindCursor: curr,
+			},
+		)
 		if err != nil {
 			return nil, horeekaaexception.NewExceptionObject(
 				horeekaaexceptionenums.QueryObjectFailed,
@@ -95,13 +101,14 @@ func (bscOperation *BasicOperation) Find(query map[string]interface{}, operation
 				err,
 			)
 		}
-		objects = append(objects, object)
 	}
 
-	return objects, err
+	var output *bool
+	*output = true
+	return output, err
 }
 
-func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *OperationOptions) (*CreateOperationOutput, error) {
+func (bscOperation *basicOperation) Create(input interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongooperationmodels.CreateOperationOutput, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -121,13 +128,13 @@ func (bscOperation *BasicOperation) Create(input interface{}, operationOptions *
 		)
 	}
 
-	return &CreateOperationOutput{
+	return &mongooperationmodels.CreateOperationOutput{
 		ID:     res.InsertedID.(primitive.ObjectID),
 		Object: input,
 	}, nil
 }
 
-func (bscOperation *BasicOperation) Update(ID interface{}, updateData interface{}, operationOptions *OperationOptions) (*interface{}, error) {
+func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
 	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
@@ -154,7 +161,7 @@ func (bscOperation *BasicOperation) Update(ID interface{}, updateData interface{
 			err,
 		)
 	}
-	objectOutput, errOutput := bscOperation.FindByID(objectID, operationOptions)
+	res, err := bscOperation.FindByID(objectID, operationOptions)
 
-	return objectOutput, errOutput
+	return res, err
 }

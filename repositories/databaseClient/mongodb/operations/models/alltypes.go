@@ -1,4 +1,4 @@
-package mongooperations
+package mongooperationmodels
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -7,6 +7,10 @@ import (
 
 type OperationOptions struct {
 	Session *mongo.SessionContext
+}
+
+type CursorObject struct {
+	MongoFindCursor *mongo.Cursor
 }
 
 type CreateOperationOutput struct {

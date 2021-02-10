@@ -5,50 +5,67 @@ import (
 
 	model "github.com/horeekaa/backend/model"
 	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
+	mongooperationinterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/operations"
 	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
 	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
+	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
 )
 
 type personRepoMongo struct {
-	basicOperation *mongooperations.BasicOperation
+	basicOperation mongooperationinterfaces.BasicOperation
 }
 
 func NewPersonRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerfaces.PersonRepoMongo, error) {
+	basicOperation, err := mongooperations.NewBasicOperation(
+		(*mongoRepo).Client,
+		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("persons"),
+		(*mongoRepo).Timeout,
+		"persons",
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &personRepoMongo{
-		basicOperation: &mongooperations.BasicOperation{
-			Client:         (*mongoRepo).Client,
-			CollectionRef:  (*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("persons"),
-			Timeout:        (*mongoRepo).Timeout,
-			CollectionName: "persons",
-		},
+		basicOperation: basicOperation,
 	}, nil
 }
 
-func (prsnRepoMongo *personRepoMongo) FindByID(ID interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
-	object, err := prsnRepoMongo.basicOperation.FindByID(ID, operationOptions)
-	output := (*object).(model.Person)
+func (prsnRepoMongo *personRepoMongo) FindByID(ID interface{}, operationOptions *mongooperationmodels.OperationOptions) (*model.Person, error) {
+	res, err := prsnRepoMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.Person
+	res.Decode(&output)
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
-	object, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
-	output := (*object).(model.Person)
+func (prsnRepoMongo *personRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) (*model.Person, error) {
+	res, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
+	var output model.Person
+	res.Decode(&output)
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperations.OperationOptions) ([]*model.Person, error) {
-	objects, err := prsnRepoMongo.basicOperation.Find(query, operationOptions)
-
+func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) ([]*model.Person, error) {
 	var persons = []*model.Person{}
-	for _, obj := range objects {
-		person := (*obj).(model.Person)
-		persons = append(persons, &person)
+	cursorDecoder := func(cursor *mongooperationmodels.CursorObject) (interface{}, error) {
+		var person *model.Person
+		err := cursor.MongoFindCursor.Decode(person)
+		if err != nil {
+			return nil, err
+		}
+		persons = append(persons, person)
+		return nil, nil
+	}
+
+	_, err := prsnRepoMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	if err != nil {
+		return nil, err
 	}
 
 	return persons, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operationOptions *mongooperationmodels.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnRepoMongo.setDefaultValues(*input,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesCreateType},
 		operationOptions,
@@ -77,7 +94,7 @@ func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operatio
 	return person, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongooperations.OperationOptions) (*model.Person, error) {
+func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongooperationmodels.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnRepoMongo.setDefaultValues(*updateData,
 		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
 		operationOptions,
@@ -86,8 +103,9 @@ func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.U
 		return nil, err
 	}
 
-	object, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
-	output := (*object).(model.Person)
+	res, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
+	var output model.Person
+	res.Decode(&output)
 
 	return &output, err
 }
@@ -97,7 +115,7 @@ type setPersonDefaultValuesOutput struct {
 	UpdatePerson *model.UpdatePerson
 }
 
-func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperations.OperationOptions) (*setPersonDefaultValuesOutput, error) {
+func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setPersonDefaultValuesOutput, error) {
 	var noOfRecentTransactionToKeep int
 
 	updateInput := input.(model.UpdatePerson)
