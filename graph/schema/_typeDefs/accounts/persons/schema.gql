@@ -1,0 +1,66 @@
+enum Gender {
+  MALE
+  FEMALE
+}
+
+input UpdatePerson {
+  _id: ObjectID!
+  firstName: String
+  lastName: String
+  gender: Gender
+  phoneNumber: String
+  email: String
+  deviceTokens: [String]
+  noOfRecentTransactionToKeep: Int
+}
+
+input CreatePerson {
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String!
+  email: String!
+  deviceTokens: [String]
+  noOfRecentTransactionToKeep: Int
+  createdAt: Time
+}
+
+interface iPerson {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  gender: Gender!
+  phoneNumber: String
+  email: String!
+  idCard: IDCard
+  noOfRecentTransactionToKeep: Int!
+  organizationMembership: OrganizationMember
+  createdAt: Time!
+}
+
+type Person implements iPerson {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  gender: Gender!
+  phoneNumber: String
+  email: String!
+  idCard: IDCard
+  noOfRecentTransactionToKeep: Int!
+  organizationMembership: OrganizationMember
+  createdAt: Time!
+}
+
+type PersonDetailed implements iPerson {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  gender: Gender!
+  phoneNumber: String
+  email: String!
+  idCard: IDCard
+  noOfRecentTransactionToKeep: Int!
+  organizationMembership: OrganizationMember
+  deviceTokens: [String]!
+  createdAt: Time!
+}

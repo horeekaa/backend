@@ -1,0 +1,42 @@
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  RECEIVE_ATTENTION
+}
+
+enum AccountType {
+  PERSON
+  SYSTEM_ENTITY
+}
+
+input UpdateOtherAccount {
+  _id: ObjectID!
+  status: AccountStatus
+  statusReason: String
+  email: String
+  type: AccountType
+  idCard: NewIDCard
+}
+
+input CreateAccount {
+  status: AccountStatus
+  statusReason: String
+  type: AccountType!
+  person: ObjectIDOnly!
+}
+
+input UpdateAccount {
+  _id: ObjectID!
+  status: AccountStatus
+  statusReason: String
+  type: AccountType
+  person: ObjectIDOnly
+}
+
+type Account {
+  _id: ObjectID!
+  status: AccountStatus!
+  statusReason: String
+  type: AccountType!
+  person: Person
+}

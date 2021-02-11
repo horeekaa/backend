@@ -1,0 +1,8 @@
+scalar Upload
+scalar Time
+
+scalar ObjectID
+
+input ObjectIDOnly {
+    _id: ObjectID
+}
