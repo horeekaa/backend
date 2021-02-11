@@ -1,7 +1,6 @@
 package horeekaaexceptiontofailure
 
 import (
-	horeekaabaseexception "github.com/horeekaa/backend/_errors/repoExceptions/_base"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 	horeekaafailure "github.com/horeekaa/backend/_errors/serviceFailures"
 	horeekaabasefailure "github.com/horeekaa/backend/_errors/serviceFailures/_base"

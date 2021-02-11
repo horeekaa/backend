@@ -1,7 +1,6 @@
 package horeekaafailuretoerror
 
 import (
-	horeekaabasefailure "github.com/horeekaa/backend/_errors/serviceFailures/_base"
 	horeekaafailureenums "github.com/horeekaa/backend/_errors/serviceFailures/_enums"
 	horeekaaerror "github.com/horeekaa/backend/_errors/usecaseErrors"
 	horeekaabaseerror "github.com/horeekaa/backend/_errors/usecaseErrors/_base"
