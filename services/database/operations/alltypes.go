@@ -1,9 +1,9 @@
 package databaseserviceoperations
 
 import (
-	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
+	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
 )
 
 type ServiceOptions struct {
-	OperationOptions *mongooperations.OperationOptions
+	OperationOptions *mongooperationmodels.OperationOptions
 }
