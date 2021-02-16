@@ -1,26 +1,19 @@
-enum MemberAccessType {
-    ACCOUNT
-    ACCOUNT_VIEW_PROFILE
-    ACCOUNT_LOGIN
-    ACCOUNT_LOGOUT
-    ACCOUNT_ACCEPT_INVITATION
+input MemberAccessOptionsInput {
+    account: AccountAccessInput
+    manageOrganizationMember: ManageOrganizationMemberAccessInput
+    requestOrganization: RequestOrganizationAccessInput
+    viewOrganization: ViewOrganizationAccessInput
+}
 
-    ORGANIZATION_MEMBER
-    ORGANIZATION_MEMBER_READ
-    ORGANIZATION_MEMBER_INVITE
-    ORGANIZATION_MEMBER_REMOVE
-
-    ORGANIZATION_REQUEST
-    ORGANIZATION_REQUEST_APPROVAL
-    ORGANIZATION_REQUEST_READ
-    ORGANIZATION_REQUEST_REJECT
-    ORGANIZATION_REQUEST_CREATE
-
-    ORGANIZATION_VIEW_PROFILE
+type MemberAccessOptions {
+    account: AccountAccess
+    manageOrganizationMember: ManageOrganizationMemberAccess
+    requestOrganization: RequestOrganizationAccess
+    viewOrganization: ViewOrganizationAccess
 }
 
 input CreateMemberAccess {
-    accessList: [MemberAccessType]!
+    access: MemberAccessOptionsInput!
     role: OrganizationMembershipRole!
     organizationType: OrganizationType!
     createdAt: Time
@@ -29,7 +22,7 @@ input CreateMemberAccess {
 
 input UpdateMemberAccess {
     _id: ObjectID!
-    accessList: [MemberAccessType]
+    access: MemberAccessOptionsInput!
     role: OrganizationMembershipRole
     organizationType: OrganizationType
     createdAt: Time
@@ -38,7 +31,7 @@ input UpdateMemberAccess {
 
 type MemberAccess {
     _id: ObjectID!
-    accessList: [MemberAccessType]
+    access: MemberAccessOptions!
     role: OrganizationMembershipRole!
     organizationType: OrganizationType!
     createdAt: Time!

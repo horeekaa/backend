@@ -83,7 +83,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Create(input *model.CreateMembe
 
 	memberAccess := &model.MemberAccess{
 		ID:               output.ID,
-		AccessList:       memberAccessOutput.AccessList,
+		Access:           memberAccessOutput.Access,
 		Role:             memberAccessOutput.Role,
 		OrganizationType: memberAccessOutput.OrganizationType,
 		CreatedAt:        memberAccessOutput.CreatedAt,
@@ -127,7 +127,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) setDefaultValues(input interfac
 		return &setMemberAccessDefaultValuesOutput{
 			UpdateMemberAccess: &model.UpdateMemberAccess{
 				ID:               updateInput.ID,
-				AccessList:       updateInput.AccessList,
+				Access:           updateInput.Access,
 				Role:             updateInput.Role,
 				OrganizationType: updateInput.OrganizationType,
 				UpdatedAt:        &currentTime,
@@ -138,7 +138,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) setDefaultValues(input interfac
 
 	return &setMemberAccessDefaultValuesOutput{
 		CreateMemberAccess: &model.CreateMemberAccess{
-			AccessList:       createInput.AccessList,
+			Access:           createInput.Access,
 			Role:             createInput.Role,
 			OrganizationType: createInput.OrganizationType,
 			CreatedAt:        &currentTime,
