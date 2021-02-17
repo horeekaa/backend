@@ -9,15 +9,26 @@ enum OrganizationMembershipStatus {
   INACTIVE
 }
 
-input CreateOrganizationMember {
+input CreateOrganizationMembership {
   person: ObjectIDOnly
   role: OrganizationMembershipRole
   status: OrganizationMembershipStatus
+  access: MemberAccessOptionsInput
 }
 
-type OrganizationMember {
+input UpdateOrganizationMembership {
+  _id: ObjectID!
+  person: ObjectIDOnly
+  role: OrganizationMembershipRole
+  status: OrganizationMembershipStatus
+  access: MemberAccessOptionsInput
+}
+
+type OrganizationMembership {
   _id: ObjectID!
   person: Person
   role: OrganizationMembershipRole
   status: OrganizationMembershipStatus
+  access: MemberAccessOptions
+  defaultAccess: MemberAccess
 }

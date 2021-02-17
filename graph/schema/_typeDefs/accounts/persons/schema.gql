@@ -34,7 +34,7 @@ interface iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
+  organizationMembership: OrganizationMembership
   createdAt: Time!
 }
 
@@ -47,7 +47,7 @@ type Person implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
+  organizationMembership: OrganizationMembership
   createdAt: Time!
 }
 
@@ -60,7 +60,7 @@ type PersonDetailed implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
+  organizationMembership: OrganizationMembership
   deviceTokens: [String]!
   createdAt: Time!
 }
