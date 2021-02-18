@@ -82,12 +82,16 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Create(input *model.CreateMembe
 	memberAccessOutput := output.Object.(model.MemberAccess)
 
 	memberAccess := &model.MemberAccess{
-		ID:               output.ID,
-		Access:           memberAccessOutput.Access,
-		Role:             memberAccessOutput.Role,
-		OrganizationType: memberAccessOutput.OrganizationType,
-		CreatedAt:        memberAccessOutput.CreatedAt,
-		UpdatedAt:        memberAccessOutput.UpdatedAt,
+		ID:                         output.ID,
+		Account:                    memberAccessOutput.Account,
+		Organization:               memberAccessOutput.Organization,
+		OrganizationMembershipRole: memberAccessOutput.OrganizationMembershipRole,
+		MemberAccessRefType:        memberAccessOutput.MemberAccessRefType,
+		Access:                     memberAccessOutput.Access,
+		DefaultAccess:              memberAccessOutput.DefaultAccess,
+		Status:                     memberAccessOutput.Status,
+		CreatedAt:                  memberAccessOutput.CreatedAt,
+		UpdatedAt:                  memberAccessOutput.UpdatedAt,
 	}
 
 	return memberAccess, err
@@ -126,11 +130,11 @@ func (memberAccRepoMongo *memberAccessRepoMongo) setDefaultValues(input interfac
 
 		return &setMemberAccessDefaultValuesOutput{
 			UpdateMemberAccess: &model.UpdateMemberAccess{
-				ID:               updateInput.ID,
-				Access:           updateInput.Access,
-				Role:             updateInput.Role,
-				OrganizationType: updateInput.OrganizationType,
-				UpdatedAt:        &currentTime,
+				ID:                         updateInput.ID,
+				OrganizationMembershipRole: updateInput.OrganizationMembershipRole,
+				Access:                     updateInput.Access,
+				Status:                     updateInput.Status,
+				UpdatedAt:                  &currentTime,
 			},
 		}, nil
 	}
@@ -138,11 +142,14 @@ func (memberAccRepoMongo *memberAccessRepoMongo) setDefaultValues(input interfac
 
 	return &setMemberAccessDefaultValuesOutput{
 		CreateMemberAccess: &model.CreateMemberAccess{
-			Access:           createInput.Access,
-			Role:             createInput.Role,
-			OrganizationType: createInput.OrganizationType,
-			CreatedAt:        &currentTime,
-			UpdatedAt:        &currentTime,
+			Account:                    createInput.Account,
+			Organization:               createInput.Organization,
+			OrganizationMembershipRole: createInput.OrganizationMembershipRole,
+			MemberAccessRefType:        createInput.MemberAccessRefType,
+			Access:                     createInput.Access,
+			Status:                     createInput.Status,
+			CreatedAt:                  &currentTime,
+			UpdatedAt:                  &currentTime,
 		},
 	}, nil
 }

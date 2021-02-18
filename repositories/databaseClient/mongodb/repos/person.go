@@ -89,6 +89,8 @@ func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operatio
 		PhoneNumber:                 personOutput.PhoneNumber,
 		Email:                       personOutput.Email,
 		NoOfRecentTransactionToKeep: personOutput.NoOfRecentTransactionToKeep,
+		CreatedAt:                   personOutput.CreatedAt,
+		UpdatedAt:                   personOutput.UpdatedAt,
 	}
 
 	return person, err
@@ -118,6 +120,7 @@ type setPersonDefaultValuesOutput struct {
 func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setPersonDefaultValuesOutput, error) {
 	var noOfRecentTransactionToKeep int
 
+	var currentTime = time.Now()
 	updateInput := input.(model.UpdatePerson)
 	if (*options).DefaultValuesType == DefaultValuesUpdateType {
 		existingObject, err := prsnRepoMongo.FindByID(updateInput.ID, operationOptions)
@@ -138,6 +141,7 @@ func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, option
 				PhoneNumber:                 updateInput.PhoneNumber,
 				Email:                       updateInput.Email,
 				NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
+				UpdatedAt:                   &currentTime,
 			},
 		}, nil
 	}
@@ -147,7 +151,6 @@ func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, option
 		noOfRecentTransactionToKeep = 15
 	}
 
-	var currentTime = time.Now()
 	return &setPersonDefaultValuesOutput{
 		CreatePerson: &model.CreatePerson{
 			FirstName:                   createInput.FirstName,
@@ -158,6 +161,7 @@ func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, option
 			DeviceTokens:                []*string{},
 			NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
 			CreatedAt:                   &currentTime,
+			UpdatedAt:                   &currentTime,
 		},
 	}, nil
 }
