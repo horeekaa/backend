@@ -48,14 +48,13 @@ models:
       person:
         resolver: true
 
-  Person:
-    fields:
-      organizationMembership:
-        resolver: true
-
-  OrganizationMembership:
+  MemberAccess:
     fields:
       defaultAccess:
+        resolver: true
+      organization:
+        resolver: true
+      account:
         resolver: true
 
   ID:
