@@ -18,7 +18,7 @@ type memberAccessRepoMongo struct {
 func NewMemberAccessRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerfaces.MemberAccessRepoMongo, error) {
 	basicOperation, err := mongooperations.NewBasicOperation(
 		(*mongoRepo).Client,
-		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("MemberAccesses"),
+		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("memberaccesses"),
 		(*mongoRepo).Timeout,
 		"memberaccesses",
 	)

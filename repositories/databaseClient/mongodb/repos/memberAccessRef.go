@@ -110,12 +110,12 @@ func (orgMemberRepoMongo *memberAccessRefRepoMongo) Update(ID interface{}, updat
 	return &output, err
 }
 
-type setmemberAccessRefDefaultValuesOutput struct {
+type setMemberAccessRefDefaultValuesOutput struct {
 	CreateMemberAccessRef *model.CreateMemberAccessRef
 	UpdateMemberAccessRef *model.UpdateMemberAccessRef
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setmemberAccessRefDefaultValuesOutput, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
 	var currentTime = time.Now()
 
 	updateInput := input.(model.UpdateMemberAccessRef)
@@ -125,7 +125,7 @@ func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input inter
 			return nil, err
 		}
 
-		return &setmemberAccessRefDefaultValuesOutput{
+		return &setMemberAccessRefDefaultValuesOutput{
 			UpdateMemberAccessRef: &model.UpdateMemberAccessRef{
 				ID:                         updateInput.ID,
 				Access:                     updateInput.Access,
@@ -138,7 +138,7 @@ func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input inter
 	}
 	createInput := (input).(model.CreateMemberAccessRef)
 
-	return &setmemberAccessRefDefaultValuesOutput{
+	return &setMemberAccessRefDefaultValuesOutput{
 		CreateMemberAccessRef: &model.CreateMemberAccessRef{
 			Access:                     createInput.Access,
 			MemberAccessRefType:        createInput.MemberAccessRefType,
