@@ -18,9 +18,9 @@ func NewAccountService(accountRepo *mongorepointerfaces.AccountRepoMongo) (datab
 	}, nil
 }
 
-func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
-	accountChn := make(chan<- *model.Account)
-	errorChn := make(chan<- error)
+func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Account, chan error) {
+	accountChn := make(chan *model.Account)
+	errorChn := make(chan error)
 
 	go func() {
 		account, err := (*accountSvc.accountRepo).FindByID(ID, (*serviceOptions).OperationOptions)
@@ -38,9 +38,9 @@ func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *datab
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
-	accountChn := make(chan<- *model.Account)
-	errorChn := make(chan<- error)
+func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Account, chan error) {
+	accountChn := make(chan *model.Account)
+	errorChn := make(chan error)
 
 	go func() {
 		account, err := (*accountSvc.accountRepo).FindOne(query, (*serviceOptions).OperationOptions)
@@ -58,9 +58,9 @@ func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceO
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.Account, chan<- error) {
-	accountsChn := make(chan<- []*model.Account)
-	errorChn := make(chan<- error)
+func (accountSvc *accountService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan []*model.Account, chan error) {
+	accountsChn := make(chan []*model.Account)
+	errorChn := make(chan error)
 
 	go func() {
 		accounts, err := (*accountSvc.accountRepo).Find(query, (*serviceOptions).OperationOptions)
@@ -78,9 +78,9 @@ func (accountSvc *accountService) Find(query map[string]interface{}, serviceOpti
 	return accountsChn, errorChn
 }
 
-func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
-	accountChn := make(chan<- *model.Account)
-	errorChn := make(chan<- error)
+func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Account, chan error) {
+	accountChn := make(chan *model.Account)
+	errorChn := make(chan error)
 
 	go func() {
 		account, err := (*accountSvc.accountRepo).Create(input, (*serviceOptions).OperationOptions)
@@ -98,9 +98,9 @@ func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOpti
 	return accountChn, errorChn
 }
 
-func (accountSvc *accountService) Update(ID interface{}, updateData *model.UpdateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Account, chan<- error) {
-	accountChn := make(chan<- *model.Account)
-	errorChn := make(chan<- error)
+func (accountSvc *accountService) Update(ID interface{}, updateData *model.UpdateAccount, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Account, chan error) {
+	accountChn := make(chan *model.Account)
+	errorChn := make(chan error)
 
 	go func() {
 		account, err := (*accountSvc.accountRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)

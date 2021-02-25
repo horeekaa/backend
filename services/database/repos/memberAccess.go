@@ -18,9 +18,9 @@ func NewMemberAccessService(memberAccessRepo *mongorepointerfaces.MemberAccessRe
 	}, nil
 }
 
-func (memberAccessSvc *memberAccessService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error) {
-	memberAccessChn := make(chan<- *model.MemberAccess)
-	errorChn := make(chan<- error)
+func (memberAccessSvc *memberAccessService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error) {
+	memberAccessChn := make(chan *model.MemberAccess)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccess, err := (*memberAccessSvc.memberAccessRepo).FindByID(ID, (*serviceOptions).OperationOptions)
@@ -38,9 +38,9 @@ func (memberAccessSvc *memberAccessService) FindByID(ID interface{}, serviceOpti
 	return memberAccessChn, errorChn
 }
 
-func (memberAccessSvc *memberAccessService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error) {
-	memberAccessChn := make(chan<- *model.MemberAccess)
-	errorChn := make(chan<- error)
+func (memberAccessSvc *memberAccessService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error) {
+	memberAccessChn := make(chan *model.MemberAccess)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccess, err := (*memberAccessSvc.memberAccessRepo).FindOne(query, (*serviceOptions).OperationOptions)
@@ -58,9 +58,9 @@ func (memberAccessSvc *memberAccessService) FindOne(query map[string]interface{}
 	return memberAccessChn, errorChn
 }
 
-func (memberAccessSvc *memberAccessService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.MemberAccess, chan<- error) {
-	memberAccessesChn := make(chan<- []*model.MemberAccess)
-	errorChn := make(chan<- error)
+func (memberAccessSvc *memberAccessService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan []*model.MemberAccess, chan error) {
+	memberAccessesChn := make(chan []*model.MemberAccess)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccesses, err := (*memberAccessSvc.memberAccessRepo).Find(query, (*serviceOptions).OperationOptions)
@@ -78,9 +78,9 @@ func (memberAccessSvc *memberAccessService) Find(query map[string]interface{}, s
 	return memberAccessesChn, errorChn
 }
 
-func (memberAccessSvc *memberAccessService) Create(input *model.CreateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error) {
-	memberAccessChn := make(chan<- *model.MemberAccess)
-	errorChn := make(chan<- error)
+func (memberAccessSvc *memberAccessService) Create(input *model.CreateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error) {
+	memberAccessChn := make(chan *model.MemberAccess)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccess, err := (*memberAccessSvc.memberAccessRepo).Create(input, (*serviceOptions).OperationOptions)
@@ -98,9 +98,9 @@ func (memberAccessSvc *memberAccessService) Create(input *model.CreateMemberAcce
 	return memberAccessChn, errorChn
 }
 
-func (memberAccessSvc *memberAccessService) Update(ID interface{}, updateData *model.UpdateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error) {
-	memberAccessChn := make(chan<- *model.MemberAccess)
-	errorChn := make(chan<- error)
+func (memberAccessSvc *memberAccessService) Update(ID interface{}, updateData *model.UpdateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error) {
+	memberAccessChn := make(chan *model.MemberAccess)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccess, err := (*memberAccessSvc.memberAccessRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)

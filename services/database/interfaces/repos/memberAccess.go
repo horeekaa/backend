@@ -6,9 +6,9 @@ import (
 )
 
 type MemberAccessService interface {
-	FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error)
-	FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error)
-	Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.MemberAccess, chan<- error)
-	Create(input *model.CreateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error)
-	Update(ID interface{}, updateData *model.UpdateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccess, chan<- error)
+	FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error)
+	FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error)
+	Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan []*model.MemberAccess, chan error)
+	Create(input *model.CreateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error)
+	Update(ID interface{}, updateData *model.UpdateMemberAccess, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccess, chan error)
 }

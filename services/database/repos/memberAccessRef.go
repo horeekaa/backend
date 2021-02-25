@@ -18,9 +18,9 @@ func NewMemberAccessRefService(memberAccessRefRepo *mongorepointerfaces.MemberAc
 	}, nil
 }
 
-func (memberAccessRefSvc *memberAccessRefService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccessRef, chan<- error) {
-	memberAccessRefChn := make(chan<- *model.MemberAccessRef)
-	errorChn := make(chan<- error)
+func (memberAccessRefSvc *memberAccessRefService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccessRef, chan error) {
+	memberAccessRefChn := make(chan *model.MemberAccessRef)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).FindByID(ID, (*serviceOptions).OperationOptions)
@@ -38,9 +38,9 @@ func (memberAccessRefSvc *memberAccessRefService) FindByID(ID interface{}, servi
 	return memberAccessRefChn, errorChn
 }
 
-func (memberAccessRefSvc *memberAccessRefService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccessRef, chan<- error) {
-	memberAccessRefChn := make(chan<- *model.MemberAccessRef)
-	errorChn := make(chan<- error)
+func (memberAccessRefSvc *memberAccessRefService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccessRef, chan error) {
+	memberAccessRefChn := make(chan *model.MemberAccessRef)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).FindOne(query, (*serviceOptions).OperationOptions)
@@ -58,9 +58,9 @@ func (memberAccessRefSvc *memberAccessRefService) FindOne(query map[string]inter
 	return memberAccessRefChn, errorChn
 }
 
-func (memberAccessRefSvc *memberAccessRefService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.MemberAccessRef, chan<- error) {
-	memberAccessRefsChn := make(chan<- []*model.MemberAccessRef)
-	errorChn := make(chan<- error)
+func (memberAccessRefSvc *memberAccessRefService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan []*model.MemberAccessRef, chan error) {
+	memberAccessRefsChn := make(chan []*model.MemberAccessRef)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccessRefs, err := (*memberAccessRefSvc.memberAccessRefRepo).Find(query, (*serviceOptions).OperationOptions)
@@ -78,9 +78,9 @@ func (memberAccessRefSvc *memberAccessRefService) Find(query map[string]interfac
 	return memberAccessRefsChn, errorChn
 }
 
-func (memberAccessRefSvc *memberAccessRefService) Create(input *model.CreateMemberAccessRef, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccessRef, chan<- error) {
-	memberAccessRefChn := make(chan<- *model.MemberAccessRef)
-	errorChn := make(chan<- error)
+func (memberAccessRefSvc *memberAccessRefService) Create(input *model.CreateMemberAccessRef, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccessRef, chan error) {
+	memberAccessRefChn := make(chan *model.MemberAccessRef)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).Create(input, (*serviceOptions).OperationOptions)
@@ -98,9 +98,9 @@ func (memberAccessRefSvc *memberAccessRefService) Create(input *model.CreateMemb
 	return memberAccessRefChn, errorChn
 }
 
-func (memberAccessRefSvc *memberAccessRefService) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.MemberAccessRef, chan<- error) {
-	memberAccessRefChn := make(chan<- *model.MemberAccessRef)
-	errorChn := make(chan<- error)
+func (memberAccessRefSvc *memberAccessRefService) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.MemberAccessRef, chan error) {
+	memberAccessRefChn := make(chan *model.MemberAccessRef)
+	errorChn := make(chan error)
 
 	go func() {
 		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)

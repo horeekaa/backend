@@ -18,9 +18,9 @@ func NewPersonService(personRepo *mongorepointerfaces.PersonRepoMongo) (database
 	}, nil
 }
 
-func (personSvc *personService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Person, chan<- error) {
-	personChn := make(chan<- *model.Person)
-	errorChn := make(chan<- error)
+func (personSvc *personService) FindByID(ID interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Person, chan error) {
+	personChn := make(chan *model.Person)
+	errorChn := make(chan error)
 
 	go func() {
 		person, err := (*personSvc.personRepo).FindByID(ID, (*serviceOptions).OperationOptions)
@@ -38,9 +38,9 @@ func (personSvc *personService) FindByID(ID interface{}, serviceOptions *databas
 	return personChn, errorChn
 }
 
-func (personSvc *personService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Person, chan<- error) {
-	personChn := make(chan<- *model.Person)
-	errorChn := make(chan<- error)
+func (personSvc *personService) FindOne(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Person, chan error) {
+	personChn := make(chan *model.Person)
+	errorChn := make(chan error)
 
 	go func() {
 		person, err := (*personSvc.personRepo).FindOne(query, (*serviceOptions).OperationOptions)
@@ -58,9 +58,9 @@ func (personSvc *personService) FindOne(query map[string]interface{}, serviceOpt
 	return personChn, errorChn
 }
 
-func (personSvc *personService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- []*model.Person, chan<- error) {
-	personsChn := make(chan<- []*model.Person)
-	errorChn := make(chan<- error)
+func (personSvc *personService) Find(query map[string]interface{}, serviceOptions *databaseserviceoperations.ServiceOptions) (chan []*model.Person, chan error) {
+	personsChn := make(chan []*model.Person)
+	errorChn := make(chan error)
 
 	go func() {
 		persons, err := (*personSvc.personRepo).Find(query, (*serviceOptions).OperationOptions)
@@ -78,9 +78,9 @@ func (personSvc *personService) Find(query map[string]interface{}, serviceOption
 	return personsChn, errorChn
 }
 
-func (personSvc *personService) Create(input *model.CreatePerson, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Person, chan<- error) {
-	personChn := make(chan<- *model.Person)
-	errorChn := make(chan<- error)
+func (personSvc *personService) Create(input *model.CreatePerson, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Person, chan error) {
+	personChn := make(chan *model.Person)
+	errorChn := make(chan error)
 
 	go func() {
 		person, err := (*personSvc.personRepo).Create(input, (*serviceOptions).OperationOptions)
@@ -98,9 +98,9 @@ func (personSvc *personService) Create(input *model.CreatePerson, serviceOptions
 	return personChn, errorChn
 }
 
-func (personSvc *personService) Update(ID interface{}, updateData *model.UpdatePerson, serviceOptions *databaseserviceoperations.ServiceOptions) (chan<- *model.Person, chan<- error) {
-	personChn := make(chan<- *model.Person)
-	errorChn := make(chan<- error)
+func (personSvc *personService) Update(ID interface{}, updateData *model.UpdatePerson, serviceOptions *databaseserviceoperations.ServiceOptions) (chan *model.Person, chan error) {
+	personChn := make(chan *model.Person)
+	errorChn := make(chan error)
 
 	go func() {
 		person, err := (*personSvc.personRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)
