@@ -12,9 +12,9 @@ type personService struct {
 	personRepo *mongorepointerfaces.PersonRepoMongo
 }
 
-func NewPersonService(personRepo *mongorepointerfaces.PersonRepoMongo) (databaseservicerepointerfaces.PersonService, error) {
+func NewPersonService(personRepo mongorepointerfaces.PersonRepoMongo) (databaseservicerepointerfaces.PersonService, error) {
 	return &personService{
-		personRepo,
+		&personRepo,
 	}, nil
 }
 

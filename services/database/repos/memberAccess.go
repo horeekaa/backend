@@ -12,9 +12,9 @@ type memberAccessService struct {
 	memberAccessRepo *mongorepointerfaces.MemberAccessRepoMongo
 }
 
-func NewMemberAccessService(memberAccessRepo *mongorepointerfaces.MemberAccessRepoMongo) (databaseservicerepointerfaces.MemberAccessService, error) {
+func NewMemberAccessService(memberAccessRepo mongorepointerfaces.MemberAccessRepoMongo) (databaseservicerepointerfaces.MemberAccessService, error) {
 	return &memberAccessService{
-		memberAccessRepo,
+		&memberAccessRepo,
 	}, nil
 }
 

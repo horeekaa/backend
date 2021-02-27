@@ -12,9 +12,9 @@ type accountService struct {
 	accountRepo *mongorepointerfaces.AccountRepoMongo
 }
 
-func NewAccountService(accountRepo *mongorepointerfaces.AccountRepoMongo) (databaseservicerepointerfaces.AccountService, error) {
+func NewAccountService(accountRepo mongorepointerfaces.AccountRepoMongo) (databaseservicerepointerfaces.AccountService, error) {
 	return &accountService{
-		accountRepo,
+		&accountRepo,
 	}, nil
 }
 
