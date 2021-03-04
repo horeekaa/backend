@@ -48,6 +48,7 @@ type Person implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
+  deviceTokens: [String]!
   createdAt: Time!
   updatedAt: Time!
 }
