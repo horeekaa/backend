@@ -66,7 +66,7 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*fir
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: user,
+		FirebaseUser: user,
 	}, nil
 }
 
@@ -80,7 +80,7 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebase
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: user,
+		FirebaseUser: user,
 	}, nil
 }
 
@@ -130,7 +130,7 @@ func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodel
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: updatedUser,
+		FirebaseUser: updatedUser,
 	}, nil
 }
 
