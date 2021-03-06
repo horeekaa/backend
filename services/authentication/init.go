@@ -71,12 +71,12 @@ func (authService *authenticationService) GetUserFromEmail(email string) (chan *
 	return authServiceUserRecordChn, errorChn
 }
 
-func (authService *authenticationService) SetRoleInAuthUserData(uid string, accountRole string, dbID string) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
+func (authService *authenticationService) SetRoleInAuthUserData(uid string, accountType string, dbID string) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
 	authServiceUserRecordChn := make(chan *authserviceoperations.AuthenticationServiceUserRecord)
 	errorChn := make(chan error)
 
 	go func() {
-		_, err := (*authService.firebaseAuth).SetRoleInAuthUserData(uid, accountRole, dbID)
+		_, err := (*authService.firebaseAuth).SetRoleInAuthUserData(uid, accountType, dbID)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/authenticationService/setRoleInAuthUserData",
