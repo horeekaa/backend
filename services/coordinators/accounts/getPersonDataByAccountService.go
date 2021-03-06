@@ -48,9 +48,9 @@ func NewGetPersonDataFromAccount(GetPersonDataFromAccountUsecaseComponent accoun
 	}, nil
 }
 
-func (getPrsnData *getPersonDataFromAccountService) preExecute(input model.Account) (model.Account, error) {
+func (getPrsnData *getPersonDataFromAccountService) preExecute(input model.Account) (*model.Account, error) {
 	if &input.ID == nil {
-		return model.Account{}, horeekaafailure.NewFailureObject(
+		return &model.Account{}, horeekaafailure.NewFailureObject(
 			horeekaafailureenums.AccountIDNeededToRetrievePersonData,
 			"/getPersonDataFromAccount",
 			horeekaaexception.NewExceptionObject(
@@ -71,7 +71,7 @@ func (getPrsnData *getPersonDataFromAccountService) Execute(input model.Account)
 			&err,
 		)
 	}
-	accountChannel, errChannel := getPrsnData.accountService.FindByID(preExecuteOutput.ID, &databaseserviceoperations.ServiceOptions{})
+	accountChannel, errChannel := getPrsnData.accountService.FindByID((*preExecuteOutput).ID, &databaseserviceoperations.ServiceOptions{})
 	account := &model.Account{}
 	select {
 	case account = <-accountChannel:
@@ -83,7 +83,7 @@ func (getPrsnData *getPersonDataFromAccountService) Execute(input model.Account)
 		)
 	}
 
-	prsonChannel, errChannel := getPrsnData.personService.FindByID(account.Person.ID, &databaseserviceoperations.ServiceOptions{})
+	prsonChannel, errChannel := getPrsnData.personService.FindByID((*account).Person.ID, &databaseserviceoperations.ServiceOptions{})
 	select {
 	case person := <-prsonChannel:
 		return &servicecoordinatormodels.GetPersonDataByAccountOutput{

@@ -6,7 +6,7 @@ import (
 )
 
 type GetPersonDataFromAccountUsecaseComponent interface {
-	Validation(input model.Account) (model.Account, error)
+	Validation(input model.Account) (*model.Account, error)
 }
 
 type GetPersonDataFromAccountService interface {
