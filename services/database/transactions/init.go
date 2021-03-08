@@ -15,8 +15,8 @@ type databaseServiceTransaction struct {
 	MongoTransaction *mongotransactioninterfaces.MongoRepoTransaction
 }
 
-func NewDatabaseServiceTransaction(component *databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
-	mongoTransactionComponent, _ := NewMongoTransactionComponent(component)
+func NewDatabaseServiceTransaction(component databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
+	mongoTransactionComponent, _ := NewMongoTransactionComponent(&component)
 
 	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
 	repository, err := mongodbclients.NewMongoClientRef(
