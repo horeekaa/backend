@@ -14,5 +14,5 @@ type FirebaseAuthToken struct {
 }
 
 type FirebaseUserRecord struct {
-	FirebaseUser *auth.UserRecord
+	RepoUser *auth.UserRecord
 }
