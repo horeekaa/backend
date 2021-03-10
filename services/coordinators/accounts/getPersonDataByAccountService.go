@@ -2,22 +2,18 @@ package accountservicescoordinators
 
 import (
 	"errors"
-	"strconv"
 
-	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaafailure "github.com/horeekaa/backend/_errors/serviceFailures"
 	horeekaafailureenums "github.com/horeekaa/backend/_errors/serviceFailures/_enums"
 
 	horeekaafailuretoerror "github.com/horeekaa/backend/_errors/usecaseErrors/_failureToError"
+	servicerepodependencies "github.com/horeekaa/backend/dependencies/services/repos"
 	model "github.com/horeekaa/backend/model"
-	mongodbclients "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongorepos "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/repos"
 	accountservicecoordinatorinterfaces "github.com/horeekaa/backend/services/coordinators/interfaces/accounts"
 	servicecoordinatormodels "github.com/horeekaa/backend/services/coordinators/models"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
-	databaseservicerepos "github.com/horeekaa/backend/services/database/repos"
 )
 
 type getPersonDataFromAccountService struct {
@@ -27,19 +23,8 @@ type getPersonDataFromAccountService struct {
 }
 
 func NewGetPersonDataFromAccount(GetPersonDataFromAccountUsecaseComponent accountservicecoordinatorinterfaces.GetPersonDataFromAccountUsecaseComponent) (accountservicecoordinatorinterfaces.GetPersonDataFromAccountService, error) {
-	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
-	repository, err := mongodbclients.NewMongoClientRef(
-		configs.GetEnvVariable(configs.DbConfigURL),
-		configs.GetEnvVariable(configs.DbConfigDBName),
-		timeout,
-	)
-	if err != nil {
-		return nil, err
-	}
-	personRepoMongo, err := mongorepos.NewPersonRepoMongo(repository)
-	accountRepoMongo, err := mongorepos.NewAccountRepoMongo(repository)
-	personService, err := databaseservicerepos.NewPersonService(personRepoMongo)
-	accountService, err := databaseservicerepos.NewAccountService(accountRepoMongo)
+	personService, _ := servicerepodependencies.InitializePersonService()
+	accountService, _ := servicerepodependencies.InitializeAccountService()
 
 	return &getPersonDataFromAccountService{
 		personService:                            personService,

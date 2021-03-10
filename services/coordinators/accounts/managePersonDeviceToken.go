@@ -1,19 +1,14 @@
 package accountservicescoordinators
 
 import (
-	"strconv"
-
-	"github.com/horeekaa/backend/_commons/configs"
 	horeekaafailuretoerror "github.com/horeekaa/backend/_errors/usecaseErrors/_failureToError"
+	servicerepodependencies "github.com/horeekaa/backend/dependencies/services/repos"
 	"github.com/horeekaa/backend/model"
-	mongodbclients "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongorepos "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/repos"
 	accountservicecoordinatorinterfaces "github.com/horeekaa/backend/services/coordinators/interfaces/accounts"
 	servicecoordinatorinterfaces "github.com/horeekaa/backend/services/coordinators/interfaces/accounts"
 	servicecoordinatormodels "github.com/horeekaa/backend/services/coordinators/models"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
-	databaseservicerepos "github.com/horeekaa/backend/services/database/repos"
 	"github.com/thoas/go-funk"
 )
 
@@ -24,17 +19,7 @@ type managePersonDeviceTokenService struct {
 }
 
 func NewManagePersonDeviceToken(managePersonDeviceTokenComponent accountservicecoordinatorinterfaces.ManagePersonDeviceTokenUsecaseComponent) (accountservicecoordinatorinterfaces.ManagePersonDeviceTokenService, error) {
-	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
-	repository, err := mongodbclients.NewMongoClientRef(
-		configs.GetEnvVariable(configs.DbConfigURL),
-		configs.GetEnvVariable(configs.DbConfigDBName),
-		timeout,
-	)
-	if err != nil {
-		return nil, err
-	}
-	personRepoMongo, err := mongorepos.NewPersonRepoMongo(repository)
-	personService, err := databaseservicerepos.NewPersonService(personRepoMongo)
+	personService, _ := servicerepodependencies.InitializePersonService()
 
 	return &managePersonDeviceTokenService{
 		personService:                           personService,

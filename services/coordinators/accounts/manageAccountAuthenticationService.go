@@ -2,15 +2,12 @@ package accountservicescoordinators
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
-	"github.com/horeekaa/backend/_commons/configs"
+	servicerepodependencies "github.com/horeekaa/backend/dependencies/services/repos"
 	"github.com/horeekaa/backend/model"
 	firebaseauthclients "github.com/horeekaa/backend/repositories/authentication/firebase"
-	mongodbclients "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
 	mongomarshaler "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/modelMarshaler"
-	mongorepos "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/repos"
 	authserviceclients "github.com/horeekaa/backend/services/authentication"
 	authserviceclientinterfaces "github.com/horeekaa/backend/services/authentication/interfaces"
 	authserviceoperations "github.com/horeekaa/backend/services/authentication/operations"
@@ -18,7 +15,6 @@ import (
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseservicetransactioninterfaces "github.com/horeekaa/backend/services/database/interfaces/transaction"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
-	databasereposervices "github.com/horeekaa/backend/services/database/repos"
 	databaseservicetransactions "github.com/horeekaa/backend/services/database/transactions"
 )
 
@@ -34,23 +30,11 @@ type manageAccountAuthenticationService struct {
 }
 
 func NewManageAccountAuthenticationService(manageAccountAuthenticationUsecaseComponent accountservicecoordinatorinterfaces.ManageAccountAuthenticationUsecaseComponent, context context.Context) (accountservicecoordinatorinterfaces.ManageAccountAuthenticationService, error) {
-	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
-	repository, err := mongodbclients.NewMongoClientRef(
-		configs.GetEnvVariable(configs.DbConfigURL),
-		configs.GetEnvVariable(configs.DbConfigDBName),
-		timeout,
-	)
-	if err != nil {
-		return nil, err
-	}
+	personService, _ := servicerepodependencies.InitializePersonService()
+	accountService, _ := servicerepodependencies.InitializeAccountService()
 
-	personRepoMongo, err := mongorepos.NewPersonRepoMongo(repository)
-	accountRepoMongo, err := mongorepos.NewAccountRepoMongo(repository)
-	personService, err := databasereposervices.NewPersonService(personRepoMongo)
-	accountService, err := databasereposervices.NewAccountService(accountRepoMongo)
-
-	firebaseRepo, err := firebaseauthclients.NewFirebaseAuthentication(&context)
-	authenticationService, err := authserviceclients.NewAuthenticationService(&firebaseRepo)
+	firebaseRepo, _ := firebaseauthclients.NewFirebaseAuthentication(&context)
+	authenticationService, _ := authserviceclients.NewAuthenticationService(&firebaseRepo)
 
 	defaultTitle := "ManageAccountAuthentication"
 
