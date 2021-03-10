@@ -3,16 +3,16 @@ package databasereposervices
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
-	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	databaseinstancereferences "github.com/horeekaa/backend/repositories/databaseClient/instanceReferences/repos"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type personService struct {
-	personRepo *mongorepointerfaces.PersonRepoMongo
+	personRepo *databaseinstancereferences.PersonRepo
 }
 
-func NewPersonService(personRepo mongorepointerfaces.PersonRepoMongo) (databaseservicerepointerfaces.PersonService, error) {
+func NewPersonService(personRepo databaseinstancereferences.PersonRepo) (databaseservicerepointerfaces.PersonService, error) {
 	return &personService{
 		&personRepo,
 	}, nil
@@ -23,7 +23,7 @@ func (personSvc *personService) FindByID(ID interface{}, serviceOptions *databas
 	errorChn := make(chan error)
 
 	go func() {
-		person, err := (*personSvc.personRepo).FindByID(ID, (*serviceOptions).OperationOptions)
+		person, err := (*personSvc.personRepo.Instance).FindByID(ID, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/personService/FindByID",
@@ -43,7 +43,7 @@ func (personSvc *personService) FindOne(query map[string]interface{}, serviceOpt
 	errorChn := make(chan error)
 
 	go func() {
-		person, err := (*personSvc.personRepo).FindOne(query, (*serviceOptions).OperationOptions)
+		person, err := (*personSvc.personRepo.Instance).FindOne(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/personService/FindOne",
@@ -63,7 +63,7 @@ func (personSvc *personService) Find(query map[string]interface{}, serviceOption
 	errorChn := make(chan error)
 
 	go func() {
-		persons, err := (*personSvc.personRepo).Find(query, (*serviceOptions).OperationOptions)
+		persons, err := (*personSvc.personRepo.Instance).Find(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/personService/Find",
@@ -83,7 +83,7 @@ func (personSvc *personService) Create(input *model.CreatePerson, serviceOptions
 	errorChn := make(chan error)
 
 	go func() {
-		person, err := (*personSvc.personRepo).Create(input, (*serviceOptions).OperationOptions)
+		person, err := (*personSvc.personRepo.Instance).Create(input, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/personService/Create",
@@ -103,7 +103,7 @@ func (personSvc *personService) Update(ID interface{}, updateData *model.UpdateP
 	errorChn := make(chan error)
 
 	go func() {
-		person, err := (*personSvc.personRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)
+		person, err := (*personSvc.personRepo.Instance).Update(ID, updateData, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/personService/Update",

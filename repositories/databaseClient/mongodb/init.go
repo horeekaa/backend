@@ -12,6 +12,10 @@ import (
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 )
 
+var (
+	DatabaseClient *MongoRepository
+)
+
 // MongoRepository holds the database reference to each of the repository collection
 type MongoRepository struct {
 	Client       *mongo.Client

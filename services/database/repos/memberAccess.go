@@ -3,16 +3,16 @@ package databasereposervices
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
-	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	databaseinstancereferences "github.com/horeekaa/backend/repositories/databaseClient/instanceReferences/repos"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type memberAccessService struct {
-	memberAccessRepo *mongorepointerfaces.MemberAccessRepoMongo
+	memberAccessRepo *databaseinstancereferences.MemberAccessRepo
 }
 
-func NewMemberAccessService(memberAccessRepo mongorepointerfaces.MemberAccessRepoMongo) (databaseservicerepointerfaces.MemberAccessService, error) {
+func NewMemberAccessService(memberAccessRepo databaseinstancereferences.MemberAccessRepo) (databaseservicerepointerfaces.MemberAccessService, error) {
 	return &memberAccessService{
 		&memberAccessRepo,
 	}, nil
@@ -23,7 +23,7 @@ func (memberAccessSvc *memberAccessService) FindByID(ID interface{}, serviceOpti
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccess, err := (*memberAccessSvc.memberAccessRepo).FindByID(ID, (*serviceOptions).OperationOptions)
+		memberAccess, err := (*memberAccessSvc.memberAccessRepo.Instance).FindByID(ID, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessService/FindByID",
@@ -43,7 +43,7 @@ func (memberAccessSvc *memberAccessService) FindOne(query map[string]interface{}
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccess, err := (*memberAccessSvc.memberAccessRepo).FindOne(query, (*serviceOptions).OperationOptions)
+		memberAccess, err := (*memberAccessSvc.memberAccessRepo.Instance).FindOne(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessService/FindOne",
@@ -63,7 +63,7 @@ func (memberAccessSvc *memberAccessService) Find(query map[string]interface{}, s
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccesses, err := (*memberAccessSvc.memberAccessRepo).Find(query, (*serviceOptions).OperationOptions)
+		memberAccesses, err := (*memberAccessSvc.memberAccessRepo.Instance).Find(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessService/Find",
@@ -83,7 +83,7 @@ func (memberAccessSvc *memberAccessService) Create(input *model.CreateMemberAcce
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccess, err := (*memberAccessSvc.memberAccessRepo).Create(input, (*serviceOptions).OperationOptions)
+		memberAccess, err := (*memberAccessSvc.memberAccessRepo.Instance).Create(input, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessService/Create",
@@ -103,7 +103,7 @@ func (memberAccessSvc *memberAccessService) Update(ID interface{}, updateData *m
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccess, err := (*memberAccessSvc.memberAccessRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)
+		memberAccess, err := (*memberAccessSvc.memberAccessRepo.Instance).Update(ID, updateData, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessService/Update",

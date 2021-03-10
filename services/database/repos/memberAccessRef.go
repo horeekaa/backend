@@ -3,16 +3,16 @@ package databasereposervices
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
-	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	databaseinstancereferences "github.com/horeekaa/backend/repositories/databaseClient/instanceReferences/repos"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type memberAccessRefService struct {
-	memberAccessRefRepo *mongorepointerfaces.MemberAccessRefRepoMongo
+	memberAccessRefRepo *databaseinstancereferences.MemberAccessRefRepo
 }
 
-func NewMemberAccessRefService(memberAccessRefRepo mongorepointerfaces.MemberAccessRefRepoMongo) (databaseservicerepointerfaces.MemberAccessRefService, error) {
+func NewMemberAccessRefService(memberAccessRefRepo databaseinstancereferences.MemberAccessRefRepo) (databaseservicerepointerfaces.MemberAccessRefService, error) {
 	return &memberAccessRefService{
 		&memberAccessRefRepo,
 	}, nil
@@ -23,7 +23,7 @@ func (memberAccessRefSvc *memberAccessRefService) FindByID(ID interface{}, servi
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).FindByID(ID, (*serviceOptions).OperationOptions)
+		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo.Instance).FindByID(ID, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessRefService/FindByID",
@@ -43,7 +43,7 @@ func (memberAccessRefSvc *memberAccessRefService) FindOne(query map[string]inter
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).FindOne(query, (*serviceOptions).OperationOptions)
+		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo.Instance).FindOne(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessRefService/FindOne",
@@ -63,7 +63,7 @@ func (memberAccessRefSvc *memberAccessRefService) Find(query map[string]interfac
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccessRefs, err := (*memberAccessRefSvc.memberAccessRefRepo).Find(query, (*serviceOptions).OperationOptions)
+		memberAccessRefs, err := (*memberAccessRefSvc.memberAccessRefRepo.Instance).Find(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessRefService/Find",
@@ -83,7 +83,7 @@ func (memberAccessRefSvc *memberAccessRefService) Create(input *model.CreateMemb
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).Create(input, (*serviceOptions).OperationOptions)
+		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo.Instance).Create(input, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessRefService/Create",
@@ -103,7 +103,7 @@ func (memberAccessRefSvc *memberAccessRefService) Update(ID interface{}, updateD
 	errorChn := make(chan error)
 
 	go func() {
-		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)
+		memberAccessRef, err := (*memberAccessRefSvc.memberAccessRefRepo.Instance).Update(ID, updateData, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/memberAccessRefService/Update",

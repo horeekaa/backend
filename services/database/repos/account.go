@@ -3,16 +3,16 @@ package databasereposervices
 import (
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	model "github.com/horeekaa/backend/model"
-	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
+	databaseinstancereferences "github.com/horeekaa/backend/repositories/databaseClient/instanceReferences/repos"
 	databaseservicerepointerfaces "github.com/horeekaa/backend/services/database/interfaces/repos"
 	databaseserviceoperations "github.com/horeekaa/backend/services/database/operations"
 )
 
 type accountService struct {
-	accountRepo *mongorepointerfaces.AccountRepoMongo
+	accountRepo *databaseinstancereferences.AccountRepo
 }
 
-func NewAccountService(accountRepo mongorepointerfaces.AccountRepoMongo) (databaseservicerepointerfaces.AccountService, error) {
+func NewAccountService(accountRepo databaseinstancereferences.AccountRepo) (databaseservicerepointerfaces.AccountService, error) {
 	return &accountService{
 		&accountRepo,
 	}, nil
@@ -23,7 +23,7 @@ func (accountSvc *accountService) FindByID(ID interface{}, serviceOptions *datab
 	errorChn := make(chan error)
 
 	go func() {
-		account, err := (*accountSvc.accountRepo).FindByID(ID, (*serviceOptions).OperationOptions)
+		account, err := (*accountSvc.accountRepo.Instance).FindByID(ID, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/accountService/FindByID",
@@ -43,7 +43,7 @@ func (accountSvc *accountService) FindOne(query map[string]interface{}, serviceO
 	errorChn := make(chan error)
 
 	go func() {
-		account, err := (*accountSvc.accountRepo).FindOne(query, (*serviceOptions).OperationOptions)
+		account, err := (*accountSvc.accountRepo.Instance).FindOne(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/accountService/FindOne",
@@ -63,7 +63,7 @@ func (accountSvc *accountService) Find(query map[string]interface{}, serviceOpti
 	errorChn := make(chan error)
 
 	go func() {
-		accounts, err := (*accountSvc.accountRepo).Find(query, (*serviceOptions).OperationOptions)
+		accounts, err := (*accountSvc.accountRepo.Instance).Find(query, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/accountService/Find",
@@ -83,7 +83,7 @@ func (accountSvc *accountService) Create(input *model.CreateAccount, serviceOpti
 	errorChn := make(chan error)
 
 	go func() {
-		account, err := (*accountSvc.accountRepo).Create(input, (*serviceOptions).OperationOptions)
+		account, err := (*accountSvc.accountRepo.Instance).Create(input, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/accountService/Create",
@@ -103,7 +103,7 @@ func (accountSvc *accountService) Update(ID interface{}, updateData *model.Updat
 	errorChn := make(chan error)
 
 	go func() {
-		account, err := (*accountSvc.accountRepo).Update(ID, updateData, (*serviceOptions).OperationOptions)
+		account, err := (*accountSvc.accountRepo.Instance).Update(ID, updateData, (*serviceOptions).OperationOptions)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/accountService/Update",
