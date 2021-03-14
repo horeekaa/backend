@@ -15,4 +15,6 @@ const (
 	QueryObjectFailed               string = "QUERY_OBJECT_FAILED"
 	IDNotFound                      string = "ID_NOT_FOUND"
 	DBConnectionFailed              string = "DB_CONNECTION_FAILED"
+
+	ClientInitializationFailed string = "CLIENT_INITIALIZATION_FAILED"
 )

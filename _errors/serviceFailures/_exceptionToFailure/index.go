@@ -15,6 +15,8 @@ var upstreamFailure = map[string]bool{
 	horeekaaexceptionenums.SetAuthDataFailed:  true,
 	horeekaaexceptionenums.DBConnectionFailed: true,
 	horeekaaexceptionenums.UpstreamException:  true,
+
+	horeekaaexceptionenums.ClientInitializationFailed: true,
 }
 
 var upstreamDuplicateFailure = map[string]bool{

@@ -30,7 +30,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DBConnectionFailed,
+			horeekaaexceptionenums.ClientInitializationFailed,
 			"/newMongoClient",
 			err,
 		)
