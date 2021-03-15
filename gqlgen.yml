@@ -47,6 +47,15 @@ models:
     fields:
       person:
         resolver: true
+  MemberAccess:
+    fields:
+      defaultAccess:
+        resolver: true
+      organization:
+        resolver: true
+      account:
+        resolver: true
+
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

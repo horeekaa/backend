@@ -106,12 +106,12 @@ func (accRepoMongo *accountRepoMongo) Update(ID interface{}, updateData *model.U
 	return &output, err
 }
 
-type setDefaultValuesOutput struct {
+type setAccountDefaultValuesOutput struct {
 	CreateAccount *model.CreateAccount
 	UpdateAccount *model.UpdateAccount
 }
 
-func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setDefaultValuesOutput, error) {
+func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setAccountDefaultValuesOutput, error) {
 	var accountStatus model.AccountStatus
 	var accountType model.AccountType
 
@@ -129,7 +129,7 @@ func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, option
 			accountType = model.AccountTypePerson
 		}
 
-		return &setDefaultValuesOutput{
+		return &setAccountDefaultValuesOutput{
 			UpdateAccount: &model.UpdateAccount{
 				ID:           updateInput.ID,
 				Status:       &accountStatus,
@@ -148,7 +148,7 @@ func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, option
 		accountType = model.AccountTypePerson
 	}
 
-	return &setDefaultValuesOutput{
+	return &setAccountDefaultValuesOutput{
 		CreateAccount: &model.CreateAccount{
 			Status:       &accountStatus,
 			StatusReason: createInput.StatusReason,

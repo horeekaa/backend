@@ -12,6 +12,7 @@ input UpdatePerson {
   email: String
   deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
+  updatedAt: Time
 }
 
 input CreatePerson {
@@ -23,6 +24,7 @@ input CreatePerson {
   deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
   createdAt: Time
+  updatedAt: Time
 }
 
 interface iPerson {
@@ -34,7 +36,6 @@ interface iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
   createdAt: Time!
 }
 
@@ -47,8 +48,9 @@ type Person implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
+  deviceTokens: [String]!
   createdAt: Time!
+  updatedAt: Time!
 }
 
 type PersonDetailed implements iPerson {
@@ -60,7 +62,7 @@ type PersonDetailed implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  organizationMembership: OrganizationMember
   deviceTokens: [String]!
   createdAt: Time!
+  updatedAt: Time!
 }

@@ -16,6 +16,10 @@ import (
 	firebaseauthutilities "github.com/horeekaa/backend/repositories/authentication/firebase/utilities"
 )
 
+var (
+	AuthenticationClient *firebaseauthinterfaces.FirebaseAuthentication
+)
+
 type firebaseAuthentication struct {
 	App     *firebase.App
 	Client  *auth.Client
@@ -66,7 +70,7 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*fir
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: user,
+		RepoUser: user,
 	}, nil
 }
 
@@ -80,12 +84,15 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebase
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: user,
+		RepoUser: user,
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountRole string, dbID string) (bool, error) {
-	claims := map[string]interface{}{"type": accountRole, "_id": dbID}
+func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountType string, dbID string) (bool, error) {
+	claims := map[string]interface{}{
+		firebaseauthoperations.FirebaseCustomClaimsAccountTypeKey: accountType,
+		firebaseauthoperations.FirebaseCustomClaimsAccountIDKey:   dbID,
+	}
 	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, uid, claims); err != nil {
 		return false, horeekaaexception.NewExceptionObject(
 			horeekaaexceptionenums.SetAuthDataFailed,
@@ -130,7 +137,7 @@ func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthmodel
 		)
 	}
 	return &firebaseauthoperations.FirebaseUserRecord{
-		User: updatedUser,
+		RepoUser: updatedUser,
 	}, nil
 }
 

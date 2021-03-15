@@ -3,21 +3,3 @@ enum OrganizationMembershipRole {
   MANAGER
   OWNER
 }
-
-enum OrganizationMembershipStatus {
-  ACTIVE
-  INACTIVE
-}
-
-input CreateOrganizationMember {
-  person: ObjectIDOnly
-  role: OrganizationMembershipRole
-  status: OrganizationMembershipStatus
-}
-
-type OrganizationMember {
-  _id: ObjectID!
-  person: Person
-  role: OrganizationMembershipRole
-  status: OrganizationMembershipStatus
-}

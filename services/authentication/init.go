@@ -18,9 +18,9 @@ func NewAuthenticationService(firebaseAuth *firebaseauthinterfaces.FirebaseAuthe
 	}, nil
 }
 
-func (authService *authenticationService) VerifyTokenAndGetUser(authToken string) (chan<- *authserviceoperations.AuthenticationServiceUserRecord, chan<- error) {
-	authServiceUserRecordChn := make(chan<- *authserviceoperations.AuthenticationServiceUserRecord)
-	errorChn := make(chan<- error)
+func (authService *authenticationService) VerifyTokenAndGetUser(authToken string) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
+	authServiceUserRecordChn := make(chan *authserviceoperations.AuthenticationServiceUserRecord)
+	errorChn := make(chan error)
 
 	go func() {
 		authServiceToken, err := (*authService.firebaseAuth).VerifyAndDecodeToken(authToken)
@@ -49,9 +49,9 @@ func (authService *authenticationService) VerifyTokenAndGetUser(authToken string
 	return authServiceUserRecordChn, errorChn
 }
 
-func (authService *authenticationService) GetUserFromEmail(email string) (chan<- *authserviceoperations.AuthenticationServiceUserRecord, chan<- error) {
-	authServiceUserRecordChn := make(chan<- *authserviceoperations.AuthenticationServiceUserRecord)
-	errorChn := make(chan<- error)
+func (authService *authenticationService) GetUserFromEmail(email string) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
+	authServiceUserRecordChn := make(chan *authserviceoperations.AuthenticationServiceUserRecord)
+	errorChn := make(chan error)
 
 	go func() {
 		authUserRecord, err := (*authService.firebaseAuth).GetAuthUserDataByEmail(email)
@@ -71,12 +71,12 @@ func (authService *authenticationService) GetUserFromEmail(email string) (chan<-
 	return authServiceUserRecordChn, errorChn
 }
 
-func (authService *authenticationService) SetRoleInAuthUserData(uid string, accountRole string, dbID string) (chan<- *authserviceoperations.AuthenticationServiceUserRecord, chan<- error) {
-	authServiceUserRecordChn := make(chan<- *authserviceoperations.AuthenticationServiceUserRecord)
-	errorChn := make(chan<- error)
+func (authService *authenticationService) SetRoleInAuthUserData(uid string, accountType string, dbID string) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
+	authServiceUserRecordChn := make(chan *authserviceoperations.AuthenticationServiceUserRecord)
+	errorChn := make(chan error)
 
 	go func() {
-		_, err := (*authService.firebaseAuth).SetRoleInAuthUserData(uid, accountRole, dbID)
+		_, err := (*authService.firebaseAuth).SetRoleInAuthUserData(uid, accountType, dbID)
 		if err != nil {
 			errorChn <- horeekaaexceptiontofailure.ConvertException(
 				"/authenticationService/setRoleInAuthUserData",
@@ -102,9 +102,9 @@ func (authService *authenticationService) SetRoleInAuthUserData(uid string, acco
 	return authServiceUserRecordChn, errorChn
 }
 
-func (authService *authenticationService) UpdateAuthUserData(updatedUser *authservicemodels.UpdateAuthUserData) (chan<- *authserviceoperations.AuthenticationServiceUserRecord, chan<- error) {
-	authServiceUserRecordChn := make(chan<- *authserviceoperations.AuthenticationServiceUserRecord)
-	errorChn := make(chan<- error)
+func (authService *authenticationService) UpdateAuthUserData(updatedUser *authservicemodels.UpdateAuthUserData) (chan *authserviceoperations.AuthenticationServiceUserRecord, chan error) {
+	authServiceUserRecordChn := make(chan *authserviceoperations.AuthenticationServiceUserRecord)
+	errorChn := make(chan error)
 
 	go func() {
 		authUserRecord, err := (*authService.firebaseAuth).UpdateAuthUserData((*updatedUser).ServiceUpdateUser)
@@ -124,9 +124,9 @@ func (authService *authenticationService) UpdateAuthUserData(updatedUser *authse
 	return authServiceUserRecordChn, errorChn
 }
 
-func (authService *authenticationService) GenerateAuthenticationRelatedLink(email string, action string) (chan<- string, chan<- error) {
-	urlLinkChn := make(chan<- string)
-	errorChn := make(chan<- error)
+func (authService *authenticationService) GenerateAuthenticationRelatedLink(email string, action string) (chan string, chan error) {
+	urlLinkChn := make(chan string)
+	errorChn := make(chan error)
 
 	go func() {
 		switch action {

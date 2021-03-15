@@ -1,9 +1,6 @@
 package databaseservicetransactions
 
 import (
-	"strconv"
-
-	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexceptiontofailure "github.com/horeekaa/backend/_errors/serviceFailures/_exceptionToFailure"
 	mongodbclients "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
 	mongotransactioninterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
@@ -15,22 +12,12 @@ type databaseServiceTransaction struct {
 	MongoTransaction *mongotransactioninterfaces.MongoRepoTransaction
 }
 
-func NewDatabaseServiceTransaction(component *databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
-	mongoTransactionComponent, _ := NewMongoTransactionComponent(component)
-
-	timeout, err := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
-	repository, err := mongodbclients.NewMongoClientRef(
-		configs.GetEnvVariable(configs.DbConfigURL),
-		configs.GetEnvVariable(configs.DbConfigDBName),
-		timeout,
-	)
-	if err != nil {
-		return nil, err
-	}
+func NewDatabaseServiceTransaction(component databaseservicetransactioninterfaces.TransactionComponent, transactionTitle *string) (databaseservicetransactioninterfaces.DatabaseServiceTransaction, error) {
+	mongoTransactionComponent, _ := NewMongoTransactionComponent(&component)
 
 	mongoTransaction, _ := mongotransactions.NewMongoTransaction(
 		&mongoTransactionComponent,
-		repository,
+		mongodbclients.DatabaseClient,
 		transactionTitle,
 	)
 

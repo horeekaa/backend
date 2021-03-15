@@ -12,6 +12,10 @@ import (
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 )
 
+var (
+	DatabaseClient *MongoRepository
+)
+
 // MongoRepository holds the database reference to each of the repository collection
 type MongoRepository struct {
 	Client       *mongo.Client
@@ -26,7 +30,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DBConnectionFailed,
+			horeekaaexceptionenums.ClientInitializationFailed,
 			"/newMongoClient",
 			err,
 		)

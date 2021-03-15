@@ -1,0 +1,12 @@
+
+input ManageOrganizationMemberAccessInput {
+    manageOrganizationMemberRead: Boolean
+    manageOrganizationMemberInvite: Boolean
+    manageOrganizationMemberRemove: Boolean
+}
+
+type ManageOrganizationMemberAccess {
+    manageOrganizationMemberRead: Boolean
+    manageOrganizationMemberInvite: Boolean
+    manageOrganizationMemberRemove: Boolean
+}

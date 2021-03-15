@@ -1,0 +1,14 @@
+
+input RequestOrganizationAccessInput {
+    requestOrganizationApproval: Boolean
+    requestOrganizationRead: Boolean
+    requestOrganizationReject: Boolean
+    requestOrganizationCreate: Boolean
+}
+
+type RequestOrganizationAccess {
+    requestOrganizationApproval: Boolean
+    requestOrganizationRead: Boolean
+    requestOrganizationReject: Boolean
+    requestOrganizationCreate: Boolean
+}

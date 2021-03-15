@@ -1,0 +1,14 @@
+
+input AccountAccessInput {
+    accountViewProfile: Boolean
+    accountLogin: Boolean
+    accountLogout: Boolean
+    accountAcceptInvitation: Boolean
+}
+
+type AccountAccess {
+    accountViewProfile: Boolean
+    accountLogin: Boolean
+    accountLogout: Boolean
+    accountAcceptInvitation: Boolean
+}
