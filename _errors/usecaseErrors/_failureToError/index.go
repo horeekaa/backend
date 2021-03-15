@@ -27,6 +27,7 @@ var conflictWithCurrentError = map[string]bool{
 var invalidInputError = map[string]bool{
 	horeekaafailureenums.SendEmailTypeNotExist:               true,
 	horeekaafailureenums.AccountIDNeededToRetrievePersonData: true,
+	horeekaafailureenums.SendEmailTypeNotExist: true,
 }
 
 var generalError = map[string]bool{

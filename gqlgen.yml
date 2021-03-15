@@ -47,7 +47,6 @@ models:
     fields:
       person:
         resolver: true
-
   MemberAccess:
     fields:
       defaultAccess:

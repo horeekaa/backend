@@ -23,6 +23,7 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+  
 	timeout, _ := strconv.Atoi(configs.GetEnvVariable(configs.DbConfigTimeout))
 	repository, _ := mongodbclients.NewMongoClientRef(
 		configs.GetEnvVariable(configs.DbConfigURL),
