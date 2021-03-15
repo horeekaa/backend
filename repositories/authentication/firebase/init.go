@@ -16,6 +16,10 @@ import (
 	firebaseauthutilities "github.com/horeekaa/backend/repositories/authentication/firebase/utilities"
 )
 
+var (
+	AuthenticationClient *firebaseauthinterfaces.FirebaseAuthentication
+)
+
 type firebaseAuthentication struct {
 	App     *firebase.App
 	Client  *auth.Client
