@@ -7,9 +7,9 @@ import (
 	auth "firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 
-	configs "github.com/horeekaa/backend/_commons/configs"
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
 	firebaseauthcoreinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
 	firebaseauthcoremodels "github.com/horeekaa/backend/core/authentication/firebase/models"
 	firebaseauthcoreoperations "github.com/horeekaa/backend/core/authentication/firebase/operations"
@@ -23,8 +23,8 @@ type firebaseAuthentication struct {
 }
 
 func NewFirebaseAuthentication(context *context.Context) (firebaseauthcoreinterfaces.FirebaseAuthentication, error) {
-	opt := option.WithCredentialsFile(configs.GetEnvVariable(configs.FirebaseServiceAccountPath))
-	config := &firebase.Config{ProjectID: configs.GetEnvVariable(configs.FirebaseConfigProjectID)}
+	opt := option.WithCredentialsFile(coreconfigs.GetEnvVariable(coreconfigs.FirebaseServiceAccountPath))
+	config := &firebase.Config{ProjectID: coreconfigs.GetEnvVariable(coreconfigs.FirebaseConfigProjectID)}
 	app, err := firebase.NewApp(*context, config, opt)
 	if err != nil {
 		return nil, horeekaaexception.NewExceptionObject(
