@@ -1,4 +1,4 @@
-package mongooperationmodels
+package mongodbcoremodels
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"

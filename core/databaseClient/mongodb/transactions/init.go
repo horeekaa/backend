@@ -1,4 +1,4 @@
-package mongotransactions
+package mongodbcoretransactions
 
 import (
 	"context"
@@ -10,20 +10,20 @@ import (
 
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
-	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongotransactioninterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/transaction"
-	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
+	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongoDB"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
+	mongodbcoremodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type mongoRepoTransaction struct {
-	Component        *mongotransactioninterfaces.TransactionComponent
-	Repository       *databaseclient.MongoRepository
+	Component        *mongodbcoretransactioninterfaces.TransactionComponent
+	Repository       *mongodbcoreclients.MongoRepository
 	RetryCounter     int
 	TransactionTitle *string
 }
 
-func NewMongoTransaction(component *mongotransactioninterfaces.TransactionComponent, repository *databaseclient.MongoRepository, transactionTitle *string) (mongotransactioninterfaces.MongoRepoTransaction, error) {
+func NewMongoTransaction(component *mongodbcoretransactioninterfaces.TransactionComponent, repository *mongodbcoreclients.MongoRepository, transactionTitle *string) (mongodbcoretransactioninterfaces.MongoRepoTransaction, error) {
 	return &mongoRepoTransaction{
 		Component:        component,
 		Repository:       repository,
@@ -65,7 +65,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	defer cancel()
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		result, err := (*mongoTrx.Component).TransactionBody(&mongooperationmodels.OperationOptions{
+		result, err := (*mongoTrx.Component).TransactionBody(&mongodbcoremodels.OperationOptions{
 			Session: &sc,
 		}, preTransactOutput)
 		if err != nil {

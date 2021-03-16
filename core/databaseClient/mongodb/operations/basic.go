@@ -1,4 +1,4 @@
-package mongooperations
+package mongodbcoreoperations
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 
 	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
 	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
-	mongooperationinterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/operations"
-	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
+	mongodbcoremodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
 )
 
 type basicOperation struct {
@@ -23,7 +23,7 @@ type basicOperation struct {
 	CollectionName string
 }
 
-func NewBasicOperation(client *mongo.Client, collectionRef *mongo.Collection, timeout time.Duration, collectionName string) (mongooperationinterfaces.BasicOperation, error) {
+func NewBasicOperation(client *mongo.Client, collectionRef *mongo.Collection, timeout time.Duration, collectionName string) (mongodbcoreoperationinterfaces.BasicOperation, error) {
 	return &basicOperation{
 		Client:         client,
 		CollectionRef:  collectionRef,
@@ -32,7 +32,7 @@ func NewBasicOperation(client *mongo.Client, collectionRef *mongo.Collection, ti
 	}, nil
 }
 
-func (bscOperation *basicOperation) FindByID(ID interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
+func (bscOperation *basicOperation) FindByID(ID interface{}, operationOptions *mongodbcoremodels.OperationOptions) (*mongo.SingleResult, error) {
 	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
@@ -46,7 +46,7 @@ func (bscOperation *basicOperation) FindByID(ID interface{}, operationOptions *m
 	return res, nil
 }
 
-func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
+func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operationOptions *mongodbcoremodels.OperationOptions) (*mongo.SingleResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -64,7 +64,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	return res, nil
 }
 
-func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDecoder func(cursorObject *mongooperationmodels.CursorObject) (interface{}, error), operationOptions *mongooperationmodels.OperationOptions) (*bool, error) {
+func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDecoder func(cursorObject *mongodbcoremodels.CursorObject) (interface{}, error), operationOptions *mongodbcoremodels.OperationOptions) (*bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*2*time.Second)
 	defer cancel()
 
@@ -90,7 +90,7 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 
 	for curr.Next(ctx) {
 		_, err := cursorDecoder(
-			&mongooperationmodels.CursorObject{
+			&mongodbcoremodels.CursorObject{
 				MongoFindCursor: curr,
 			},
 		)
@@ -108,7 +108,7 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 	return output, err
 }
 
-func (bscOperation *basicOperation) Create(input interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongooperationmodels.CreateOperationOutput, error) {
+func (bscOperation *basicOperation) Create(input interface{}, operationOptions *mongodbcoremodels.OperationOptions) (*mongodbcoremodels.CreateOperationOutput, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()
 
@@ -128,13 +128,13 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 		)
 	}
 
-	return &mongooperationmodels.CreateOperationOutput{
+	return &mongodbcoremodels.CreateOperationOutput{
 		ID:     res.InsertedID.(primitive.ObjectID),
 		Object: input,
 	}, nil
 }
 
-func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{}, operationOptions *mongooperationmodels.OperationOptions) (*mongo.SingleResult, error) {
+func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{}, operationOptions *mongodbcoremodels.OperationOptions) (*mongo.SingleResult, error) {
 	objectID := ID.(primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.Timeout*time.Second)
 	defer cancel()

@@ -1,4 +1,4 @@
-package mongodbclients
+package mongodbcoreclients
 
 import (
 	"context"
