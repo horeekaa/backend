@@ -1,4 +1,4 @@
-package horeekaabaseexception
+package horeekaacorebaseexception
 
 import "fmt"
 

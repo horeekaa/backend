@@ -1,4 +1,4 @@
-package horeekaaerrorenums
+package horeekaacoreerrorenums
 
 // string enums for usecase error
 const (

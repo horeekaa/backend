@@ -1,4 +1,4 @@
-package horeekaafailureenums
+package horeekaacorefailureenums
 
 // string enums for service failures
 const (

@@ -1,16 +1,16 @@
-package horeekaabasefailure
+package horeekaacorebasefailure
 
 import (
 	"fmt"
 
-	horeekaabaseexception "github.com/horeekaa/backend/_errors/repoExceptions/_base"
+	horeekaacorebaseexception "github.com/horeekaa/backend/core/_errors/repoExceptions/_base"
 )
 
 // Failure struct for shaping service layer error
 type Failure struct {
 	Message string
 	Path    string
-	Err     *horeekaabaseexception.Exception
+	Err     *horeekaacorebaseexception.Exception
 }
 
 func (f *Failure) Error() string {

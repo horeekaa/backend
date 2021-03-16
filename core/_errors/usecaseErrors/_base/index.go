@@ -1,9 +1,9 @@
-package horeekaabaseerror
+package horeekaacorebaseerror
 
 import (
 	"fmt"
 
-	horeekaabasefailure "github.com/horeekaa/backend/_errors/serviceFailures/_base"
+	horeekaacorebasefailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_base"
 )
 
 // Error struct for shaping usecase layer error
@@ -11,7 +11,7 @@ type Error struct {
 	Message    string
 	StatusCode int
 	Path       string
-	Err        *horeekaabasefailure.Failure
+	Err        *horeekaacorebasefailure.Failure
 }
 
 func (e *Error) Error() string {

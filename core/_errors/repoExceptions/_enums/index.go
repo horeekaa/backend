@@ -1,4 +1,4 @@
-package horeekaaexceptionenums
+package horeekaacoreexceptionenums
 
 // string enums for repo exception
 const (
