@@ -1,12 +1,12 @@
 package mongodbcoretransactioninterfaces
 
 import (
-	mongodbcoreoperationmodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 )
 
 type TransactionComponent interface {
 	PreTransaction(input interface{}) (interface{}, error)
-	TransactionBody(operationOptions *mongodbcoreoperationmodels.OperationOptions, preOutput interface{}) (interface{}, error)
+	TransactionBody(operationOptions *mongodbcoretypes.OperationOptions, preOutput interface{}) (interface{}, error)
 }
 
 type MongoRepoTransaction interface {

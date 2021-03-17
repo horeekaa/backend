@@ -12,7 +12,7 @@ import (
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongoDB"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
-	mongodbcoremodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -65,7 +65,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	defer cancel()
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		result, err := (*mongoTrx.Component).TransactionBody(&mongodbcoremodels.OperationOptions{
+		result, err := (*mongoTrx.Component).TransactionBody(&mongodbcoretypes.OperationOptions{
 			Session: &sc,
 		}, preTransactOutput)
 		if err != nil {
