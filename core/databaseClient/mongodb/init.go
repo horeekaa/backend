@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
-	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
-	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	horeekaaexceptioncore "github.com/horeekaa/backend/core/_errors/repoExceptions"
+	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 )
 
 var (
@@ -29,8 +29,8 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.ClientInitializationFailed,
+		return nil, horeekaaexceptioncore.NewExceptionObject(
+			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
 			err,
 		)
@@ -38,8 +38,8 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 
 	// confirm connection by pinging to primary cluster
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DBConnectionFailed,
+		return nil, horeekaaexceptioncore.NewExceptionObject(
+			horeekaaexceptioncoreenums.DBConnectionFailed,
 			"/newMongoClient",
 			err,
 		)

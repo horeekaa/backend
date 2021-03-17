@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
-	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
 	mongodbcoremodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
 )
@@ -81,8 +81,8 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 	}
 
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.QueryObjectFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
 			fmt.Sprintf("/%s/find", bscOperation.CollectionName),
 			err,
 		)
@@ -95,8 +95,8 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 			},
 		)
 		if err != nil {
-			return nil, horeekaaexception.NewExceptionObject(
-				horeekaaexceptionenums.QueryObjectFailed,
+			return nil, horeekaacoreexception.NewExceptionObject(
+				horeekaacoreexceptionenums.QueryObjectFailed,
 				fmt.Sprintf("/%s/find", bscOperation.CollectionName),
 				err,
 			)
@@ -121,8 +121,8 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	}
 
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.CreateObjectFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.CreateObjectFailed,
 			fmt.Sprintf("/%s/create", bscOperation.CollectionName),
 			err,
 		)
@@ -155,8 +155,8 @@ func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{
 	}
 
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.UpdateObjectFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
 			fmt.Sprintf("/%s/update", bscOperation.CollectionName),
 			err,
 		)

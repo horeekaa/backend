@@ -7,9 +7,9 @@ import (
 	auth "firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 
-	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
-	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
 	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
+	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	firebaseauthcoreinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
 	firebaseauthcoremodels "github.com/horeekaa/backend/core/authentication/firebase/models"
 	firebaseauthcoreoperations "github.com/horeekaa/backend/core/authentication/firebase/operations"
@@ -27,8 +27,8 @@ func NewFirebaseAuthentication(context *context.Context) (firebaseauthcoreinterf
 	config := &firebase.Config{ProjectID: coreconfigs.GetEnvVariable(coreconfigs.FirebaseConfigProjectID)}
 	app, err := firebase.NewApp(*context, config, opt)
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.UpstreamException,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
 			"/newFirebaseAuthentication",
 			err,
 		)
@@ -45,8 +45,8 @@ func NewFirebaseAuthentication(context *context.Context) (firebaseauthcoreinterf
 func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*firebaseauthcoreoperations.FirebaseAuthToken, error) {
 	token, err := (*fbAuth).Client.VerifyIDToken(*fbAuth.Context, authToken)
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DecodingAuthTokenFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.DecodingAuthTokenFailed,
 			"/authentication/verifyAndDecodeToken",
 			err,
 		)
@@ -59,8 +59,8 @@ func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*f
 func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*firebaseauthcoreoperations.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUserByEmail(*fbAuth.Context, email)
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.GetAuthDataFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.GetAuthDataFailed,
 			"/authentication/getAuthUserDataByEmail",
 			err,
 		)
@@ -73,8 +73,8 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*fir
 func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebaseauthcoreoperations.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUser(*fbAuth.Context, uid)
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.GetAuthDataFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.GetAuthDataFailed,
 			"/authentication/getAuthUserDataById",
 			err,
 		)
@@ -90,8 +90,8 @@ func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountT
 		firebaseauthcoreoperations.FirebaseCustomClaimsAccountIDKey:   dbID,
 	}
 	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, uid, claims); err != nil {
-		return false, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.SetAuthDataFailed,
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.SetAuthDataFailed,
 			"/authentication/setRoleInAuthUserData",
 			err,
 		)
@@ -126,8 +126,8 @@ func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthcorem
 
 	updatedUser, err := (*fbAuth).Client.UpdateUser(*fbAuth.Context, (*user).UID, params)
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.UpdateObjectFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
 			"/authentication/updateAuthUserData",
 			err,
 		)
@@ -144,8 +144,8 @@ func (fbAuth *firebaseAuthentication) GenerateEmailVerificationLink(email string
 		firebaseauthcoreutilities.GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
 	)
 	if err != nil {
-		return "", horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.UpstreamException,
+		return "", horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
 			"firebase/generateEmailVerificationLink",
 			err,
 		)
@@ -160,8 +160,8 @@ func (fbAuth *firebaseAuthentication) GeneratePasswordResetLink(email string) (s
 		firebaseauthcoreutilities.GetFirebaseActionCodeSettings()["data"].(*auth.ActionCodeSettings),
 	)
 	if err != nil {
-		return "", horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.UpstreamException,
+		return "", horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
 			"firebase/passwordResetLinkWithSettings",
 			err,
 		)

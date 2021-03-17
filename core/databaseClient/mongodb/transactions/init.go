@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	horeekaaexception "github.com/horeekaa/backend/_errors/repoExceptions"
-	horeekaaexceptionenums "github.com/horeekaa/backend/_errors/repoExceptions/_enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongoDB"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
 	mongodbcoremodels "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations/models"
@@ -46,15 +46,15 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 
 	session, err := (*mongoTrx).Repository.Client.StartSession()
 	if err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DBConnectionFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.DBConnectionFailed,
 			"/mongoTransaction/createSession",
 			err,
 		)
 	}
 	if err = session.StartTransaction(); err != nil {
-		return nil, horeekaaexception.NewExceptionObject(
-			horeekaaexceptionenums.DBConnectionFailed,
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.DBConnectionFailed,
 			"/mongoTransaction/startTransaction",
 			err,
 		)
@@ -88,8 +88,8 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 				return nil
 			}
 
-			return horeekaaexception.NewExceptionObject(
-				horeekaaexceptionenums.DBConnectionFailed,
+			return horeekaacoreexception.NewExceptionObject(
+				horeekaacoreexceptionenums.DBConnectionFailed,
 				"/mongoTransaction/commitTransaction",
 				err,
 			)
