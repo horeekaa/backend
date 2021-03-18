@@ -1,22 +1,22 @@
-package mongorepos
+package mongodbaccountdatasources
 
 import (
 	"time"
 
+	databaseclient "github.com/horeekaa/backend/core/databaseClient/mongoDB"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
+	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
-	databaseclient "github.com/horeekaa/backend/repositories/databaseClient/mongoDB"
-	mongooperationinterfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/operations"
-	mongorepointerfaces "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/interfaces/repos"
-	mongooperations "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations"
-	mongooperationmodels "github.com/horeekaa/backend/repositories/databaseClient/mongoDB/operations/models"
 )
 
 type memberAccessRefRepoMongo struct {
-	basicOperation mongooperationinterfaces.BasicOperation
+	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewMemberAccessRefRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongorepointerfaces.MemberAccessRefRepoMongo, error) {
-	basicOperation, err := mongooperations.NewBasicOperation(
+func NewMemberAccessRefRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongodbaccountdatasourceinterfaces.MemberAccessRefRepoMongo, error) {
+	basicOperation, err := mongodbcoreoperations.NewBasicOperation(
 		(*mongoRepo).Client,
 		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("memberaccessrefs"),
 		(*mongoRepo).Timeout,
@@ -31,23 +31,23 @@ func NewMemberAccessRefRepoMongo(mongoRepo *databaseclient.MongoRepository) (mon
 	}, nil
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) FindByID(ID interface{}, operationOptions *mongooperationmodels.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	res, err := orgMemberRepoMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.MemberAccessRef
 	res.Decode(&output)
 	return &output, err
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	res, err := orgMemberRepoMongo.basicOperation.FindOne(query, operationOptions)
 	var output model.MemberAccessRef
 	res.Decode(&output)
 	return &output, err
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) Find(query map[string]interface{}, operationOptions *mongooperationmodels.OperationOptions) ([]*model.MemberAccessRef, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
-	cursorDecoder := func(cursor *mongooperationmodels.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
 		var memberAccessRef *model.MemberAccessRef
 		err := cursor.MongoFindCursor.Decode(memberAccessRef)
 		if err != nil {
@@ -65,9 +65,9 @@ func (orgMemberRepoMongo *memberAccessRefRepoMongo) Find(query map[string]interf
 	return memberAccessRefs, err
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) Create(input *model.CreateMemberAccessRef, operationOptions *mongooperationmodels.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) Create(input *model.CreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	defaultedInput, err := orgMemberRepoMongo.setDefaultValues(*input,
-		&defaultValuesOptions{DefaultValuesType: DefaultValuesCreateType},
+		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
 	)
 	if err != nil {
@@ -94,9 +94,9 @@ func (orgMemberRepoMongo *memberAccessRefRepoMongo) Create(input *model.CreateMe
 	return memberAccessRef, err
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, operationOptions *mongooperationmodels.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	defaultedInput, err := orgMemberRepoMongo.setDefaultValues(*updateData,
-		&defaultValuesOptions{DefaultValuesType: DefaultValuesUpdateType},
+		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
 	)
 	if err != nil {
@@ -115,11 +115,11 @@ type setMemberAccessRefDefaultValuesOutput struct {
 	UpdateMemberAccessRef *model.UpdateMemberAccessRef
 }
 
-func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input interface{}, options *defaultValuesOptions, operationOptions *mongooperationmodels.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
+func (orgMemberRepoMongo *memberAccessRefRepoMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
 	var currentTime = time.Now()
 
 	updateInput := input.(model.UpdateMemberAccessRef)
-	if (*options).DefaultValuesType == DefaultValuesUpdateType {
+	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
 		_, err := orgMemberRepoMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
