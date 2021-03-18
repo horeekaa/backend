@@ -1,4 +1,4 @@
-package firebaseauthcoreoperations
+package firebaseauthcoretypes
 
 import (
 	auth "firebase.google.com/go/v4/auth"

@@ -12,7 +12,7 @@ import (
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	firebaseauthcoreinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
 	firebaseauthcoremodels "github.com/horeekaa/backend/core/authentication/firebase/models"
-	firebaseauthcoreoperations "github.com/horeekaa/backend/core/authentication/firebase/operations"
+	firebaseauthcoretypes "github.com/horeekaa/backend/core/authentication/firebase/types"
 	firebaseauthcoreutilities "github.com/horeekaa/backend/core/authentication/firebase/utilities"
 )
 
@@ -42,7 +42,7 @@ func NewFirebaseAuthentication(context *context.Context) (firebaseauthcoreinterf
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*firebaseauthcoreoperations.FirebaseAuthToken, error) {
+func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*firebaseauthcoretypes.FirebaseAuthToken, error) {
 	token, err := (*fbAuth).Client.VerifyIDToken(*fbAuth.Context, authToken)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
@@ -51,12 +51,12 @@ func (fbAuth *firebaseAuthentication) VerifyAndDecodeToken(authToken string) (*f
 			err,
 		)
 	}
-	return &firebaseauthcoreoperations.FirebaseAuthToken{
+	return &firebaseauthcoretypes.FirebaseAuthToken{
 		Token: token,
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*firebaseauthcoreoperations.FirebaseUserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*firebaseauthcoretypes.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUserByEmail(*fbAuth.Context, email)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
@@ -65,12 +65,12 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataByEmail(email string) (*fir
 			err,
 		)
 	}
-	return &firebaseauthcoreoperations.FirebaseUserRecord{
+	return &firebaseauthcoretypes.FirebaseUserRecord{
 		RepoUser: user,
 	}, nil
 }
 
-func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebaseauthcoreoperations.FirebaseUserRecord, error) {
+func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebaseauthcoretypes.FirebaseUserRecord, error) {
 	user, err := (*fbAuth).Client.GetUser(*fbAuth.Context, uid)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
@@ -79,15 +79,15 @@ func (fbAuth *firebaseAuthentication) GetAuthUserDataById(uid string) (*firebase
 			err,
 		)
 	}
-	return &firebaseauthcoreoperations.FirebaseUserRecord{
+	return &firebaseauthcoretypes.FirebaseUserRecord{
 		RepoUser: user,
 	}, nil
 }
 
 func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountType string, dbID string) (bool, error) {
 	claims := map[string]interface{}{
-		firebaseauthcoreoperations.FirebaseCustomClaimsAccountTypeKey: accountType,
-		firebaseauthcoreoperations.FirebaseCustomClaimsAccountIDKey:   dbID,
+		firebaseauthcoretypes.FirebaseCustomClaimsAccountTypeKey: accountType,
+		firebaseauthcoretypes.FirebaseCustomClaimsAccountIDKey:   dbID,
 	}
 	if err := (*fbAuth).Client.SetCustomUserClaims(*fbAuth.Context, uid, claims); err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
@@ -100,7 +100,7 @@ func (fbAuth *firebaseAuthentication) SetRoleInAuthUserData(uid string, accountT
 	return true, nil
 }
 
-func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthcoremodels.UpdateAuthUserData) (*firebaseauthcoreoperations.FirebaseUserRecord, error) {
+func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthcoremodels.UpdateAuthUserData) (*firebaseauthcoretypes.FirebaseUserRecord, error) {
 	params := (&auth.UserToUpdate{})
 	if &user.Email != nil {
 		params = params.Email((*user).Email)
@@ -132,7 +132,7 @@ func (fbAuth *firebaseAuthentication) UpdateAuthUserData(user *firebaseauthcorem
 			err,
 		)
 	}
-	return &firebaseauthcoreoperations.FirebaseUserRecord{
+	return &firebaseauthcoretypes.FirebaseUserRecord{
 		RepoUser: updatedUser,
 	}, nil
 }
