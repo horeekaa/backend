@@ -10,20 +10,20 @@ import (
 
 	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
-	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongoDB"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type mongoRepoTransaction struct {
 	Component        *mongodbcoretransactioninterfaces.TransactionComponent
-	Repository       *mongodbcoreclients.MongoRepository
+	Repository       *mongodbcoreclientinterfaces.MongoClient
 	RetryCounter     int
 	TransactionTitle *string
 }
 
-func NewMongoTransaction(component *mongodbcoretransactioninterfaces.TransactionComponent, repository *mongodbcoreclients.MongoRepository, transactionTitle *string) (mongodbcoretransactioninterfaces.MongoRepoTransaction, error) {
+func NewMongoTransaction(component *mongodbcoretransactioninterfaces.TransactionComponent, repository *mongodbcoreclientinterfaces.MongoClient, transactionTitle *string) (mongodbcoretransactioninterfaces.MongoRepoTransaction, error) {
 	return &mongoRepoTransaction{
 		Component:        component,
 		Repository:       repository,
@@ -44,7 +44,16 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 		return nil, err
 	}
 
-	session, err := (*mongoTrx).Repository.Client.StartSession()
+	client, err := (*mongoTrx.Repository).GetClient()
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.DBConnectionFailed,
+			"/mongoTransaction/createSession",
+			err,
+		)
+	}
+
+	session, err := client.StartSession()
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DBConnectionFailed,
@@ -61,7 +70,8 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	}
 
 	transactResult := make(chan interface{})
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration((*mongoTrx).Repository.Timeout)*time.Second)
+	timeout, err := (*mongoTrx.Repository).GetDatabaseTimeout()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout*time.Second))
 	defer cancel()
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
