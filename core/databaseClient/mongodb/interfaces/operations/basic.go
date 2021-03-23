@@ -6,6 +6,8 @@ import (
 )
 
 type BasicOperation interface {
+	SetCollection(collectionName string) bool
+	GetCollectionName() string
 	FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*mongo.SingleResult, error)
 	FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*mongo.SingleResult, error)
 	Find(query map[string]interface{}, cursorDecoder func(cursorObject *mongodbcoretypes.CursorObject) (interface{}, error), operationOptions *mongodbcoretypes.OperationOptions) (*bool, error)

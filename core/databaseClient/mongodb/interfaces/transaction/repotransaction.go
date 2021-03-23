@@ -10,5 +10,6 @@ type TransactionComponent interface {
 }
 
 type MongoRepoTransaction interface {
+	SetTransaction(component interface{}, transactionTitle string) bool
 	RunTransaction(input interface{}) (interface{}, error)
 }
