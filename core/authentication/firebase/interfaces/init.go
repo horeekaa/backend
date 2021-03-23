@@ -1,16 +1,12 @@
-package firebaseauthcoreinterfaces
+package firebaseauthcoreclientinterfaces
 
 import (
-	firebaseauthcoremodels "github.com/horeekaa/backend/core/authentication/firebase/models"
-	firebaseauthcoretypes "github.com/horeekaa/backend/core/authentication/firebase/types"
+	auth "firebase.google.com/go/v4/auth"
+	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 )
 
-type FirebaseAuthentication interface {
-	VerifyAndDecodeToken(authToken string) (*firebaseauthcoretypes.FirebaseAuthToken, error)
-	GetAuthUserDataByEmail(email string) (*firebaseauthcoretypes.FirebaseUserRecord, error)
-	GetAuthUserDataById(uid string) (*firebaseauthcoretypes.FirebaseUserRecord, error)
-	SetRoleInAuthUserData(uid string, accountType string, dbID string) (bool, error)
-	UpdateAuthUserData(user *firebaseauthcoremodels.UpdateAuthUserData) (*firebaseauthcoretypes.FirebaseUserRecord, error)
-	GenerateEmailVerificationLink(email string) (string, error)
-	GeneratePasswordResetLink(email string) (string, error)
+type FirebaseAuthenticationClient interface {
+	InitializeClient(fbServerlessClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient) (bool, error)
+	GetServerlessClient() (firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient, error)
+	GetAuthClient() (*auth.Client, error)
 }

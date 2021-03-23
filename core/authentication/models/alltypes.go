@@ -1,4 +1,4 @@
-package firebaseauthcoremodels
+package authenticationcoremodels
 
 type UpdateAuthUserData struct {
 	UID           string

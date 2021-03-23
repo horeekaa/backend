@@ -1,0 +1,8 @@
+package authenticationcoreclientinterfaces
+
+import firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
+
+type AuthenticationClient interface {
+	SetFirebaseAuthClient(firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient) bool
+	GetFirebaseAuthClient() firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient
+}
