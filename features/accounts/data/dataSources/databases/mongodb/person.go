@@ -14,6 +14,7 @@ type personRepoMongo struct {
 }
 
 func NewPersonRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.PersonRepoMongo, error) {
+	basicOperation.SetCollection("persons")
 	return &personRepoMongo{
 		basicOperation: basicOperation,
 	}, nil

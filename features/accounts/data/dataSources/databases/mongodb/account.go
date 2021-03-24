@@ -12,6 +12,7 @@ type accountRepoMongo struct {
 }
 
 func NewAccountRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.AccountRepoMongo, error) {
+	basicOperation.SetCollection("accounts")
 	return &accountRepoMongo{
 		basicOperation: basicOperation,
 	}, nil

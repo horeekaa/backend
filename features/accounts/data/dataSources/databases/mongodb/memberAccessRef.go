@@ -14,6 +14,7 @@ type memberAccessRefRepoMongo struct {
 }
 
 func NewMemberAccessRefRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessRefRepoMongo, error) {
+	basicOperation.SetCollection("memberaccessrefs")
 	return &memberAccessRefRepoMongo{
 		basicOperation: basicOperation,
 	}, nil
