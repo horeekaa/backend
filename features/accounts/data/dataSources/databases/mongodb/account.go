@@ -1,9 +1,7 @@
 package mongodbaccountdatasources
 
 import (
-	databaseclient "github.com/horeekaa/backend/core/databaseClient/mongoDB"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -13,17 +11,7 @@ type accountRepoMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewAccountRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongodbaccountdatasourceinterfaces.AccountRepoMongo, error) {
-	basicOperation, err := mongodbcoreoperations.NewBasicOperation(
-		(*mongoRepo).Client,
-		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("accounts"),
-		(*mongoRepo).Timeout,
-		"accounts",
-	)
-	if err != nil {
-		return nil, err
-	}
-
+func NewAccountRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.AccountRepoMongo, error) {
 	return &accountRepoMongo{
 		basicOperation: basicOperation,
 	}, nil

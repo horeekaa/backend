@@ -3,9 +3,7 @@ package mongodbaccountdatasources
 import (
 	"time"
 
-	databaseclient "github.com/horeekaa/backend/core/databaseClient/mongoDB"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -15,17 +13,7 @@ type memberAccessRepoMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewMemberAccessRepoMongo(mongoRepo *databaseclient.MongoRepository) (mongodbaccountdatasourceinterfaces.MemberAccessRepoMongo, error) {
-	basicOperation, err := mongodbcoreoperations.NewBasicOperation(
-		(*mongoRepo).Client,
-		(*mongoRepo.Client.Database((*mongoRepo).DatabaseName)).Collection("memberaccesses"),
-		(*mongoRepo).Timeout,
-		"memberaccesses",
-	)
-	if err != nil {
-		return nil, err
-	}
-
+func NewMemberAccessRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessRepoMongo, error) {
 	return &memberAccessRepoMongo{
 		basicOperation: basicOperation,
 	}, nil
