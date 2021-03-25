@@ -3,26 +3,26 @@ package mongodbaccountrepodependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	databaseaccountrepointerfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/repos"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	mongodbaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
-	databaseaccountrepos "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/repos"
+	databaseaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/sources"
 )
 
-type MemberAccessRefRepoDependency struct{}
+type MemberAccessRefDataSourceDependency struct{}
 
-func (memberAccessRefRepoDependency *MemberAccessRefRepoDependency) bind() {
+func (memberAccessRefDataSourceDependency *MemberAccessRefDataSourceDependency) bind() {
 	container.Singleton(
-		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.MemberAccessRefRepoMongo {
-			memberAccessRefRepoMongo, _ := mongodbaccountdatasources.NewMemberAccessRefRepoMongo(basicOperation)
+		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.MemberAccessRefDataSourceMongo {
+			memberAccessRefRepoMongo, _ := mongodbaccountdatasources.NewMemberAccessRefDataSourceMongo(basicOperation)
 			return memberAccessRefRepoMongo
 		},
 	)
 
 	container.Singleton(
-		func(memberAccessRefRepoMongo mongodbaccountdatasourceinterfaces.MemberAccessRefRepoMongo) databaseaccountrepointerfaces.MemberAccessRefRepo {
-			memberAccessRefRepo, _ := databaseaccountrepos.NewMemberAccessRefRepo()
-			memberAccessRefRepo.SetMongoRepo(memberAccessRefRepoMongo)
+		func(memberAccessRefRepoMongo mongodbaccountdatasourceinterfaces.MemberAccessRefDataSourceMongo) databaseaccountdatasourceinterfaces.MemberAccessRefDataSource {
+			memberAccessRefRepo, _ := databaseaccountdatasources.NewMemberAccessRefDataSource()
+			memberAccessRefRepo.SetMongoDataSource(memberAccessRefRepoMongo)
 			return memberAccessRefRepo
 		},
 	)

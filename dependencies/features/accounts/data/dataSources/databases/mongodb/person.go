@@ -3,26 +3,26 @@ package mongodbaccountrepodependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	databaseaccountrepointerfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/repos"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	mongodbaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
-	databaseaccountrepos "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/repos"
+	databaseaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/sources"
 )
 
-type PersonRepoDependency struct{}
+type PersonDataSourceDependency struct{}
 
-func (personRepoDependency *PersonRepoDependency) bind() {
+func (personDataSourceDependency *PersonDataSourceDependency) bind() {
 	container.Singleton(
-		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.PersonRepoMongo {
-			personRepoMongo, _ := mongodbaccountdatasources.NewPersonRepoMongo(basicOperation)
+		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.PersonDataSourceMongo {
+			personRepoMongo, _ := mongodbaccountdatasources.NewPersonDataSourceMongo(basicOperation)
 			return personRepoMongo
 		},
 	)
 
 	container.Singleton(
-		func(personRepoMongo mongodbaccountdatasourceinterfaces.PersonRepoMongo) databaseaccountrepointerfaces.PersonRepo {
-			personRepo, _ := databaseaccountrepos.NewPersonRepo()
-			personRepo.SetMongoRepo(personRepoMongo)
+		func(personRepoMongo mongodbaccountdatasourceinterfaces.PersonDataSourceMongo) databaseaccountdatasourceinterfaces.PersonDataSource {
+			personRepo, _ := databaseaccountdatasources.NewPersonDataSource()
+			personRepo.SetMongoDataSource(personRepoMongo)
 			return personRepo
 		},
 	)

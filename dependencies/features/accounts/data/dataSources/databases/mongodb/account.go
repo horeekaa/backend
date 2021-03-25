@@ -3,26 +3,26 @@ package mongodbaccountrepodependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	databaseaccountrepointerfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/repos"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	mongodbaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
-	databaseaccountrepos "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/repos"
+	databaseaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/sources"
 )
 
-type AccountRepoDependency struct{}
+type AccountDataSourceDependency struct{}
 
-func (accountRepoDependency *AccountRepoDependency) bind() {
+func (accountDataSourceDependency *AccountDataSourceDependency) bind() {
 	container.Singleton(
-		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.AccountRepoMongo {
-			accountRepoMongo, _ := mongodbaccountdatasources.NewAccountRepoMongo(basicOperation)
-			return accountRepoMongo
+		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.AccountDataSourceMongo {
+			accountDataSourceMongo, _ := mongodbaccountdatasources.NewAccountDataSourceMongo(basicOperation)
+			return accountDataSourceMongo
 		},
 	)
 
 	container.Singleton(
-		func(accountRepoMongo mongodbaccountdatasourceinterfaces.AccountRepoMongo) databaseaccountrepointerfaces.AccountRepo {
-			accountRepo, _ := databaseaccountrepos.NewAccountRepo()
-			accountRepo.SetMongoRepo(accountRepoMongo)
+		func(accountDataSourceMongo mongodbaccountdatasourceinterfaces.AccountDataSourceMongo) databaseaccountdatasourceinterfaces.AccountDataSource {
+			accountRepo, _ := databaseaccountdatasources.NewAccountDataSource()
+			accountRepo.SetMongoDataSource(accountDataSourceMongo)
 			return accountRepo
 		},
 	)

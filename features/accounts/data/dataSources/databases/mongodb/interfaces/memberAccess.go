@@ -5,7 +5,7 @@ import (
 	model "github.com/horeekaa/backend/model"
 )
 
-type MemberAccessRepoMongo interface {
+type MemberAccessDataSourceMongo interface {
 	FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
 	FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
 	Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccess, error)

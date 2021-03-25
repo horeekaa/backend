@@ -9,32 +9,32 @@ import (
 	model "github.com/horeekaa/backend/model"
 )
 
-type personRepoMongo struct {
+type personDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewPersonRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.PersonRepoMongo, error) {
+func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.PersonDataSourceMongo, error) {
 	basicOperation.SetCollection("persons")
-	return &personRepoMongo{
+	return &personDataSourceMongo{
 		basicOperation: basicOperation,
 	}, nil
 }
 
-func (prsnRepoMongo *personRepoMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	res, err := prsnRepoMongo.basicOperation.FindByID(ID, operationOptions)
+func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	res, err := prsnDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Person
 	res.Decode(&output)
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	res, err := prsnRepoMongo.basicOperation.FindOne(query, operationOptions)
+func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	res, err := prsnDataSourceMongo.basicOperation.FindOne(query, operationOptions)
 	var output model.Person
 	res.Decode(&output)
 	return &output, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Person, error) {
 	var persons = []*model.Person{}
 	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
 		var person *model.Person
@@ -46,7 +46,7 @@ func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operati
 		return nil, nil
 	}
 
-	_, err := prsnRepoMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := prsnDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +54,8 @@ func (prsnRepoMongo *personRepoMongo) Find(query map[string]interface{}, operati
 	return persons, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	defaultedInput, err := prsnRepoMongo.setDefaultValues(*input,
+func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
 	)
@@ -63,7 +63,7 @@ func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operatio
 		return nil, err
 	}
 
-	output, err := prsnRepoMongo.basicOperation.Create(*defaultedInput.CreatePerson, operationOptions)
+	output, err := prsnDataSourceMongo.basicOperation.Create(*defaultedInput.CreatePerson, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +85,8 @@ func (prsnRepoMongo *personRepoMongo) Create(input *model.CreatePerson, operatio
 	return person, err
 }
 
-func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	defaultedInput, err := prsnRepoMongo.setDefaultValues(*updateData,
+func (prsnDataSourceMongo *personDataSourceMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
 	)
@@ -94,7 +94,7 @@ func (prsnRepoMongo *personRepoMongo) Update(ID interface{}, updateData *model.U
 		return nil, err
 	}
 
-	res, err := prsnRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
+	res, err := prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
 	var output model.Person
 	res.Decode(&output)
 
@@ -106,13 +106,13 @@ type setPersonDefaultValuesOutput struct {
 	UpdatePerson *model.UpdatePerson
 }
 
-func (prsnRepoMongo *personRepoMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setPersonDefaultValuesOutput, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setPersonDefaultValuesOutput, error) {
 	var noOfRecentTransactionToKeep int
 
 	var currentTime = time.Now()
 	updateInput := input.(model.UpdatePerson)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		existingObject, err := prsnRepoMongo.FindByID(updateInput.ID, operationOptions)
+		existingObject, err := prsnDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
 		}

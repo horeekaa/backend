@@ -7,32 +7,32 @@ import (
 	model "github.com/horeekaa/backend/model"
 )
 
-type accountRepoMongo struct {
+type accountDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewAccountRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.AccountRepoMongo, error) {
+func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.AccountDataSourceMongo, error) {
 	basicOperation.SetCollection("accounts")
-	return &accountRepoMongo{
+	return &accountDataSourceMongo{
 		basicOperation: basicOperation,
 	}, nil
 }
 
-func (accRepoMongo *accountRepoMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	res, err := accRepoMongo.basicOperation.FindByID(ID, operationOptions)
+func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	res, err := accDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Account
 	res.Decode(&output)
 	return &output, err
 }
 
-func (accRepoMongo *accountRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	res, err := accRepoMongo.basicOperation.FindOne(query, operationOptions)
+func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	res, err := accDataSourceMongo.basicOperation.FindOne(query, operationOptions)
 	var output model.Account
 	res.Decode(&output)
 	return &output, err
 }
 
-func (accRepoMongo *accountRepoMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
 	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
 		var account *model.Account
@@ -44,7 +44,7 @@ func (accRepoMongo *accountRepoMongo) Find(query map[string]interface{}, operati
 		return nil, nil
 	}
 
-	_, err := accRepoMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := accDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -52,8 +52,8 @@ func (accRepoMongo *accountRepoMongo) Find(query map[string]interface{}, operati
 	return accounts, err
 }
 
-func (accRepoMongo *accountRepoMongo) Create(input *model.CreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	defaultedInput, err := accRepoMongo.setDefaultValues(*input,
+func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	defaultedInput, err := accDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
 	)
@@ -61,7 +61,7 @@ func (accRepoMongo *accountRepoMongo) Create(input *model.CreateAccount, operati
 		return nil, err
 	}
 
-	output, err := accRepoMongo.basicOperation.Create(*defaultedInput.CreateAccount, operationOptions)
+	output, err := accDataSourceMongo.basicOperation.Create(*defaultedInput.CreateAccount, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +79,8 @@ func (accRepoMongo *accountRepoMongo) Create(input *model.CreateAccount, operati
 	return account, err
 }
 
-func (accRepoMongo *accountRepoMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	defaultedInput, err := accRepoMongo.setDefaultValues(*updateData,
+func (accDataSourceMongo *accountDataSourceMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	defaultedInput, err := accDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
 	)
@@ -88,7 +88,7 @@ func (accRepoMongo *accountRepoMongo) Update(ID interface{}, updateData *model.U
 		return nil, err
 	}
 
-	res, err := accRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
+	res, err := accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
 	var output model.Account
 	res.Decode(&output)
 
@@ -100,13 +100,13 @@ type setAccountDefaultValuesOutput struct {
 	UpdateAccount *model.UpdateAccount
 }
 
-func (accRepoMongo *accountRepoMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setAccountDefaultValuesOutput, error) {
+func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setAccountDefaultValuesOutput, error) {
 	var accountStatus model.AccountStatus
 	var accountType model.AccountType
 
 	updateInput := input.(model.UpdateAccount)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		existingObject, err := accRepoMongo.FindByID(updateInput.ID, operationOptions)
+		existingObject, err := accDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
 		}

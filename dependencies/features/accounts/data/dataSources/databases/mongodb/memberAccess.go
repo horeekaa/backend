@@ -3,26 +3,26 @@ package mongodbaccountrepodependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	databaseaccountrepointerfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/repos"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	mongodbaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
-	databaseaccountrepos "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/repos"
+	databaseaccountdatasources "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/sources"
 )
 
-type MemberAccessRepoDependency struct{}
+type MemberAccessDataSourceDependency struct{}
 
-func (memberAccessRepoDependency *MemberAccessRepoDependency) bind() {
+func (memberAccessDataSourceDependency *MemberAccessDataSourceDependency) bind() {
 	container.Singleton(
-		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.MemberAccessRepoMongo {
-			memberAccessRepoMongo, _ := mongodbaccountdatasources.NewMemberAccessRepoMongo(basicOperation)
+		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.MemberAccessDataSourceMongo {
+			memberAccessRepoMongo, _ := mongodbaccountdatasources.NewMemberAccessDataSourceMongo(basicOperation)
 			return memberAccessRepoMongo
 		},
 	)
 
 	container.Singleton(
-		func(memberAccessRepoMongo mongodbaccountdatasourceinterfaces.MemberAccessRepoMongo) databaseaccountrepointerfaces.MemberAccessRepo {
-			memberAccessRepo, _ := databaseaccountrepos.NewMemberAccessRepo()
-			memberAccessRepo.SetMongoRepo(memberAccessRepoMongo)
+		func(memberAccessRepoMongo mongodbaccountdatasourceinterfaces.MemberAccessDataSourceMongo) databaseaccountdatasourceinterfaces.MemberAccessDataSource {
+			memberAccessRepo, _ := databaseaccountdatasources.NewMemberAccessDataSource()
+			memberAccessRepo.SetMongoDataSource(memberAccessRepoMongo)
 			return memberAccessRepo
 		},
 	)

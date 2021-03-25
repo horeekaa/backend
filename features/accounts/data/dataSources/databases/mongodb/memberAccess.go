@@ -9,32 +9,32 @@ import (
 	model "github.com/horeekaa/backend/model"
 )
 
-type memberAccessRepoMongo struct {
+type memberAccessDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewMemberAccessRepoMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessRepoMongo, error) {
+func NewMemberAccessDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessDataSourceMongo, error) {
 	basicOperation.SetCollection("memberaccesses")
-	return &memberAccessRepoMongo{
+	return &memberAccessDataSourceMongo{
 		basicOperation: basicOperation,
 	}, nil
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	res, err := memberAccRepoMongo.basicOperation.FindByID(ID, operationOptions)
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+	res, err := memberAccDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.MemberAccess
 	res.Decode(&output)
 	return &output, err
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	res, err := memberAccRepoMongo.basicOperation.FindOne(query, operationOptions)
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+	res, err := memberAccDataSourceMongo.basicOperation.FindOne(query, operationOptions)
 	var output model.MemberAccess
 	res.Decode(&output)
 	return &output, err
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccess, error) {
 	var memberAccesses = []*model.MemberAccess{}
 	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
 		var memberAccess *model.MemberAccess
@@ -46,7 +46,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Find(query map[string]interface
 		return nil, nil
 	}
 
-	_, err := memberAccRepoMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := memberAccDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +54,8 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Find(query map[string]interface
 	return memberAccesses, err
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) Create(input *model.CreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	defaultedInput, err := memberAccRepoMongo.setDefaultValues(*input,
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.CreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
 	)
@@ -63,7 +63,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Create(input *model.CreateMembe
 		return nil, err
 	}
 
-	output, err := memberAccRepoMongo.basicOperation.Create(*defaultedInput.CreateMemberAccess, operationOptions)
+	output, err := memberAccDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMemberAccess, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,8 +86,8 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Create(input *model.CreateMembe
 	return memberAccess, err
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) Update(ID interface{}, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	defaultedInput, err := memberAccRepoMongo.setDefaultValues(*updateData,
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID interface{}, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
 	)
@@ -95,7 +95,7 @@ func (memberAccRepoMongo *memberAccessRepoMongo) Update(ID interface{}, updateDa
 		return nil, err
 	}
 
-	res, err := memberAccRepoMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccess, operationOptions)
+	res, err := memberAccDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccess, operationOptions)
 	var output model.MemberAccess
 	res.Decode(&output)
 
@@ -107,12 +107,12 @@ type setMemberAccessDefaultValuesOutput struct {
 	UpdateMemberAccess *model.UpdateMemberAccess
 }
 
-func (memberAccRepoMongo *memberAccessRepoMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessDefaultValuesOutput, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessDefaultValuesOutput, error) {
 	var currentTime = time.Now()
 
 	updateInput := input.(model.UpdateMemberAccess)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		_, err := memberAccRepoMongo.FindByID(updateInput.ID, operationOptions)
+		_, err := memberAccDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
 		}
