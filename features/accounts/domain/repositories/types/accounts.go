@@ -26,3 +26,9 @@ type ManagePersonDeviceTokenInput struct {
 	DeviceToken                   string
 	ManagePersonDeviceTokenAction string
 }
+
+type GetAccountMemberAccessInput struct {
+	Account                model.Account
+	MemberAccessRefType    model.MemberAccessRefType
+	MemberAccessRefOptions model.MemberAccessRefOptionsInput
+}
