@@ -42,6 +42,9 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) SetValidat
 func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) PreTransaction(
 	manageAccountAuthInput accountdomainrepositorytypes.ManageAccountAuthenticationInput,
 ) (accountdomainrepositorytypes.ManageAccountAuthenticationInput, error) {
+	if msgAccAuthTrx.manageAccountAuthenticationUsecaseComponent == nil {
+		return manageAccountAuthInput, nil
+	}
 	return msgAccAuthTrx.manageAccountAuthenticationUsecaseComponent.Validation(manageAccountAuthInput)
 }
 

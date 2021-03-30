@@ -30,7 +30,10 @@ func (mgsAccDevToken *managePersonDeviceTokenRepository) SetValidation(
 	return true, nil
 }
 
-func (mgsAccDevToken *managePersonDeviceTokenRepository) preExecute(input accountdomainrepositorytypes.ManagePersonDeviceTokenInput) (*accountdomainrepositorytypes.ManagePersonDeviceTokenInput, error) {
+func (mgsAccDevToken *managePersonDeviceTokenRepository) preExecute(input accountdomainrepositorytypes.ManagePersonDeviceTokenInput) (accountdomainrepositorytypes.ManagePersonDeviceTokenInput, error) {
+	if mgsAccDevToken.managePersonDeviceTokenUsecaseComponent == nil {
+		return input, nil
+	}
 	return mgsAccDevToken.managePersonDeviceTokenUsecaseComponent.Validation(input)
 }
 

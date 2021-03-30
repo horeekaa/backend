@@ -6,7 +6,7 @@ import (
 )
 
 type ManagePersonDeviceTokenUsecaseComponent interface {
-	Validation(input accountrepositorytypes.ManagePersonDeviceTokenInput) (*accountrepositorytypes.ManagePersonDeviceTokenInput, error)
+	Validation(input accountrepositorytypes.ManagePersonDeviceTokenInput) (accountrepositorytypes.ManagePersonDeviceTokenInput, error)
 }
 
 type ManagePersonDeviceTokenRepository interface {

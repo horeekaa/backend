@@ -50,6 +50,9 @@ func (getPrsnData *getPersonDataFromAccountRepository) preExecute(input model.Ac
 			),
 		)
 	}
+	if getPrsnData.getPersonDataFromAccountUsecaseComponent == nil {
+		return &input, nil
+	}
 	return getPrsnData.getPersonDataFromAccountUsecaseComponent.Validation(input)
 }
 

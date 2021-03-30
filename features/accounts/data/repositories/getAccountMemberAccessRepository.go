@@ -39,9 +39,9 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) SetValidation(
 
 func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 	input accountdomainrepositorytypes.GetAccountMemberAccessInput,
-) (*accountdomainrepositorytypes.GetAccountMemberAccessInput, error) {
+) (accountdomainrepositorytypes.GetAccountMemberAccessInput, error) {
 	if &input.Account.ID == nil {
-		return &accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
+		return accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getAccountMemberAccess",
 			horeekaacoreexception.NewExceptionObject(
@@ -50,6 +50,9 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 				errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
 			),
 		)
+	}
+	if getAccountMemberAccess.getAccountMemberAccessUsecaseComponent == nil {
+		return input, nil
 	}
 	return getAccountMemberAccess.getAccountMemberAccessUsecaseComponent.Validation(input)
 }
@@ -63,7 +66,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 		)
 	}
 
-	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID((*preExecuteOutput).Account.ID, &mongodbcoretypes.OperationOptions{})
+	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID(preExecuteOutput.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getPersonDataFromAccount",

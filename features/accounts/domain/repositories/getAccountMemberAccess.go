@@ -6,7 +6,7 @@ import (
 )
 
 type GetAccountMemberAccessUsecaseComponent interface {
-	Validation(input accountdomainrepositorytypes.GetAccountMemberAccessInput) (*accountdomainrepositorytypes.GetAccountMemberAccessInput, error)
+	Validation(input accountdomainrepositorytypes.GetAccountMemberAccessInput) (accountdomainrepositorytypes.GetAccountMemberAccessInput, error)
 }
 
 type GetAccountMemberAccessRepository interface {
