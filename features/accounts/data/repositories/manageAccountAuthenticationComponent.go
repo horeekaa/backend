@@ -103,7 +103,6 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 				LastName:                    lastName,
 				PhoneNumber:                 user.PhoneNumber,
 				Email:                       user.Email,
-				DeviceTokens:                []*string{},
 				NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 			},
 			session,

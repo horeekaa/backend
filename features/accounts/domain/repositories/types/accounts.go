@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	ManagePersonDeviceTokenActionInsert string = "MANAGE_PERSON_DEVICE_TOKEN_INSERT"
-	ManagePersonDeviceTokenActionRemove string = "MANAGE_PERSON_DEVICE_TOKEN_REMOVE"
+	ManageAccountDeviceTokenActionInsert string = "MANAGE_ACCOUNT_DEVICE_TOKEN_INSERT"
+	ManageAccountDeviceTokenActionRemove string = "MANAGE_ACCOUNT_DEVICE_TOKEN_REMOVE"
 )
 
 type ManageAccountAuthenticationInput struct {
@@ -21,10 +21,10 @@ type GetPersonDataByAccountOutput struct {
 	Account *model.Account
 }
 
-type ManagePersonDeviceTokenInput struct {
-	Person                        *model.Person
-	DeviceToken                   string
-	ManagePersonDeviceTokenAction string
+type ManageAccountDeviceTokenInput struct {
+	Account                        *model.Account
+	DeviceToken                    string
+	ManageAccountDeviceTokenAction string
 }
 
 type GetAccountMemberAccessInput struct {

@@ -7,17 +7,17 @@ import (
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 )
 
-type ManagePersonDeviceTokenDependency struct{}
+type ManageAccountDeviceTokenDependency struct{}
 
-func (managePrsDeviceTokenDependency *ManagePersonDeviceTokenDependency) bind() {
+func (manageAccDeviceTokenDependency *ManageAccountDeviceTokenDependency) bind() {
 	container.Singleton(
 		func(
-			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-		) accountdomainrepositoryinterfaces.ManagePersonDeviceTokenRepository {
-			managePersonDeviceTokenRepository, _ := accountdomainrepositories.NewManagePersonDeviceTokenRepository(
-				personDataSource,
+			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
+		) accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository {
+			manageAccountDeviceTokenRepository, _ := accountdomainrepositories.NewManageAccountDeviceTokenRepository(
+				accountDataSource,
 			)
-			return managePersonDeviceTokenRepository
+			return manageAccountDeviceTokenRepository
 		},
 	)
 }

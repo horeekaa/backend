@@ -125,6 +125,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 				StatusReason: updateInput.StatusReason,
 				Type:         &accountType,
 				Person:       updateInput.Person,
+				DeviceTokens: updateInput.DeviceTokens,
 			},
 		}, nil
 	}
@@ -143,6 +144,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 			StatusReason: createInput.StatusReason,
 			Type:         accountType,
 			Person:       createInput.Person,
+			DeviceTokens: []*string{},
 		},
 	}, nil
 }

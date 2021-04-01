@@ -147,7 +147,6 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interfa
 			Gender:                      createInput.Gender,
 			PhoneNumber:                 createInput.PhoneNumber,
 			Email:                       createInput.Email,
-			DeviceTokens:                []*string{},
 			NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
 			CreatedAt:                   &currentTime,
 			UpdatedAt:                   &currentTime,

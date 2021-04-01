@@ -10,7 +10,6 @@ input UpdatePerson {
   gender: Gender
   phoneNumber: String
   email: String
-  deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
   updatedAt: Time
 }
@@ -21,7 +20,6 @@ input CreatePerson {
   gender: Gender
   phoneNumber: String!
   email: String!
-  deviceTokens: [String]
   noOfRecentTransactionToKeep: Int
   createdAt: Time
   updatedAt: Time
@@ -48,7 +46,6 @@ type Person implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  deviceTokens: [String]!
   createdAt: Time!
   updatedAt: Time!
 }
@@ -62,7 +59,6 @@ type PersonDetailed implements iPerson {
   email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
-  deviceTokens: [String]!
   createdAt: Time!
   updatedAt: Time!
 }
