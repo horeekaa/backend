@@ -3,7 +3,6 @@ package accountdomainrepositories
 import (
 	"errors"
 
-	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
@@ -44,11 +43,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 		return accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getAccountMemberAccess",
-			horeekaacoreexception.NewExceptionObject(
-				horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-				"/getAccountMemberAccess",
-				errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
-			),
+			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
 		)
 	}
 	if getAccountMemberAccess.getAccountMemberAccessUsecaseComponent == nil {
@@ -62,7 +57,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getAccountMemberAccess",
-			&err,
+			err,
 		)
 	}
 
@@ -70,7 +65,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getPersonDataFromAccount",
-			&err,
+			err,
 		)
 	}
 
@@ -87,11 +82,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 			"/getPersonDataFromAccount",
-			horeekaacoreexception.NewExceptionObject(
-				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				"/getPersonDataFromAccount",
-				errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
-			),
+			errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
 		)
 	}
 	return memberAccess, nil

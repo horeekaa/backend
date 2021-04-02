@@ -3,7 +3,6 @@ package accountdomainrepositories
 import (
 	"errors"
 
-	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
@@ -43,11 +42,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) preExecute(input model.Ac
 		return &model.Account{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getPersonDataFromAccount",
-			horeekaacoreexception.NewExceptionObject(
-				horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-				"/getPersonDataFromAccount",
-				errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
-			),
+			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
 		)
 	}
 	if getPrsnData.getPersonDataFromAccountUsecaseComponent == nil {
@@ -61,14 +56,14 @@ func (getPrsnData *getPersonDataFromAccountRepository) Execute(input model.Accou
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getPersonDataFromAccount",
-			&err,
+			err,
 		)
 	}
 	account, err := getPrsnData.accountDataSource.GetMongoDataSource().FindByID((*preExecuteOutput).ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getPersonDataFromAccount",
-			&err,
+			err,
 		)
 	}
 
@@ -76,7 +71,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) Execute(input model.Accou
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getPersonDataFromAccount",
-			&err,
+			err,
 		)
 	}
 	return &accountrepositorytypes.GetPersonDataByAccountOutput{

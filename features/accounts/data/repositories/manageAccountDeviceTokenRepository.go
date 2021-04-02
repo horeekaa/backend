@@ -42,14 +42,14 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	if err != nil {
 		return nil, horeekaafailuretoerror.ConvertFailure(
 			"/manageAccountDeviceTokenRepository",
-			&err,
+			err,
 		)
 	}
 	account, err := mgsAccDevToken.accountDataSource.GetMongoDataSource().FindByID(input.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
 		return nil, horeekaafailuretoerror.ConvertFailure(
 			"/manageAccountDeviceTokenRepository",
-			&err,
+			err,
 		)
 	}
 
@@ -76,7 +76,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	if err != nil {
 		return nil, horeekaafailuretoerror.ConvertFailure(
 			"/manageAccountDeviceTokenRepository",
-			&err,
+			err,
 		)
 	}
 	return updatedAccount, nil

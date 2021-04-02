@@ -39,7 +39,7 @@ var badGatewayError = map[string]bool{
 }
 
 // ConvertFailure helps convert failures coming from the service layer to be an error in usecase layer
-func ConvertFailure(path string, failure *error) *horeekaacorebaseerror.Error {
+func ConvertFailure(path string, failure error) *horeekaacorebaseerror.Error {
 	errMsg := ""
 	if &failure.Message != nil {
 		errMsg := *failure.Message

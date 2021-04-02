@@ -34,7 +34,7 @@ var objectNotFoundFailure = map[string]bool{
 }
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
-func ConvertException(path string, exception *error) *horeekaacorebasefailure.Failure {
+func ConvertException(path string, exception error) *horeekaacorebasefailure.Failure {
 	errMsg := ""
 	if &exception.Message != nil {
 		errMsg = *exception.Message

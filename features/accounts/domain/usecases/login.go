@@ -1,7 +1,8 @@
 package accountpresentationusecases
 
 import (
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_base"
+	"errors"
+
 	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/_errors/usecaseErrors/_enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
@@ -34,7 +35,7 @@ func (loginUsecase *loginUsecase) Validation(input accountpresentationusecasetyp
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"loginUsecase/",
-				&horeekaacorebasefailure.Failure{},
+				errors.New("loginUsecase/"),
 			)
 	}
 	return input, nil
@@ -50,7 +51,7 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"loginUsecase/",
-			&err,
+			err,
 		)
 	}
 
@@ -67,7 +68,7 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"loginUsecase/",
-			&err,
+			err,
 		)
 	}
 

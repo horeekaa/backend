@@ -1,7 +1,8 @@
 package accountpresentationusecases
 
 import (
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_base"
+	"errors"
+
 	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -27,7 +28,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Validati
 			"getPersonDataFromAccount/",
 			404,
 			"test",
-			&horeekaacorebasefailure.Failure{},
+			errors.New("getPersonDataFromAccount/"),
 		)
 	}
 	return &input, nil
@@ -38,7 +39,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"getPersonDataFromAccount/",
-			&err,
+			err,
 		)
 	}
 	return result.Person, nil
