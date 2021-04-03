@@ -49,7 +49,7 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) PreTransac
 }
 
 func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) TransactionBody(
-	session *mongodbcoretypes.OperationOptions,
+	operationOption *mongodbcoretypes.OperationOptions,
 	manageAccountAuthInput accountdomainrepositorytypes.ManageAccountAuthenticationInput,
 ) (*model.Account, error) {
 	splitted := strings.Split(manageAccountAuthInput.AuthHeader, " ")
@@ -74,7 +74,7 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 
 		account, err := msgAccAuthTrx.accountDataSource.GetMongoDataSource().FindByID(
 			unmarshaledAccountID,
-			session,
+			operationOption,
 		)
 		if err != nil {
 			return nil, err
@@ -86,7 +86,7 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 		map[string]interface{}{
 			"email": user.Email,
 		},
-		session,
+		operationOption,
 	)
 	if account == nil {
 		fullNameSplit := strings.Split(user.DisplayName, " ")
@@ -105,7 +105,7 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 				Email:                       user.Email,
 				NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 			},
-			session,
+			operationOption,
 		)
 		if err != nil {
 			return nil, err
@@ -118,7 +118,7 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 					ID: &person.ID,
 				},
 			},
-			session,
+			operationOption,
 		)
 		if err != nil {
 			return nil, err
