@@ -22,7 +22,7 @@ func NewGetPersonDataFromAccountUsecase(
 	}, nil
 }
 
-func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Validation(input model.Account) (*model.Account, error) {
+func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) validation(input model.Account) (*model.Account, error) {
 	if &input.ID == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
 			"getPersonDataFromAccount/",
@@ -34,8 +34,16 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Validati
 	return &input, nil
 }
 
-func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(input *model.Account) (*model.Person, error) {
-	result, err := getPersonDataFromAccountUsecase.getPersonDataFromAccountRepository.Execute(*input)
+func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(input model.Account) (*model.Person, error) {
+	validatedInput, err := getPersonDataFromAccountUsecase.validation(input)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"getPersonDataFromAccount/",
+			err,
+		)
+	}
+
+	result, err := getPersonDataFromAccountUsecase.getPersonDataFromAccountRepository.Execute(*validatedInput)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"getPersonDataFromAccount/",

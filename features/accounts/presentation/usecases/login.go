@@ -6,6 +6,5 @@ import (
 )
 
 type LoginUsecase interface {
-	Validation(input accountpresentationusecasetypes.LoginUsecaseInput) (accountpresentationusecasetypes.LoginUsecaseInput, error)
 	Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error)
 }

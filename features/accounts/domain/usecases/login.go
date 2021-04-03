@@ -28,7 +28,7 @@ func NewLoginUsecase(
 	}, nil
 }
 
-func (loginUsecase *loginUsecase) Validation(input accountpresentationusecasetypes.LoginUsecaseInput) (accountpresentationusecasetypes.LoginUsecaseInput, error) {
+func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetypes.LoginUsecaseInput) (accountpresentationusecasetypes.LoginUsecaseInput, error) {
 	if &input.AuthHeader == nil {
 		return accountpresentationusecasetypes.LoginUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
@@ -42,10 +42,18 @@ func (loginUsecase *loginUsecase) Validation(input accountpresentationusecasetyp
 }
 
 func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error) {
+	validatedInput, err := loginUsecase.validation(input)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"getPersonDataFromAccount/",
+			err,
+		)
+	}
+
 	account, err := loginUsecase.manageAccountAuthenticationRepository.RunTransaction(
 		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: input.AuthHeader,
-			Context:    input.Context,
+			AuthHeader: validatedInput.AuthHeader,
+			Context:    validatedInput.Context,
 		},
 	)
 	if err != nil {
@@ -61,7 +69,7 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	account, err = loginUsecase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,
-			DeviceToken:                    input.DeviceToken,
+			DeviceToken:                    validatedInput.DeviceToken,
 			ManageAccountDeviceTokenAction: accountdomainrepositorytypes.ManageAccountDeviceTokenActionInsert,
 		},
 	)
