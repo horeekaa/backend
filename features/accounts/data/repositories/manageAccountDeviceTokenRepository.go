@@ -11,7 +11,7 @@ import (
 )
 
 type manageAccountDeviceTokenRepository struct {
-	accountDataSource                       databaseaccountdatasourceinterfaces.AccountDataSource
+	accountDataSource                        databaseaccountdatasourceinterfaces.AccountDataSource
 	manageAccountDeviceTokenUsecaseComponent accountdomainrepositoryinterfaces.ManageAccountDeviceTokenUsecaseComponent
 }
 
