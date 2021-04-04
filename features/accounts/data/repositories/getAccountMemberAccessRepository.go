@@ -55,10 +55,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input accountdomainrepositorytypes.GetAccountMemberAccessInput) (*model.MemberAccess, error) {
 	preExecuteOutput, err := getAccountMemberAccess.preExecute(input)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAccountMemberAccess",
-			err,
-		)
+		return nil, err
 	}
 
 	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID(preExecuteOutput.Account.ID, &mongodbcoretypes.OperationOptions{})

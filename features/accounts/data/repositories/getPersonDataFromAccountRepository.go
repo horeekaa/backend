@@ -54,10 +54,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) preExecute(input model.Ac
 func (getPrsnData *getPersonDataFromAccountRepository) Execute(input model.Account) (*accountrepositorytypes.GetPersonDataByAccountOutput, error) {
 	preExecuteOutput, err := getPrsnData.preExecute(input)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getPersonDataFromAccount",
-			err,
-		)
+		return nil, err
 	}
 	account, err := getPrsnData.accountDataSource.GetMongoDataSource().FindByID((*preExecuteOutput).ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {

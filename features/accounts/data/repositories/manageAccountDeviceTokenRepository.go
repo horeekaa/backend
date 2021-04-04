@@ -40,10 +40,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) preExecute(input accou
 func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountdomainrepositorytypes.ManageAccountDeviceTokenInput) (*model.Account, error) {
 	_, err := mgsAccDevToken.preExecute(input)
 	if err != nil {
-		return nil, horeekaafailuretoerror.ConvertFailure(
-			"/manageAccountDeviceTokenRepository",
-			err,
-		)
+		return nil, err
 	}
 	account, err := mgsAccDevToken.accountDataSource.GetMongoDataSource().FindByID(input.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
