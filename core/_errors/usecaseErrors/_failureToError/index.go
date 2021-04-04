@@ -27,7 +27,11 @@ var conflictWithCurrentError = map[string]bool{
 var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.SendEmailTypeNotExist:               true,
 	horeekaacorefailureenums.AccountIDNeededToRetrievePersonData: true,
-	horeekaacorefailureenums.SendEmailTypeNotExist:               true,
+
+	horeekaacorefailureenums.MemberAccessRefNotExist:                                   true,
+	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
+
+	horeekaacorefailureenums.SendEmailTypeNotExist: true,
 }
 
 var generalError = map[string]bool{

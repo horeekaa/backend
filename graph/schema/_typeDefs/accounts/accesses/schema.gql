@@ -9,6 +9,7 @@ input CreateMemberAccess {
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptionsInput!
+  defaultAccess: ObjectIDOnly
   status: MemberAccessStatus!
   createdAt: Time
   updatedAt: Time

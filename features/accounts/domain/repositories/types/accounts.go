@@ -11,6 +11,14 @@ const (
 	ManageAccountDeviceTokenActionRemove string = "MANAGE_ACCOUNT_DEVICE_TOKEN_REMOVE"
 )
 
+type CreateMemberAccessForAccountInput struct {
+	Account                    model.Account
+	MemberAccessRefType        model.MemberAccessRefType
+	OrganizationMembershipRole model.OrganizationMembershipRole
+	OrganizationType           model.OrganizationType
+	Organization               model.Organization
+}
+
 type ManageAccountAuthenticationInput struct {
 	AuthHeader string
 	Context    context.Context

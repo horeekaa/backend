@@ -136,6 +136,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(in
 			OrganizationMembershipRole: createInput.OrganizationMembershipRole,
 			MemberAccessRefType:        createInput.MemberAccessRefType,
 			Access:                     createInput.Access,
+			DefaultAccess:              createInput.DefaultAccess,
 			Status:                     createInput.Status,
 			CreatedAt:                  &currentTime,
 			UpdatedAt:                  &currentTime,

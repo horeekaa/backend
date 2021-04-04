@@ -9,6 +9,9 @@ const (
 	FeatureNotAccessibleByAccount       string = "FEATURE_NOT_ACCESSIBLE_BY_ACCOUNT"
 	SendEmailTypeNotExist               string = "SEND_EMAIL_TYPE_NOT_EXIST"
 
+	MemberAccessRefNotExist                                   string = "MEMBER_ACCESS_REF_NOT_EXIST"
+	OrganizationIDNeededToCreateOrganizationBasedMemberAccess string = "ORGANIZATION_ID_NEEDED_TO_CREATE_ORGANIZATION_BASED_MEMBER_ACCESS"
+
 	DuplicateObjectExist string = "DUPLICATE_OBJECT_EXIST"
 	ObjectNotFound       string = "OBJECT_NOT_FOUND"
 
