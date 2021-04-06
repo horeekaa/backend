@@ -70,7 +70,7 @@ models:
 
   ObjectID:
     model:
-      - github.com/horeekaa/backend/repositories/databaseClient/mongoDB/modelMarshaler.ObjectID
+      - github.com/horeekaa/backend/core/databaseClient/mongoDB/modelMarshalers.ObjectID
 
   Time:
     model:
