@@ -111,6 +111,8 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			Access: &model.MemberAccessRefOptionsInput{
 				Account:                  (*model.AccountAccessInput)(memberAccessRef.Access.Account),
 				ManageOrganizationMember: (*model.ManageOrganizationMemberAccessInput)(memberAccessRef.Access.ManageOrganizationMember),
+				RequestOrganization:      (*model.RequestOrganizationAccessInput)(memberAccessRef.Access.RequestOrganization),
+				ViewOrganization:         (*model.ViewOrganizationAccessInput)(memberAccessRef.Access.ViewOrganization),
 			},
 			Organization:  &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
 			Status:        model.MemberAccessStatusActive,
