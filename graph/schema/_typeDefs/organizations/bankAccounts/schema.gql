@@ -1,9 +1,9 @@
-input BankAccount {
+input BankAccountInput {
   number: String!
   bankName: String!
 }
 
-type BankAccountType {
+type BankAccount {
   number: String!
   bankName: String!
 }

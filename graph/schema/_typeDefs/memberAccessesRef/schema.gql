@@ -22,6 +22,8 @@ input CreateMemberAccessRef {
     memberAccessRefType: MemberAccessRefType!
     organizationMembershipRole: OrganizationMembershipRole
     organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus
+    submittingPerson: ObjectIDOnly!
     createdAt: Time
     updatedAt: Time
 }
@@ -32,6 +34,8 @@ input UpdateMemberAccessRef {
     memberAccessRefType: MemberAccessRefType
     organizationMembershipRole: OrganizationMembershipRole
     organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus
+    approvingPerson: ObjectIDOnly
     updatedAt: Time
 }
 
@@ -41,6 +45,9 @@ type MemberAccessRef {
     memberAccessRefType: MemberAccessRefType!
     organizationMembershipRole: OrganizationMembershipRole
     organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus!
+    submittingPerson: Person!
+    approvingPerson: Person
     createdAt: Time!
     updatedAt: Time!
 }

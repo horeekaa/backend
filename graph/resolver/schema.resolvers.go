@@ -35,7 +35,7 @@ func (r *mutationResolver) Logout(ctx context.Context, deviceToken *string) (*mo
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) CreateOrganization(ctx context.Context, newOrganization model.NewOrganization) (*model.Organization, error) {
+func (r *mutationResolver) CreateOrganization(ctx context.Context, createOrganization model.CreateOrganization) (*model.Organization, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

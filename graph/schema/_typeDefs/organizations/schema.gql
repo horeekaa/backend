@@ -4,53 +4,49 @@ enum OrganizationType {
   INTERNAL
 }
 
-enum OrganizationStatus {
-  PROPOSED
-  APPROVED
-  REVISION_NEEDED
-  REJECTED
-}
-
-input NewOrganization {
+input CreateOrganization {
   name: String!
   phoneNumber: String!
   type: OrganizationType!
-  addresses: [NewAddress]!
-  bankAccount: BankAccount!
   profilePhotos: [NewOrganizationDescriptivePhoto]
   taxIdentification: NewIDCard
+  proposalStatus: EntityProposalStatus
+  submittingPerson: ObjectIDOnly!
+  createdAt: Time
+  updatedAt: Time
 }
 
 input UpdateOrganization {
   _id: ObjectID!
   name: String
   phoneNumber: String
-  status: OrganizationStatus
   type: OrganizationType
   creditAllowance: Int
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
-  addresses: [UpdateAddress]!
-  bankAccount: BankAccount
   profilePhotos: [UpdateOrganizationDescriptivePhoto]
   taxIdentification: UpdateIDCard
+  proposalStatus: EntityProposalStatus
+  approvingPerson: ObjectIDOnly
+  updatedAt: Time
 }
 
 type Organization {
   _id: ObjectID!
   name: String!
   phoneNumber: String!
-  status: OrganizationStatus!
   type: OrganizationType!
   creditAllowance: Int
   rating: Float
   ratingDescription: String
   point: Int
   unfinalizedPoint: Int
-  addresses: [Address]!
-  bankAccount: BankAccountType
   profilePhotos: [DescriptivePhoto]!
   taxIdentification: IDCard
+  proposalStatus: EntityProposalStatus!
+  submittingPerson: Person!
+  approvingPerson: Person
   createdAt: Time!
+  updatedAt: Time!
 }
