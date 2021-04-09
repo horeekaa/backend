@@ -1,4 +1,4 @@
-package mongodbaccountrepodependencies
+package mongodbaccountdatasourcedependencies
 
 import (
 	"github.com/golobby/container/v2"
