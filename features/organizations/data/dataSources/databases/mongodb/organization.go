@@ -69,26 +69,9 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Creat
 	}
 
 	organizationOutput := output.Object.(model.Organization)
+	organizationOutput.ID = output.ID
 
-	organization := &model.Organization{
-		ID:                output.ID,
-		Name:              organizationOutput.Name,
-		PhoneNumber:       organizationOutput.PhoneNumber,
-		Type:              organizationOutput.Type,
-		CreditAllowance:   organizationOutput.CreditAllowance,
-		Rating:            organizationOutput.Rating,
-		RatingDescription: organizationOutput.RatingDescription,
-		Point:             organizationOutput.Point,
-		UnfinalizedPoint:  organizationOutput.UnfinalizedPoint,
-		ProfilePhotos:     organizationOutput.ProfilePhotos,
-		TaxIdentification: organizationOutput.TaxIdentification,
-		ProposalStatus:    organizationOutput.ProposalStatus,
-		SubmittingPerson:  organizationOutput.SubmittingPerson,
-		CreatedAt:         organizationOutput.CreatedAt,
-		UpdatedAt:         organizationOutput.UpdatedAt,
-	}
-
-	return organization, err
+	return &organizationOutput, err
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID interface{}, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
@@ -115,6 +98,7 @@ type setorganizationDefaultValuesOutput struct {
 func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setorganizationDefaultValuesOutput, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
+	defaultPoint := 0
 
 	updateInput := input.(model.UpdateOrganization)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
@@ -122,46 +106,22 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input in
 		if err != nil {
 			return nil, err
 		}
-		proposalStatus := defaultProposalStatus
-		if updateInput.ProposalStatus != nil {
-			proposalStatus = *updateInput.ProposalStatus
-		}
+		updateInput.UpdatedAt = &currentTime
 
 		return &setorganizationDefaultValuesOutput{
-			UpdateOrganization: &model.UpdateOrganization{
-				ID:                updateInput.ID,
-				Name:              updateInput.Name,
-				PhoneNumber:       updateInput.PhoneNumber,
-				Type:              updateInput.Type,
-				CreditAllowance:   updateInput.CreditAllowance,
-				Rating:            updateInput.Rating,
-				RatingDescription: updateInput.RatingDescription,
-				UnfinalizedPoint:  updateInput.UnfinalizedPoint,
-				ProfilePhotos:     updateInput.ProfilePhotos,
-				TaxIdentification: updateInput.TaxIdentification,
-				ProposalStatus:    &proposalStatus,
-				ApprovingPerson:   updateInput.ApprovingPerson,
-				UpdatedAt:         &currentTime,
-			},
+			UpdateOrganization: &updateInput,
 		}, nil
 	}
 	createInput := (input).(model.CreateOrganization)
-	proposalStatus := defaultProposalStatus
-	if createInput.ProposalStatus != nil {
-		proposalStatus = *createInput.ProposalStatus
+	if createInput.ProposalStatus == nil {
+		createInput.ProposalStatus = &defaultProposalStatus
 	}
+	createInput.Point = &defaultPoint
+	createInput.UnfinalizedPoint = &defaultPoint
+	createInput.CreatedAt = &currentTime
+	createInput.UpdatedAt = &currentTime
 
 	return &setorganizationDefaultValuesOutput{
-		CreateOrganization: &model.CreateOrganization{
-			Name:              createInput.Name,
-			PhoneNumber:       createInput.PhoneNumber,
-			Type:              createInput.Type,
-			ProfilePhotos:     createInput.ProfilePhotos,
-			TaxIdentification: createInput.TaxIdentification,
-			ProposalStatus:    &proposalStatus,
-			SubmittingPerson:  createInput.SubmittingPerson,
-			CreatedAt:         &currentTime,
-			UpdatedAt:         &currentTime,
-		},
+		CreateOrganization: &createInput,
 	}, nil
 }

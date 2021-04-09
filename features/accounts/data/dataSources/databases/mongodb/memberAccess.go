@@ -69,21 +69,9 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 	}
 
 	memberAccessOutput := output.Object.(model.MemberAccess)
+	memberAccessOutput.ID = output.ID
 
-	memberAccess := &model.MemberAccess{
-		ID:                         output.ID,
-		Account:                    memberAccessOutput.Account,
-		Organization:               memberAccessOutput.Organization,
-		OrganizationMembershipRole: memberAccessOutput.OrganizationMembershipRole,
-		MemberAccessRefType:        memberAccessOutput.MemberAccessRefType,
-		Access:                     memberAccessOutput.Access,
-		DefaultAccess:              memberAccessOutput.DefaultAccess,
-		Status:                     memberAccessOutput.Status,
-		CreatedAt:                  memberAccessOutput.CreatedAt,
-		UpdatedAt:                  memberAccessOutput.UpdatedAt,
-	}
-
-	return memberAccess, err
+	return &memberAccessOutput, err
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID interface{}, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
@@ -116,30 +104,17 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(in
 		if err != nil {
 			return nil, err
 		}
+		updateInput.UpdatedAt = &currentTime
 
 		return &setMemberAccessDefaultValuesOutput{
-			UpdateMemberAccess: &model.UpdateMemberAccess{
-				ID:                         updateInput.ID,
-				OrganizationMembershipRole: updateInput.OrganizationMembershipRole,
-				Access:                     updateInput.Access,
-				Status:                     updateInput.Status,
-				UpdatedAt:                  &currentTime,
-			},
+			UpdateMemberAccess: &updateInput,
 		}, nil
 	}
 	createInput := (input).(model.CreateMemberAccess)
+	createInput.CreatedAt = &currentTime
+	createInput.UpdatedAt = &currentTime
 
 	return &setMemberAccessDefaultValuesOutput{
-		CreateMemberAccess: &model.CreateMemberAccess{
-			Account:                    createInput.Account,
-			Organization:               createInput.Organization,
-			OrganizationMembershipRole: createInput.OrganizationMembershipRole,
-			MemberAccessRefType:        createInput.MemberAccessRefType,
-			Access:                     createInput.Access,
-			DefaultAccess:              createInput.DefaultAccess,
-			Status:                     createInput.Status,
-			CreatedAt:                  &currentTime,
-			UpdatedAt:                  &currentTime,
-		},
+		CreateMemberAccess: &createInput,
 	}, nil
 }

@@ -8,6 +8,8 @@ input CreateOrganization {
   name: String!
   phoneNumber: String!
   type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
   profilePhotos: [NewOrganizationDescriptivePhoto]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus

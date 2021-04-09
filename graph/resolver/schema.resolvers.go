@@ -39,7 +39,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, createOrganiz
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) User(ctx context.Context) (*model.PersonDetailed, error) {
+func (r *queryResolver) User(ctx context.Context) (*model.Person, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

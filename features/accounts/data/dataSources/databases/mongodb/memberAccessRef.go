@@ -69,18 +69,9 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 	}
 
 	memberAccessRefOutput := output.Object.(model.MemberAccessRef)
+	memberAccessRefOutput.ID = output.ID
 
-	memberAccessRef := &model.MemberAccessRef{
-		ID:                         output.ID,
-		Access:                     memberAccessRefOutput.Access,
-		MemberAccessRefType:        memberAccessRefOutput.MemberAccessRefType,
-		OrganizationMembershipRole: memberAccessRefOutput.OrganizationMembershipRole,
-		OrganizationType:           memberAccessRefOutput.OrganizationType,
-		CreatedAt:                  memberAccessRefOutput.CreatedAt,
-		UpdatedAt:                  memberAccessRefOutput.UpdatedAt,
-	}
-
-	return memberAccessRef, err
+	return &memberAccessRefOutput, err
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
@@ -106,6 +97,7 @@ type setMemberAccessRefDefaultValuesOutput struct {
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
 	var currentTime = time.Now()
+	defaultProposalStatus := model.EntityProposalStatusProposed
 
 	updateInput := input.(model.UpdateMemberAccessRef)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
@@ -113,28 +105,20 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 		if err != nil {
 			return nil, err
 		}
+		updateInput.UpdatedAt = &currentTime
 
 		return &setMemberAccessRefDefaultValuesOutput{
-			UpdateMemberAccessRef: &model.UpdateMemberAccessRef{
-				ID:                         updateInput.ID,
-				Access:                     updateInput.Access,
-				MemberAccessRefType:        updateInput.MemberAccessRefType,
-				OrganizationMembershipRole: updateInput.OrganizationMembershipRole,
-				OrganizationType:           updateInput.OrganizationType,
-				UpdatedAt:                  &currentTime,
-			},
+			UpdateMemberAccessRef: &updateInput,
 		}, nil
 	}
 	createInput := (input).(model.CreateMemberAccessRef)
+	if createInput.ProposalStatus == nil {
+		createInput.ProposalStatus = &defaultProposalStatus
+	}
+	createInput.CreatedAt = &currentTime
+	createInput.UpdatedAt = &currentTime
 
 	return &setMemberAccessRefDefaultValuesOutput{
-		CreateMemberAccessRef: &model.CreateMemberAccessRef{
-			Access:                     createInput.Access,
-			MemberAccessRefType:        createInput.MemberAccessRefType,
-			OrganizationMembershipRole: createInput.OrganizationMembershipRole,
-			OrganizationType:           createInput.OrganizationType,
-			CreatedAt:                  &currentTime,
-			UpdatedAt:                  &currentTime,
-		},
+		CreateMemberAccessRef: &createInput,
 	}, nil
 }

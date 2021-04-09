@@ -25,36 +25,11 @@ input CreatePerson {
   updatedAt: Time
 }
 
-interface iPerson {
+type Person {
   _id: ObjectID!
   firstName: String!
   lastName: String!
-  gender: Gender!
-  phoneNumber: String
-  email: String!
-  idCard: IDCard
-  noOfRecentTransactionToKeep: Int!
-  createdAt: Time!
-}
-
-type Person implements iPerson {
-  _id: ObjectID!
-  firstName: String!
-  lastName: String!
-  gender: Gender!
-  phoneNumber: String
-  email: String!
-  idCard: IDCard
-  noOfRecentTransactionToKeep: Int!
-  createdAt: Time!
-  updatedAt: Time!
-}
-
-type PersonDetailed implements iPerson {
-  _id: ObjectID!
-  firstName: String!
-  lastName: String!
-  gender: Gender!
+  gender: Gender
   phoneNumber: String
   email: String!
   idCard: IDCard

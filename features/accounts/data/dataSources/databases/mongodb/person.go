@@ -69,20 +69,9 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 	}
 
 	personOutput := output.Object.(model.Person)
+	personOutput.ID = output.ID
 
-	person := &model.Person{
-		ID:                          output.ID,
-		FirstName:                   personOutput.FirstName,
-		LastName:                    personOutput.LastName,
-		Gender:                      personOutput.Gender,
-		PhoneNumber:                 personOutput.PhoneNumber,
-		Email:                       personOutput.Email,
-		NoOfRecentTransactionToKeep: personOutput.NoOfRecentTransactionToKeep,
-		CreatedAt:                   personOutput.CreatedAt,
-		UpdatedAt:                   personOutput.UpdatedAt,
-	}
-
-	return person, err
+	return &personOutput, err
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
@@ -107,7 +96,7 @@ type setPersonDefaultValuesOutput struct {
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setPersonDefaultValuesOutput, error) {
-	var noOfRecentTransactionToKeep int
+	defaultNoOfRecentTransactionToKeep := 15
 
 	var currentTime = time.Now()
 	updateInput := input.(model.UpdatePerson)
@@ -118,38 +107,23 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interfa
 		}
 
 		if &(*existingObject).NoOfRecentTransactionToKeep == nil {
-			noOfRecentTransactionToKeep = 15
+			updateInput.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
 		}
+		updateInput.UpdatedAt = &currentTime
 
 		return &setPersonDefaultValuesOutput{
-			UpdatePerson: &model.UpdatePerson{
-				ID:                          updateInput.ID,
-				FirstName:                   updateInput.FirstName,
-				LastName:                    updateInput.LastName,
-				Gender:                      updateInput.Gender,
-				PhoneNumber:                 updateInput.PhoneNumber,
-				Email:                       updateInput.Email,
-				NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
-				UpdatedAt:                   &currentTime,
-			},
+			UpdatePerson: &updateInput,
 		}, nil
 	}
 	createInput := (input).(model.CreatePerson)
 
 	if &createInput.NoOfRecentTransactionToKeep == nil {
-		noOfRecentTransactionToKeep = 15
+		createInput.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
 	}
+	createInput.CreatedAt = &currentTime
+	createInput.UpdatedAt = &currentTime
 
 	return &setPersonDefaultValuesOutput{
-		CreatePerson: &model.CreatePerson{
-			FirstName:                   createInput.FirstName,
-			LastName:                    createInput.LastName,
-			Gender:                      createInput.Gender,
-			PhoneNumber:                 createInput.PhoneNumber,
-			Email:                       createInput.Email,
-			NoOfRecentTransactionToKeep: &noOfRecentTransactionToKeep,
-			CreatedAt:                   &currentTime,
-			UpdatedAt:                   &currentTime,
-		},
+		CreatePerson: &createInput,
 	}, nil
 }

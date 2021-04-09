@@ -5,5 +5,5 @@ extend type Mutation {
 }
 
 extend type Query {
-  user: PersonDetailed!
+  user: Person!
 }
