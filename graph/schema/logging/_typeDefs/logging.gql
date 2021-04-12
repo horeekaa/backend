@@ -1,4 +1,4 @@
-enum LoggingActivity {
+enum LoggedActivity {
     CREATE
     UPDATE
     DELETE
@@ -8,16 +8,28 @@ input CreateLogging {
 	collection: String!
     changeLog: String!
     changedBy: ObjectIDOnly!
-    activity: LoggingActivity!
+    activity: LoggedActivity!
     proposalStatus: EntityProposalStatus!
     createdAt: Time
 }
 
+input UpdateLogging {
+    _id: ObjectID!
+    collection: String
+    changeLog: String
+    changedBy: ObjectIDOnly
+    activity: LoggedActivity
+    proposalStatus: EntityProposalStatus
+    updatedAt: Time
+}
+
 type Logging {
+    _id: ObjectID!
     collection: String!
     changeLog: String!
     changedBy: Person!
-    activity: LoggingActivity!
+    activity: LoggedActivity!
     proposalStatus: EntityProposalStatus!
     createdAt: Time
+    updatedAt: Time
 }
