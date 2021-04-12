@@ -42,9 +42,9 @@ type Organization {
   creditAllowance: Int
   rating: Float
   ratingDescription: String
-  point: Int
-  unfinalizedPoint: Int
-  profilePhotos: [DescriptivePhoto]!
+  point: Int!
+  unfinalizedPoint: Int!
+  profilePhotos: [DescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   submittingPerson: Person!
