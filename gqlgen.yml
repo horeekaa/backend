@@ -55,6 +55,18 @@ models:
         resolver: true
       account:
         resolver: true
+  MemberAccessRef:
+    fields:
+      submittingPerson:
+        resolver: true
+      approvingPerson:
+        resolver: true
+  Organization:
+    fields:
+      submittingPerson:
+        resolver: true
+      approvingPerson:
+        resolver: true
 
   ID:
     model:
