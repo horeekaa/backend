@@ -14,6 +14,7 @@ input CreateOrganization {
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
   submittingPerson: ObjectIDOnly!
+  correspondingLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -49,6 +50,7 @@ type Organization {
   proposalStatus: EntityProposalStatus!
   submittingPerson: Person!
   approvingPerson: Person
+  correspondingLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }
