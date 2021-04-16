@@ -99,8 +99,8 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 	var currentTime = time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 
-	updateInput := input.(model.UpdateMemberAccessRef)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateMemberAccessRef)
 		_, err := orgMemberDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err

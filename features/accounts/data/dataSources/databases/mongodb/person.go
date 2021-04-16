@@ -99,8 +99,8 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interfa
 	defaultNoOfRecentTransactionToKeep := 15
 
 	var currentTime = time.Now()
-	updateInput := input.(model.UpdatePerson)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdatePerson)
 		existingObject, err := prsnDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err

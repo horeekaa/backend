@@ -98,8 +98,8 @@ type setLoggingDefaultValuesOutput struct {
 func (orgDataSourceMongo *loggingDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setLoggingDefaultValuesOutput, error) {
 	currentTime := time.Now()
 
-	updateInput := input.(model.UpdateLogging)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateLogging)
 		_, err := orgDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err

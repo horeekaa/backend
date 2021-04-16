@@ -98,8 +98,8 @@ type setMemberAccessDefaultValuesOutput struct {
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessDefaultValuesOutput, error) {
 	var currentTime = time.Now()
 
-	updateInput := input.(model.UpdateMemberAccess)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateMemberAccess)
 		_, err := memberAccDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err

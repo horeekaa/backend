@@ -100,8 +100,8 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input in
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	defaultPoint := 0
 
-	updateInput := input.(model.UpdateOrganization)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateOrganization)
 		_, err := orgDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
