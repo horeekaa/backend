@@ -11,3 +11,9 @@ type LogEntityProposalActivityInput struct {
 	ExistingObjectID *string
 	NewObject        *interface{}
 }
+
+type LogEntityApprovalActivityInput struct {
+	PreviousLog    *model.Logging
+	ApprovedBy     *model.Person
+	ApprovalStatus model.EntityProposalStatus
+}
