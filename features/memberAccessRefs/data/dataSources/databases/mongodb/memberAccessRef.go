@@ -1,11 +1,11 @@
-package mongodbaccountdatasources
+package mongodbmemberaccessrefdatasources
 
 import (
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
-	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
+	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 )
 
@@ -13,7 +13,7 @@ type memberAccessRefDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessRefDataSourceMongo, error) {
+func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbmemberaccessrefdatasourceinterfaces.MemberAccessRefDataSourceMongo, error) {
 	basicOperation.SetCollection("memberaccessrefs")
 	return &memberAccessRefDataSourceMongo{
 		basicOperation: basicOperation,

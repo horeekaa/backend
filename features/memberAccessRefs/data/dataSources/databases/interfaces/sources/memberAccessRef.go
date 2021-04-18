@@ -1,0 +1,10 @@
+package databasememberaccessrefdatasourceinterfaces
+
+import (
+	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb/interfaces"
+)
+
+type MemberAccessRefDataSource interface {
+	GetMongoDataSource() mongodbmemberaccessrefdatasourceinterfaces.MemberAccessRefDataSourceMongo
+	SetMongoDataSource(mongoRepo mongodbmemberaccessrefdatasourceinterfaces.MemberAccessRefDataSourceMongo) bool
+}

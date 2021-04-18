@@ -1,4 +1,4 @@
-package mongodbaccountdatasourceinterfaces
+package mongodbmemberaccessrefdatasourceinterfaces
 
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"

@@ -8,6 +8,7 @@ import (
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 	"github.com/pkg/errors"
 )
@@ -15,14 +16,14 @@ import (
 type createMemberAccessForAccountRepository struct {
 	accountDataSource                            databaseaccountdatasourceinterfaces.AccountDataSource
 	memberAccessDataSource                       databaseaccountdatasourceinterfaces.MemberAccessDataSource
-	memberAccessRefDataSource                    databaseaccountdatasourceinterfaces.MemberAccessRefDataSource
+	memberAccessRefDataSource                    databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	createMemberAccessForAccountUsecaseComponent accountdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent
 }
 
 func NewCreateMemberAccessForAccountRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
-	memberAccessRefDataSource databaseaccountdatasourceinterfaces.MemberAccessRefDataSource,
+	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 ) (accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository, error) {
 	return &createMemberAccessForAccountRepository{
 		accountDataSource:         accountDataSource,
