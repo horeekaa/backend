@@ -4,7 +4,8 @@ import "github.com/horeekaa/backend/model"
 
 type LogEntityProposalActivityInput struct {
 	CollectionName   string
-	ChangedBy        model.Person
+	CreatedByAccount *model.Account
+	CreatorInitial   string
 	Activity         model.LoggedActivity
 	ProposalStatus   model.EntityProposalStatus
 	ExistingObject   *interface{}
@@ -13,7 +14,8 @@ type LogEntityProposalActivityInput struct {
 }
 
 type LogEntityApprovalActivityInput struct {
-	PreviousLog    *model.Logging
-	ApprovedBy     *model.Person
-	ApprovalStatus model.EntityProposalStatus
+	PreviousLog      *model.Logging
+	ApprovingAccount *model.Account
+	ApproverInitial  string
+	ApprovalStatus   model.EntityProposalStatus
 }

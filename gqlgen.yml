@@ -57,15 +57,15 @@ models:
         resolver: true
   MemberAccessRef:
     fields:
-      submittingPerson:
+      submittingAccount:
         resolver: true
-      approvingPerson:
+      approvingAccount:
         resolver: true
   Organization:
     fields:
-      submittingPerson:
+      submittingAccount:
         resolver: true
-      approvingPerson:
+      approvingAccount:
         resolver: true
 
   ID:

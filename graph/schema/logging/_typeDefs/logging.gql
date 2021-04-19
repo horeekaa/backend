@@ -7,7 +7,7 @@ enum LoggedActivity {
 input CreateLogging {
 	collection: String!
     changeLog: String!
-    changedBy: ObjectIDOnly!
+    createdByAccount: ObjectIDOnly!
     activity: LoggedActivity!
     proposalStatus: EntityProposalStatus!
     createdAt: Time
@@ -17,7 +17,7 @@ input UpdateLogging {
     _id: ObjectID!
     collection: String
     changeLog: String
-    changedBy: ObjectIDOnly
+    createdByAccount: ObjectIDOnly
     activity: LoggedActivity
     proposalStatus: EntityProposalStatus
     updatedAt: Time
@@ -27,7 +27,7 @@ type Logging {
     _id: ObjectID!
     collection: String!
     changeLog: String!
-    changedBy: Person!
+    createdByAccount: Account!
     activity: LoggedActivity!
     proposalStatus: EntityProposalStatus!
     createdAt: Time

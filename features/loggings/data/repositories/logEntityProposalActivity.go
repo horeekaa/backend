@@ -71,7 +71,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		existingIDValue := *validatedInput.ExistingObjectID
 		changeLogString = fmt.Sprintf(
 			"%s proposed changes to %s with id **%s to the followings:\n",
-			validatedInput.ChangedBy.FirstName,
+			validatedInput.CreatorInitial,
 			validatedInput.CollectionName,
 			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
 		)
@@ -106,7 +106,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 	case model.LoggedActivityCreate:
 		changeLogString = fmt.Sprintf(
 			"%s proposed creation to %s with the followings:\n",
-			validatedInput.ChangedBy.FirstName,
+			validatedInput.CreatorInitial,
 			validatedInput.CollectionName,
 		)
 		logEttPrpsalActivity.structFieldIteratorUtility.SetIteratingFunc(
@@ -145,7 +145,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		existingIDValue := *validatedInput.ExistingObjectID
 		changeLogString = fmt.Sprintf(
 			"%s proposed deletion to %s with id **%s\n",
-			validatedInput.ChangedBy.FirstName,
+			validatedInput.CreatorInitial,
 			validatedInput.CollectionName,
 			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
 		)
@@ -156,8 +156,8 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		&model.CreateLogging{
 			Collection: validatedInput.CollectionName,
 			ChangeLog:  changeLogString.(string),
-			ChangedBy: &model.ObjectIDOnly{
-				ID: &validatedInput.ChangedBy.ID,
+			CreatedByAccount: &model.ObjectIDOnly{
+				ID: &validatedInput.CreatedByAccount.ID,
 			},
 			Activity:       validatedInput.Activity,
 			ProposalStatus: validatedInput.ProposalStatus,

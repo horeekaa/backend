@@ -13,7 +13,7 @@ input CreateOrganization {
   profilePhotos: [NewOrganizationDescriptivePhoto]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
-  submittingPerson: ObjectIDOnly!
+  submittingAccount: ObjectIDOnly!
   correspondingLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -31,7 +31,7 @@ input UpdateOrganization {
   profilePhotos: [UpdateOrganizationDescriptivePhoto]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
-  approvingPerson: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -48,8 +48,8 @@ type Organization {
   profilePhotos: [DescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
-  submittingPerson: Person!
-  approvingPerson: Person
+  submittingAccount: Account!
+  approvingAccount: Account
   correspondingLog: Logging!
   createdAt: Time!
   updatedAt: Time!

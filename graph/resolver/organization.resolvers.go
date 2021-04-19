@@ -11,11 +11,11 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-func (r *organizationResolver) SubmittingPerson(ctx context.Context, obj *model.Organization) (*model.Person, error) {
+func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *organizationResolver) ApprovingPerson(ctx context.Context, obj *model.Organization) (*model.Person, error) {
+func (r *organizationResolver) ApprovingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

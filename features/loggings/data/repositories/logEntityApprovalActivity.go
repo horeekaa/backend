@@ -64,7 +64,7 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 	case model.EntityProposalStatusRejected:
 		changeLogString = fmt.Sprintf(
 			"%v rejected the following changes to collection %s:\n%s",
-			validatedInput.ApprovedBy.FirstName,
+			validatedInput.ApproverInitial,
 			previousLog.Collection,
 			previousLog.ChangeLog,
 		)
@@ -73,7 +73,7 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 	case model.EntityProposalStatusApproved:
 		changeLogString = fmt.Sprintf(
 			"%v approved the following changes to collection %s:\n%s",
-			validatedInput.ApprovedBy.FirstName,
+			validatedInput.ApproverInitial,
 			previousLog.Collection,
 			previousLog.ChangeLog,
 		)
@@ -82,7 +82,7 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 	case model.EntityProposalStatusRevisionNeeded:
 		changeLogString = fmt.Sprintf(
 			"%v asked revision for the following changes to collection %s:\n%s",
-			validatedInput.ApprovedBy.FirstName,
+			validatedInput.ApproverInitial,
 			previousLog.Collection,
 			previousLog.ChangeLog,
 		)
@@ -93,8 +93,8 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 		&model.CreateLogging{
 			Collection: previousLog.Collection,
 			ChangeLog:  changeLogString,
-			ChangedBy: &model.ObjectIDOnly{
-				ID: &validatedInput.ApprovedBy.ID,
+			CreatedByAccount: &model.ObjectIDOnly{
+				ID: &validatedInput.ApprovingAccount.ID,
 			},
 			Activity:       previousLog.Activity,
 			ProposalStatus: model.EntityProposalStatusApproved,
