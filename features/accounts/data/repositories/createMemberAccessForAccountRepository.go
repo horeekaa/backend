@@ -1,6 +1,8 @@
 package accountdomainrepositories
 
 import (
+	"encoding/json"
+
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
@@ -103,21 +105,19 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			errors.New(horeekaacorefailureenums.MemberAccessRefNotExist),
 		)
 	}
+	var accessInput model.MemberAccessRefOptionsInput
+	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
+	json.Unmarshal(jsonTemp, &accessInput)
 
 	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
 		&model.CreateMemberAccess{
 			Account:                    &model.ObjectIDOnly{ID: &account.ID},
 			OrganizationMembershipRole: &validatedInput.OrganizationMembershipRole,
 			MemberAccessRefType:        validatedInput.MemberAccessRefType,
-			Access: &model.MemberAccessRefOptionsInput{
-				Account:                  (*model.AccountAccessInput)(memberAccessRef.Access.Account),
-				ManageOrganizationMember: (*model.ManageOrganizationMemberAccessInput)(memberAccessRef.Access.ManageOrganizationMember),
-				RequestOrganization:      (*model.RequestOrganizationAccessInput)(memberAccessRef.Access.RequestOrganization),
-				ViewOrganization:         (*model.ViewOrganizationAccessInput)(memberAccessRef.Access.ViewOrganization),
-			},
-			Organization:  &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
-			Status:        model.MemberAccessStatusActive,
-			DefaultAccess: &model.ObjectIDOnly{ID: &memberAccessRef.ID},
+			Access:                     &accessInput,
+			Organization:               &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
+			Status:                     model.MemberAccessStatusActive,
+			DefaultAccess:              &model.ObjectIDOnly{ID: &memberAccessRef.ID},
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
