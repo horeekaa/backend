@@ -78,6 +78,9 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 
 		logEttPrpsalActivity.structComparisonUtility.SetComparisonFunc(
 			func(tag interface{}, field1 interface{}, field2 interface{}, logString *interface{}) {
+				if field1 == field2 {
+					return
+				}
 				*logString = fmt.Sprintf(
 					"%v%v from %v to %v\n",
 					*logString,
