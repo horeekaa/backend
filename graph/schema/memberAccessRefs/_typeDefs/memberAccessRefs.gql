@@ -24,6 +24,7 @@ input CreateMemberAccessRef {
     organizationType: OrganizationType
     proposalStatus: EntityProposalStatus
     submittingAccount: ObjectIDOnly!
+    previousEntity: ObjectIDOnly
     correspondingLog: ObjectIDOnly
     createdAt: Time
     updatedAt: Time
@@ -36,6 +37,7 @@ input UpdateMemberAccessRef {
     organizationMembershipRole: OrganizationMembershipRole
     organizationType: OrganizationType
     proposalStatus: EntityProposalStatus
+    submittingAccount: ObjectIDOnly!
     approvingAccount: ObjectIDOnly
     updatedAt: Time
 }
@@ -49,6 +51,7 @@ type MemberAccessRef {
     proposalStatus: EntityProposalStatus!
     submittingAccount: Account!
     approvingAccount: Account
+    previousEntity: MemberAccessRef
     correspondingLog: Logging!
     createdAt: Time!
     updatedAt: Time!
