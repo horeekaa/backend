@@ -5,7 +5,7 @@ import (
 
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -58,9 +58,12 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 		return nil, err
 	}
 
-	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID(preExecuteOutput.Account.ID, &mongodbcoretypes.OperationOptions{})
+	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID(
+		preExecuteOutput.Account.ID,
+		&mongodbcoretypes.OperationOptions{},
+	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/getPersonDataFromAccount",
 			err,
 		)
@@ -69,12 +72,18 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	memberAccess, err := getAccountMemberAccess.memberAccessDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
 			"account":             &model.Account{ID: account.ID},
-			"memberAccessRefType": input.MemberAccessRefType,
-			"access":              input.MemberAccessRefOptions,
+			"memberAccessRefType": preExecuteOutput.MemberAccessRefType,
+			"access":              preExecuteOutput.MemberAccessRefOptions,
 			"status":              model.MemberAccessStatusActive,
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/getPersonDataFromAccount",
+			err,
+		)
+	}
 	if memberAccess == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,

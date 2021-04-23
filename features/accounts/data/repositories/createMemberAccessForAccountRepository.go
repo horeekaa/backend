@@ -5,7 +5,7 @@ import (
 
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -78,7 +78,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 
 	account, err := createMbrAccForAccount.accountDataSource.GetMongoDataSource().FindByID(validatedInput.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/createMemberAccessForAccount",
 			err,
 		)
@@ -89,11 +89,12 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			"memberAccessRefType":        validatedInput.MemberAccessRefType,
 			"organizationType":           validatedInput.OrganizationType,
 			"organizationMembershipRole": validatedInput.OrganizationMembershipRole,
+			"proposalStatus":             model.EntityProposalStatusApproved,
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/createMemberAccessForAccount",
 			err,
 		)
@@ -121,6 +122,12 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createMemberAccessForAccount",
+			err,
+		)
+	}
 
 	return memberAccess, nil
 }

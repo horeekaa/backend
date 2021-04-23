@@ -1,7 +1,7 @@
 package accountdomainrepositories
 
 import (
-	horeekaafailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -44,7 +44,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	}
 	account, err := mgsAccDevToken.accountDataSource.GetMongoDataSource().FindByID(input.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
-		return nil, horeekaafailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/manageAccountDeviceTokenRepository",
 			err,
 		)
@@ -71,7 +71,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
-		return nil, horeekaafailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/manageAccountDeviceTokenRepository",
 			err,
 		)

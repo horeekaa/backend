@@ -6,10 +6,10 @@ import (
 )
 
 type GetPersonDataFromAccountUsecaseComponent interface {
-	Validation(input model.Account) (*model.Account, error)
+	Validation(input *model.Account) (*model.Account, error)
 }
 
 type GetPersonDataFromAccountRepository interface {
 	SetValidation(usecaseComponent GetPersonDataFromAccountUsecaseComponent) (bool, error)
-	Execute(input model.Account) (*accountrepositorytypes.GetPersonDataByAccountOutput, error)
+	Execute(input *model.Account) (*accountrepositorytypes.GetPersonDataByAccountOutput, error)
 }
