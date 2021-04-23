@@ -111,6 +111,12 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 		&combinedOrganization,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateOrganization",
+			err,
+		)
+	}
 
 	return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
 		PreviousOrganization: existingOrganization,

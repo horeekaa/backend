@@ -50,7 +50,7 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/UpdateMemberAccessRef",
+			"/updateMemberAccessRef",
 			err,
 		)
 	}
@@ -64,7 +64,7 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/UpdateMemberAccessRef",
+				"/updateMemberAccessRef",
 				err,
 			)
 		}
@@ -81,7 +81,7 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/UpdateMemberAccessRef",
+					"/updateMemberAccessRef",
 					err,
 				)
 			}
@@ -111,6 +111,12 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 		&combinedMemberAccessRef,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateMemberAccessRef",
+			err,
+		)
+	}
 
 	return &memberaccessrefdomainrepositorytypes.UpdateMemberAccessRefOutput{
 		PreviousMemberAccessRef: existingMemberAccessRef,
