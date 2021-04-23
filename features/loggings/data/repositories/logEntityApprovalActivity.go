@@ -97,7 +97,7 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 				ID: &validatedInput.ApprovingAccount.ID,
 			},
 			Activity:       previousLog.Activity,
-			ProposalStatus: model.EntityProposalStatusApproved,
+			ProposalStatus: validatedInput.ApprovalStatus,
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
