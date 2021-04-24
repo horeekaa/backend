@@ -2,7 +2,6 @@ package mongodbcoreoperations
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -65,8 +64,15 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	defer cancel()
 
 	var bsonObject bson.M
-	encodedJSON, _ := json.Marshal(query)
-	_ = bson.Unmarshal(encodedJSON, &bsonObject)
+	data, err := bson.Marshal(query)
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
+			fmt.Sprintf("/%s/findOne", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(data, &bsonObject)
 
 	var res *mongo.SingleResult
 	if &(*operationOptions).Session != nil {
@@ -83,11 +89,17 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 	defer cancel()
 
 	var bsonObject bson.M
-	encodedJSON, _ := json.Marshal(query)
-	_ = bson.Unmarshal(encodedJSON, &bsonObject)
+	data, err := bson.Marshal(query)
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
+			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(data, &bsonObject)
 
 	var curr *mongo.Cursor
-	var err error
 	if &(*operationOptions).Session != nil {
 		curr, err = bscOperation.collectionRef.Find(*operationOptions.Session, bsonObject)
 	} else {
@@ -126,12 +138,22 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
+	var bsonObject bson.D
+	data, err := bson.Marshal(input)
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
+			fmt.Sprintf("/%s/create", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(data, &bsonObject)
+
 	var res *mongo.InsertOneResult
-	var err error
 	if &(*operationOptions).Session != nil {
-		res, err = bscOperation.collectionRef.InsertOne(*operationOptions.Session, input)
+		res, err = bscOperation.collectionRef.InsertOne(*operationOptions.Session, bsonObject)
 	} else {
-		res, err = bscOperation.collectionRef.InsertOne(ctx, input)
+		res, err = bscOperation.collectionRef.InsertOne(ctx, bsonObject)
 	}
 
 	if err != nil {
@@ -153,18 +175,28 @@ func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
-	var err error
+	var bsonObject bson.D
+	data, err := bson.Marshal(updateData)
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
+			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(data, &bsonObject)
+
 	if &(*operationOptions).Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			*operationOptions.Session,
 			bson.M{"_id": objectID},
-			updateData,
+			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
 		)
 	} else {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			ctx,
 			bson.M{"_id": objectID},
-			updateData,
+			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
 		)
 	}
 
