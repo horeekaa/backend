@@ -24,11 +24,6 @@ type ManageAccountAuthenticationInput struct {
 	Context    context.Context
 }
 
-type GetPersonDataByAccountOutput struct {
-	Person  *model.Person
-	Account *model.Account
-}
-
 type ManageAccountDeviceTokenInput struct {
 	Account                        *model.Account
 	DeviceToken                    string

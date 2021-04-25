@@ -40,12 +40,12 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		return nil, err
 	}
 
-	result, err := getPersonDataFromAccountUsecase.getPersonDataFromAccountRepository.Execute(validatedInput)
+	person, err := getPersonDataFromAccountUsecase.getPersonDataFromAccountRepository.Execute(validatedInput)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"getPersonDataFromAccount/",
 			err,
 		)
 	}
-	return result.Person, nil
+	return person, nil
 }
