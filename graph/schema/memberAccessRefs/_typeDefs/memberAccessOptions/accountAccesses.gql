@@ -1,12 +1,12 @@
 
-input AccountAccessInput {
+input AccountAccessesInput {
     accountViewProfile: Boolean
     accountLogin: Boolean
     accountLogout: Boolean
     accountAcceptInvitation: Boolean
 }
 
-type AccountAccess {
+type AccountAccesses {
     accountViewProfile: Boolean
     accountLogin: Boolean
     accountLogout: Boolean

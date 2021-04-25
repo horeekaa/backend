@@ -4,17 +4,17 @@ enum MemberAccessRefType {
 }
 
 input MemberAccessRefOptionsInput {
-    account: AccountAccessInput
-    manageOrganizationMember: ManageOrganizationMemberAccessInput
-    requestOrganization: RequestOrganizationAccessInput
-    viewOrganization: ViewOrganizationAccessInput
+    accountAccesses: AccountAccessesInput
+    manageMemberAccesses: ManageMemberAccessesInput
+    organizationAccesses: OrganizationAccessesInput
+    memberAccessRefAccesses: MemberAccessRefAccessesInput
 }
 
 type MemberAccessRefOptions {
-    account: AccountAccess
-    manageOrganizationMember: ManageOrganizationMemberAccess
-    requestOrganization: RequestOrganizationAccess
-    viewOrganization: ViewOrganizationAccess
+    accountAccesses: AccountAccesses
+    manageMemberAccesses: ManageMemberAccesses
+    organizationAccesses: OrganizationAccesses
+    memberAccessRefAccesses: MemberAccessRefAccesses
 }
 
 input CreateMemberAccessRef {

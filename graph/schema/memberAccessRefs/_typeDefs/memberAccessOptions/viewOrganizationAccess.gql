@@ -1,8 +1,0 @@
-
-input ViewOrganizationAccessInput {
-    viewOrganizationProfile: Boolean
-}
-
-type ViewOrganizationAccess {
-    viewOrganizationProfile: Boolean
-}

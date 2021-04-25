@@ -1,0 +1,12 @@
+
+input ManageMemberAccessesInput {
+    manageMemberAccessRead: Boolean
+    manageMemberAccessInvite: Boolean
+    manageMemberAccessRemove: Boolean
+}
+
+type ManageMemberAccesses {
+    manageMemberAccessRead: Boolean
+    manageMemberAccessInvite: Boolean
+    manageMemberAccessRemove: Boolean
+}
