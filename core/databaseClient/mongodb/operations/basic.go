@@ -2,6 +2,7 @@ package mongodbcoreoperations
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -56,6 +57,17 @@ func (bscOperation *basicOperation) FindByID(ID interface{}, operationOptions *m
 	} else {
 		res = bscOperation.collectionRef.FindOne(ctx, bson.M{"_id": objectID})
 	}
+
+	var objectReturn interface{}
+	res.Decode(&objectReturn)
+	if &objectReturn == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.IDNotFound,
+			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			errors.New(horeekaacoreexceptionenums.IDNotFound),
+		)
+	}
+
 	return res, nil
 }
 
@@ -67,7 +79,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	data, err := bson.Marshal(query)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpdateObjectFailed,
+			horeekaacoreexceptionenums.UpstreamException,
 			fmt.Sprintf("/%s/findOne", bscOperation.collectionName),
 			err,
 		)
@@ -92,7 +104,7 @@ func (bscOperation *basicOperation) Find(query map[string]interface{}, cursorDec
 	data, err := bson.Marshal(query)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpdateObjectFailed,
+			horeekaacoreexceptionenums.UpstreamException,
 			fmt.Sprintf("/%s/find", bscOperation.collectionName),
 			err,
 		)
@@ -142,7 +154,7 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	data, err := bson.Marshal(input)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpdateObjectFailed,
+			horeekaacoreexceptionenums.UpstreamException,
 			fmt.Sprintf("/%s/create", bscOperation.collectionName),
 			err,
 		)
@@ -179,7 +191,7 @@ func (bscOperation *basicOperation) Update(ID interface{}, updateData interface{
 	data, err := bson.Marshal(updateData)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpdateObjectFailed,
+			horeekaacoreexceptionenums.UpstreamException,
 			fmt.Sprintf("/%s/update", bscOperation.collectionName),
 			err,
 		)
