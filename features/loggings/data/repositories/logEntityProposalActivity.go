@@ -58,6 +58,14 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		return nil, err
 	}
 	var changeLogString interface{} = ""
+	creatorInitial := fmt.Sprintf("%s ", validatedInput.CreatorInitial)
+	if validatedInput.ProposalStatus == model.EntityProposalStatusApproved {
+		changeLogString = fmt.Sprintf(
+			"%s approved the ",
+			creatorInitial,
+		)
+		creatorInitial = "self-"
+	}
 
 	switch validatedInput.Activity {
 	case model.LoggedActivityUpdate:
@@ -70,8 +78,9 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		}
 		existingIDValue := *validatedInput.ExistingObjectID
 		changeLogString = fmt.Sprintf(
-			"%s proposed changes to %s with id **%s to the followings:\n",
-			validatedInput.CreatorInitial,
+			"%s %sproposed changes to %s with id **%s to the followings:\n",
+			changeLogString,
+			creatorInitial,
 			validatedInput.CollectionName,
 			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
 		)
@@ -108,8 +117,9 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 
 	case model.LoggedActivityCreate:
 		changeLogString = fmt.Sprintf(
-			"%s proposed creation to %s with the followings:\n",
-			validatedInput.CreatorInitial,
+			"%s %sproposed creation to %s with the followings:\n",
+			changeLogString,
+			creatorInitial,
 			validatedInput.CollectionName,
 		)
 		logEttPrpsalActivity.structFieldIteratorUtility.SetIteratingFunc(
@@ -147,8 +157,9 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 		}
 		existingIDValue := *validatedInput.ExistingObjectID
 		changeLogString = fmt.Sprintf(
-			"%s proposed deletion to %s with id **%s\n",
-			validatedInput.CreatorInitial,
+			"%s %sproposed deletion to %s with id **%s\n",
+			changeLogString,
+			creatorInitial,
 			validatedInput.CollectionName,
 			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
 		)
