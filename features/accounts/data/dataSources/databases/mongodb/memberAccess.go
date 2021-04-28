@@ -7,6 +7,8 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type memberAccessDataSourceMongo struct {
@@ -20,7 +22,7 @@ func NewMemberAccessDataSourceMongo(basicOperation mongodbcoreoperationinterface
 	}, nil
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	res, err := memberAccDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.MemberAccess
 	res.Decode(&output)
@@ -34,11 +36,15 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindOne(query map[s
 	return &output, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpts *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.MemberAccess, error) {
 	var memberAccesses = []*model.MemberAccess{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var memberAccess *model.MemberAccess
-		err := cursor.MongoFindCursor.Decode(memberAccess)
+		err := cursor.Decode(memberAccess)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +52,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(query map[stri
 		return nil, nil
 	}
 
-	_, err := memberAccDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := memberAccDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 	return &memberAccessOutput, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID interface{}, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

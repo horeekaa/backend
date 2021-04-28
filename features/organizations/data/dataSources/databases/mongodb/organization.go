@@ -7,6 +7,8 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodborganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type organizationDataSourceMongo struct {
@@ -20,7 +22,7 @@ func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterface
 	}, nil
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Organization
 	res.Decode(&output)
@@ -34,11 +36,15 @@ func (orgDataSourceMongo *organizationDataSourceMongo) FindOne(query map[string]
 	return &output, err
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Organization, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpts *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var organization *model.Organization
-		err := cursor.MongoFindCursor.Decode(organization)
+		err := cursor.Decode(organization)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +52,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(query map[string]int
 		return nil, nil
 	}
 
-	_, err := orgDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Creat
 	return &organizationOutput, err
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID interface{}, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

@@ -7,6 +7,8 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type personDataSourceMongo struct {
@@ -20,7 +22,7 @@ func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Basi
 	}, nil
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	res, err := prsnDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Person
 	res.Decode(&output)
@@ -34,11 +36,15 @@ func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]inter
 	return &output, err
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpts *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.Person, error) {
 	var persons = []*model.Person{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var person *model.Person
-		err := cursor.MongoFindCursor.Decode(person)
+		err := cursor.Decode(person)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +52,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(query map[string]interfac
 		return nil, nil
 	}
 
-	_, err := prsnDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 	return &personOutput, err
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) Update(ID interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

@@ -7,6 +7,8 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type loggingDataSourceMongo struct {
@@ -20,7 +22,7 @@ func NewLoggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 	}, nil
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Logging
 	res.Decode(&output)
@@ -34,11 +36,15 @@ func (orgDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]inter
 	return &output, err
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Logging, error) {
+func (orgDataSourceMongo *loggingDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpts *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.Logging, error) {
 	var loggings = []*model.Logging{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var logging *model.Logging
-		err := cursor.MongoFindCursor.Decode(logging)
+		err := cursor.Decode(logging)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +52,7 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(query map[string]interfac
 		return nil, nil
 	}
 
-	_, err := orgDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,7 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 	return &loggingOutput, err
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID interface{}, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

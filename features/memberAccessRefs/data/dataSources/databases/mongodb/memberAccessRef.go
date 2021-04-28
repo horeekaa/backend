@@ -7,6 +7,8 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type memberAccessRefDataSourceMongo struct {
@@ -20,7 +22,7 @@ func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterf
 	}, nil
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	res, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.MemberAccessRef
 	res.Decode(&output)
@@ -34,11 +36,15 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query ma
 	return &output, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.MemberAccessRef, error) {
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpt *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var memberAccessRef *model.MemberAccessRef
-		err := cursor.MongoFindCursor.Decode(memberAccessRef)
+		err := cursor.Decode(memberAccessRef)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +52,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(query map[s
 		return nil, nil
 	}
 
-	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +80,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 	return &memberAccessRefOutput, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID interface{}, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
