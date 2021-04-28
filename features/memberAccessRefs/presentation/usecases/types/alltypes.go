@@ -11,3 +11,9 @@ type CreateMemberAccessRefUsecaseInput struct {
 	Context               context.Context
 	CreateMemberAccessRef *model.CreateMemberAccessRef
 }
+
+type UpdateMemberAccessRefUsecaseInput struct {
+	AuthHeader            string
+	Context               context.Context
+	UpdateMemberAccessRef *model.UpdateMemberAccessRef
+}
