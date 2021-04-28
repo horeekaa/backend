@@ -1,7 +1,7 @@
 package databasememberaccessrefdatasourceinterfaces
 
 import (
-	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb/interfaces"
+	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"
 )
 
 type MemberAccessRefDataSource interface {

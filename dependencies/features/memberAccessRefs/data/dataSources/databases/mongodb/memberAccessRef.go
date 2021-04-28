@@ -3,10 +3,10 @@ package mongodbmemberaccessrefdatasourcedependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/interfaces/sources"
-	mongodbmemberaccessrefdatasources "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb"
-	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/mongodb/interfaces"
-	databasememberaccessrefdatasources "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/sources"
+	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
+	mongodbmemberaccessrefdatasources "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb"
+	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"
+	databasememberaccessrefdatasources "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/sources"
 )
 
 type MemberAccessRefDataSourceDependency struct{}

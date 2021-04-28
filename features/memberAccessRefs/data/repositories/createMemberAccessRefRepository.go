@@ -3,8 +3,8 @@ package memberaccessrefdomainrepositories
 import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
-	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
