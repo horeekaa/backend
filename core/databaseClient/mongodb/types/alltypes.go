@@ -24,6 +24,6 @@ type CreateOperationOutput struct {
 }
 
 type PaginationOptions struct {
-	StartObjectID primitive.ObjectID
-	QueryLimit    int
+	LastObjectID *primitive.ObjectID
+	QueryLimit   *int
 }

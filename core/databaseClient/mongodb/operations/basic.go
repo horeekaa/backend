@@ -116,10 +116,10 @@ func (bscOperation *basicOperation) Find(
 	}
 	bson.Unmarshal(data, &bsonFilter)
 
-	if &paginationOpt.StartObjectID != nil {
+	if paginationOpt.LastObjectID != nil {
 		data, err = bson.Marshal(
 			bson.M{
-				"_id": bson.M{"$gt": paginationOpt.StartObjectID},
+				"_id": bson.M{"$gt": *paginationOpt.LastObjectID},
 			},
 		)
 		if err != nil {
@@ -133,9 +133,10 @@ func (bscOperation *basicOperation) Find(
 	}
 
 	var opts *options.FindOptions
-	if &paginationOpt.QueryLimit != nil {
+	opts.SetLimit(int64(10))
+	if paginationOpt.QueryLimit != nil {
 		opts.SetSort(bson.M{"_id": -1})
-		opts.SetLimit(int64(paginationOpt.QueryLimit))
+		opts.SetLimit(int64(*paginationOpt.QueryLimit))
 	}
 
 	var curr *mongo.Cursor
