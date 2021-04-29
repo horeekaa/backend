@@ -214,7 +214,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
+			"/updateMemberAccessRefUsecase",
 			err,
 		)
 	}
@@ -230,7 +230,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/createMemberAccessRefUsecase",
+				"/updateMemberAccessRefUsecase",
 				err,
 			)
 		}
