@@ -13,7 +13,8 @@ input CreateOrganization {
   profilePhotos: [NewOrganizationDescriptivePhoto]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
-  submittingAccount: ObjectIDOnly!
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
   previousEntity: ObjectIDOnly
   correspondingLog: ObjectIDOnly
   createdAt: Time
@@ -32,8 +33,9 @@ input UpdateOrganization {
   profilePhotos: [UpdateOrganizationDescriptivePhoto]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
-  submittingAccount: ObjectIDOnly!
+  submittingAccount: ObjectIDOnly
   approvingAccount: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
   updatedAt: Time
 }
 

@@ -38,7 +38,7 @@ input UpdateMemberAccessRef {
     organizationMembershipRole: OrganizationMembershipRole
     organizationType: OrganizationType
     proposalStatus: EntityProposalStatus
-    submittingAccount: ObjectIDOnly!
+    submittingAccount: ObjectIDOnly
     approvingAccount: ObjectIDOnly
     correspondingLog: ObjectIDOnly
     updatedAt: Time
