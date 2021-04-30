@@ -2,7 +2,7 @@ package mongodbmemberaccessrefdatasourcedependencies
 
 import (
 	"github.com/golobby/container/v2"
-	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	mongodbmemberaccessrefdatasources "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb"
 	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"

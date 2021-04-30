@@ -2,7 +2,7 @@ package mongodbloggingdatasourcedependencies
 
 import (
 	container "github.com/golobby/container/v2/"
-	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	mongodbloggingdatasources "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb"
 	mongodbloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb/interfaces"

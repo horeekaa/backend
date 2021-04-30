@@ -94,7 +94,7 @@ models:
 
   ObjectID:
     model:
-      - github.com/horeekaa/backend/core/databaseClient/mongoDB/modelMarshalers.ObjectID
+      - github.com/horeekaa/backend/core/databaseClient/mongodb/modelMarshalers.ObjectID
 
   Time:
     model:
