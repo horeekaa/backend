@@ -82,7 +82,7 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
+			"/getAllOrganizationUsecase",
 			err,
 		)
 	}
@@ -95,7 +95,7 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
+			"/getAllOrganizationUsecase",
 			err,
 		)
 	}
