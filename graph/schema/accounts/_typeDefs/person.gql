@@ -1,0 +1,39 @@
+enum Gender {
+  MALE
+  FEMALE
+}
+
+input UpdatePerson {
+  _id: ObjectID!
+  firstName: String
+  lastName: String
+  gender: Gender
+  phoneNumber: String
+  email: String
+  noOfRecentTransactionToKeep: Int
+  updatedAt: Time
+}
+
+input CreatePerson {
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String!
+  email: String!
+  noOfRecentTransactionToKeep: Int
+  createdAt: Time
+  updatedAt: Time
+}
+
+type Person {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String
+  email: String!
+  idCard: IDCard
+  noOfRecentTransactionToKeep: Int!
+  createdAt: Time!
+  updatedAt: Time!
+}

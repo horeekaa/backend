@@ -6,3 +6,8 @@ scalar ObjectID
 input ObjectIDOnly {
     _id: ObjectID
 }
+
+input PaginationOptionInput {
+    lastObjectID: ObjectID
+    queryLimit: Int
+}

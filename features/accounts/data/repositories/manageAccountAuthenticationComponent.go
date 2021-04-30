@@ -3,6 +3,7 @@ package accountdomainrepositories
 import (
 	"strings"
 
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	firebaseauthcoretypes "github.com/horeekaa/backend/core/authentication/firebase/types"
 	mongomarshaler "github.com/horeekaa/backend/core/databaseClient/mongoDB/modelMarshalers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
@@ -60,12 +61,21 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 		authToken,
 	)
 	if err != nil {
-		return nil, err
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/manageAccountAuthenticationRepo",
+			err,
+		)
 	}
 	user, err := msgAccAuthTrx.firebaseDataSource.GetAuthUserDataById(
 		manageAccountAuthInput.Context,
 		token.UID,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/manageAccountAuthenticationRepo",
+			err,
+		)
+	}
 
 	storedAccountID := user.CustomClaims[firebaseauthcoretypes.FirebaseCustomClaimsAccountIDKey]
 	if &storedAccountID != nil {
@@ -77,7 +87,10 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 			operationOption,
 		)
 		if err != nil {
-			return nil, err
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/manageAccountAuthenticationRepo",
+				err,
+			)
 		}
 		return account, nil
 	}
@@ -88,6 +101,12 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 		},
 		operationOption,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/manageAccountAuthenticationRepo",
+			err,
+		)
+	}
 	if account == nil {
 		fullNameSplit := strings.Split(user.DisplayName, " ")
 		firstName := fullNameSplit[0]
@@ -108,7 +127,10 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 			operationOption,
 		)
 		if err != nil {
-			return nil, err
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/manageAccountAuthenticationComponent",
+				err,
+			)
 		}
 
 		account, err := msgAccAuthTrx.accountDataSource.GetMongoDataSource().Create(
@@ -121,16 +143,25 @@ func (msgAccAuthTrx *manageAccountAuthenticationTransactionComponent) Transactio
 			operationOption,
 		)
 		if err != nil {
-			return nil, err
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/manageAccountAuthenticationComponent",
+				err,
+			)
 		}
 		return account, nil
 	}
 
-	msgAccAuthTrx.firebaseDataSource.SetRoleInAuthUserData(
+	_, err = msgAccAuthTrx.firebaseDataSource.SetRoleInAuthUserData(
 		manageAccountAuthInput.Context,
 		user.UID,
 		model.AccountTypePerson.String(),
 		account.ID.String(),
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/manageAccountAuthenticationComponent",
+			err,
+		)
+	}
 	return account, nil
 }

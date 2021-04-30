@@ -1,0 +1,8 @@
+
+enum EntityProposalStatus {
+  PROPOSED
+  APPROVED
+  REVISION_NEEDED
+  REJECTED
+  REPLACED
+}

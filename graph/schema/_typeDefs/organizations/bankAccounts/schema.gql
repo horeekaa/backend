@@ -1,9 +1,0 @@
-input BankAccount {
-  number: String!
-  bankName: String!
-}
-
-type BankAccountType {
-  number: String!
-  bankName: String!
-}

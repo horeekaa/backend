@@ -31,6 +31,8 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.MemberAccessRefNotExist:                                   true,
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
 
+	horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity: true,
+
 	horeekaacorefailureenums.SendEmailTypeNotExist: true,
 }
 

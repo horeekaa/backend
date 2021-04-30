@@ -1,13 +1,16 @@
 package accountdomainrepositories
 
 import (
+	"encoding/json"
+
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberaccessrefs/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 	"github.com/pkg/errors"
 )
@@ -15,14 +18,14 @@ import (
 type createMemberAccessForAccountRepository struct {
 	accountDataSource                            databaseaccountdatasourceinterfaces.AccountDataSource
 	memberAccessDataSource                       databaseaccountdatasourceinterfaces.MemberAccessDataSource
-	memberAccessRefDataSource                    databaseaccountdatasourceinterfaces.MemberAccessRefDataSource
+	memberAccessRefDataSource                    databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	createMemberAccessForAccountUsecaseComponent accountdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent
 }
 
 func NewCreateMemberAccessForAccountRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
-	memberAccessRefDataSource databaseaccountdatasourceinterfaces.MemberAccessRefDataSource,
+	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 ) (accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository, error) {
 	return &createMemberAccessForAccountRepository{
 		accountDataSource:         accountDataSource,
@@ -75,7 +78,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 
 	account, err := createMbrAccForAccount.accountDataSource.GetMongoDataSource().FindByID(validatedInput.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/createMemberAccessForAccount",
 			err,
 		)
@@ -86,11 +89,12 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			"memberAccessRefType":        validatedInput.MemberAccessRefType,
 			"organizationType":           validatedInput.OrganizationType,
 			"organizationMembershipRole": validatedInput.OrganizationMembershipRole,
+			"proposalStatus":             model.EntityProposalStatusApproved,
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/createMemberAccessForAccount",
 			err,
 		)
@@ -102,24 +106,28 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			errors.New(horeekaacorefailureenums.MemberAccessRefNotExist),
 		)
 	}
+	var accessInput model.MemberAccessRefOptionsInput
+	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
+	json.Unmarshal(jsonTemp, &accessInput)
 
 	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
 		&model.CreateMemberAccess{
 			Account:                    &model.ObjectIDOnly{ID: &account.ID},
 			OrganizationMembershipRole: &validatedInput.OrganizationMembershipRole,
 			MemberAccessRefType:        validatedInput.MemberAccessRefType,
-			Access: &model.MemberAccessRefOptionsInput{
-				Account:                  (*model.AccountAccessInput)(memberAccessRef.Access.Account),
-				ManageOrganizationMember: (*model.ManageOrganizationMemberAccessInput)(memberAccessRef.Access.ManageOrganizationMember),
-				RequestOrganization:      (*model.RequestOrganizationAccessInput)(memberAccessRef.Access.RequestOrganization),
-				ViewOrganization:         (*model.ViewOrganizationAccessInput)(memberAccessRef.Access.ViewOrganization),
-			},
-			Organization:  &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
-			Status:        model.MemberAccessStatusActive,
-			DefaultAccess: &model.ObjectIDOnly{ID: &memberAccessRef.ID},
+			Access:                     &accessInput,
+			Organization:               &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
+			Status:                     model.MemberAccessStatusActive,
+			DefaultAccess:              &model.ObjectIDOnly{ID: &memberAccessRef.ID},
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createMemberAccessForAccount",
+			err,
+		)
+	}
 
 	return memberAccess, nil
 }

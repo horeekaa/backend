@@ -12,21 +12,16 @@ const (
 )
 
 type CreateMemberAccessForAccountInput struct {
-	Account                    model.Account
+	Account                    *model.Account
 	MemberAccessRefType        model.MemberAccessRefType
 	OrganizationMembershipRole model.OrganizationMembershipRole
 	OrganizationType           model.OrganizationType
-	Organization               model.Organization
+	Organization               *model.Organization
 }
 
 type ManageAccountAuthenticationInput struct {
 	AuthHeader string
 	Context    context.Context
-}
-
-type GetPersonDataByAccountOutput struct {
-	Person  *model.Person
-	Account *model.Account
 }
 
 type ManageAccountDeviceTokenInput struct {
@@ -36,7 +31,7 @@ type ManageAccountDeviceTokenInput struct {
 }
 
 type GetAccountMemberAccessInput struct {
-	Account                model.Account
+	Account                *model.Account
 	MemberAccessRefType    model.MemberAccessRefType
 	MemberAccessRefOptions model.MemberAccessRefOptionsInput
 }

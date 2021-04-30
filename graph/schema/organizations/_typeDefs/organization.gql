@@ -1,0 +1,61 @@
+enum OrganizationType {
+  PARTNER
+  CUSTOMER
+  INTERNAL
+}
+
+input CreateOrganization {
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [NewOrganizationDescriptivePhoto]
+  taxIdentification: NewIDCard
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  previousEntity: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateOrganization {
+  _id: ObjectID!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+  creditAllowance: Int
+  rating: Float
+  ratingDescription: String
+  unfinalizedPoint: Int
+  profilePhotos: [UpdateOrganizationDescriptivePhoto]
+  taxIdentification: UpdateIDCard
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+type Organization {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  creditAllowance: Int
+  rating: Float
+  ratingDescription: String
+  point: Int!
+  unfinalizedPoint: Int!
+  profilePhotos: [DescriptivePhoto]
+  taxIdentification: IDCard
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  approvingAccount: Account
+  previousEntity: Organization
+  correspondingLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

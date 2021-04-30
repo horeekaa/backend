@@ -1,0 +1,9 @@
+input BankAccountInput {
+  number: String!
+  bankName: String!
+}
+
+type BankAccount {
+  number: String!
+  bankName: String!
+}

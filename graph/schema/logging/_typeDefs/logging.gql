@@ -1,0 +1,35 @@
+enum LoggedActivity {
+    CREATE
+    UPDATE
+    DELETE
+}
+
+input CreateLogging {
+	collection: String!
+    changeLog: String!
+    createdByAccount: ObjectIDOnly!
+    activity: LoggedActivity!
+    proposalStatus: EntityProposalStatus!
+    createdAt: Time
+}
+
+input UpdateLogging {
+    _id: ObjectID!
+    collection: String
+    changeLog: String
+    createdByAccount: ObjectIDOnly
+    activity: LoggedActivity
+    proposalStatus: EntityProposalStatus
+    updatedAt: Time
+}
+
+type Logging {
+    _id: ObjectID!
+    collection: String!
+    changeLog: String!
+    createdByAccount: Account!
+    activity: LoggedActivity!
+    proposalStatus: EntityProposalStatus!
+    createdAt: Time
+    updatedAt: Time
+}

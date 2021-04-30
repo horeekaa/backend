@@ -13,11 +13,9 @@ func (getPersonDataFromAccountDependency *GetPersonDataFromAccountDependency) bi
 	container.Singleton(
 		func(
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 		) accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository {
 			getPersonDataFromAccountRepo, _ := accountdomainrepositories.NewGetPersonDataFromAccountRepository(
 				personDataSource,
-				accountDataSource,
 			)
 			return getPersonDataFromAccountRepo
 		},

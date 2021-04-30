@@ -1,0 +1,60 @@
+enum MemberAccessRefType {
+    ORGANIZATIONS_BASED
+    ACCOUNTS_BASICS
+}
+
+input MemberAccessRefOptionsInput {
+    accountAccesses: AccountAccessesInput
+    manageMemberAccesses: ManageMemberAccessesInput
+    organizationAccesses: OrganizationAccessesInput
+    memberAccessRefAccesses: MemberAccessRefAccessesInput
+}
+
+type MemberAccessRefOptions {
+    accountAccesses: AccountAccesses
+    manageMemberAccesses: ManageMemberAccesses
+    organizationAccesses: OrganizationAccesses
+    memberAccessRefAccesses: MemberAccessRefAccesses
+}
+
+input CreateMemberAccessRef {
+    access: MemberAccessRefOptionsInput!
+    memberAccessRefType: MemberAccessRefType!
+    organizationMembershipRole: OrganizationMembershipRole
+    organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus
+    submittingAccount: ObjectIDOnly
+    approvingAccount: ObjectIDOnly
+    previousEntity: ObjectIDOnly
+    correspondingLog: ObjectIDOnly
+    createdAt: Time
+    updatedAt: Time
+}
+
+input UpdateMemberAccessRef {
+    _id: ObjectID!
+    access: MemberAccessRefOptionsInput
+    memberAccessRefType: MemberAccessRefType
+    organizationMembershipRole: OrganizationMembershipRole
+    organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus
+    submittingAccount: ObjectIDOnly
+    approvingAccount: ObjectIDOnly
+    correspondingLog: ObjectIDOnly
+    updatedAt: Time
+}
+
+type MemberAccessRef {
+    _id: ObjectID!
+    access: MemberAccessRefOptions!
+    memberAccessRefType: MemberAccessRefType!
+    organizationMembershipRole: OrganizationMembershipRole
+    organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus!
+    submittingAccount: Account!
+    approvingAccount: Account
+    previousEntity: MemberAccessRef
+    correspondingLog: Logging!
+    createdAt: Time!
+    updatedAt: Time!
+}

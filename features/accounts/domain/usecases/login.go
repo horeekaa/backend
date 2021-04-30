@@ -44,10 +44,7 @@ func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetyp
 func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error) {
 	validatedInput, err := loginUsecase.validation(input)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"getPersonDataFromAccount/",
-			err,
-		)
+		return nil, err
 	}
 
 	account, err := loginUsecase.manageAccountAuthenticationRepository.RunTransaction(

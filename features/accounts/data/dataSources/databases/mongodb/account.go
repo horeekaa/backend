@@ -1,10 +1,14 @@
 package mongodbaccountdatasources
 
 import (
+	"time"
+
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type accountDataSourceMongo struct {
@@ -18,7 +22,7 @@ func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 	}, nil
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	res, err := accDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
 	var output model.Account
 	res.Decode(&output)
@@ -32,11 +36,15 @@ func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]inter
 	return &output, err
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) Find(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) ([]*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) Find(
+	query map[string]interface{},
+	paginationOpts *mongodbcoretypes.PaginationOptions,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
-	cursorDecoder := func(cursor *mongodbcoretypes.CursorObject) (interface{}, error) {
+	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
 		var account *model.Account
-		err := cursor.MongoFindCursor.Decode(account)
+		err := cursor.Decode(account)
 		if err != nil {
 			return nil, err
 		}
@@ -44,7 +52,7 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(query map[string]interfac
 		return nil, nil
 	}
 
-	_, err := accDataSourceMongo.basicOperation.Find(query, cursorDecoder, operationOptions)
+	_, err := accDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -67,19 +75,12 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 	}
 
 	accountOutput := output.Object.(model.Account)
+	accountOutput.ID = output.ID
 
-	account := &model.Account{
-		ID:           output.ID,
-		Status:       accountOutput.Status,
-		StatusReason: accountOutput.StatusReason,
-		Type:         accountOutput.Type,
-		Person:       accountOutput.Person,
-	}
-
-	return account, err
+	return &accountOutput, err
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) Update(ID interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	defaultedInput, err := accDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -101,8 +102,9 @@ type setAccountDefaultValuesOutput struct {
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setAccountDefaultValuesOutput, error) {
-	var accountStatus model.AccountStatus
-	var accountType model.AccountType
+	defaultAccountStatus := model.AccountStatusActive
+	defaultAccountType := model.AccountTypePerson
+	currentTime := time.Now()
 
 	updateInput := input.(model.UpdateAccount)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
@@ -112,39 +114,32 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 		}
 
 		if &(*existingObject).Status == nil {
-			accountStatus = model.AccountStatusActive
+			updateInput.Status = &defaultAccountStatus
 		}
 		if &(*existingObject).Type == nil {
-			accountType = model.AccountTypePerson
+			updateInput.Type = &defaultAccountType
 		}
+		updateInput.UpdatedAt = &currentTime
 
 		return &setAccountDefaultValuesOutput{
-			UpdateAccount: &model.UpdateAccount{
-				ID:           updateInput.ID,
-				Status:       &accountStatus,
-				StatusReason: updateInput.StatusReason,
-				Type:         &accountType,
-				Person:       updateInput.Person,
-				DeviceTokens: updateInput.DeviceTokens,
-			},
+			UpdateAccount: &updateInput,
 		}, nil
 	}
 	createInput := (input).(model.CreateAccount)
 
 	if &createInput.Status == nil {
-		accountStatus = model.AccountStatusActive
+		createInput.Status = &defaultAccountStatus
 	}
 	if &createInput.Type == nil {
-		accountType = model.AccountTypePerson
+		createInput.Type = defaultAccountType
 	}
+	if createInput.DeviceTokens == nil {
+		createInput.DeviceTokens = []*string{}
+	}
+	createInput.CreatedAt = &currentTime
+	createInput.UpdatedAt = &currentTime
 
 	return &setAccountDefaultValuesOutput{
-		CreateAccount: &model.CreateAccount{
-			Status:       &accountStatus,
-			StatusReason: createInput.StatusReason,
-			Type:         accountType,
-			Person:       createInput.Person,
-			DeviceTokens: []*string{},
-		},
+		CreateAccount: &createInput,
 	}, nil
 }

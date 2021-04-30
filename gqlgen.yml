@@ -55,6 +55,30 @@ models:
         resolver: true
       account:
         resolver: true
+  Logging:
+    fields:
+      createdByAccount:
+        resolver: true
+  MemberAccessRef:
+    fields:
+      submittingAccount:
+        resolver: true
+      approvingAccount:
+        resolver: true
+      previousEntity:
+        resolver: true
+      correspondingLog:
+        resolver: true
+  Organization:
+    fields:
+      submittingAccount:
+        resolver: true
+      approvingAccount:
+        resolver: true
+      previousEntity:
+        resolver: true
+      correspondingLog:
+        resolver: true
 
   ID:
     model:
