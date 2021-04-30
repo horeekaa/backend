@@ -37,6 +37,14 @@ input UpdateAccount {
   updatedAt: Time
 }
 
+input AccountFilterFields {
+  _id: ObjectID
+  status: AccountStatus
+  statusReason: String
+  type: AccountType
+  person: ObjectIDOnly
+}
+
 type Account {
   _id: ObjectID!
   status: AccountStatus!
