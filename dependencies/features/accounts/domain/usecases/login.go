@@ -1,4 +1,4 @@
-package accountdomainusecasedependencies
+package accountpresentationusecasedependencies
 
 import (
 	"github.com/golobby/container/v2"
