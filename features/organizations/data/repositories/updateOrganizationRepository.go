@@ -1,7 +1,7 @@
 package organizationdomainrepositories
 
 import (
-	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"

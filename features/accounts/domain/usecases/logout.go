@@ -13,50 +13,43 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type loginUsecase struct {
+type logoutUsecase struct {
 	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
-	getAccountMemberAccessRepository      accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository    accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
-	loginAccessIdentity                   *model.MemberAccessRefOptionsInput
 }
 
-func NewLoginUsecase(
+func NewLogoutUsecase(
 	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
-	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
-) (accountpresentationusecaseinterfaces.LoginUsecase, error) {
-	return &loginUsecase{
+) (accountpresentationusecaseinterfaces.LogoutUsecase, error) {
+	return &logoutUsecase{
 		manageAccountAuthenticationRepository,
-		getAccountMemberAccessRepository,
 		manageAccountDeviceTokenRepository,
-		&model.MemberAccessRefOptionsInput{
-			AccountAccesses: &model.AccountAccessesInput{
-				AccountLogin: func(b bool) *bool { return &b }(true),
-			},
-		},
 	}, nil
 }
 
-func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetypes.LoginUsecaseInput) (*accountpresentationusecasetypes.LoginUsecaseInput, error) {
+func (logoutUcase *logoutUsecase) validation(input accountpresentationusecasetypes.LogoutUsecaseInput) (*accountpresentationusecasetypes.LogoutUsecaseInput, error) {
 	if &input.AuthHeader == nil {
-		return &accountpresentationusecasetypes.LoginUsecaseInput{},
+		return &accountpresentationusecasetypes.LogoutUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
-				"/loginUsecase",
+				"/logoutUsecase",
 				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
 			)
 	}
 	return &input, nil
 }
 
-func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error) {
-	validatedInput, err := loginUcase.validation(input)
+func (logoutUcase *logoutUsecase) Execute(
+	input accountpresentationusecasetypes.LogoutUsecaseInput,
+) (*model.Account, error) {
+	validatedInput, err := logoutUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := loginUcase.manageAccountAuthenticationRepository.RunTransaction(
+	account, err := logoutUcase.manageAccountAuthenticationRepository.RunTransaction(
 		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
 			AuthHeader: validatedInput.AuthHeader,
 			Context:    validatedInput.Context,
@@ -64,21 +57,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
-			err,
-		)
-	}
-
-	_, err = loginUcase.getAccountMemberAccessRepository.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
-			MemberAccessRefOptions: *loginUcase.loginAccessIdentity,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
+			"/logoutUsecase",
 			err,
 		)
 	}
@@ -86,16 +65,16 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	if &input.DeviceToken == nil {
 		return account, nil
 	}
-	account, err = loginUcase.manageAccountDeviceTokenRepository.Execute(
+	account, err = logoutUcase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,
 			DeviceToken:                    validatedInput.DeviceToken,
-			ManageAccountDeviceTokenAction: accountdomainrepositorytypes.ManageAccountDeviceTokenActionInsert,
+			ManageAccountDeviceTokenAction: accountdomainrepositorytypes.ManageAccountDeviceTokenActionRemove,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
+			"/logoutUsecase",
 			err,
 		)
 	}

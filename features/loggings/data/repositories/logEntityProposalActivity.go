@@ -7,7 +7,7 @@ import (
 	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"

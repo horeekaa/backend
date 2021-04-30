@@ -5,6 +5,6 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type GetPersonDataFromAccountUsecase interface {
-	Execute(input accountpresentationusecasetypes.GetPersonDataFromAccountInput) (*model.Person, error)
+type LogoutUsecase interface {
+	Execute(input accountpresentationusecasetypes.LogoutUsecaseInput) (*model.Account, error)
 }

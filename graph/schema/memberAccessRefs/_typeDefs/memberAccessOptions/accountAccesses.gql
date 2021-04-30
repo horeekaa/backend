@@ -2,13 +2,11 @@
 input AccountAccessesInput {
     accountViewProfile: Boolean
     accountLogin: Boolean
-    accountLogout: Boolean
     accountAcceptInvitation: Boolean
 }
 
 type AccountAccesses {
     accountViewProfile: Boolean
     accountLogin: Boolean
-    accountLogout: Boolean
     accountAcceptInvitation: Boolean
 }

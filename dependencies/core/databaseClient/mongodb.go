@@ -4,11 +4,11 @@ import (
 	container "github.com/golobby/container/v2"
 	databasecoreclients "github.com/horeekaa/backend/core/databaseClient"
 	databasecoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/interfaces/init"
-	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongoDB"
-	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
-	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongoDB/operations"
+	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongodb"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
+	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongodb/operations"
 	mongodbcoretransactions "github.com/horeekaa/backend/core/databaseClient/mongodb/transactions"
 )
 

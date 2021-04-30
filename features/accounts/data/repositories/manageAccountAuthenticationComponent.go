@@ -5,8 +5,8 @@ import (
 
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	firebaseauthcoretypes "github.com/horeekaa/backend/core/authentication/firebase/types"
-	mongomarshaler "github.com/horeekaa/backend/core/databaseClient/mongoDB/modelMarshalers"
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongomarshaler "github.com/horeekaa/backend/core/databaseClient/mongodb/modelMarshalers"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	firebaseauthdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/authentication/interfaces"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"

@@ -1,7 +1,7 @@
 package organizationdomainrepositoryinterfaces
 
 import (
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )

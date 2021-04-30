@@ -3,8 +3,8 @@ package mongodbloggingdatasources
 import (
 	"time"
 
-	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/operations"
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"

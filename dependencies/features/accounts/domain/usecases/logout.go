@@ -7,21 +7,19 @@ import (
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 )
 
-type LoginUsecaseDependency struct{}
+type LogoutUsecaseDependency struct{}
 
-func (loginUsecaseDpdcy *LoginUsecaseDependency) bind() {
+func (_ LogoutUsecaseDependency) bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
-			getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
-		) accountpresentationusecaseinterfaces.LoginUsecase {
-			loginUsecase, _ := accountpresentationusecases.NewLoginUsecase(
+		) accountpresentationusecaseinterfaces.LogoutUsecase {
+			logoutUsecase, _ := accountpresentationusecases.NewLogoutUsecase(
 				manageAccountAuthenticationRepository,
-				getAccountMemberAccessRepository,
 				manageAccountDeviceTokenRepository,
 			)
-			return loginUsecase
+			return logoutUsecase
 		},
 	)
 }

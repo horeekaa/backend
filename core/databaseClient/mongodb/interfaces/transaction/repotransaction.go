@@ -1,7 +1,7 @@
 package mongodbcoretransactioninterfaces
 
 import (
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 )
 
 type TransactionComponent interface {

@@ -10,9 +10,9 @@ import (
 
 	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
-	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongoDB/interfaces/transaction"
-	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongoDB/types"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
