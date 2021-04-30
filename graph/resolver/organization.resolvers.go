@@ -19,6 +19,14 @@ func (r *organizationResolver) ApprovingAccount(ctx context.Context, obj *model.
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *organizationResolver) PreviousEntity(ctx context.Context, obj *model.Organization) (*model.Organization, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *organizationResolver) CorrespondingLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Organization returns generated.OrganizationResolver implementation.
 func (r *Resolver) Organization() generated.OrganizationResolver { return &organizationResolver{r} }
 

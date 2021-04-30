@@ -19,6 +19,14 @@ func (r *memberAccessRefResolver) ApprovingAccount(ctx context.Context, obj *mod
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *memberAccessRefResolver) PreviousEntity(ctx context.Context, obj *model.MemberAccessRef) (*model.MemberAccessRef, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *memberAccessRefResolver) CorrespondingLog(ctx context.Context, obj *model.MemberAccessRef) (*model.Logging, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // MemberAccessRef returns generated.MemberAccessRefResolver implementation.
 func (r *Resolver) MemberAccessRef() generated.MemberAccessRefResolver {
 	return &memberAccessRefResolver{r}
