@@ -11,6 +11,14 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
+func (r *mutationResolver) CreateOrganization(ctx context.Context, createOrganization model.CreateOrganization) (*model.Organization, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, updateOrganization model.UpdateOrganization) (*model.Organization, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -24,6 +32,10 @@ func (r *organizationResolver) PreviousEntity(ctx context.Context, obj *model.Or
 }
 
 func (r *organizationResolver) CorrespondingLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Organizations(ctx context.Context, filterFields *model.OrganizationFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Organization, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

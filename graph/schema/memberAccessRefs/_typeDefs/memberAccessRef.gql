@@ -44,6 +44,18 @@ input UpdateMemberAccessRef {
     updatedAt: Time
 }
 
+input MemberAccessRefFilterFields {
+    access: MemberAccessRefOptionsInput
+    memberAccessRefType: MemberAccessRefType
+    organizationMembershipRole: OrganizationMembershipRole
+    organizationType: OrganizationType
+    proposalStatus: EntityProposalStatus
+    submittingAccount: ObjectIDOnly
+    approvingAccount: ObjectIDOnly
+    previousEntity: ObjectIDOnly
+    correspondingLog: ObjectIDOnly
+}
+
 type MemberAccessRef {
     _id: ObjectID!
     access: MemberAccessRefOptions!
