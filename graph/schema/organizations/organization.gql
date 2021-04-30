@@ -1,0 +1,8 @@
+extend type Mutation {
+    createOrganization(createOrganization: CreateOrganization!): Organization!
+    updateOrganization(updateOrganization: UpdateOrganization!): Organization!
+}
+
+extend type Query {
+    organizations(filterFields: OrganizationFilterFields, paginationOpt: PaginationOptionInput): [Organization]!
+}

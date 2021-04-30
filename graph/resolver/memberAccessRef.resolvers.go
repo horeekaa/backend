@@ -27,6 +27,18 @@ func (r *memberAccessRefResolver) CorrespondingLog(ctx context.Context, obj *mod
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) CreateMemberAccessRef(ctx context.Context, createMemberAccessRef model.CreateMemberAccessRef) (*model.MemberAccessRef, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateMemberAccessRef(ctx context.Context, updateMemberAccessRef model.UpdateMemberAccessRef) (*model.MemberAccessRef, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) MemberAccessRefs(ctx context.Context, filterFields *model.MemberAccessRefFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MemberAccessRef, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // MemberAccessRef returns generated.MemberAccessRefResolver implementation.
 func (r *Resolver) MemberAccessRef() generated.MemberAccessRefResolver {
 	return &memberAccessRefResolver{r}

@@ -1,9 +1,8 @@
 extend type Mutation {
   login(deviceToken: String): Account!
   logout(deviceToken: String): Account!
-  createOrganization(createOrganization: CreateOrganization!): Organization!
 }
 
 extend type Query {
-  user: Person!
+  person(account: ObjectIDOnly): Person!
 }

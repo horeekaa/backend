@@ -39,6 +39,20 @@ input UpdateOrganization {
   updatedAt: Time
 }
 
+input OrganizationFilterFields {
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+  creditAllowance: Int
+  rating: Float
+  ratingDescription: String
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  previousEntity: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
+}
+
 type Organization {
   _id: ObjectID!
   name: String!
