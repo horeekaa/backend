@@ -13,10 +13,12 @@ func (loginUsecaseDpdcy *LoginUsecaseDependency) bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 		) accountpresentationusecaseinterfaces.LoginUsecase {
 			loginUsecase, _ := accountpresentationusecases.NewLoginUsecase(
 				manageAccountAuthenticationRepository,
+				getAccountMemberAccessRepository,
 				manageAccountDeviceTokenRepository,
 			)
 			return loginUsecase

@@ -15,39 +15,48 @@ import (
 
 type loginUsecase struct {
 	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountMemberAccessRepository      accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository    accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
+	loginAccessIdentity                   *model.MemberAccessRefOptionsInput
 }
 
 func NewLoginUsecase(
 	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 ) (accountpresentationusecaseinterfaces.LoginUsecase, error) {
 	return &loginUsecase{
 		manageAccountAuthenticationRepository,
+		getAccountMemberAccessRepository,
 		manageAccountDeviceTokenRepository,
+		&model.MemberAccessRefOptionsInput{
+			AccountAccesses: &model.AccountAccessesInput{
+				AccountLogin: func(b bool) *bool { return &b }(true),
+			},
+		},
 	}, nil
 }
 
-func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetypes.LoginUsecaseInput) (accountpresentationusecasetypes.LoginUsecaseInput, error) {
+func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetypes.LoginUsecaseInput) (*accountpresentationusecasetypes.LoginUsecaseInput, error) {
 	if &input.AuthHeader == nil {
-		return accountpresentationusecasetypes.LoginUsecaseInput{},
+		return &accountpresentationusecasetypes.LoginUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
-				"loginUsecase/",
-				errors.New("loginUsecase/"),
+				"/loginUsecase",
+				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
 			)
 	}
-	return input, nil
+	return &input, nil
 }
 
-func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error) {
-	validatedInput, err := loginUsecase.validation(input)
+func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.LoginUsecaseInput) (*model.Account, error) {
+	validatedInput, err := loginUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := loginUsecase.manageAccountAuthenticationRepository.RunTransaction(
+	account, err := loginUcase.manageAccountAuthenticationRepository.RunTransaction(
 		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
 			AuthHeader: validatedInput.AuthHeader,
 			Context:    validatedInput.Context,
@@ -55,7 +64,21 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"loginUsecase/",
+			"/loginUsecase",
+			err,
+		)
+	}
+
+	_, err = loginUcase.getAccountMemberAccessRepository.Execute(
+		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+			Account:                account,
+			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
+			MemberAccessRefOptions: *loginUcase.loginAccessIdentity,
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/loginUsecase",
 			err,
 		)
 	}
@@ -63,7 +86,7 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	if &input.DeviceToken == nil {
 		return account, nil
 	}
-	account, err = loginUsecase.manageAccountDeviceTokenRepository.Execute(
+	account, err = loginUcase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,
 			DeviceToken:                    validatedInput.DeviceToken,
@@ -72,7 +95,7 @@ func (loginUsecase *loginUsecase) Execute(input accountpresentationusecasetypes.
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"loginUsecase/",
+			"/loginUsecase",
 			err,
 		)
 	}
