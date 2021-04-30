@@ -40,6 +40,7 @@ input UpdateOrganization {
 }
 
 input OrganizationFilterFields {
+  _id: ObjectID
   name: String
   phoneNumber: String
   type: OrganizationType

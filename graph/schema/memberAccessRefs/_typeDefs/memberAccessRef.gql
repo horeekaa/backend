@@ -45,6 +45,7 @@ input UpdateMemberAccessRef {
 }
 
 input MemberAccessRefFilterFields {
+    _id: ObjectID
     access: MemberAccessRefOptionsInput
     memberAccessRefType: MemberAccessRefType
     organizationMembershipRole: OrganizationMembershipRole

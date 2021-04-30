@@ -8,6 +8,6 @@ type UpdateMemberAccessRefOutput struct {
 }
 
 type GetAllMemberAccessRefInput struct {
-	FilterFields  *model.UpdateMemberAccessRef
+	FilterFields  *model.MemberAccessRefFilterFields
 	PaginationOpt *model.PaginationOptionInput
 }

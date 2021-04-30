@@ -8,6 +8,6 @@ type UpdateOrganizationOutput struct {
 }
 
 type GetAllOrganizationInput struct {
-	FilterFields  *model.UpdateOrganization
+	FilterFields  *model.OrganizationFilterFields
 	PaginationOpt *model.PaginationOptionInput
 }

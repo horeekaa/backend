@@ -129,8 +129,8 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	}
 
 	existingMemberAccRef, err := updateMmbAccessRefUcase.getMemberAccessRefRepo.Execute(
-		&model.UpdateMemberAccessRef{
-			ID: validatedInput.UpdateMemberAccessRef.ID,
+		&model.MemberAccessRefFilterFields{
+			ID: &validatedInput.UpdateMemberAccessRef.ID,
 		},
 	)
 	if err != nil {

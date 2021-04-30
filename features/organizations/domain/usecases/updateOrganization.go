@@ -129,8 +129,8 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 	}
 
 	existingMemberAccRef, err := updateMmbAccessRefUcase.getOrganizationRepo.Execute(
-		&model.UpdateOrganization{
-			ID: validatedInput.UpdateOrganization.ID,
+		&model.OrganizationFilterFields{
+			ID: &validatedInput.UpdateOrganization.ID,
 		},
 	)
 	if err != nil {
