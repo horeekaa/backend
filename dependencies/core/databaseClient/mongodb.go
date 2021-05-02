@@ -14,7 +14,7 @@ import (
 
 type DatabaseDependency struct{}
 
-func (dbDependency *DatabaseDependency) bind() {
+func (dbDependency *DatabaseDependency) Bind() {
 	container.Singleton(
 		func() mongodbcoreclientinterfaces.MongoClient {
 			mongoclient, _ := mongodbcoreclients.NewMongoClient()

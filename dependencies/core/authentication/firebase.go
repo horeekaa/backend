@@ -11,7 +11,7 @@ import (
 
 type FirebaseAuthenticationDependency struct{}
 
-func (firebaseAuthDependency *FirebaseAuthenticationDependency) bind() {
+func (firebaseAuthDependency *FirebaseAuthenticationDependency) Bind() {
 	container.Singleton(
 		func(fbSvless firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient) firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient {
 			fbAuthClient, _ := firebaseauthcoreclients.NewFirebaseAuthClient()

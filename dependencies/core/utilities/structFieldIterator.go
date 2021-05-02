@@ -8,7 +8,7 @@ import (
 
 type StructFieldIteratorDependency struct{}
 
-func (structFieldDpdcy *StructFieldIteratorDependency) bind() {
+func (structFieldDpdcy *StructFieldIteratorDependency) Bind() {
 	container.Singleton(
 		func() coreutilityinterfaces.StructFieldIteratorUtility {
 			structFieldIteratorUtility, _ := coreutilities.NewStructFieldIteratorUtility()

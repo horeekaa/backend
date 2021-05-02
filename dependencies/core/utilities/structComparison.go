@@ -8,7 +8,7 @@ import (
 
 type StructComparisonDependency struct{}
 
-func (strctCompareDpdcy *StructComparisonDependency) bind() {
+func (strctCompareDpdcy *StructComparisonDependency) Bind() {
 	container.Singleton(
 		func() coreutilityinterfaces.StructComparisonUtility {
 			structComparisonUtility, _ := coreutilities.NewStructComparisonUtility()
