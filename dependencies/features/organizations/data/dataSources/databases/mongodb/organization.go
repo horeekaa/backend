@@ -11,7 +11,7 @@ import (
 
 type OrganizationDataSourceDependency struct{}
 
-func (orgDataSourceDpdcy *OrganizationDataSourceDependency) bind() {
+func (orgDataSourceDpdcy *OrganizationDataSourceDependency) Bind() {
 	container.Singleton(
 		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodborganizationdatasourceinterfaces.OrganizationDataSourceMongo {
 			organizationDataSourceMongo, _ := mongodborganizationdatasources.NewOrganizationDataSourceMongo(basicOperation)
