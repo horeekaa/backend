@@ -9,7 +9,7 @@ import (
 
 type GetAllMemberAccessRefDependency struct{}
 
-func (_ *GetAllMemberAccessRefDependency) bind() {
+func (_ *GetAllMemberAccessRefDependency) Bind() {
 	container.Singleton(
 		func(
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,

@@ -11,7 +11,7 @@ import (
 
 type CreateMemberAccessRefUsecaseDependency struct{}
 
-func (_ *CreateMemberAccessRefUsecaseDependency) bind() {
+func (_ *CreateMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,

@@ -10,7 +10,7 @@ import (
 
 type UpdateMemberAccessRefDependency struct{}
 
-func (_ UpdateMemberAccessRefDependency) bind() {
+func (_ UpdateMemberAccessRefDependency) Bind() {
 	container.Singleton(
 		func(
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
