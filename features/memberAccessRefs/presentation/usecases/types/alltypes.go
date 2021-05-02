@@ -21,6 +21,6 @@ type UpdateMemberAccessRefUsecaseInput struct {
 type GetAllMemberAccessRefUsecaseInput struct {
 	AuthHeader    string
 	Context       context.Context
-	FilterFields  *model.UpdateMemberAccessRef
+	FilterFields  *model.MemberAccessRefFilterFields
 	PaginationOps *model.PaginationOptionInput
 }

@@ -3,5 +3,5 @@ package memberaccessrefdomainrepositoryinterfaces
 import "github.com/horeekaa/backend/model"
 
 type GetMemberAccessRefRepository interface {
-	Execute(filterFields *model.UpdateMemberAccessRef) (*model.MemberAccessRef, error)
+	Execute(filterFields *model.MemberAccessRefFilterFields) (*model.MemberAccessRef, error)
 }

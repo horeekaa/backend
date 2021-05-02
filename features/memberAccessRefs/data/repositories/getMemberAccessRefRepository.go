@@ -22,7 +22,7 @@ func NewGetMemberAccessRefRepository(
 	}, nil
 }
 
-func (getMmbAccessRefRepo *getMemberAccessRefRepository) Execute(filterFields *model.UpdateMemberAccessRef) (*model.MemberAccessRef, error) {
+func (getMmbAccessRefRepo *getMemberAccessRefRepository) Execute(filterFields *model.MemberAccessRefFilterFields) (*model.MemberAccessRef, error) {
 	var filterFieldsMap map[string]interface{}
 	data, _ := json.Marshal(filterFields)
 	json.Unmarshal(data, &filterFieldsMap)

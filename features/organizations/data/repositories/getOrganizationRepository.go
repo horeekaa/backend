@@ -22,7 +22,7 @@ func NewGetOrganizationRepository(
 	}, nil
 }
 
-func (getOrgRepo *getOrganizationRepository) Execute(filterFields *model.UpdateOrganization) (*model.Organization, error) {
+func (getOrgRepo *getOrganizationRepository) Execute(filterFields *model.OrganizationFilterFields) (*model.Organization, error) {
 	var filterFieldsMap map[string]interface{}
 	data, _ := json.Marshal(filterFields)
 	json.Unmarshal(data, &filterFieldsMap)

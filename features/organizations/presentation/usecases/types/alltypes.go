@@ -21,6 +21,6 @@ type UpdateOrganizationUsecaseInput struct {
 type GetAllOrganizationUsecaseInput struct {
 	AuthHeader    string
 	Context       context.Context
-	FilterFields  *model.UpdateOrganization
+	FilterFields  *model.OrganizationFilterFields
 	PaginationOps *model.PaginationOptionInput
 }

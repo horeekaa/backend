@@ -15,6 +15,18 @@ func (r *accountResolver) Person(ctx context.Context, obj *model.Account) (*mode
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) Login(ctx context.Context, deviceToken *string) (*model.Account, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) Logout(ctx context.Context, deviceToken *string) (*model.Account, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Person(ctx context.Context, account *model.ObjectIDOnly) (*model.Person, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Account returns generated.AccountResolver implementation.
 func (r *Resolver) Account() generated.AccountResolver { return &accountResolver{r} }
 

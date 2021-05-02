@@ -23,6 +23,15 @@ input UpdateLogging {
     updatedAt: Time
 }
 
+input LoggingFilterFields {
+    _id: ObjectID
+    collection: String
+    changeLog: String
+    createdByAccount: ObjectIDOnly
+    activity: LoggedActivity
+    proposalStatus: EntityProposalStatus
+}
+
 type Logging {
     _id: ObjectID!
     collection: String!

@@ -1,0 +1,8 @@
+extend type Mutation {
+    createMemberAccessRef(createMemberAccessRef: CreateMemberAccessRef!): MemberAccessRef!
+    updateMemberAccessRef(updateMemberAccessRef: UpdateMemberAccessRef!): MemberAccessRef!
+}
+
+extend type Query {
+    memberAccessRefs(filterFields: MemberAccessRefFilterFields, paginationOpt: PaginationOptionInput): [MemberAccessRef]!
+}
