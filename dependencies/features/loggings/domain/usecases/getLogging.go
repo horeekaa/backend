@@ -9,7 +9,7 @@ import (
 
 type GetLoggingUsecaseDependency struct{}
 
-func (_ GetLoggingUsecaseDependency) bind() {
+func (_ GetLoggingUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getLoggingRepo loggingdomainrepositoryinterfaces.GetLoggingRepository,

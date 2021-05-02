@@ -11,7 +11,7 @@ import (
 
 type LoggingDataSourceDependency struct{}
 
-func (logDataSourceDpdcy *LoggingDataSourceDependency) bind() {
+func (logDataSourceDpdcy *LoggingDataSourceDependency) Bind() {
 	container.Singleton(
 		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbloggingdatasourceinterfaces.LoggingDataSourceMongo {
 			loggingDataSourceMongo, _ := mongodbloggingdatasources.NewLoggingDataSourceMongo(basicOperation)
