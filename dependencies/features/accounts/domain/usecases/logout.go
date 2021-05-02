@@ -9,7 +9,7 @@ import (
 
 type LogoutUsecaseDependency struct{}
 
-func (_ LogoutUsecaseDependency) bind() {
+func (_ LogoutUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,

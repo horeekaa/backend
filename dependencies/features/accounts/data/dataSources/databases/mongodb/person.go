@@ -11,7 +11,7 @@ import (
 
 type PersonDataSourceDependency struct{}
 
-func (personDataSourceDependency *PersonDataSourceDependency) bind() {
+func (personDataSourceDependency *PersonDataSourceDependency) Bind() {
 	container.Singleton(
 		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.PersonDataSourceMongo {
 			personRepoMongo, _ := mongodbaccountdatasources.NewPersonDataSourceMongo(basicOperation)

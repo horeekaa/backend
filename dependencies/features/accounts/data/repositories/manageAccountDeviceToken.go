@@ -9,7 +9,7 @@ import (
 
 type ManageAccountDeviceTokenDependency struct{}
 
-func (manageAccDeviceTokenDependency *ManageAccountDeviceTokenDependency) bind() {
+func (manageAccDeviceTokenDependency *ManageAccountDeviceTokenDependency) Bind() {
 	container.Singleton(
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,

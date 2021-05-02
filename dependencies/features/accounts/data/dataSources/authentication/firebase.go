@@ -9,7 +9,7 @@ import (
 
 type FirebaseAuthDependency struct{}
 
-func (firebaseAuthDependency *FirebaseAuthDependency) bind() {
+func (firebaseAuthDependency *FirebaseAuthDependency) Bind() {
 	container.Singleton(
 		func(fbAuthClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient) firebaseauthdatasourceinterfaces.FirebaseAuthRepo {
 			fbAuthRepo, _ := firebaseauthdatasources.NewFirebaseAuthRepo(fbAuthClient)

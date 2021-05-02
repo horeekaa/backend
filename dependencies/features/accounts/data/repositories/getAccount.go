@@ -9,7 +9,7 @@ import (
 
 type GetAccountDependency struct{}
 
-func (_ *GetAccountDependency) bind() {
+func (_ *GetAccountDependency) Bind() {
 	container.Singleton(
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,

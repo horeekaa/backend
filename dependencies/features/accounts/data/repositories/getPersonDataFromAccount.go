@@ -9,7 +9,7 @@ import (
 
 type GetPersonDataFromAccountDependency struct{}
 
-func (getPersonDataFromAccountDependency *GetPersonDataFromAccountDependency) bind() {
+func (getPersonDataFromAccountDependency *GetPersonDataFromAccountDependency) Bind() {
 	container.Singleton(
 		func(
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,

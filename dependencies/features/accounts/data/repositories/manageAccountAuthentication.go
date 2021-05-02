@@ -11,7 +11,7 @@ import (
 
 type ManageAccountAuthenticationDependency struct{}
 
-func (manageAccAuthDependency *ManageAccountAuthenticationDependency) bind() {
+func (manageAccAuthDependency *ManageAccountAuthenticationDependency) Bind() {
 	container.Singleton(
 		func(
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,

@@ -10,7 +10,7 @@ import (
 
 type CreateMemberAccessForAccountDependency struct{}
 
-func (createMemberAccessForAccountDependency *CreateMemberAccessForAccountDependency) bind() {
+func (createMemberAccessForAccountDependency *CreateMemberAccessForAccountDependency) Bind() {
 	container.Singleton(
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
