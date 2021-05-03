@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/serviceFailures/exceptionToFailure"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"

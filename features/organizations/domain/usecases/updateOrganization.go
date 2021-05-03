@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/serviceFailures/enums"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/usecaseErrors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/usecaseErrors/enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/failureToError"

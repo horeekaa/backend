@@ -1,7 +1,7 @@
 package horeekaacorefailure
 
 import (
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/serviceFailures/base"
+	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
 )
 
 // NewFailureObject getter service layer Failure
