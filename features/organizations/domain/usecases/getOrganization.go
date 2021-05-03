@@ -1,7 +1,7 @@
 package organizationpresentationusecases
 
 import (
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_failureToError"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/failureToError"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
 	"github.com/horeekaa/backend/model"

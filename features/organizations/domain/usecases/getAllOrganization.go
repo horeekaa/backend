@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/usecaseErrors"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_failureToError"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/usecaseErrors/enums"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
