@@ -1,7 +1,7 @@
 package horeekaacoreexception
 
 import (
-	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/repoExceptions/_base"
+	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/repoExceptions/base"
 )
 
 // NewExceptionObject getter repo layer Exception Object

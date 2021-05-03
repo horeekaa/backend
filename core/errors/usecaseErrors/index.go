@@ -1,7 +1,7 @@
 package horeekaacoreerror
 
 import (
-	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_base"
+	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/usecaseErrors/base"
 )
 
 // NewErrorObject getter usecaes layer Error Object
