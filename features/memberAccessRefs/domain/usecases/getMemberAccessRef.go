@@ -1,7 +1,7 @@
 package memberaccessrefpresentationusecases
 
 import (
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/failureToError"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
 	"github.com/horeekaa/backend/model"

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
+	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
-	horeekaacoreerror "github.com/horeekaa/backend/core/errors/usecaseErrors"
-	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/usecaseErrors/enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
