@@ -1,7 +1,7 @@
 package loggingdomainrepositorydependencies
 
 import (
-	container "github.com/golobby/container/v2/"
+	container "github.com/golobby/container/v2"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	loggingdomainrepositories "github.com/horeekaa/backend/features/loggings/data/repositories"
