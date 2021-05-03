@@ -8,7 +8,7 @@ import (
 
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 )
 

@@ -12,7 +12,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

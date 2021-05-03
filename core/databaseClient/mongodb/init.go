@@ -13,7 +13,7 @@ import (
 	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	horeekaaexceptioncore "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
+	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
 )
 
 // MongoClient holds the database reference to each of the Client collection
