@@ -1,10 +1,10 @@
 package horeekaacoreexceptiontofailure
 
 import (
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
-	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_base"
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/serviceFailures"
+	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/serviceFailures/_base"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/serviceFailures/_enums"
 )
 
 var upstreamFailure = map[string]bool{

@@ -6,8 +6,8 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
-	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 	"google.golang.org/api/option"
 )

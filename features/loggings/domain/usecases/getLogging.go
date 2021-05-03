@@ -1,7 +1,7 @@
 package loggingpresentationusecases
 
 import (
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_failureToError"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	"github.com/horeekaa/backend/model"

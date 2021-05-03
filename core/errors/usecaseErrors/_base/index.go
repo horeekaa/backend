@@ -3,7 +3,7 @@ package horeekaacorebaseerror
 import (
 	"fmt"
 
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_base"
+	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/serviceFailures/_base"
 )
 
 // Error struct for shaping usecase layer error

@@ -1,9 +1,9 @@
 package horeekaacorefailuretoerror
 
 import (
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
-	horeekaacorebaseerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_base"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/serviceFailures/_enums"
+	horeekaacoreerror "github.com/horeekaa/backend/core/errors/usecaseErrors"
+	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_base"
 )
 
 var authenticationError = map[string]bool{

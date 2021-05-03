@@ -11,9 +11,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
 	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
-	horeekaaexceptioncore "github.com/horeekaa/backend/core/_errors/repoExceptions"
-	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
+	horeekaaexceptioncore "github.com/horeekaa/backend/core/errors/repoExceptions"
+	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/repoExceptions/_enums"
 )
 
 // MongoClient holds the database reference to each of the Client collection

@@ -3,9 +3,9 @@ package accountpresentationusecases
 import (
 	"errors"
 
-	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
-	horeekaacoreerrorenums "github.com/horeekaa/backend/core/_errors/usecaseErrors/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreerror "github.com/horeekaa/backend/core/errors/usecaseErrors"
+	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/usecaseErrors/_enums"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/usecaseErrors/_failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
