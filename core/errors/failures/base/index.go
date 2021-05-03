@@ -8,9 +8,9 @@ import (
 
 // Failure struct for shaping service layer error
 type Failure struct {
-	Message string
-	Path    string
-	Err     *horeekaacorebaseexception.Exception
+	Message string                               `json:"Message"`
+	Path    string                               `json:"Path"`
+	Err     *horeekaacorebaseexception.Exception `json:"Err"`
 }
 
 func (f *Failure) Error() string {

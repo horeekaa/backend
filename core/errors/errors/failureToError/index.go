@@ -1,9 +1,12 @@
 package horeekaacorefailuretoerror
 
 import (
+	"encoding/json"
+
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/errors/base"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
+	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
 )
 
 var authenticationError = map[string]bool{
@@ -32,8 +35,6 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
 
 	horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity: true,
-
-	horeekaacorefailureenums.SendEmailTypeNotExist: true,
 }
 
 var generalError = map[string]bool{
@@ -45,10 +46,13 @@ var badGatewayError = map[string]bool{
 }
 
 // ConvertFailure helps convert failures coming from the service layer to be an error in usecase layer
-func ConvertFailure(path string, failure error) *horeekaacorebaseerror.Error {
+func ConvertFailure(path string, errorObject interface{}) *horeekaacorebaseerror.Error {
+	var failure *horeekaacorebasefailure.Failure
+	jsonTemp, _ := json.Marshal(errorObject)
+	json.Unmarshal(jsonTemp, failure)
 	errMsg := ""
 	if &failure.Message != nil {
-		errMsg := *failure.Message
+		errMsg = failure.Message
 	}
 
 	if authenticationError[errMsg] {

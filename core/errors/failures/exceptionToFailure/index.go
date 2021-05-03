@@ -1,6 +1,9 @@
 package horeekaacoreexceptiontofailure
 
 import (
+	"encoding/json"
+
+	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/exceptions/base"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
@@ -34,10 +37,13 @@ var objectNotFoundFailure = map[string]bool{
 }
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
-func ConvertException(path string, exception error) *horeekaacorebasefailure.Failure {
+func ConvertException(path string, errorObject interface{}) *horeekaacorebasefailure.Failure {
+	var exception *horeekaacorebaseexception.Exception
+	jsonTemp, _ := json.Marshal(errorObject)
+	json.Unmarshal(jsonTemp, exception)
 	errMsg := ""
 	if &exception.Message != nil {
-		errMsg = *exception.Message
+		errMsg = exception.Message
 	}
 
 	if authenticationFailure[errMsg] {

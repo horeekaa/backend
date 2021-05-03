@@ -8,10 +8,10 @@ import (
 
 // Error struct for shaping usecase layer error
 type Error struct {
-	Message    string
-	StatusCode int
-	Path       string
-	Err        *horeekaacorebasefailure.Failure
+	Message    string                           `json:"Message"`
+	StatusCode int                              `json:"StatusCode"`
+	Path       string                           `json:"Path"`
+	Err        *horeekaacorebasefailure.Failure `json:"Err"`
 }
 
 func (e *Error) Error() string {

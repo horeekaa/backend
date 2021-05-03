@@ -4,9 +4,9 @@ import "fmt"
 
 // Exception struct for shaping repo layer error
 type Exception struct {
-	Message string
-	Path    string
-	Err     error
+	Message string `json:"Message"`
+	Path    string `json:"Path"`
+	Err     error  `json:"Err"`
 }
 
 func (e *Exception) Error() string {
