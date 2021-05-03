@@ -7,8 +7,8 @@ import (
 	auth "firebase.google.com/go/v4/auth"
 
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
-	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 )
 

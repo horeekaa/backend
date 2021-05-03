@@ -11,8 +11,8 @@ import (
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

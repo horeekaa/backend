@@ -11,8 +11,8 @@ import (
 	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
-	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 )
 
 type firebaseAuthRepo struct {

@@ -3,7 +3,7 @@ package horeekaacorebasefailure
 import (
 	"fmt"
 
-	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/repoExceptions/base"
+	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/exceptions/base"
 )
 
 // Failure struct for shaping service layer error

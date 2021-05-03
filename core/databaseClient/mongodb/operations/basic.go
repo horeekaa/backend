@@ -14,8 +14,8 @@ import (
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexception "github.com/horeekaa/backend/core/errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/repoExceptions/enums"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 )
 
 type basicOperation struct {
