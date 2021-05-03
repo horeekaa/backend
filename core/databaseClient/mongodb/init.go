@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
-	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	horeekaaexceptioncore "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/exceptions/enums"

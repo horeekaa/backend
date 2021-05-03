@@ -4,7 +4,7 @@ import (
 	"context"
 
 	firebase "firebase.google.com/go/v4"
-	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
