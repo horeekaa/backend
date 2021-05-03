@@ -5,8 +5,8 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/serviceFailures"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/serviceFailures/_exceptionToFailure"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/serviceFailures/enums"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/serviceFailures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"

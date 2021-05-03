@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/serviceFailures/_exceptionToFailure"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/serviceFailures/exceptionToFailure"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
