@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	masterdependencies "github.com/horeekaa/backend/dependencies"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
@@ -16,6 +18,9 @@ import (
 const defaultPort = "8080"
 
 func main() {
+	masterBind := &masterdependencies.MasterDependency{}
+	masterBind.Bind()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
