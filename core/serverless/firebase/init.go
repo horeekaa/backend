@@ -2,12 +2,11 @@ package firebaseserverlesscoreclients
 
 import (
 	"context"
-	"errors"
 
 	firebase "firebase.google.com/go/v4"
-	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
-	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 	"google.golang.org/api/option"
 )
@@ -37,7 +36,7 @@ func (svlessClient *firebaseServerlessClient) GetApp() (*firebase.App, error) {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaacoreexceptionenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return svlessClient.app, nil

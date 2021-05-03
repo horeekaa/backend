@@ -21,8 +21,8 @@ This project uses Golang for better multi-threading backend performance.
 ## Initialize App
 
 The Project requires 2 config files needed in order to run. 
-- Please setup the all the project strings config as listed on `/_commons/configs/strings.go`.
+- Please setup the all the project strings config as listed on `/commons/configs/strings.go`.
 Put them on a `.env` file so the code can consume it when it is run.
-- Please put the `Firebase Service Account JSON file` within folder `/_commons/assets`
+- Please put the `Firebase Service Account JSON file` within folder `/commons/assets`
 
 DO NOT include those files in the git repository under any circumstances.

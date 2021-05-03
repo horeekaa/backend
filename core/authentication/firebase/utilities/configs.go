@@ -1,7 +1,7 @@
 package firebaseauthcoreutilities
 
 import (
-	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 )
 
 func GetFirebaseActionCodeSettings() map[string]interface{} {

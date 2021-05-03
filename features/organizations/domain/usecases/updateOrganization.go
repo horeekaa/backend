@@ -1,13 +1,12 @@
 package organizationpresentationusecases
 
 import (
-	"errors"
 	"fmt"
 
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
-	horeekaacoreerrorenums "github.com/horeekaa/backend/core/_errors/usecaseErrors/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
+	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
@@ -61,7 +60,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organ
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/updateOrganizationUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	input.UpdateOrganization.ApprovingAccount = nil
@@ -147,7 +146,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 				403,
 				"/updateOrganizationUsecase",
-				errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
+				nil,
 			)
 		}
 

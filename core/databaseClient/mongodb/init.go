@@ -2,7 +2,6 @@ package mongodbcoreclients
 
 import (
 	"context"
-	"errors"
 	"strconv"
 	"time"
 
@@ -10,10 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
-	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
-	horeekaaexceptioncore "github.com/horeekaa/backend/core/_errors/repoExceptions"
-	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
+	horeekaaexceptioncore "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 )
 
 // MongoClient holds the database reference to each of the Client collection
@@ -70,7 +69,7 @@ func (mongoClient *mongoClient) GetClient() (*mongo.Client, error) {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.client, nil
@@ -81,7 +80,7 @@ func (mongoClient *mongoClient) GetDatabaseName() (string, error) {
 		return "", horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.databaseName, nil
@@ -92,7 +91,7 @@ func (mongoClient *mongoClient) GetDatabaseTimeout() (time.Duration, error) {
 		return time.Duration(0), horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.timeout, nil

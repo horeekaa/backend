@@ -3,16 +3,15 @@ package accountdomainrepositories
 import (
 	"encoding/json"
 
-	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
-	"github.com/pkg/errors"
 )
 
 type createMemberAccessForAccountRepository struct {
@@ -48,7 +47,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 		return accountdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/createMemberAccessForAccount",
-			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
+			nil,
 		)
 	}
 
@@ -57,7 +56,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 			return accountdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess,
 				"/createMemberAccessForAccount",
-				errors.New(horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess),
+				nil,
 			)
 		}
 	}
@@ -103,7 +102,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.MemberAccessRefNotExist,
 			"/createMemberAccessForAccount",
-			errors.New(horeekaacorefailureenums.MemberAccessRefNotExist),
+			nil,
 		)
 	}
 	var accessInput model.MemberAccessRefOptionsInput

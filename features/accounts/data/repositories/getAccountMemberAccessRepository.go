@@ -1,12 +1,10 @@
 package accountdomainrepositories
 
 import (
-	"errors"
-
-	horeekaacorefailure "github.com/horeekaa/backend/core/_errors/serviceFailures"
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/_errors/serviceFailures/_enums"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/_errors/serviceFailures/_exceptionToFailure"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
@@ -43,7 +41,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 		return accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getAccountMemberAccess",
-			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
+			nil,
 		)
 	}
 	if getAccountMemberAccess.getAccountMemberAccessUsecaseComponent == nil {
@@ -88,7 +86,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 			"/getPersonDataFromAccount",
-			errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
+			nil,
 		)
 	}
 	return memberAccess, nil

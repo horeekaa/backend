@@ -2,7 +2,6 @@ package mongodbcoreoperations
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -11,11 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	horeekaacoreexception "github.com/horeekaa/backend/core/_errors/repoExceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/_errors/repoExceptions/_enums"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 )
 
 type basicOperation struct {
@@ -64,7 +63,7 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, operationOpt
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
 			fmt.Sprintf("/%s/find", bscOperation.collectionName),
-			errors.New(horeekaacoreexceptionenums.IDNotFound),
+			nil,
 		)
 	}
 

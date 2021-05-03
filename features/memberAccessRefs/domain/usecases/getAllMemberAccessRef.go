@@ -1,11 +1,9 @@
 package memberaccessrefpresentationusecases
 
 import (
-	"errors"
-
-	horeekaacoreerror "github.com/horeekaa/backend/core/_errors/usecaseErrors"
-	horeekaacoreerrorenums "github.com/horeekaa/backend/core/_errors/usecaseErrors/_enums"
-	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/_errors/usecaseErrors/_failureToError"
+	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
+	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
@@ -46,7 +44,7 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) validation(input membe
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/getAllMemberAccessRefUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	return &input, nil
