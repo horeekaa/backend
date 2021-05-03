@@ -10,7 +10,7 @@ import (
 
 type GetAllOrganizationUsecaseDependency struct{}
 
-func (_ GetAllOrganizationUsecaseDependency) bind() {
+func (_ GetAllOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,

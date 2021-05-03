@@ -9,7 +9,7 @@ import (
 
 type GetMemberAccessRefUsecaseDependency struct{}
 
-func (_ GetMemberAccessRefUsecaseDependency) bind() {
+func (_ GetMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,

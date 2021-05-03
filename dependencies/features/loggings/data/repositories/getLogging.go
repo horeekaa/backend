@@ -9,7 +9,7 @@ import (
 
 type GetLoggingDependency struct{}
 
-func (_ *GetLoggingDependency) bind() {
+func (_ *GetLoggingDependency) Bind() {
 	container.Singleton(
 		func(
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,

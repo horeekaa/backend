@@ -9,7 +9,7 @@ import (
 
 type GetPersonDataFromAccountUsecaseDependency struct{}
 
-func (getPrsnDataFromAccUsecaseDpdcy *GetPersonDataFromAccountUsecaseDependency) bind() {
+func (getPrsnDataFromAccUsecaseDpdcy *GetPersonDataFromAccountUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,

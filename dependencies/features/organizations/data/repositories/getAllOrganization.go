@@ -9,7 +9,7 @@ import (
 
 type GetAllOrganizationDependency struct{}
 
-func (_ *GetAllOrganizationDependency) bind() {
+func (_ *GetAllOrganizationDependency) Bind() {
 	container.Singleton(
 		func(
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,

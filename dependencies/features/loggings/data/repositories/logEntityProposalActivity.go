@@ -10,7 +10,7 @@ import (
 
 type LogEntityProposalActivityDependency struct{}
 
-func (logEntityProposalActivityDependency *LogEntityProposalActivityDependency) bind() {
+func (logEntityProposalActivityDependency *LogEntityProposalActivityDependency) Bind() {
 	container.Singleton(
 		func(
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,

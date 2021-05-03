@@ -11,7 +11,7 @@ import (
 
 type AccountDataSourceDependency struct{}
 
-func (accountDataSourceDependency *AccountDataSourceDependency) bind() {
+func (accountDataSourceDependency *AccountDataSourceDependency) Bind() {
 	container.Singleton(
 		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbaccountdatasourceinterfaces.AccountDataSourceMongo {
 			accountDataSourceMongo, _ := mongodbaccountdatasources.NewAccountDataSourceMongo(basicOperation)

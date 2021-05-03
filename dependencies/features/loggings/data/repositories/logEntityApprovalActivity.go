@@ -9,7 +9,7 @@ import (
 
 type LogEntityApprovalActivityDependency struct{}
 
-func (logEntityApprActivityDpdcy *LogEntityApprovalActivityDependency) bind() {
+func (logEntityApprActivityDpdcy *LogEntityApprovalActivityDependency) Bind() {
 	container.Singleton(
 		func(
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,

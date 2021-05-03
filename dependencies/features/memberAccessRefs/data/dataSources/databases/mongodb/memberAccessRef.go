@@ -11,7 +11,7 @@ import (
 
 type MemberAccessRefDataSourceDependency struct{}
 
-func (memberAccessRefDataSourceDependency *MemberAccessRefDataSourceDependency) bind() {
+func (memberAccessRefDataSourceDependency *MemberAccessRefDataSourceDependency) Bind() {
 	container.Singleton(
 		func(basicOperation mongodbcoreoperationinterfaces.BasicOperation) mongodbmemberaccessrefdatasourceinterfaces.MemberAccessRefDataSourceMongo {
 			memberAccessRefRepoMongo, _ := mongodbmemberaccessrefdatasources.NewMemberAccessRefDataSourceMongo(basicOperation)

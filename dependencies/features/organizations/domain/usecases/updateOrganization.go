@@ -11,7 +11,7 @@ import (
 
 type UpdateOrganizationUsecaseDependency struct{}
 
-func (_ *UpdateOrganizationUsecaseDependency) bind() {
+func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,

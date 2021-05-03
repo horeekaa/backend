@@ -10,7 +10,7 @@ import (
 
 type FirebaseServerlessDependency struct{}
 
-func (firebaseDependency *FirebaseServerlessDependency) bind() {
+func (firebaseDependency *FirebaseServerlessDependency) Bind() {
 	container.Singleton(
 		func() firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient {
 			fbServerlessClient, _ := firebaseserverlesscoreclients.NewFirebaseServerlessClient()
