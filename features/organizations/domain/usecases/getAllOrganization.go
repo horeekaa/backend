@@ -1,8 +1,6 @@
 package organizationpresentationusecases
 
 import (
-	"errors"
-
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
@@ -46,7 +44,7 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) validation(input organiza
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/getAllOrganizationUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	return &input, nil

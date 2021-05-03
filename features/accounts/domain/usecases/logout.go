@@ -1,8 +1,6 @@
 package accountpresentationusecases
 
 import (
-	"errors"
-
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
@@ -35,7 +33,7 @@ func (logoutUcase *logoutUsecase) validation(input accountpresentationusecasetyp
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/logoutUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	return &input, nil

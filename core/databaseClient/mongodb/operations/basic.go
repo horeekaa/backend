@@ -2,7 +2,6 @@ package mongodbcoreoperations
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -64,7 +63,7 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, operationOpt
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
 			fmt.Sprintf("/%s/find", bscOperation.collectionName),
-			errors.New(horeekaacoreexceptionenums.IDNotFound),
+			nil,
 		)
 	}
 

@@ -1,8 +1,6 @@
 package accountpresentationusecases
 
 import (
-	"errors"
-
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
@@ -46,7 +44,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) validati
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/getPersonDataFromAccount",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 

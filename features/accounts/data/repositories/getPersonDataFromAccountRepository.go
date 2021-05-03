@@ -1,8 +1,6 @@
 package accountdomainrepositories
 
 import (
-	"errors"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
@@ -38,7 +36,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) preExecute(input *model.A
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getPersonDataFromAccount",
-			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
+			nil,
 		)
 	}
 	if getPrsnData.getPersonDataFromAccountUsecaseComponent == nil {

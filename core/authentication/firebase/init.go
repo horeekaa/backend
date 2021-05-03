@@ -2,7 +2,6 @@ package firebaseauthcoreclients
 
 import (
 	"context"
-	"errors"
 
 	auth "firebase.google.com/go/v4/auth"
 
@@ -22,7 +21,7 @@ func (fbAuthClient *firebaseAuthenticationClient) GetServerlessClient() (firebas
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
 			"/newFirebaseAuthentication",
-			errors.New(horeekaacoreexceptionenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return fbAuthClient.firebaseServerlessClient, nil
@@ -33,7 +32,7 @@ func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (*auth.Client,
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
 			"/newFirebaseAuthentication",
-			errors.New(horeekaacoreexceptionenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return fbAuthClient.client, nil

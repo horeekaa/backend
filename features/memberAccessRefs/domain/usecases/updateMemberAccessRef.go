@@ -1,7 +1,6 @@
 package memberaccessrefpresentationusecases
 
 import (
-	"errors"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -61,7 +60,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) validation(input me
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/updateMemberAccessRefUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	input.UpdateMemberAccessRef.ApprovingAccount = nil
@@ -147,7 +146,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 				403,
 				"/updateMemberAccessRefUsecase",
-				errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
+				nil,
 			)
 		}
 

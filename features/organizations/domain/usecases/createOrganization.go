@@ -1,7 +1,6 @@
 package organizationpresentationusecases
 
 import (
-	"errors"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -54,7 +53,7 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organ
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/createOrganizationUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	input.CreateOrganization.SubmittingAccount = nil

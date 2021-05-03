@@ -1,7 +1,6 @@
 package memberaccessrefpresentationusecases
 
 import (
-	"errors"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -54,7 +53,7 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input me
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/createMemberAccessRefUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	input.CreateMemberAccessRef.SubmittingAccount = nil

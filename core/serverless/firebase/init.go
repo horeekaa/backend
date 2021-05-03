@@ -2,7 +2,6 @@ package firebaseserverlesscoreclients
 
 import (
 	"context"
-	"errors"
 
 	firebase "firebase.google.com/go/v4"
 	coreconfigs "github.com/horeekaa/backend/core/_commons/configs"
@@ -37,7 +36,7 @@ func (svlessClient *firebaseServerlessClient) GetApp() (*firebase.App, error) {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaacoreexceptionenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return svlessClient.app, nil

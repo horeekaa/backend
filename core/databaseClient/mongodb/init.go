@@ -2,7 +2,6 @@ package mongodbcoreclients
 
 import (
 	"context"
-	"errors"
 	"strconv"
 	"time"
 
@@ -70,7 +69,7 @@ func (mongoClient *mongoClient) GetClient() (*mongo.Client, error) {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.client, nil
@@ -81,7 +80,7 @@ func (mongoClient *mongoClient) GetDatabaseName() (string, error) {
 		return "", horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.databaseName, nil
@@ -92,7 +91,7 @@ func (mongoClient *mongoClient) GetDatabaseTimeout() (time.Duration, error) {
 		return time.Duration(0), horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
 			"/newMongoClient",
-			errors.New(horeekaaexceptioncoreenums.ClientInitializationFailed),
+			nil,
 		)
 	}
 	return mongoClient.timeout, nil

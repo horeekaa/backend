@@ -1,8 +1,6 @@
 package accountdomainrepositories
 
 import (
-	"errors"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
@@ -43,7 +41,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 		return accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getAccountMemberAccess",
-			errors.New(horeekaacorefailureenums.AccountIDNeededToRetrievePersonData),
+			nil,
 		)
 	}
 	if getAccountMemberAccess.getAccountMemberAccessUsecaseComponent == nil {
@@ -88,7 +86,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 			"/getPersonDataFromAccount",
-			errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
+			nil,
 		)
 	}
 	return memberAccess, nil

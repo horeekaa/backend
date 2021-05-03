@@ -1,7 +1,6 @@
 package loggingdomainrepositories
 
 import (
-	"errors"
 	"fmt"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -73,7 +72,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity,
 				"/logEntityProposalActivity",
-				errors.New(horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity),
+				nil,
 			)
 		}
 		existingIDValue := *validatedInput.ExistingObjectID
@@ -152,7 +151,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity,
 				"/logEntityProposalActivity",
-				errors.New(horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity),
+				nil,
 			)
 		}
 		existingIDValue := *validatedInput.ExistingObjectID

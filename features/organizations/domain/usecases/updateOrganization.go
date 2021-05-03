@@ -1,7 +1,6 @@
 package organizationpresentationusecases
 
 import (
-	"errors"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -61,7 +60,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organ
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
 				401,
 				"/updateOrganizationUsecase",
-				errors.New(horeekaacoreerrorenums.AuthenticationTokenNotExist),
+				nil,
 			)
 	}
 	input.UpdateOrganization.ApprovingAccount = nil
@@ -147,7 +146,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 				403,
 				"/updateOrganizationUsecase",
-				errors.New(horeekaacorefailureenums.FeatureNotAccessibleByAccount),
+				nil,
 			)
 		}
 
