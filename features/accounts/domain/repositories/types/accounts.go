@@ -24,6 +24,11 @@ type ManageAccountAuthenticationInput struct {
 	Context    context.Context
 }
 
+type GetUserFromAuthHeaderInput struct {
+	AuthHeader string
+	Context    context.Context
+}
+
 type ManageAccountDeviceTokenInput struct {
 	Account                        *model.Account
 	DeviceToken                    string
