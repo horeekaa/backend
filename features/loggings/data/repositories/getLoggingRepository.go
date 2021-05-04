@@ -23,6 +23,10 @@ func NewGetLoggingRepository(
 }
 
 func (getLoggingRefRepo *getLoggingRepository) Execute(filterFields *model.LoggingFilterFields) (*model.Logging, error) {
+	if filterFields == nil {
+		return nil, nil
+	}
+
 	var filterFieldsMap map[string]interface{}
 	data, _ := json.Marshal(filterFields)
 	json.Unmarshal(data, &filterFieldsMap)

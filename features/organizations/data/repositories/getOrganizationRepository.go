@@ -23,6 +23,10 @@ func NewGetOrganizationRepository(
 }
 
 func (getOrgRepo *getOrganizationRepository) Execute(filterFields *model.OrganizationFilterFields) (*model.Organization, error) {
+	if filterFields == nil {
+		return nil, nil
+	}
+
 	var filterFieldsMap map[string]interface{}
 	data, _ := json.Marshal(filterFields)
 	json.Unmarshal(data, &filterFieldsMap)
