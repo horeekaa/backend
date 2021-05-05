@@ -20,9 +20,8 @@ type CreateMemberAccessForAccountInput struct {
 	Organization               *model.Organization
 }
 
-type ManageAccountAuthenticationInput struct {
-	AuthHeader string
-	Context    context.Context
+type CreateAccountFromAuthDataInput struct {
+	User *auth.UserRecord
 }
 
 type GetUserFromAuthHeaderInput struct {
