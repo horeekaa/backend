@@ -21,7 +21,9 @@ func (_ *AccountDependency) Bind() {
 		&accountdomainrepositorydependencies.GetAccountDependency{},
 		&accountdomainrepositorydependencies.GetAccountMemberAccessDependency{},
 		&accountdomainrepositorydependencies.GetPersonDataFromAccountDependency{},
-		&accountdomainrepositorydependencies.ManageAccountAuthenticationDependency{},
+		&accountdomainrepositorydependencies.CreateAccountFromAuthDataDependency{},
+		&accountdomainrepositorydependencies.GetAccountFromAuthDataDependency{},
+		&accountdomainrepositorydependencies.GetUserFromAuthHeaderDependency{},
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
 
 		&accountpresentationusecasedependencies.GetAccountUsecaseDependency{},

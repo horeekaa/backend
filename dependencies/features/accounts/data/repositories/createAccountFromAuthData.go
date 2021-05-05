@@ -3,41 +3,38 @@ package accountdomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
-	firebaseauthdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/authentication/interfaces"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositories "github.com/horeekaa/backend/features/accounts/data/repositories"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 )
 
-type ManageAccountAuthenticationDependency struct{}
+type CreateAccountFromAuthDataDependency struct{}
 
-func (manageAccAuthDependency *ManageAccountAuthenticationDependency) Bind() {
+func (_ *CreateAccountFromAuthDataDependency) Bind() {
 	container.Singleton(
 		func(
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
-			firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo,
-		) accountdomainrepositoryinterfaces.ManageAccountAuthenticationTransactionComponent {
-			manageAccAuthTransactionComponent, _ :=
-				accountdomainrepositories.NewManageAccountAuthenticationTransactionComponent(
+		) accountdomainrepositoryinterfaces.CreateAccountFromAuthDataTransactionComponent {
+			createAccFrmAuthDataComponent, _ :=
+				accountdomainrepositories.NewCreateAccountFromAuthDataTransactionComponent(
 					personDataSource,
 					accountDataSource,
-					firebaseDataSource,
 				)
-			return manageAccAuthTransactionComponent
+			return createAccFrmAuthDataComponent
 		},
 	)
 
 	container.Transient(
 		func(
-			usecaseComponent accountdomainrepositoryinterfaces.ManageAccountAuthenticationTransactionComponent,
+			usecaseComponent accountdomainrepositoryinterfaces.CreateAccountFromAuthDataTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
-		) accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository {
-			accountAuthenticationRepo, _ := accountdomainrepositories.NewManageAccountAuthenticationRepository(
+		) accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository {
+			createAccFromAuthDataRepo, _ := accountdomainrepositories.NewCreateAccountFromAuthDataRepository(
 				usecaseComponent,
 				mongoDBTransaction,
 			)
-			return accountAuthenticationRepo
+			return createAccFromAuthDataRepo
 		},
 	)
 }
