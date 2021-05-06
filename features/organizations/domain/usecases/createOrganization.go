@@ -17,7 +17,7 @@ import (
 )
 
 type createOrganizationUsecase struct {
-	manageAccountAuthenticationRepo  accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
@@ -26,14 +26,14 @@ type createOrganizationUsecase struct {
 }
 
 func NewCreateOrganizationUsecase(
-	manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (organizationpresentationusecaseinterfaces.CreateOrganizationUsecase, error) {
 	return &createOrganizationUsecase{
-		manageAccountAuthenticationRepo,
+		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		getPersonDataFromAccountRepo,
 		createOrganizationRepo,
@@ -47,7 +47,7 @@ func NewCreateOrganizationUsecase(
 }
 
 func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (organizationpresentationusecasetypes.CreateOrganizationUsecaseInput, error) {
-	if &input.AuthHeader == nil {
+	if &input.User == nil {
 		return organizationpresentationusecasetypes.CreateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -67,16 +67,24 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 		return nil, err
 	}
 
-	account, err := createMmbAccessRefUcase.manageAccountAuthenticationRepo.RunTransaction(
-		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: validatedInput.AuthHeader,
-			Context:    validatedInput.Context,
+	account, err := createMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
+		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+			User:    validatedInput.User,
+			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/createOrganizationUsecase",
 			err,
+		)
+	}
+	if account == nil {
+		return nil, horeekaacoreerror.NewErrorObject(
+			horeekaacoreerrorenums.AuthenticationTokenNotExist,
+			401,
+			"/createOrganizationUsecase",
+			nil,
 		)
 	}
 

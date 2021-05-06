@@ -14,7 +14,7 @@ type UpdateOrganizationUsecaseDependency struct{}
 func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			updateOrganizationRepo organizationdomainrepositoryinterfaces.UpdateOrganizationRepository,
@@ -23,7 +23,7 @@ func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 			logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository,
 		) organizationpresentationusecaseinterfaces.UpdateOrganizationUsecase {
 			updateOrganizationUsecase, _ := organizationpresentationusecases.NewUpdateOrganizationUsecase(
-				manageAccountAuthenticationRepo,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				getPersonDataFromAccountRepo,
 				updateOrganizationRepo,

@@ -14,19 +14,19 @@ import (
 )
 
 type getAllOrganizationUsecase struct {
-	manageAccountAuthenticationRepo  accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllOrganizationRepo           organizationdomainrepositoryinterfaces.GetAllOrganizationRepository
 	getAllOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllOrganizationUsecase(
-	manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getAllOrganizationRepo organizationdomainrepositoryinterfaces.GetAllOrganizationRepository,
 ) (organizationpresentationusecaseinterfaces.GetAllOrganizationUsecase, error) {
 	return &getAllOrganizationUsecase{
-		manageAccountAuthenticationRepo,
+		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		getAllOrganizationRepo,
 		&model.MemberAccessRefOptionsInput{
@@ -38,7 +38,7 @@ func NewGetAllOrganizationUsecase(
 }
 
 func (getAllMmbAccRefUcase *getAllOrganizationUsecase) validation(input organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput) (*organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput, error) {
-	if &input.AuthHeader == nil {
+	if &input.User == nil {
 		return &organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -58,16 +58,24 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 		return nil, err
 	}
 
-	account, err := getAllMmbAccRefUcase.manageAccountAuthenticationRepo.RunTransaction(
-		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: validatedInput.AuthHeader,
-			Context:    validatedInput.Context,
+	account, err := getAllMmbAccRefUcase.getAccountFromAuthDataRepo.Execute(
+		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+			User:    validatedInput.User,
+			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/getAllOrganizationUsecase",
 			err,
+		)
+	}
+	if account == nil {
+		return nil, horeekaacoreerror.NewErrorObject(
+			horeekaacoreerrorenums.AuthenticationTokenNotExist,
+			401,
+			"/getAllOrganizationUsecase",
+			nil,
 		)
 	}
 
