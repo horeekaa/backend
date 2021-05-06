@@ -17,7 +17,7 @@ import (
 )
 
 type createMemberAccessRefUsecase struct {
-	manageAccountAuthenticationRepo     accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo          accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository
@@ -26,14 +26,14 @@ type createMemberAccessRefUsecase struct {
 }
 
 func NewCreateMemberAccessRefUsecase(
-	manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (memberaccessrefpresentationusecaseinterfaces.CreateMemberAccessRefUsecase, error) {
 	return &createMemberAccessRefUsecase{
-		manageAccountAuthenticationRepo,
+		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		getPersonDataFromAccountRepo,
 		createMemberAccessRefRepo,
@@ -47,7 +47,7 @@ func NewCreateMemberAccessRefUsecase(
 }
 
 func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput) (memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput, error) {
-	if &input.AuthHeader == nil {
+	if &input.User == nil {
 		return memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -67,16 +67,24 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 		return nil, err
 	}
 
-	account, err := createMmbAccessRefUcase.manageAccountAuthenticationRepo.RunTransaction(
-		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: validatedInput.AuthHeader,
-			Context:    validatedInput.Context,
+	account, err := createMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
+		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+			User:    validatedInput.User,
+			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/createMemberAccessRefUsecase",
 			err,
+		)
+	}
+	if account == nil {
+		return nil, horeekaacoreerror.NewErrorObject(
+			horeekaacoreerrorenums.AuthenticationTokenNotExist,
+			401,
+			"/createMemberAccessRefUsecase",
+			nil,
 		)
 	}
 
