@@ -3,19 +3,19 @@ package accountdomainrepositories
 import (
 	"strings"
 
-	"firebase.google.com/go/v4/auth"
+	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces"
+	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	firebaseauthdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/authentication/interfaces"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 )
 
 type getUserFromAuthHeaderRepository struct {
-	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo
+	firebaseDataSource authenticationcoreclientinterfaces.AuthenticationRepo
 }
 
 func NewGetUserFromAuthHeaderRepository(
-	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo,
+	firebaseDataSource authenticationcoreclientinterfaces.AuthenticationRepo,
 ) (accountdomainrepositoryinterfaces.GetUserFromAuthHeaderRepository, error) {
 	return &getUserFromAuthHeaderRepository{
 		firebaseDataSource,
@@ -24,7 +24,7 @@ func NewGetUserFromAuthHeaderRepository(
 
 func (getUsrFromAuthHeaderRepo *getUserFromAuthHeaderRepository) Execute(
 	getUserFromAuthHeaderInput accountdomainrepositorytypes.GetUserFromAuthHeaderInput,
-) (*auth.UserRecord, error) {
+) (*authenticationcoremodels.AuthUserWrap, error) {
 	splitted := strings.Split(getUserFromAuthHeaderInput.AuthHeader, " ")
 	authToken := splitted[len(splitted)-1]
 
@@ -40,7 +40,7 @@ func (getUsrFromAuthHeaderRepo *getUserFromAuthHeaderRepository) Execute(
 	}
 	user, err := getUsrFromAuthHeaderRepo.firebaseDataSource.GetAuthUserDataById(
 		getUserFromAuthHeaderInput.Context,
-		token.UID,
+		token.FirebaseToken.UID,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

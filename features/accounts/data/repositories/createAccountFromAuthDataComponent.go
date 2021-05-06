@@ -36,7 +36,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	operationOption *mongodbcoretypes.OperationOptions,
 	createAccFrmAuthDataInput accountdomainrepositorytypes.CreateAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	fullNameSplit := strings.Split(createAccFrmAuthDataInput.User.DisplayName, " ")
+	fullNameSplit := strings.Split(createAccFrmAuthDataInput.User.FirebaseUser.DisplayName, " ")
 	firstName := fullNameSplit[0]
 	lastName := fullNameSplit[len(fullNameSplit)-1]
 	if firstName == lastName {
@@ -48,8 +48,8 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		&model.CreatePerson{
 			FirstName:                   firstName,
 			LastName:                    lastName,
-			PhoneNumber:                 createAccFrmAuthDataInput.User.PhoneNumber,
-			Email:                       createAccFrmAuthDataInput.User.Email,
+			PhoneNumber:                 createAccFrmAuthDataInput.User.FirebaseUser.PhoneNumber,
+			Email:                       createAccFrmAuthDataInput.User.FirebaseUser.Email,
 			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 		},
 		operationOption,

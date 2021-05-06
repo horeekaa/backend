@@ -3,7 +3,7 @@ package accountdomainrepositorytypes
 import (
 	"context"
 
-	"firebase.google.com/go/v4/auth"
+	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -21,7 +21,7 @@ type CreateMemberAccessForAccountInput struct {
 }
 
 type CreateAccountFromAuthDataInput struct {
-	User *auth.UserRecord
+	User *authenticationcoremodels.AuthUserWrap
 }
 
 type GetUserFromAuthHeaderInput struct {
@@ -31,7 +31,7 @@ type GetUserFromAuthHeaderInput struct {
 
 type GetAccountFromAuthDataInput struct {
 	Context context.Context
-	User    *auth.UserRecord
+	User    *authenticationcoremodels.AuthUserWrap
 }
 
 type ManageAccountDeviceTokenInput struct {
