@@ -12,22 +12,22 @@ import (
 )
 
 type logoutUsecase struct {
-	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
-	manageAccountDeviceTokenRepository    accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
+	getAccountFromAuthDataRepo         accountdomainrepositoryinterfaces.GetAccountFromAuthData
+	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
 }
 
 func NewLogoutUsecase(
-	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 ) (accountpresentationusecaseinterfaces.LogoutUsecase, error) {
 	return &logoutUsecase{
-		manageAccountAuthenticationRepository,
+		getAccountFromAuthDataRepo,
 		manageAccountDeviceTokenRepository,
 	}, nil
 }
 
 func (logoutUcase *logoutUsecase) validation(input accountpresentationusecasetypes.LogoutUsecaseInput) (*accountpresentationusecasetypes.LogoutUsecaseInput, error) {
-	if &input.AuthHeader == nil {
+	if &input.User == nil {
 		return &accountpresentationusecasetypes.LogoutUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -47,16 +47,24 @@ func (logoutUcase *logoutUsecase) Execute(
 		return nil, err
 	}
 
-	account, err := logoutUcase.manageAccountAuthenticationRepository.RunTransaction(
-		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: validatedInput.AuthHeader,
-			Context:    validatedInput.Context,
+	account, err := logoutUcase.getAccountFromAuthDataRepo.Execute(
+		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+			User:    validatedInput.User,
+			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/logoutUsecase",
 			err,
+		)
+	}
+	if account == nil {
+		return nil, horeekaacoreerror.NewErrorObject(
+			horeekaacoreerrorenums.AuthenticationTokenNotExist,
+			401,
+			"/logoutUsecase",
+			nil,
 		)
 	}
 

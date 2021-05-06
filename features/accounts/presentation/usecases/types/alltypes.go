@@ -3,23 +3,24 @@ package accountpresentationusecasetypes
 import (
 	"context"
 
+	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 	"github.com/horeekaa/backend/model"
 )
 
 type LoginUsecaseInput struct {
-	AuthHeader  string
+	User        *authenticationcoremodels.AuthUserWrap
 	DeviceToken string
 	Context     context.Context
 }
 
 type LogoutUsecaseInput struct {
-	AuthHeader  string
+	User        *authenticationcoremodels.AuthUserWrap
 	DeviceToken string
 	Context     context.Context
 }
 
 type GetPersonDataFromAccountInput struct {
-	AuthHeader      string
+	User            *authenticationcoremodels.AuthUserWrap
 	Context         context.Context
 	Account         *model.Account
 	ViewProfileMode bool

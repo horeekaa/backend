@@ -12,11 +12,11 @@ type LogoutUsecaseDependency struct{}
 func (_ LogoutUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 		) accountpresentationusecaseinterfaces.LogoutUsecase {
 			logoutUsecase, _ := accountpresentationusecases.NewLogoutUsecase(
-				manageAccountAuthenticationRepository,
+				getAccountFromAuthDataRepo,
 				manageAccountDeviceTokenRepository,
 			)
 			return logoutUsecase
