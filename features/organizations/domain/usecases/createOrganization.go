@@ -47,7 +47,7 @@ func NewCreateOrganizationUsecase(
 }
 
 func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (organizationpresentationusecasetypes.CreateOrganizationUsecaseInput, error) {
-	if &input.User == nil {
+	if &input.Context == nil {
 		return organizationpresentationusecasetypes.CreateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -69,7 +69,6 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 
 	account, err := createMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			User:    validatedInput.User,
 			Context: validatedInput.Context,
 		},
 	)

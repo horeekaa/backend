@@ -54,7 +54,7 @@ func NewUpdateOrganizationUsecase(
 }
 
 func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput, error) {
-	if &input.User == nil {
+	if &input.Context == nil {
 		return organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -77,7 +77,6 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 	account, err := updateMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			User:    validatedInput.User,
 			Context: validatedInput.Context,
 		},
 	)
