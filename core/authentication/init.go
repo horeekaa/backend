@@ -2,7 +2,7 @@ package authenticationcoreclients
 
 import (
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
-	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces"
+	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces/init"
 )
 
 type authClient struct {

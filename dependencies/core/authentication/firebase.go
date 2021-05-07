@@ -5,7 +5,7 @@ import (
 	authenticationcoreclients "github.com/horeekaa/backend/core/authentication"
 	firebaseauthcoreclients "github.com/horeekaa/backend/core/authentication/firebase"
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
-	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces"
+	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces/init"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
 )
 
