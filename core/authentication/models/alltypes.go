@@ -1,7 +1,5 @@
 package authenticationcoremodels
 
-import "firebase.google.com/go/v4/auth"
-
 type UpdateAuthUserData struct {
 	UID           string
 	Email         string
@@ -13,10 +11,6 @@ type UpdateAuthUserData struct {
 	Disabled      bool
 }
 
-type AuthUserWrap struct {
-	FirebaseUser *auth.UserRecord
-}
-
-type AuthTokenWrap struct {
-	FirebaseToken *auth.Token
+type UserContextKey struct {
+	Name string
 }

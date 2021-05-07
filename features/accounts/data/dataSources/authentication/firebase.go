@@ -3,10 +3,11 @@ package firebaseauthdatasources
 import (
 	"context"
 
+	firebaseauthdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/authentication/interfaces"
+
 	auth "firebase.google.com/go/v4/auth"
 	firebaseauthcoretypes "github.com/horeekaa/backend/core/authentication/firebase/types"
 	firebaseauthcoreutilities "github.com/horeekaa/backend/core/authentication/firebase/utilities"
-	authenticationcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/interfaces"
 	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
@@ -18,13 +19,13 @@ type firebaseAuthRepo struct {
 	firebaseClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient
 }
 
-func NewFirebaseAuthRepo(firebaseClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient) (authenticationcoreclientinterfaces.AuthenticationRepo, error) {
+func NewFirebaseAuthRepo(firebaseClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient) (firebaseauthdatasourceinterfaces.FirebaseAuthRepo, error) {
 	return &firebaseAuthRepo{
 		firebaseClient,
 	}, nil
 }
 
-func (fbAuthRepo *firebaseAuthRepo) VerifyAndDecodeToken(context context.Context, authToken string) (*authenticationcoremodels.AuthTokenWrap, error) {
+func (fbAuthRepo *firebaseAuthRepo) VerifyAndDecodeToken(context context.Context, authToken string) (*auth.Token, error) {
 	client, err := (*fbAuthRepo).firebaseClient.GetAuthClient()
 
 	token, err := client.VerifyIDToken(context, authToken)
@@ -35,12 +36,10 @@ func (fbAuthRepo *firebaseAuthRepo) VerifyAndDecodeToken(context context.Context
 			err,
 		)
 	}
-	return &authenticationcoremodels.AuthTokenWrap{
-		FirebaseToken: token,
-	}, nil
+	return token, nil
 }
 
-func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataByEmail(context context.Context, email string) (*authenticationcoremodels.AuthUserWrap, error) {
+func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataByEmail(context context.Context, email string) (*auth.UserRecord, error) {
 	client, err := (*fbAuthRepo).firebaseClient.GetAuthClient()
 
 	user, err := client.GetUserByEmail(context, email)
@@ -51,12 +50,10 @@ func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataByEmail(context context.Conte
 			err,
 		)
 	}
-	return &authenticationcoremodels.AuthUserWrap{
-		FirebaseUser: user,
-	}, nil
+	return user, nil
 }
 
-func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataById(context context.Context, uid string) (*authenticationcoremodels.AuthUserWrap, error) {
+func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataById(context context.Context, uid string) (*auth.UserRecord, error) {
 	client, err := (*fbAuthRepo).firebaseClient.GetAuthClient()
 
 	user, err := client.GetUser(context, uid)
@@ -67,9 +64,7 @@ func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataById(context context.Context,
 			err,
 		)
 	}
-	return &authenticationcoremodels.AuthUserWrap{
-		FirebaseUser: user,
-	}, nil
+	return user, nil
 }
 
 func (fbAuthRepo *firebaseAuthRepo) SetRoleInAuthUserData(context context.Context, uid string, accountType string, dbID string) (bool, error) {
@@ -90,7 +85,7 @@ func (fbAuthRepo *firebaseAuthRepo) SetRoleInAuthUserData(context context.Contex
 	return true, nil
 }
 
-func (fbAuthRepo *firebaseAuthRepo) UpdateAuthUserData(context context.Context, user *authenticationcoremodels.UpdateAuthUserData) (*authenticationcoremodels.AuthUserWrap, error) {
+func (fbAuthRepo *firebaseAuthRepo) UpdateAuthUserData(context context.Context, user *authenticationcoremodels.UpdateAuthUserData) (*auth.UserRecord, error) {
 	params := (&auth.UserToUpdate{})
 	if &user.Email != nil {
 		params = params.Email((*user).Email)
@@ -123,9 +118,7 @@ func (fbAuthRepo *firebaseAuthRepo) UpdateAuthUserData(context context.Context, 
 			err,
 		)
 	}
-	return &authenticationcoremodels.AuthUserWrap{
-		FirebaseUser: updatedUser,
-	}, nil
+	return updatedUser, nil
 }
 
 func (fbAuthRepo *firebaseAuthRepo) GenerateEmailVerificationLink(context context.Context, email string) (string, error) {

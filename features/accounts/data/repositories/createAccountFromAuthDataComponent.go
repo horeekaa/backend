@@ -3,7 +3,11 @@ package accountdomainrepositories
 import (
 	"strings"
 
+	"firebase.google.com/go/v4/auth"
+	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -36,7 +40,16 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	operationOption *mongodbcoretypes.OperationOptions,
 	createAccFrmAuthDataInput accountdomainrepositorytypes.CreateAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	fullNameSplit := strings.Split(createAccFrmAuthDataInput.User.FirebaseUser.DisplayName, " ")
+	user := createAccFrmAuthDataInput.Context.Value(&authenticationcoremodels.UserContextKey{Name: "user"})
+	if user == nil {
+		return nil, horeekaacorefailure.NewFailureObject(
+			horeekaacorefailureenums.AuthenticationTokenFailed,
+			"/createAccountFromAuthDataTransactionComponent",
+			nil,
+		)
+	}
+
+	fullNameSplit := strings.Split(user.(auth.UserRecord).DisplayName, " ")
 	firstName := fullNameSplit[0]
 	lastName := fullNameSplit[len(fullNameSplit)-1]
 	if firstName == lastName {
@@ -48,8 +61,8 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		&model.CreatePerson{
 			FirstName:                   firstName,
 			LastName:                    lastName,
-			PhoneNumber:                 createAccFrmAuthDataInput.User.FirebaseUser.PhoneNumber,
-			Email:                       createAccFrmAuthDataInput.User.FirebaseUser.Email,
+			PhoneNumber:                 user.(auth.UserRecord).PhoneNumber,
+			Email:                       user.(auth.UserRecord).Email,
 			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 		},
 		operationOption,

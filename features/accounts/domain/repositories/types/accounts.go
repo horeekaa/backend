@@ -3,7 +3,6 @@ package accountdomainrepositorytypes
 import (
 	"context"
 
-	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -21,7 +20,7 @@ type CreateMemberAccessForAccountInput struct {
 }
 
 type CreateAccountFromAuthDataInput struct {
-	User *authenticationcoremodels.AuthUserWrap
+	Context context.Context
 }
 
 type GetUserFromAuthHeaderInput struct {
@@ -31,7 +30,6 @@ type GetUserFromAuthHeaderInput struct {
 
 type GetAccountFromAuthDataInput struct {
 	Context context.Context
-	User    *authenticationcoremodels.AuthUserWrap
 }
 
 type ManageAccountDeviceTokenInput struct {
