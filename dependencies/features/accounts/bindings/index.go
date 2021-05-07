@@ -30,6 +30,7 @@ func (_ *AccountDependency) Bind() {
 		&accountpresentationusecasedependencies.GetPersonDataFromAccountUsecaseDependency{},
 		&accountpresentationusecasedependencies.LoginUsecaseDependency{},
 		&accountpresentationusecasedependencies.LogoutUsecaseDependency{},
+		&accountpresentationusecasedependencies.GetAuthUserAndAttachToCtxUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {
