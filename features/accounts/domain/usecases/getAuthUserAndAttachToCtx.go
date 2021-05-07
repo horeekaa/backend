@@ -1,0 +1,47 @@
+package accountpresentationusecases
+
+import (
+	"context"
+
+	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
+	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
+	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
+	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
+	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+)
+
+type getAuthUserAndAttachToCtxUsecase struct {
+	getUserFromAuthHeaderRepo accountdomainrepositoryinterfaces.GetUserFromAuthHeaderRepository
+}
+
+func NewGetAuthUserAndAttachToCtxUsecase(
+	getUserFromAuthHeaderRepo accountdomainrepositoryinterfaces.GetUserFromAuthHeaderRepository,
+) (accountpresentationusecaseinterfaces.GetAuthUserAndAttachToCtxUsecase, error) {
+	return &getAuthUserAndAttachToCtxUsecase{
+		getUserFromAuthHeaderRepo,
+	}, nil
+}
+
+func (getAuthUserAndAttachToCtx *getAuthUserAndAttachToCtxUsecase) Execute(
+	input accountpresentationusecasetypes.GetAuthUserAndAttachToCtxInput,
+) (context.Context, error) {
+	user, err := getAuthUserAndAttachToCtx.getUserFromAuthHeaderRepo.Execute(
+		accountdomainrepositorytypes.GetUserFromAuthHeaderInput{
+			AuthHeader: input.AuthHeader,
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/getAuthUserAndAttachToCtx",
+			err,
+		)
+	}
+
+	ctx := context.WithValue(
+		input.Context,
+		&authenticationcoremodels.UserContextKey{Name: "user"},
+		user,
+	)
+	return ctx, nil
+}

@@ -21,3 +21,8 @@ type GetPersonDataFromAccountInput struct {
 	Account         *model.Account
 	ViewProfileMode bool
 }
+
+type GetAuthUserAndAttachToCtxInput struct {
+	AuthHeader string
+	Context    context.Context
+}
