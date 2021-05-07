@@ -47,7 +47,7 @@ func NewCreateMemberAccessRefUsecase(
 }
 
 func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput) (memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput, error) {
-	if &input.User == nil {
+	if &input.Context == nil {
 		return memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -69,7 +69,6 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 
 	account, err := createMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			User:    validatedInput.User,
 			Context: validatedInput.Context,
 		},
 	)
