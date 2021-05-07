@@ -27,7 +27,7 @@ func NewLogoutUsecase(
 }
 
 func (logoutUcase *logoutUsecase) validation(input accountpresentationusecasetypes.LogoutUsecaseInput) (*accountpresentationusecasetypes.LogoutUsecaseInput, error) {
-	if &input.User == nil {
+	if &input.Context == nil {
 		return &accountpresentationusecasetypes.LogoutUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -49,7 +49,6 @@ func (logoutUcase *logoutUsecase) Execute(
 
 	account, err := logoutUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			User:    validatedInput.User,
 			Context: validatedInput.Context,
 		},
 	)

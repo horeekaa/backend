@@ -38,7 +38,7 @@ func NewGetPersonDataFromAccountUsecase(
 func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) validation(
 	input accountpresentationusecasetypes.GetPersonDataFromAccountInput,
 ) (*accountpresentationusecasetypes.GetPersonDataFromAccountInput, error) {
-	if &input.User == nil && input.ViewProfileMode {
+	if &input.Context == nil && input.ViewProfileMode {
 		return &accountpresentationusecasetypes.GetPersonDataFromAccountInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -62,7 +62,6 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 	if validatedInput.ViewProfileMode {
 		account, err := getPersonDataFromAccountUsecase.getAccountFromAuthDataRepo.Execute(
 			accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-				User:    validatedInput.User,
 				Context: validatedInput.Context,
 			},
 		)

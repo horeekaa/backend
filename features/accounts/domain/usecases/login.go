@@ -39,7 +39,7 @@ func NewLoginUsecase(
 }
 
 func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetypes.LoginUsecaseInput) (*accountpresentationusecasetypes.LoginUsecaseInput, error) {
-	if &input.User == nil {
+	if &input.Context == nil {
 		return &accountpresentationusecasetypes.LoginUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -59,7 +59,6 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 
 	account, err := loginUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			User:    validatedInput.User,
 			Context: validatedInput.Context,
 		},
 	)
@@ -72,7 +71,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	if account == nil {
 		account, err = loginUcase.createAccountFromAuthDataRepo.RunTransaction(
 			accountdomainrepositorytypes.CreateAccountFromAuthDataInput{
-				User: validatedInput.User,
+				Context: validatedInput.Context,
 			},
 		)
 	}
