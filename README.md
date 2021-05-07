@@ -20,9 +20,11 @@ This project uses Golang for better multi-threading backend performance.
 
 ## Initialize App
 
-The Project requires 2 config files needed in order to run. 
-- Please setup the all the project strings config as listed on `/commons/configs/strings.go`.
-Put them on a `.env` file so the code can consume it when it is run.
+1. The Project requires 2 config files needed in order to run. 
+- Please setup the all the project variables as listed on `/commons/configs/strings.go`.
+Put the variable values on a `.env` file inside the root folder so the code can consume it when it runs.
 - Please put the `Firebase Service Account JSON file` within folder `/commons/assets`
 
-DO NOT include those files in the git repository under any circumstances.
+DO NOT include `.env` and `Firebase Service Account JSON file` in the git repository under any circumstances.
+
+2. Run `gqlgen generate` to get the all the auto-generated models from gqlgen schemas.

@@ -12,19 +12,19 @@ import (
 )
 
 type getPersonDataFromAccountUsecase struct {
-	manageAccountAuthenticationRepository  accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountFromAuthDataRepo             accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepository       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepository     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	getPersonDataFromAccountAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetPersonDataFromAccountUsecase(
-	manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepository accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 ) (accountpresentationusecaseinterfaces.GetPersonDataFromAccountUsecase, error) {
 	return &getPersonDataFromAccountUsecase{
-		manageAccountAuthenticationRepository,
+		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepository,
 		getPersonDataFromAccountRepository,
 		&model.MemberAccessRefOptionsInput{
@@ -38,7 +38,7 @@ func NewGetPersonDataFromAccountUsecase(
 func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) validation(
 	input accountpresentationusecasetypes.GetPersonDataFromAccountInput,
 ) (*accountpresentationusecasetypes.GetPersonDataFromAccountInput, error) {
-	if &input.AuthHeader == nil && input.ViewProfileMode {
+	if &input.Context == nil && input.ViewProfileMode {
 		return &accountpresentationusecasetypes.GetPersonDataFromAccountInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -60,10 +60,9 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 	}
 
 	if validatedInput.ViewProfileMode {
-		validatedInput.Account, err = getPersonDataFromAccountUsecase.manageAccountAuthenticationRepository.RunTransaction(
-			accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-				AuthHeader: validatedInput.AuthHeader,
-				Context:    validatedInput.Context,
+		account, err := getPersonDataFromAccountUsecase.getAccountFromAuthDataRepo.Execute(
+			accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+				Context: validatedInput.Context,
 			},
 		)
 		if err != nil {
@@ -72,6 +71,15 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 				err,
 			)
 		}
+		if account == nil {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AuthenticationTokenNotExist,
+				401,
+				"/getPersonDataFromAccount",
+				nil,
+			)
+		}
+		validatedInput.Account = account
 
 		_, err = getPersonDataFromAccountUsecase.getAccountMemberAccessRepository.Execute(
 			accountdomainrepositorytypes.GetAccountMemberAccessInput{

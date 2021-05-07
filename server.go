@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	authenticationmiddlewares "github.com/horeekaa/backend/http/middlewares/authentication"
+
 	masterdependencies "github.com/horeekaa/backend/dependencies"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -29,8 +31,17 @@ func main() {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graphresolver.Resolver{}}))
 
-	router.Handle("/api/v1/graphql", playground.Handler("GraphQL playground", "/api/v1/graphql/query"))
-	router.Handle("/api/v1/graphql/query", srv)
+	router.Route("/api", func(r chi.Router) {
+		r.Route("/v1", func(r chi.Router) {
+			r.Route("/graphql", func(r chi.Router) {
+				r.Get("/", playground.Handler("GraphQL playground", "/api/v1/graphql/query"))
+				r.Route("/query", func(r chi.Router) {
+					r.Use(authenticationmiddlewares.AuthGateMiddleware)
+					r.Handle("/", srv)
+				})
+			})
+		})
+	})
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))

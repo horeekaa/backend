@@ -12,12 +12,12 @@ type GetPersonDataFromAccountUsecaseDependency struct{}
 func (getPrsnDataFromAccUsecaseDpdcy *GetPersonDataFromAccountUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepository accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 		) accountpresentationusecaseinterfaces.GetPersonDataFromAccountUsecase {
 			getPersonDataFromAccountUsecase, _ := accountpresentationusecases.NewGetPersonDataFromAccountUsecase(
-				manageAccountAuthenticationRepository,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepository,
 				getPersonDataFromAccountRepository,
 			)

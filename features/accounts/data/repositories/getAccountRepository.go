@@ -23,6 +23,10 @@ func NewGetAccountRepository(
 }
 
 func (getMmbAccessRefRepo *getAccountRepository) Execute(filterFields *model.AccountFilterFields) (*model.Account, error) {
+	if filterFields == nil {
+		return nil, nil
+	}
+
 	var filterFieldsMap map[string]interface{}
 	data, _ := json.Marshal(filterFields)
 	json.Unmarshal(data, &filterFieldsMap)

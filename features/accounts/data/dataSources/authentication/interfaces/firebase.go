@@ -3,7 +3,7 @@ package firebaseauthdatasourceinterfaces
 import (
 	"context"
 
-	auth "firebase.google.com/go/v4/auth"
+	"firebase.google.com/go/v4/auth"
 	authenticationcoremodels "github.com/horeekaa/backend/core/authentication/models"
 )
 

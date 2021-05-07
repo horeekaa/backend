@@ -12,12 +12,14 @@ type LoginUsecaseDependency struct{}
 func (loginUsecaseDpdcy *LoginUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepository accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
+			createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
 			getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 		) accountpresentationusecaseinterfaces.LoginUsecase {
 			loginUsecase, _ := accountpresentationusecases.NewLoginUsecase(
-				manageAccountAuthenticationRepository,
+				getAccountFromAuthDataRepo,
+				createAccountFromAuthDataRepo,
 				getAccountMemberAccessRepository,
 				manageAccountDeviceTokenRepository,
 			)

@@ -10,3 +10,7 @@ type UpdateAuthUserData struct {
 	PhotoURL      string
 	Disabled      bool
 }
+
+type UserContextKey struct {
+	Name string
+}

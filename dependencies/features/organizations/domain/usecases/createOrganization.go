@@ -14,14 +14,14 @@ type CreateOrganizationUsecaseDependency struct{}
 func (_ *CreateOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 		) organizationpresentationusecaseinterfaces.CreateOrganizationUsecase {
 			organizationRefUcase, _ := organizationpresentationusecases.NewCreateOrganizationUsecase(
-				manageAccountAuthenticationRepo,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				getPersonDataFromAccountRepo,
 				createOrganizationRepo,

@@ -1,7 +1,7 @@
 package mongodborganizationdatasourcedependencies
 
 import (
-	container "github.com/golobby/container/v2/"
+	container "github.com/golobby/container/v2"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	mongodborganizationdatasources "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/mongodb"
