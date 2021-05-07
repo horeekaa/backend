@@ -18,7 +18,7 @@ import (
 )
 
 type updateOrganizationUsecase struct {
-	manageAccountAuthenticationRepo  accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository
+	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateOrganizationRepo           organizationdomainrepositoryinterfaces.UpdateOrganizationRepository
@@ -29,7 +29,7 @@ type updateOrganizationUsecase struct {
 }
 
 func NewUpdateOrganizationUsecase(
-	manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateOrganizationRepo organizationdomainrepositoryinterfaces.UpdateOrganizationRepository,
@@ -38,7 +38,7 @@ func NewUpdateOrganizationUsecase(
 	logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository,
 ) (organizationpresentationusecaseinterfaces.UpdateOrganizationUsecase, error) {
 	return &updateOrganizationUsecase{
-		manageAccountAuthenticationRepo,
+		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		getPersonDataFromAccountRepo,
 		updateOrganizationRepo,
@@ -54,7 +54,7 @@ func NewUpdateOrganizationUsecase(
 }
 
 func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput, error) {
-	if &input.AuthHeader == nil {
+	if &input.Context == nil {
 		return organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AuthenticationTokenNotExist,
@@ -75,16 +75,23 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		return nil, err
 	}
 
-	account, err := updateMmbAccessRefUcase.manageAccountAuthenticationRepo.RunTransaction(
-		accountdomainrepositorytypes.ManageAccountAuthenticationInput{
-			AuthHeader: validatedInput.AuthHeader,
-			Context:    validatedInput.Context,
+	account, err := updateMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
+		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/updateOrganizationUsecase",
 			err,
+		)
+	}
+	if account == nil {
+		return nil, horeekaacoreerror.NewErrorObject(
+			horeekaacoreerrorenums.AuthenticationTokenNotExist,
+			401,
+			"/updateOrganizationUsecase",
+			nil,
 		)
 	}
 

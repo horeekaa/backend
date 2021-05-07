@@ -14,7 +14,7 @@ type UpdateMemberAccessRefUsecaseDependency struct{}
 func (_ *UpdateMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
@@ -23,7 +23,7 @@ func (_ *UpdateMemberAccessRefUsecaseDependency) Bind() {
 			logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository,
 		) memberaccessrefpresentationusecaseinterfaces.UpdateMemberAccessRefUsecase {
 			updateMemberAccessRefUsecase, _ := memberaccessrefpresentationusecases.NewUpdateMemberAccessRefUsecase(
-				manageAccountAuthenticationRepo,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				getPersonDataFromAccountRepo,
 				updateMemberAccessRefRepo,

@@ -13,12 +13,12 @@ type GetAllMemberAccessRefUsecaseDependency struct{}
 func (_ GetAllMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository,
 		) memberaccessrefpresentationusecaseinterfaces.GetAllMemberAccessRefUsecase {
 			getAllMemberAccessRefUcase, _ := memberaccessrefpresentationusecases.NewGetAllMemberAccessRefUsecase(
-				manageAccountAuthenticationRepo,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				getAllMemberAccessRefRepo,
 			)

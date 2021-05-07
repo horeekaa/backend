@@ -62,7 +62,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPersonDataFromAccount",
+			"/getAccountMemberAccess",
 			err,
 		)
 	}
@@ -78,14 +78,14 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPersonDataFromAccount",
+			"/getAccountMemberAccess",
 			err,
 		)
 	}
 	if memberAccess == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-			"/getPersonDataFromAccount",
+			"/getAccountMemberAccess",
 			nil,
 		)
 	}

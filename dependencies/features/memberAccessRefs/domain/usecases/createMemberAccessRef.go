@@ -14,14 +14,14 @@ type CreateMemberAccessRefUsecaseDependency struct{}
 func (_ *CreateMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
-			manageAccountAuthenticationRepo accountdomainrepositoryinterfaces.ManageAccountAuthenticationRepository,
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			createMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 		) memberaccessrefpresentationusecaseinterfaces.CreateMemberAccessRefUsecase {
 			memberAccRefUcase, _ := memberaccessrefpresentationusecases.NewCreateMemberAccessRefUsecase(
-				manageAccountAuthenticationRepo,
+				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				getPersonDataFromAccountRepo,
 				createMemberAccessRefRepo,

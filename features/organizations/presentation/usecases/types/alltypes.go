@@ -7,19 +7,16 @@ import (
 )
 
 type CreateOrganizationUsecaseInput struct {
-	AuthHeader         string
 	Context            context.Context
 	CreateOrganization *model.CreateOrganization
 }
 
 type UpdateOrganizationUsecaseInput struct {
-	AuthHeader         string
 	Context            context.Context
 	UpdateOrganization *model.UpdateOrganization
 }
 
 type GetAllOrganizationUsecaseInput struct {
-	AuthHeader    string
 	Context       context.Context
 	FilterFields  *model.OrganizationFilterFields
 	PaginationOps *model.PaginationOptionInput
