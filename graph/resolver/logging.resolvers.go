@@ -5,14 +5,21 @@ package graphresolver
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/golobby/container/v2"
+	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
 
 func (r *loggingResolver) CreatedByAccount(ctx context.Context, obj *model.Logging) (*model.Account, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
+	container.Make(&getAccountUsecase)
+	return getAccountUsecase.Execute(
+		&model.AccountFilterFields{
+			ID: &obj.CreatedByAccount.ID,
+		},
+	)
 }
 
 // Logging returns generated.LoggingResolver implementation.

@@ -5,38 +5,88 @@ package graphresolver
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/golobby/container/v2"
+	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
+	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
+	organizationpresentationusecasetypes "github.com/horeekaa/backend/features/organizations/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
 
 func (r *mutationResolver) CreateOrganization(ctx context.Context, createOrganization model.CreateOrganization) (*model.Organization, error) {
-	panic(fmt.Errorf("not implemented"))
+	var createOrganizationUsecase organizationpresentationusecaseinterfaces.CreateOrganizationUsecase
+	container.Make(&createOrganizationUsecase)
+	return createOrganizationUsecase.Execute(
+		organizationpresentationusecasetypes.CreateOrganizationUsecaseInput{
+			Context:            ctx,
+			CreateOrganization: &createOrganization,
+		},
+	)
 }
 
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, updateOrganization model.UpdateOrganization) (*model.Organization, error) {
-	panic(fmt.Errorf("not implemented"))
+	var updateOrganizationUsecase organizationpresentationusecaseinterfaces.UpdateOrganizationUsecase
+	container.Make(&updateOrganizationUsecase)
+	return updateOrganizationUsecase.Execute(
+		organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput{
+			Context:            ctx,
+			UpdateOrganization: &updateOrganization,
+		},
+	)
 }
 
 func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
+	container.Make(&getAccountUsecase)
+	return getAccountUsecase.Execute(
+		&model.AccountFilterFields{
+			ID: &obj.SubmittingAccount.ID,
+		},
+	)
 }
 
 func (r *organizationResolver) ApprovingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
+	container.Make(&getAccountUsecase)
+	return getAccountUsecase.Execute(
+		&model.AccountFilterFields{
+			ID: &obj.ApprovingAccount.ID,
+		},
+	)
 }
 
 func (r *organizationResolver) PreviousEntity(ctx context.Context, obj *model.Organization) (*model.Organization, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
+	container.Make(&getOrganizationUsecase)
+	return getOrganizationUsecase.Execute(
+		&model.OrganizationFilterFields{
+			ID: &obj.PreviousEntity.ID,
+		},
+	)
 }
 
 func (r *organizationResolver) CorrespondingLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
+	container.Make(&getLoggingUsecase)
+	return getLoggingUsecase.Execute(
+		&model.LoggingFilterFields{
+			ID: &obj.CorrespondingLog.ID,
+		},
+	)
 }
 
 func (r *queryResolver) Organizations(ctx context.Context, filterFields *model.OrganizationFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Organization, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getOrganizationsUsecase organizationpresentationusecaseinterfaces.GetAllOrganizationUsecase
+	container.Make(&getOrganizationsUsecase)
+	return getOrganizationsUsecase.Execute(
+		organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput{
+			Context:       ctx,
+			FilterFields:  filterFields,
+			PaginationOps: paginationOpt,
+		},
+	)
 }
 
 // Organization returns generated.OrganizationResolver implementation.
