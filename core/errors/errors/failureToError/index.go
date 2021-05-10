@@ -5,8 +5,8 @@ import (
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/errors/base"
-	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 )
 
 var authenticationError = map[string]bool{
@@ -47,9 +47,10 @@ var badGatewayError = map[string]bool{
 
 // ConvertFailure helps convert failures coming from the service layer to be an error in usecase layer
 func ConvertFailure(path string, errorObject interface{}) *horeekaacorebaseerror.Error {
-	var failure *horeekaacorebasefailure.Failure
+	var failure horeekaacorebasefailure.Failure
 	jsonTemp, _ := json.Marshal(errorObject)
-	json.Unmarshal(jsonTemp, failure)
+	json.Unmarshal(jsonTemp, &failure)
+
 	errMsg := ""
 	if &failure.Message != nil {
 		errMsg = failure.Message
@@ -57,62 +58,62 @@ func ConvertFailure(path string, errorObject interface{}) *horeekaacorebaseerror
 
 	if authenticationError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			401,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	if forbiddenError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			403,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	if resourceNotFoundError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			404,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	if conflictWithCurrentError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			409,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	if invalidInputError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			422,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	if badGatewayError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
-			(*failure).Message,
+			failure.Message,
 			503,
 			path,
-			failure,
+			&failure,
 		)
 	}
 
 	return horeekaacoreerror.NewErrorObject(
-		(*failure).Message,
+		failure.Message,
 		500,
 		path,
-		failure,
+		&failure,
 	)
 }

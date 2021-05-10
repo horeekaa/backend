@@ -38,9 +38,10 @@ var objectNotFoundFailure = map[string]bool{
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
 func ConvertException(path string, errorObject interface{}) *horeekaacorebasefailure.Failure {
-	var exception *horeekaacorebaseexception.Exception
+	var exception horeekaacorebaseexception.Exception
 	jsonTemp, _ := json.Marshal(errorObject)
-	json.Unmarshal(jsonTemp, exception)
+	json.Unmarshal(jsonTemp, &exception)
+
 	errMsg := ""
 	if &exception.Message != nil {
 		errMsg = exception.Message
@@ -50,7 +51,7 @@ func ConvertException(path string, errorObject interface{}) *horeekaacorebasefai
 		return horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
 			path,
-			exception,
+			&exception,
 		)
 	}
 
@@ -58,7 +59,7 @@ func ConvertException(path string, errorObject interface{}) *horeekaacorebasefai
 		return horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.DuplicateObjectExist,
 			path,
-			exception,
+			&exception,
 		)
 	}
 
@@ -66,7 +67,7 @@ func ConvertException(path string, errorObject interface{}) *horeekaacorebasefai
 		return horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.ObjectNotFound,
 			path,
-			exception,
+			&exception,
 		)
 	}
 
@@ -74,13 +75,13 @@ func ConvertException(path string, errorObject interface{}) *horeekaacorebasefai
 		return horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.UpstreamFailures,
 			path,
-			exception,
+			&exception,
 		)
 	}
 
 	return horeekaacorefailure.NewFailureObject(
 		horeekaacorefailureenums.UnknownFailures,
 		path,
-		exception,
+		&exception,
 	)
 }
