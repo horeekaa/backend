@@ -29,6 +29,7 @@ func (getAuthUserAndAttachToCtx *getAuthUserAndAttachToCtxUsecase) Execute(
 	user, err := getAuthUserAndAttachToCtx.getUserFromAuthHeaderRepo.Execute(
 		accountdomainrepositorytypes.GetUserFromAuthHeaderInput{
 			AuthHeader: input.AuthHeader,
+			Context:    input.Context,
 		},
 	)
 	if err != nil {
