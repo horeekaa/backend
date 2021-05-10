@@ -30,7 +30,7 @@ func (r *mutationResolver) Login(ctx context.Context, deviceToken *string) (*mod
 	container.Make(&loginUsecase)
 	return loginUsecase.Execute(
 		accountpresentationusecasetypes.LoginUsecaseInput{
-			DeviceToken: *deviceToken,
+			DeviceToken: deviceToken,
 			Context:     ctx,
 		},
 	)
@@ -41,7 +41,7 @@ func (r *mutationResolver) Logout(ctx context.Context, deviceToken *string) (*mo
 	container.Make(&logoutUsecase)
 	return logoutUsecase.Execute(
 		accountpresentationusecasetypes.LogoutUsecaseInput{
-			DeviceToken: *deviceToken,
+			DeviceToken: deviceToken,
 			Context:     ctx,
 		},
 	)

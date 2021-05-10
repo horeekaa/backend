@@ -90,13 +90,13 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		)
 	}
 
-	if &input.DeviceToken == nil {
+	if validatedInput.DeviceToken == nil {
 		return account, nil
 	}
 	account, err = loginUcase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,
-			DeviceToken:                    validatedInput.DeviceToken,
+			DeviceToken:                    *validatedInput.DeviceToken,
 			ManageAccountDeviceTokenAction: accountdomainrepositorytypes.ManageAccountDeviceTokenActionInsert,
 		},
 	)

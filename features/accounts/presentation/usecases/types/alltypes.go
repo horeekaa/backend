@@ -7,12 +7,12 @@ import (
 )
 
 type LoginUsecaseInput struct {
-	DeviceToken string
+	DeviceToken *string
 	Context     context.Context
 }
 
 type LogoutUsecaseInput struct {
-	DeviceToken string
+	DeviceToken *string
 	Context     context.Context
 }
 

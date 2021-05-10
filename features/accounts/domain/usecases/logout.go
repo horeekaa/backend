@@ -67,13 +67,13 @@ func (logoutUcase *logoutUsecase) Execute(
 		)
 	}
 
-	if &input.DeviceToken == nil {
+	if validatedInput.DeviceToken == nil {
 		return account, nil
 	}
 	account, err = logoutUcase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,
-			DeviceToken:                    validatedInput.DeviceToken,
+			DeviceToken:                    *validatedInput.DeviceToken,
 			ManageAccountDeviceTokenAction: accountdomainrepositorytypes.ManageAccountDeviceTokenActionRemove,
 		},
 	)
