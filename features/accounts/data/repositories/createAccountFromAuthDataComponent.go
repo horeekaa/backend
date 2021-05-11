@@ -49,7 +49,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		)
 	}
 
-	fullNameSplit := strings.Split(user.(auth.UserRecord).DisplayName, " ")
+	fullNameSplit := strings.Split(user.(*auth.UserRecord).DisplayName, " ")
 	firstName := fullNameSplit[0]
 	lastName := fullNameSplit[len(fullNameSplit)-1]
 	if firstName == lastName {
@@ -61,8 +61,8 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		&model.CreatePerson{
 			FirstName:                   firstName,
 			LastName:                    lastName,
-			PhoneNumber:                 user.(auth.UserRecord).PhoneNumber,
-			Email:                       user.(auth.UserRecord).Email,
+			PhoneNumber:                 user.(*auth.UserRecord).PhoneNumber,
+			Email:                       user.(*auth.UserRecord).Email,
 			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 		},
 		operationOption,
