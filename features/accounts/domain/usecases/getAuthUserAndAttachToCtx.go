@@ -41,7 +41,7 @@ func (getAuthUserAndAttachToCtx *getAuthUserAndAttachToCtxUsecase) Execute(
 
 	ctx := context.WithValue(
 		input.Context,
-		&authenticationcoremodels.UserContextKey{Name: "user"},
+		authenticationcoremodels.UserContextKey,
 		user,
 	)
 	return ctx, nil

@@ -40,7 +40,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	operationOption *mongodbcoretypes.OperationOptions,
 	createAccFrmAuthDataInput accountdomainrepositorytypes.CreateAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	user := createAccFrmAuthDataInput.Context.Value(&authenticationcoremodels.UserContextKey{Name: "user"})
+	user := createAccFrmAuthDataInput.Context.Value(authenticationcoremodels.UserContextKey)
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,

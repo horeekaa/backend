@@ -34,7 +34,7 @@ func NewGetAccountFromAuthDataRepository(
 func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	input accountdomainrepositorytypes.GetAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	user := input.Context.Value(&authenticationcoremodels.UserContextKey{Name: "user"})
+	user := input.Context.Value(authenticationcoremodels.UserContextKey)
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
