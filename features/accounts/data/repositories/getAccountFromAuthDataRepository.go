@@ -44,7 +44,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	}
 
 	storedAccountID := user.(*auth.UserRecord).CustomClaims[firebaseauthcoretypes.FirebaseCustomClaimsAccountIDKey]
-	if &storedAccountID != nil {
+	if storedAccountID != nil {
 		storedAccountID = (storedAccountID).(string)
 		unmarshaledAccountID, _ := mongomarshaler.UnmarshalObjectID(storedAccountID)
 

@@ -51,7 +51,7 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, operationOpt
 	defer cancel()
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res = bscOperation.collectionRef.FindOne(*operationOptions.Session, bson.M{"_id": ID})
 	} else {
 		res = bscOperation.collectionRef.FindOne(ctx, bson.M{"_id": ID})
@@ -86,7 +86,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	bson.Unmarshal(data, &bsonFilter)
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res = bscOperation.collectionRef.FindOne(*operationOptions.Session, bsonFilter)
 	} else {
 		res = bscOperation.collectionRef.FindOne(ctx, bsonFilter)
@@ -139,7 +139,7 @@ func (bscOperation *basicOperation) Find(
 	}
 
 	var curr *mongo.Cursor
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		curr, err = bscOperation.collectionRef.Find(*operationOptions.Session, bsonFilter, opts)
 	} else {
 		curr, err = bscOperation.collectionRef.Find(ctx, bsonFilter, opts)
@@ -185,7 +185,7 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	bson.Unmarshal(data, &bsonObject)
 
 	var res *mongo.InsertOneResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res, err = bscOperation.collectionRef.InsertOne(*operationOptions.Session, bsonObject)
 	} else {
 		res, err = bscOperation.collectionRef.InsertOne(ctx, bsonObject)
@@ -220,7 +220,7 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 	}
 	bson.Unmarshal(data, &bsonObject)
 
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			*operationOptions.Session,
 			bson.M{"_id": ID},
