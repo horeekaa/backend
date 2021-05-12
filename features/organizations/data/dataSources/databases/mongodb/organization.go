@@ -24,15 +24,27 @@ func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterface
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, err
+	}
+
 	return &output, err
 }
 
@@ -90,10 +102,14 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 	}
 
 	res, err := orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateOrganization, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setorganizationDefaultValuesOutput struct {

@@ -58,8 +58,8 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, operationOpt
 	}
 
 	var objectReturn interface{}
-	res.Decode(&objectReturn)
-	if &objectReturn == nil {
+	err := res.Decode(&objectReturn)
+	if err == mongo.ErrNoDocuments {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
 			fmt.Sprintf("/%s/find", bscOperation.collectionName),

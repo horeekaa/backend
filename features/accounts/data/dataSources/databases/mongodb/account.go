@@ -24,16 +24,28 @@ func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 
 func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	res, err := accDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	res, err := accDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
-	res.Decode(&output)
-	return &output, err
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, err
+	}
+
+	return &output, nil
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) Find(
@@ -90,10 +102,14 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	res, err := accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setAccountDefaultValuesOutput struct {

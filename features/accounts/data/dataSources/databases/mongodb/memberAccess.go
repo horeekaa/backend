@@ -24,15 +24,27 @@ func NewMemberAccessDataSourceMongo(basicOperation mongodbcoreoperationinterface
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	res, err := memberAccDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccess
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	res, err := memberAccDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccess
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, err
+	}
+
 	return &output, err
 }
 
@@ -90,10 +102,14 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive
 	}
 
 	res, err := memberAccDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccess, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccess
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setMemberAccessDefaultValuesOutput struct {

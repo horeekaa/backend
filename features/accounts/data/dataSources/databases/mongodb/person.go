@@ -24,15 +24,27 @@ func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Basi
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	res, err := prsnDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	res, err := prsnDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, err
+	}
+
 	return &output, err
 }
 
@@ -90,10 +102,14 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	res, err := prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setPersonDefaultValuesOutput struct {
