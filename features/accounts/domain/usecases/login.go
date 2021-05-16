@@ -14,6 +14,7 @@ import (
 type loginUsecase struct {
 	getAccountFromAuthDataRepo         accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	createAccountFromAuthDataRepo      accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository
+	createMemberAccessForAccountRepo   accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository
 	getAccountMemberAccessRepository   accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
 	loginAccessIdentity                *model.MemberAccessRefOptionsInput
@@ -22,12 +23,14 @@ type loginUsecase struct {
 func NewLoginUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
+	createMemberAccessForAccountRepo accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
 	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 ) (accountpresentationusecaseinterfaces.LoginUsecase, error) {
 	return &loginUsecase{
 		getAccountFromAuthDataRepo,
 		createAccountFromAuthDataRepo,
+		createMemberAccessForAccountRepo,
 		getAccountMemberAccessRepository,
 		manageAccountDeviceTokenRepository,
 		&model.MemberAccessRefOptionsInput{
@@ -72,6 +75,13 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		account, err = loginUcase.createAccountFromAuthDataRepo.RunTransaction(
 			accountdomainrepositorytypes.CreateAccountFromAuthDataInput{
 				Context: validatedInput.Context,
+			},
+		)
+
+		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
+			accountdomainrepositorytypes.CreateMemberAccessForAccountInput{
+				Account:             account,
+				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
 			},
 		)
 	}

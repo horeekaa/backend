@@ -14,12 +14,14 @@ func (loginUsecaseDpdcy *LoginUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
+			createMemberAccessForAccountRepo accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
 			getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 		) accountpresentationusecaseinterfaces.LoginUsecase {
 			loginUsecase, _ := accountpresentationusecases.NewLoginUsecase(
 				getAccountFromAuthDataRepo,
 				createAccountFromAuthDataRepo,
+				createMemberAccessForAccountRepo,
 				getAccountMemberAccessRepository,
 				manageAccountDeviceTokenRepository,
 			)
