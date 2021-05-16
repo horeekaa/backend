@@ -2,6 +2,7 @@ package memberaccessrefdomainrepositories
 
 import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
@@ -16,15 +17,17 @@ func NewUpdateMemberAccessRefRepository(
 	updateMemberAccessRefRepositoryTransactionComponent memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository, error) {
-	mongoDBTransaction.SetTransaction(
+	updateMmbAccRefRepo := &updateMemberAccessRefRepository{
 		updateMemberAccessRefRepositoryTransactionComponent,
+		mongoDBTransaction,
+	}
+
+	mongoDBTransaction.SetTransaction(
+		updateMmbAccRefRepo,
 		"UpdateMemberAccessRefRepository",
 	)
 
-	return &updateMemberAccessRefRepository{
-		updateMemberAccessRefRepositoryTransactionComponent: updateMemberAccessRefRepositoryTransactionComponent,
-		mongoDBTransaction: mongoDBTransaction,
-	}, nil
+	return updateMmbAccRefRepo, nil
 }
 
 func (updateMmbAccRefRepo *updateMemberAccessRefRepository) SetValidation(
@@ -32,6 +35,24 @@ func (updateMmbAccRefRepo *updateMemberAccessRefRepository) SetValidation(
 ) (bool, error) {
 	updateMmbAccRefRepo.updateMemberAccessRefRepositoryTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
+}
+
+func (updateMmbAccRefRepo *updateMemberAccessRefRepository) PreTransaction(
+	input interface{},
+) (interface{}, error) {
+	return updateMmbAccRefRepo.updateMemberAccessRefRepositoryTransactionComponent.PreTransaction(
+		input.(*model.UpdateMemberAccessRef),
+	)
+}
+
+func (updateMmbAccRefRepo *updateMemberAccessRefRepository) TransactionBody(
+	operationOption *mongodbcoretypes.OperationOptions,
+	input interface{},
+) (interface{}, error) {
+	return updateMmbAccRefRepo.updateMemberAccessRefRepositoryTransactionComponent.TransactionBody(
+		operationOption,
+		input.(*model.UpdateMemberAccessRef),
+	)
 }
 
 func (updateMmbAccRefRepo *updateMemberAccessRefRepository) RunTransaction(
