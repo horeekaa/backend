@@ -42,7 +42,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]inter
 	var output model.Person
 	err = res.Decode(&output)
 	if err == mongo.ErrNoDocuments {
-		return nil, err
+		return nil, nil
 	}
 
 	return &output, err

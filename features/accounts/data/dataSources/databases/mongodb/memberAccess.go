@@ -42,7 +42,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) FindOne(query map[s
 	var output model.MemberAccess
 	err = res.Decode(&output)
 	if err == mongo.ErrNoDocuments {
-		return nil, err
+		return nil, nil
 	}
 
 	return &output, err

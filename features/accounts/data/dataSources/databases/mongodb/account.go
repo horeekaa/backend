@@ -42,7 +42,7 @@ func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]inter
 	var output model.Account
 	err = res.Decode(&output)
 	if err == mongo.ErrNoDocuments {
-		return nil, err
+		return nil, nil
 	}
 
 	return &output, nil

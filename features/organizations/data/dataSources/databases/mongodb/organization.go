@@ -42,7 +42,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) FindOne(query map[string]
 	var output model.Organization
 	err = res.Decode(&output)
 	if err == mongo.ErrNoDocuments {
-		return nil, err
+		return nil, nil
 	}
 
 	return &output, err
