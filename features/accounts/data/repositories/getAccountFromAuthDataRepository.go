@@ -79,7 +79,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 			input.Context,
 			user.(*auth.UserRecord).UID,
 			model.AccountTypePerson.String(),
-			account.ID.String(),
+			account.ID.Hex(),
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
