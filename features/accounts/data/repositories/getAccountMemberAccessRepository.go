@@ -17,19 +17,19 @@ import (
 type getAccountMemberAccessRepository struct {
 	accountDataSource                      databaseaccountdatasourceinterfaces.AccountDataSource
 	memberAccessDataSource                 databaseaccountdatasourceinterfaces.MemberAccessDataSource
-	nilValueRemoverFromMapUtility          coreutilityinterfaces.NilValueRemoverFromMapUtility
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 	getAccountMemberAccessUsecaseComponent accountdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent
 }
 
 func NewGetAccountMemberAccessRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
-	nilValueRemoverFromMapUtility coreutilityinterfaces.NilValueRemoverFromMapUtility,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository, error) {
 	return &getAccountMemberAccessRepository{
-		accountDataSource:             accountDataSource,
-		memberAccessDataSource:        memberAccessDataSource,
-		nilValueRemoverFromMapUtility: nilValueRemoverFromMapUtility,
+		accountDataSource:      accountDataSource,
+		memberAccessDataSource: memberAccessDataSource,
+		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -76,15 +76,22 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	jsonTemp, _ := json.Marshal(preExecuteOutput.MemberAccessRefOptions)
 	json.Unmarshal(jsonTemp, &accessMap)
 
-	getAccountMemberAccess.nilValueRemoverFromMapUtility.Execute(accessMap)
+	getAccountMemberAccess.mapProcessorUtility.RemoveNil(accessMap)
 
-	memberAccess, err := getAccountMemberAccess.memberAccessDataSource.GetMongoDataSource().FindOne(
+	getMemberAccessQuery := make(map[string]interface{})
+	getAccountMemberAccess.mapProcessorUtility.FlattenMap(
+		"",
 		map[string]interface{}{
-			"account":             model.ObjectIDOnly{ID: &account.ID},
+			"account":             map[string]interface{}{"_id": account.ID},
 			"memberAccessRefType": preExecuteOutput.MemberAccessRefType,
 			"access":              accessMap,
 			"status":              model.MemberAccessStatusActive,
 		},
+		&getMemberAccessQuery,
+	)
+
+	memberAccess, err := getAccountMemberAccess.memberAccessDataSource.GetMongoDataSource().FindOne(
+		getMemberAccessQuery,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {

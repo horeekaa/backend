@@ -15,12 +15,12 @@ func (getAccountMemberAccessDependency *GetAccountMemberAccessDependency) Bind()
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 			memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
-			nilValueRemoverFromMapUtility coreutilityinterfaces.NilValueRemoverFromMapUtility,
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository {
 			getAccountMemberAccessDataSource, _ := accountdomainrepositories.NewGetAccountMemberAccessRepository(
 				accountDataSource,
 				memberAccessDataSource,
-				nilValueRemoverFromMapUtility,
+				mapProcessorUtility,
 			)
 			return getAccountMemberAccessDataSource
 		},
