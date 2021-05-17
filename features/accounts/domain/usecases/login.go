@@ -77,6 +77,12 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 				Context: validatedInput.Context,
 			},
 		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/loginUsecase",
+				err,
+			)
+		}
 
 		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
 			accountdomainrepositorytypes.CreateMemberAccessForAccountInput{
@@ -84,6 +90,12 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
 			},
 		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/loginUsecase",
+				err,
+			)
+		}
 	}
 
 	_, err = loginUcase.getAccountMemberAccessRepository.Execute(
