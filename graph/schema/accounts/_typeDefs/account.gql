@@ -18,6 +18,7 @@ input UpdateOtherAccount {
 }
 
 input CreateAccount {
+  email: String!
   status: AccountStatus
   statusReason: String
   type: AccountType!
@@ -29,6 +30,7 @@ input CreateAccount {
 
 input UpdateAccount {
   _id: ObjectID!
+  email: String
   status: AccountStatus
   statusReason: String
   type: AccountType
@@ -39,6 +41,7 @@ input UpdateAccount {
 
 input AccountFilterFields {
   _id: ObjectID
+  email: String
   status: AccountStatus
   statusReason: String
   type: AccountType
@@ -47,6 +50,7 @@ input AccountFilterFields {
 
 type Account {
   _id: ObjectID!
+  email: String!
   status: AccountStatus!
   statusReason: String
   type: AccountType!

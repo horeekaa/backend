@@ -62,7 +62,6 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 			FirstName:                   firstName,
 			LastName:                    lastName,
 			PhoneNumber:                 user.(*auth.UserRecord).PhoneNumber,
-			Email:                       user.(*auth.UserRecord).Email,
 			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 		},
 		operationOption,
@@ -76,7 +75,8 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 
 	account, err := createAccFromAuthDataCom.accountDataSource.GetMongoDataSource().Create(
 		&model.CreateAccount{
-			Type: model.AccountTypePerson,
+			Email: user.(*auth.UserRecord).Email,
+			Type:  model.AccountTypePerson,
 			Person: &model.ObjectIDOnly{
 				ID: &person.ID,
 			},
