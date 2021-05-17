@@ -27,4 +27,4 @@ Put the variable values on a `.env` file inside the root folder so the code can 
 
 DO NOT include `.env` and `Firebase Service Account JSON file` in the git repository under any circumstances.
 
-2. Run `gqlgen generate` to get the all the auto-generated models from gqlgen schemas.
+2. Run `go run runner/runner.go` to get the all the auto-generated models from gqlgen schemas.
