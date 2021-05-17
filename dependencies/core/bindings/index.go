@@ -17,7 +17,7 @@ func (_ *CoreDependency) Bind() {
 		&databaseclientdependencies.DatabaseDependency{},
 		&coreutilitydependencies.StructComparisonDependency{},
 		&coreutilitydependencies.StructFieldIteratorDependency{},
-		&coreutilitydependencies.NilValueRemoverFromMapDependency{},
+		&coreutilitydependencies.MapProcessorUtilityDependency{},
 	}
 
 	for _, reg := range registrationList {
