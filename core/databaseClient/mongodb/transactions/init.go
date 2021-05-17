@@ -74,7 +74,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 		)
 	}
 
-	transactResult := make(chan interface{})
+	var transactResult interface{}
 	timeout, err := mongoTrx.mongoClient.GetDatabaseTimeout()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout*time.Second))
 	defer cancel()
@@ -98,7 +98,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 				if err != nil {
 					return err
 				}
-				transactResult <- result
+				transactResult = result
 				return nil
 			}
 
@@ -110,12 +110,12 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 		}
 
 		log.Printf("Transaction %s successfully run", mongoTrx.transactionTitle)
-		transactResult <- result
+		transactResult = result
 		return nil
 	}); err != nil {
 		return nil, err
 	}
 	session.EndSession(ctx)
 
-	return <-transactResult, nil
+	return transactResult, nil
 }
