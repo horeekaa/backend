@@ -31,7 +31,7 @@ func (dbDependency *DatabaseDependency) Bind() {
 		},
 	)
 
-	container.Singleton(
+	container.Transient(
 		func(mongoClient mongodbcoreclientinterfaces.MongoClient) mongodbcoreoperationinterfaces.BasicOperation {
 			basicOperation, _ := mongodbcoreoperations.NewBasicOperation(mongoClient)
 			return basicOperation
