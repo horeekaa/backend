@@ -1,6 +1,7 @@
 package mongodbaccountdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -86,10 +87,12 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 		return nil, err
 	}
 
-	memberAccessOutput := output.Object.(model.MemberAccess)
-	memberAccessOutput.ID = output.ID
+	var outputModel model.MemberAccess
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &memberAccessOutput, err
+	return &outputModel, err
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {

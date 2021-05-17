@@ -1,6 +1,7 @@
 package mongodbaccountdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -86,10 +87,12 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 		return nil, err
 	}
 
-	accountOutput := output.Object.(model.Account)
-	accountOutput.ID = output.ID
+	var outputModel model.Account
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &accountOutput, err
+	return &outputModel, err
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
@@ -122,8 +125,8 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 	defaultAccountType := model.AccountTypePerson
 	currentTime := time.Now()
 
-	updateInput := input.(model.UpdateAccount)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateAccount)
 		existingObject, err := accDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err

@@ -1,6 +1,7 @@
 package mongodborganizationdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -86,10 +87,12 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Creat
 		return nil, err
 	}
 
-	organizationOutput := output.Object.(model.Organization)
-	organizationOutput.ID = output.ID
+	var outputModel model.Organization
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &organizationOutput, err
+	return &outputModel, err
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {

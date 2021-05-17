@@ -1,6 +1,7 @@
 package mongodbloggingdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -86,10 +87,12 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 		return nil, err
 	}
 
-	loggingOutput := output.Object.(model.Logging)
-	loggingOutput.ID = output.ID
+	var outputModel model.Logging
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &loggingOutput, err
+	return &outputModel, err
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {

@@ -1,6 +1,7 @@
 package mongodbmemberaccessrefdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -86,10 +87,12 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 		return nil, err
 	}
 
-	memberAccessRefOutput := output.Object.(model.MemberAccessRef)
-	memberAccessRefOutput.ID = output.ID
+	var outputModel model.MemberAccessRef
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &memberAccessRefOutput, err
+	return &outputModel, err
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
