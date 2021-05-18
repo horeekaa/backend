@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
@@ -13,14 +14,17 @@ import (
 
 type updateMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource             databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	mapProcessorUtility                   coreutilityinterfaces.MapProcessorUtility
 	updateMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefUsecaseComponent
 }
 
 func NewUpdateMemberAccessRefTransactionComponent(
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefTransactionComponent, error) {
 	return &updateMemberAccessRefTransactionComponent{
 		memberAccessRefDataSource: memberAccessRefDataSource,
+		mapProcessorUtility:       mapProcessorUtility,
 	}, nil
 }
 
@@ -69,7 +73,7 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 			)
 		}
 
-		if &existingMemberAccessRef.PreviousEntity.ID != nil &&
+		if existingMemberAccessRef.PreviousEntity != nil &&
 			*updateMemberAccessRef.ProposalStatus == model.EntityProposalStatusApproved {
 			replacedProposalStatus := model.EntityProposalStatusReplaced
 			previousMemberAccessRef, err := updateMmbAccRefTrx.memberAccessRefDataSource.GetMongoDataSource().Update(
@@ -100,12 +104,19 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 	var combinedMemberAccessRef model.CreateMemberAccessRef
 	ja, _ := json.Marshal(existingMemberAccessRef)
 	json.Unmarshal(ja, &combinedMemberAccessRef)
-	jb, _ := json.Marshal(updateMemberAccessRef)
+
+	var updateMemberAccessRefMap map[string]interface{}
+	jsonTemp, _ := json.Marshal(updateMemberAccessRef)
+	json.Unmarshal(jsonTemp, &updateMemberAccessRefMap)
+
+	updateMmbAccRefTrx.mapProcessorUtility.RemoveNil(updateMemberAccessRefMap)
+
+	jb, _ := json.Marshal(updateMemberAccessRefMap)
 	json.Unmarshal(jb, &combinedMemberAccessRef)
 	proposedProposalStatus := model.EntityProposalStatusProposed
 	combinedMemberAccessRef.ProposalStatus = &proposedProposalStatus
 
-	combinedMemberAccessRef.PreviousEntity.ID = &existingMemberAccessRef.ID
+	combinedMemberAccessRef.PreviousEntity = &model.ObjectIDOnly{ID: &existingMemberAccessRef.ID}
 
 	updatedMemberAccessRef, err := updateMmbAccRefTrx.memberAccessRefDataSource.GetMongoDataSource().Create(
 		&combinedMemberAccessRef,
