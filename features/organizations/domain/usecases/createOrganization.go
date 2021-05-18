@@ -56,8 +56,9 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organ
 				nil,
 			)
 	}
+	proposedProposalStatus := model.EntityProposalStatusProposed
 	input.CreateOrganization.SubmittingAccount = nil
-	input.CreateOrganization.ProposalStatus = nil
+	input.CreateOrganization.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -110,9 +111,11 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 			err,
 		)
 	}
-	if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
-		validatedInput.CreateOrganization.ProposalStatus =
-			func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+	if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval != nil {
+		if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
+			validatedInput.CreateOrganization.ProposalStatus =
+				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+		}
 	}
 
 	accountInitials := ""

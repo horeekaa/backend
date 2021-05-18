@@ -56,8 +56,9 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input me
 				nil,
 			)
 	}
+	proposedProposalStatus := model.EntityProposalStatusProposed
 	input.CreateMemberAccessRef.SubmittingAccount = nil
-	input.CreateMemberAccessRef.ProposalStatus = nil
+	input.CreateMemberAccessRef.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -110,9 +111,11 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 			err,
 		)
 	}
-	if *accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
-		validatedInput.CreateMemberAccessRef.ProposalStatus =
-			func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+	if accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval != nil {
+		if *accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
+			validatedInput.CreateMemberAccessRef.ProposalStatus =
+				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+		}
 	}
 
 	accountInitials := ""

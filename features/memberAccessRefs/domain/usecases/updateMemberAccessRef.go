@@ -148,6 +148,14 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 
 	// if user is only going to approve proposal
 	if validatedInput.UpdateMemberAccessRef.ProposalStatus != nil {
+		if accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval == nil {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+				403,
+				"/updateMemberAccessRefUsecase",
+				nil,
+			)
+		}
 		if !*accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
@@ -187,9 +195,11 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		return updateMemberAccessRefOutput.UpdatedMemberAccessRef, nil
 	}
 
-	if *accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
-		validatedInput.UpdateMemberAccessRef.ProposalStatus =
-			func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+	if accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval != nil {
+		if *accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
+			validatedInput.UpdateMemberAccessRef.ProposalStatus =
+				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+		}
 	}
 
 	var newObject interface{} = *validatedInput.UpdateMemberAccessRef

@@ -148,6 +148,14 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 	// if user is only going to approve proposal
 	if validatedInput.UpdateOrganization.ProposalStatus != nil {
+		if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval == nil {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+				403,
+				"/updateOrganizationUsecase",
+				nil,
+			)
+		}
 		if !*accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
@@ -187,9 +195,11 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		return updateOrganizationOutput.UpdatedOrganization, nil
 	}
 
-	if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
-		validatedInput.UpdateOrganization.ProposalStatus =
-			func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+	if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval != nil {
+		if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
+			validatedInput.UpdateOrganization.ProposalStatus =
+				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
+		}
 	}
 
 	var newObject interface{} = *validatedInput.UpdateOrganization
