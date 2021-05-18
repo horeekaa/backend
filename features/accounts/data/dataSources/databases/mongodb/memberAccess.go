@@ -96,6 +96,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+	updateData.ID = ID
 	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

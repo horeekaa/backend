@@ -15,18 +15,24 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 )
 
 type basicOperation struct {
-	mongoClient    mongodbcoreclientinterfaces.MongoClient
-	collectionRef  *mongo.Collection
-	collectionName string
-	timeout        time.Duration
+	mongoClient         mongodbcoreclientinterfaces.MongoClient
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	collectionRef       *mongo.Collection
+	collectionName      string
+	timeout             time.Duration
 }
 
-func NewBasicOperation(mongoClient mongodbcoreclientinterfaces.MongoClient) (mongodbcoreoperationinterfaces.BasicOperation, error) {
+func NewBasicOperation(
+	mongoClient mongodbcoreclientinterfaces.MongoClient,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+) (mongodbcoreoperationinterfaces.BasicOperation, error) {
 	return &basicOperation{
-		mongoClient: mongoClient,
+		mongoClient:         mongoClient,
+		mapProcessorUtility: mapProcessorUtility,
 	}, nil
 }
 
@@ -173,8 +179,13 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
-	var bsonObject bson.D
-	data, err := bson.Marshal(input)
+	var createDataMap map[string]interface{}
+	bsonTemp, err := bson.Marshal(input)
+	bson.Unmarshal(bsonTemp, &createDataMap)
+	bscOperation.mapProcessorUtility.RemoveNil(createDataMap)
+
+	var bsonObject bson.M
+	data, err := bson.Marshal(createDataMap)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
@@ -209,8 +220,13 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
-	var bsonObject bson.D
-	data, err := bson.Marshal(updateData)
+	var updateDataMap map[string]interface{}
+	bsonTemp, err := bson.Marshal(updateData)
+	bson.Unmarshal(bsonTemp, &updateDataMap)
+	bscOperation.mapProcessorUtility.RemoveNil(updateDataMap)
+
+	var bsonObject bson.M
+	data, err := bson.Marshal(updateDataMap)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
@@ -219,18 +235,19 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 		)
 	}
 	bson.Unmarshal(data, &bsonObject)
+	delete(bsonObject, "_id")
 
 	if operationOptions.Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			*operationOptions.Session,
 			bson.M{"_id": ID},
-			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
+			bson.M{"$set": bsonObject},
 		)
 	} else {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			ctx,
 			bson.M{"_id": ID},
-			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
+			bson.M{"$set": bsonObject},
 		)
 	}
 

@@ -96,6 +96,7 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+	updateData.ID = ID
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

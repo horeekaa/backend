@@ -96,6 +96,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	updateData.ID = ID
 	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,

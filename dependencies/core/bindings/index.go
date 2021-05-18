@@ -12,12 +12,12 @@ type CoreDependency struct{}
 
 func (_ *CoreDependency) Bind() {
 	registrationList := [...]dependencybindinginterfaces.BindingInterface{
-		&serverlesscoredependencies.FirebaseServerlessDependency{},
-		&authenticationcoredependencies.FirebaseAuthenticationDependency{},
-		&databaseclientdependencies.DatabaseDependency{},
 		&coreutilitydependencies.StructComparisonDependency{},
 		&coreutilitydependencies.StructFieldIteratorDependency{},
 		&coreutilitydependencies.MapProcessorUtilityDependency{},
+		&serverlesscoredependencies.FirebaseServerlessDependency{},
+		&authenticationcoredependencies.FirebaseAuthenticationDependency{},
+		&databaseclientdependencies.DatabaseDependency{},
 	}
 
 	for _, reg := range registrationList {
