@@ -154,7 +154,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 		createInput.Type = defaultAccountType
 	}
 	if createInput.DeviceTokens == nil {
-		createInput.DeviceTokens = []*string{}
+		createInput.DeviceTokens = []string{}
 	}
 	createInput.CreatedAt = &currentTime
 	createInput.UpdatedAt = &currentTime

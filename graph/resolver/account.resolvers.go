@@ -25,7 +25,7 @@ func (r *accountResolver) Person(ctx context.Context, obj *model.Account) (*mode
 	)
 }
 
-func (r *mutationResolver) Login(ctx context.Context, deviceToken *string) (*model.Account, error) {
+func (r *mutationResolver) Login(ctx context.Context, deviceToken string) (*model.Account, error) {
 	var loginUsecase accountpresentationusecaseinterfaces.LoginUsecase
 	container.Make(&loginUsecase)
 	return loginUsecase.Execute(
@@ -36,7 +36,7 @@ func (r *mutationResolver) Login(ctx context.Context, deviceToken *string) (*mod
 	)
 }
 
-func (r *mutationResolver) Logout(ctx context.Context, deviceToken *string) (*model.Account, error) {
+func (r *mutationResolver) Logout(ctx context.Context, deviceToken string) (*model.Account, error) {
 	var logoutUsecase accountpresentationusecaseinterfaces.LogoutUsecase
 	container.Make(&logoutUsecase)
 	return logoutUsecase.Execute(

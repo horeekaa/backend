@@ -23,7 +23,7 @@ input CreateAccount {
   statusReason: String
   type: AccountType!
   person: ObjectIDOnly
-  deviceTokens: [String]
+  deviceTokens: [String!]
   createdAt: Time
   updatedAt: Time
 }
@@ -35,7 +35,7 @@ input UpdateAccount {
   statusReason: String
   type: AccountType
   person: ObjectIDOnly
-  deviceTokens: [String]
+  deviceTokens: [String!]
   updatedAt: Time
 }
 
@@ -54,7 +54,7 @@ type Account {
   status: AccountStatus!
   statusReason: String
   type: AccountType!
-  deviceTokens: [String]!
+  deviceTokens: [String!]!
   person: Person
   createdAt: Time!
   updatedAt: Time!

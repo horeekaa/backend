@@ -1,6 +1,6 @@
 extend type Mutation {
-  login(deviceToken: String): Account!
-  logout(deviceToken: String): Account!
+  login(deviceToken: String!): Account!
+  logout(deviceToken: String!): Account!
 }
 
 extend type Query {
