@@ -134,7 +134,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		)
 	}
 
-	existingMemberAccRef, err := updateMmbAccessRefUcase.getOrganizationRepo.Execute(
+	existingOrg, err := updateMmbAccessRefUcase.getOrganizationRepo.Execute(
 		&model.OrganizationFilterFields{
 			ID: &validatedInput.UpdateOrganization.ID,
 		},
@@ -167,7 +167,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 		logApprovalActivity, err := updateMmbAccessRefUcase.logEntityApprovalActivityRepo.Execute(
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
-				PreviousLog:      existingMemberAccRef.CorrespondingLog,
+				PreviousLog:      existingOrg.CorrespondingLog,
 				ApprovingAccount: account,
 				ApproverInitial:  accountInitials,
 				ApprovalStatus:   *validatedInput.UpdateOrganization.ProposalStatus,
@@ -195,6 +195,8 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		return updateOrganizationOutput.UpdatedOrganization, nil
 	}
 
+	validatedInput.UpdateOrganization.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval != nil {
 		if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
 			validatedInput.UpdateOrganization.ProposalStatus =
@@ -203,7 +205,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 	}
 
 	var newObject interface{} = *validatedInput.UpdateOrganization
-	var existingObject interface{} = *existingMemberAccRef
+	var existingObject interface{} = *existingOrg
 	logEntityProposal, err := updateMmbAccessRefUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
 			CollectionName:   "Organization",
@@ -212,7 +214,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 			ProposalStatus:   *validatedInput.UpdateOrganization.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
-			ExistingObjectID: func(t string) *string { return &t }(existingMemberAccRef.ID.Hex()),
+			ExistingObjectID: func(t string) *string { return &t }(existingOrg.ID.Hex()),
 			CreatorInitial:   accountInitials,
 		},
 	)

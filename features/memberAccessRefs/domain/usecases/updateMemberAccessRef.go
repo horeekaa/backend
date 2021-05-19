@@ -195,6 +195,8 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		return updateMemberAccessRefOutput.UpdatedMemberAccessRef, nil
 	}
 
+	validatedInput.UpdateMemberAccessRef.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval != nil {
 		if *accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
 			validatedInput.UpdateMemberAccessRef.ProposalStatus =
