@@ -101,7 +101,7 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		accountdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
+			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
 			MemberAccessRefOptions: *createMmbAccessRefUcase.createOrganizationAccessIdentity,
 		},
 	)
