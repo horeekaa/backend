@@ -80,6 +80,8 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
+	bscOperation.mapProcessorUtility.RemoveNil(query)
+
 	var bsonFilter bson.M
 	data, err := bson.Marshal(query)
 	if err != nil {
@@ -109,6 +111,8 @@ func (bscOperation *basicOperation) Find(
 ) (*bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*2*time.Second)
 	defer cancel()
+
+	bscOperation.mapProcessorUtility.RemoveNil(query)
 
 	var bsonFilter bson.M
 	data, err := bson.Marshal(query)
