@@ -43,17 +43,24 @@ func (structFieldIterator *structFieldIteratorUtility) IterateStruct(
 
 	for i := 0; i < itemType.NumField(); i++ {
 		itemTag := itemType.Field(i).Tag.Get("json")
-		itemField := itemReflectValue.Field(i).Interface()
+		itemField := itemReflectValue.Field(i)
+		if reflect.ValueOf(itemField.Interface()) == reflect.Zero(reflect.TypeOf(itemField.Interface())) {
+			continue
+		}
+
+		if itemField.Kind() == reflect.Ptr {
+			itemField = itemField.Elem()
+		}
 
 		if itemTag != "" && itemTag != "-" {
 			if itemType.Field(i).Type.Kind() == reflect.Struct {
 				if structFieldIterator.preDeepIterateFunc != nil {
 					structFieldIterator.preDeepIterateFunc(itemTag, output)
 				}
-				structFieldIterator.IterateStruct(itemField, output)
+				structFieldIterator.IterateStruct(itemField.Interface(), output)
 			} else {
 				if structFieldIterator.iterateFunc != nil {
-					structFieldIterator.iterateFunc(itemTag, itemField, output)
+					structFieldIterator.iterateFunc(itemTag, itemField.Interface(), output)
 				}
 			}
 		}

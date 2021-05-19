@@ -50,18 +50,29 @@ func (strctComparisonUtility *structComparisonUtility) CompareStructs(
 
 	for i := 0; i < item1Type.NumField(); i++ {
 		item1Tag := item1Type.Field(i).Tag.Get("json")
-		item1Field := item1ReflectValue.Field(i).Interface()
-		item2Field := item2ReflectValue.FieldByName(item1Tag).Interface()
+		item1Field := item1ReflectValue.Field(i)
+		item2Field := item2ReflectValue.FieldByName(item1Tag)
+		if reflect.ValueOf(item1Field.Interface()) == reflect.Zero(reflect.TypeOf(item1Field.Interface())) {
+			continue
+		}
+		if item1Field.Kind() == reflect.Ptr {
+			item1Field = item1Field.Elem()
+		}
+
+		if item2Field.Kind() == reflect.Ptr &&
+			reflect.ValueOf(item2Field.Interface()) != reflect.Zero(reflect.TypeOf(item2Field.Interface())) {
+			item2Field = item2Field.Elem()
+		}
 
 		if item1Tag != "" && item1Tag != "-" {
 			if item1Type.Field(i).Type.Kind() == reflect.Struct {
 				if strctComparisonUtility.preDeepCompareFunc != nil {
 					strctComparisonUtility.preDeepCompareFunc(item1Tag, output)
 				}
-				strctComparisonUtility.CompareStructs(item1Field, item2Field, output)
+				strctComparisonUtility.CompareStructs(item1Field.Interface(), item2Field.Interface(), output)
 			} else {
 				if strctComparisonUtility.comparisonFunc != nil {
-					strctComparisonUtility.comparisonFunc(item1Tag, item1Field, item2Field, output)
+					strctComparisonUtility.comparisonFunc(item1Tag, item1Field.Interface(), item2Field.Interface(), output)
 				}
 			}
 		}

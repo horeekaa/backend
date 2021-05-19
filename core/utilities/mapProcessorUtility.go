@@ -13,7 +13,7 @@ func NewMapProcessorUtility() (coreutilityinterfaces.MapProcessorUtility, error)
 	return &mapProcessorUtility{}, nil
 }
 
-func (nilValueRemover *mapProcessorUtility) RemoveNil(input map[string]interface{}) (bool, error) {
+func (mapProcessorUtil *mapProcessorUtility) RemoveNil(input map[string]interface{}) (bool, error) {
 	val := reflect.ValueOf(input)
 	for _, e := range val.MapKeys() {
 		v := val.MapIndex(e)
@@ -24,13 +24,13 @@ func (nilValueRemover *mapProcessorUtility) RemoveNil(input map[string]interface
 		switch t := v.Interface().(type) {
 		// If key is a JSON object (Go Map), use recursion to go deeper
 		case map[string]interface{}:
-			nilValueRemover.RemoveNil(t)
+			mapProcessorUtil.RemoveNil(t)
 		}
 	}
 	return true, nil
 }
 
-func (nilValueRemover *mapProcessorUtility) FlattenMap(
+func (mapProcessorUtil *mapProcessorUtility) FlattenMap(
 	keyPrefix string,
 	input map[string]interface{},
 	output *map[string]interface{},
@@ -47,7 +47,7 @@ func (nilValueRemover *mapProcessorUtility) FlattenMap(
 		switch t := v.Interface().(type) {
 		// If key is a JSON object (Go Map), use recursion to go deeper
 		case map[string]interface{}:
-			nilValueRemover.FlattenMap(
+			mapProcessorUtil.FlattenMap(
 				fmt.Sprintf("%s%s", prefix, e.String()),
 				t,
 				output,
