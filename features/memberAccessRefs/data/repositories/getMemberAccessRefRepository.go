@@ -1,13 +1,12 @@
 package memberaccessrefdomainrepositories
 
 import (
-	"encoding/json"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getMemberAccessRefRepository struct {
@@ -28,8 +27,8 @@ func (getMmbAccessRefRepo *getMemberAccessRefRepository) Execute(filterFields *m
 	}
 
 	var filterFieldsMap map[string]interface{}
-	data, _ := json.Marshal(filterFields)
-	json.Unmarshal(data, &filterFieldsMap)
+	data, _ := bson.Marshal(filterFields)
+	bson.Unmarshal(data, &filterFieldsMap)
 
 	memberAccessRef, err := getMmbAccessRefRepo.memberAccessRefDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
