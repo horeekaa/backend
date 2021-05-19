@@ -76,8 +76,6 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input ac
 	jsonTemp, _ := json.Marshal(preExecuteOutput.MemberAccessRefOptions)
 	json.Unmarshal(jsonTemp, &accessMap)
 
-	getAccountMemberAccess.mapProcessorUtility.RemoveNil(accessMap)
-
 	getMemberAccessQuery := make(map[string]interface{})
 	getAccountMemberAccess.mapProcessorUtility.FlattenMap(
 		"",
