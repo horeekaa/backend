@@ -51,7 +51,7 @@ func (strctComparisonUtility *structComparisonUtility) CompareStructs(
 	for i := 0; i < item1Type.NumField(); i++ {
 		item1Tag := item1Type.Field(i).Tag.Get("json")
 		item1Field := item1ReflectValue.Field(i)
-		item2Field := item2ReflectValue.FieldByName(item1Tag)
+		item2Field := item2ReflectValue.Field(i)
 		if reflect.ValueOf(item1Field.Interface()) == reflect.Zero(reflect.TypeOf(item1Field.Interface())) {
 			continue
 		}
