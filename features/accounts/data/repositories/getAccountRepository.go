@@ -1,13 +1,12 @@
 package accountdomainrepositories
 
 import (
-	"encoding/json"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAccountRepository struct {
@@ -28,8 +27,8 @@ func (getMmbAccessRefRepo *getAccountRepository) Execute(filterFields *model.Acc
 	}
 
 	var filterFieldsMap map[string]interface{}
-	data, _ := json.Marshal(filterFields)
-	json.Unmarshal(data, &filterFieldsMap)
+	data, _ := bson.Marshal(filterFields)
+	bson.Unmarshal(data, &filterFieldsMap)
 
 	account, err := getMmbAccessRefRepo.accountDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,

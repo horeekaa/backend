@@ -1,6 +1,7 @@
 package mongodbloggingdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -24,15 +25,27 @@ func NewLoggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 
 func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Logging
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Logging
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+
 	return &output, err
 }
 
@@ -43,12 +56,12 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 ) ([]*model.Logging, error) {
 	var loggings = []*model.Logging{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var logging *model.Logging
-		err := cursor.Decode(logging)
+		var logging model.Logging
+		err := cursor.Decode(&logging)
 		if err != nil {
 			return nil, err
 		}
-		loggings = append(loggings, logging)
+		loggings = append(loggings, &logging)
 		return nil, nil
 	}
 
@@ -74,13 +87,16 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 		return nil, err
 	}
 
-	loggingOutput := output.Object.(model.Logging)
-	loggingOutput.ID = output.ID
+	var outputModel model.Logging
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &loggingOutput, err
+	return &outputModel, err
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+	updateData.ID = ID
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -90,10 +106,14 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	res, err := orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateLogging, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Logging
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setLoggingDefaultValuesOutput struct {

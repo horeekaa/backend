@@ -8,8 +8,10 @@ import (
 // NewErrorObject getter usecaes layer Error Object
 func NewErrorObject(message string, statusCode int, path string, err *horeekaacorebasefailure.Failure) *horeekaacorebaseerror.Error {
 	extPath := ""
-	if &err.Path != nil {
-		extPath = err.Path
+	if err != nil {
+		if &err.Path != nil {
+			extPath = err.Path
+		}
 	}
 
 	return &horeekaacorebaseerror.Error{

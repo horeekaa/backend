@@ -8,8 +8,10 @@ import (
 // NewFailureObject getter service layer Failure
 func NewFailureObject(message string, path string, err *horeekaacorebaseexception.Exception) *horeekaacorebasefailure.Failure {
 	extPath := ""
-	if &err.Path != nil {
-		extPath = err.Path
+	if err != nil {
+		if &err.Path != nil {
+			extPath = err.Path
+		}
 	}
 
 	return &horeekaacorebasefailure.Failure{

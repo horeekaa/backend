@@ -40,7 +40,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	operationOption *mongodbcoretypes.OperationOptions,
 	createAccFrmAuthDataInput accountdomainrepositorytypes.CreateAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	user := createAccFrmAuthDataInput.Context.Value(&authenticationcoremodels.UserContextKey{Name: "user"})
+	user := createAccFrmAuthDataInput.Context.Value(authenticationcoremodels.UserContextKey)
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
@@ -49,7 +49,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		)
 	}
 
-	fullNameSplit := strings.Split(user.(auth.UserRecord).DisplayName, " ")
+	fullNameSplit := strings.Split(user.(*auth.UserRecord).DisplayName, " ")
 	firstName := fullNameSplit[0]
 	lastName := fullNameSplit[len(fullNameSplit)-1]
 	if firstName == lastName {
@@ -61,8 +61,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 		&model.CreatePerson{
 			FirstName:                   firstName,
 			LastName:                    lastName,
-			PhoneNumber:                 user.(auth.UserRecord).PhoneNumber,
-			Email:                       user.(auth.UserRecord).Email,
+			PhoneNumber:                 user.(*auth.UserRecord).PhoneNumber,
 			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
 		},
 		operationOption,
@@ -76,7 +75,8 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 
 	account, err := createAccFromAuthDataCom.accountDataSource.GetMongoDataSource().Create(
 		&model.CreateAccount{
-			Type: model.AccountTypePerson,
+			Email: user.(*auth.UserRecord).Email,
+			Type:  model.AccountTypePerson,
 			Person: &model.ObjectIDOnly{
 				ID: &person.ID,
 			},

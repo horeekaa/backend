@@ -46,7 +46,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	switch input.ManageAccountDeviceTokenAction {
 	case accountdomainrepositorytypes.ManageAccountDeviceTokenActionInsert:
 		if !funk.Contains(validatedInput.Account.DeviceTokens, validatedInput.DeviceToken) {
-			validatedInput.Account.DeviceTokens = append(validatedInput.Account.DeviceTokens, &validatedInput.DeviceToken)
+			validatedInput.Account.DeviceTokens = append(validatedInput.Account.DeviceTokens, validatedInput.DeviceToken)
 		}
 		break
 

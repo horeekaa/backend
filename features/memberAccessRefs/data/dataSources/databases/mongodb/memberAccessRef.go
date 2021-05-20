@@ -1,6 +1,7 @@
 package mongodbmemberaccessrefdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -24,15 +25,27 @@ func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterf
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	res, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccessRef
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	res, err := orgMemberDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccessRef
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+
 	return &output, err
 }
 
@@ -43,12 +56,12 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 ) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var memberAccessRef *model.MemberAccessRef
-		err := cursor.Decode(memberAccessRef)
+		var memberAccessRef model.MemberAccessRef
+		err := cursor.Decode(&memberAccessRef)
 		if err != nil {
 			return nil, err
 		}
-		memberAccessRefs = append(memberAccessRefs, memberAccessRef)
+		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
 		return nil, nil
 	}
 
@@ -74,13 +87,16 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 		return nil, err
 	}
 
-	memberAccessRefOutput := output.Object.(model.MemberAccessRef)
-	memberAccessRefOutput.ID = output.ID
+	var outputModel model.MemberAccessRef
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &memberAccessRefOutput, err
+	return &outputModel, err
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+	updateData.ID = ID
 	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -90,10 +106,14 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primit
 	}
 
 	res, err := orgMemberDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccessRef, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.MemberAccessRef
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setMemberAccessRefDefaultValuesOutput struct {

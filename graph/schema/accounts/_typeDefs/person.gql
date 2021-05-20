@@ -9,7 +9,6 @@ input UpdatePerson {
   lastName: String
   gender: Gender
   phoneNumber: String
-  email: String
   noOfRecentTransactionToKeep: Int
   updatedAt: Time
 }
@@ -19,7 +18,6 @@ input CreatePerson {
   lastName: String!
   gender: Gender
   phoneNumber: String!
-  email: String!
   noOfRecentTransactionToKeep: Int
   createdAt: Time
   updatedAt: Time
@@ -31,7 +29,6 @@ type Person {
   lastName: String!
   gender: Gender
   phoneNumber: String
-  email: String!
   idCard: IDCard
   noOfRecentTransactionToKeep: Int!
   createdAt: Time!

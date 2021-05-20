@@ -1,13 +1,12 @@
 package loggingdomainrepositories
 
 import (
-	"encoding/json"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getLoggingRepository struct {
@@ -28,8 +27,8 @@ func (getLoggingRefRepo *getLoggingRepository) Execute(filterFields *model.Loggi
 	}
 
 	var filterFieldsMap map[string]interface{}
-	data, _ := json.Marshal(filterFields)
-	json.Unmarshal(data, &filterFieldsMap)
+	data, _ := bson.Marshal(filterFields)
+	bson.Unmarshal(data, &filterFieldsMap)
 
 	logging, err := getLoggingRefRepo.loggingDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,

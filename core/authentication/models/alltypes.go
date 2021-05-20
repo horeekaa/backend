@@ -11,6 +11,8 @@ type UpdateAuthUserData struct {
 	Disabled      bool
 }
 
-type UserContextKey struct {
-	Name string
+type contextKey struct {
+	name string
 }
+
+var UserContextKey *contextKey = &contextKey{"user"}

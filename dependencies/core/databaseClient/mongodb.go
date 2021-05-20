@@ -10,6 +10,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongodb/operations"
 	mongodbcoretransactions "github.com/horeekaa/backend/core/databaseClient/mongodb/transactions"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 )
 
 type DatabaseDependency struct{}
@@ -31,9 +32,15 @@ func (dbDependency *DatabaseDependency) Bind() {
 		},
 	)
 
-	container.Singleton(
-		func(mongoClient mongodbcoreclientinterfaces.MongoClient) mongodbcoreoperationinterfaces.BasicOperation {
-			basicOperation, _ := mongodbcoreoperations.NewBasicOperation(mongoClient)
+	container.Transient(
+		func(
+			mongoClient mongodbcoreclientinterfaces.MongoClient,
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+		) mongodbcoreoperationinterfaces.BasicOperation {
+			basicOperation, _ := mongodbcoreoperations.NewBasicOperation(
+				mongoClient,
+				mapProcessorUtility,
+			)
 			return basicOperation
 		},
 	)

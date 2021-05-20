@@ -51,8 +51,8 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 		)
 	}
 
-	if &input.OrganizationType != nil {
-		if &input.Organization.ID == nil {
+	if input.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased {
+		if input.Organization == nil || input.OrganizationType == "" {
 			return accountdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess,
 				"/createMemberAccessForAccount",
@@ -83,13 +83,19 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		)
 	}
 
+	queryMap := map[string]interface{}{
+		"memberAccessRefType": validatedInput.MemberAccessRefType,
+		"proposalStatus":      model.EntityProposalStatusApproved,
+	}
+	if validatedInput.OrganizationType != "" {
+		queryMap["organizationType"] = validatedInput.OrganizationType
+	}
+	if validatedInput.OrganizationMembershipRole != "" {
+		queryMap["organizationMembershipRole"] = validatedInput.OrganizationMembershipRole
+	}
+
 	memberAccessRef, err := createMbrAccForAccount.memberAccessRefDataSource.GetMongoDataSource().FindOne(
-		map[string]interface{}{
-			"memberAccessRefType":        validatedInput.MemberAccessRefType,
-			"organizationType":           validatedInput.OrganizationType,
-			"organizationMembershipRole": validatedInput.OrganizationMembershipRole,
-			"proposalStatus":             model.EntityProposalStatusApproved,
-		},
+		queryMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
@@ -109,16 +115,22 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
 	json.Unmarshal(jsonTemp, &accessInput)
 
+	createMemberAccessData := &model.CreateMemberAccess{
+		Account:             &model.ObjectIDOnly{ID: &account.ID},
+		MemberAccessRefType: validatedInput.MemberAccessRefType,
+		Access:              &accessInput,
+		Status:              model.MemberAccessStatusActive,
+		DefaultAccess:       &model.ObjectIDOnly{ID: &memberAccessRef.ID},
+	}
+	if validatedInput.Organization != nil {
+		createMemberAccessData.Organization = &model.ObjectIDOnly{ID: &validatedInput.Organization.ID}
+	}
+	if validatedInput.OrganizationMembershipRole != "" {
+		createMemberAccessData.OrganizationMembershipRole = &validatedInput.OrganizationMembershipRole
+	}
+
 	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
-		&model.CreateMemberAccess{
-			Account:                    &model.ObjectIDOnly{ID: &account.ID},
-			OrganizationMembershipRole: &validatedInput.OrganizationMembershipRole,
-			MemberAccessRefType:        validatedInput.MemberAccessRefType,
-			Access:                     &accessInput,
-			Organization:               &model.ObjectIDOnly{ID: &validatedInput.Organization.ID},
-			Status:                     model.MemberAccessStatusActive,
-			DefaultAccess:              &model.ObjectIDOnly{ID: &memberAccessRef.ID},
-		},
+		createMemberAccessData,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {

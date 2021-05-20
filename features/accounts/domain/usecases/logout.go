@@ -67,9 +67,6 @@ func (logoutUcase *logoutUsecase) Execute(
 		)
 	}
 
-	if &input.DeviceToken == nil {
-		return account, nil
-	}
 	account, err = logoutUcase.manageAccountDeviceTokenRepository.Execute(
 		accountdomainrepositorytypes.ManageAccountDeviceTokenInput{
 			Account:                        account,

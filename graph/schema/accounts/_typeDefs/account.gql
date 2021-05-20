@@ -18,27 +18,30 @@ input UpdateOtherAccount {
 }
 
 input CreateAccount {
+  email: String!
   status: AccountStatus
   statusReason: String
   type: AccountType!
   person: ObjectIDOnly
-  deviceTokens: [String]
+  deviceTokens: [String!]
   createdAt: Time
   updatedAt: Time
 }
 
 input UpdateAccount {
   _id: ObjectID!
+  email: String
   status: AccountStatus
   statusReason: String
   type: AccountType
   person: ObjectIDOnly
-  deviceTokens: [String]
+  deviceTokens: [String!]
   updatedAt: Time
 }
 
 input AccountFilterFields {
   _id: ObjectID
+  email: String
   status: AccountStatus
   statusReason: String
   type: AccountType
@@ -47,10 +50,11 @@ input AccountFilterFields {
 
 type Account {
   _id: ObjectID!
+  email: String!
   status: AccountStatus!
   statusReason: String
   type: AccountType!
-  deviceTokens: [String]!
+  deviceTokens: [String!]!
   person: Person
   createdAt: Time!
   updatedAt: Time!

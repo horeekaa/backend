@@ -15,18 +15,24 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 )
 
 type basicOperation struct {
-	mongoClient    mongodbcoreclientinterfaces.MongoClient
-	collectionRef  *mongo.Collection
-	collectionName string
-	timeout        time.Duration
+	mongoClient         mongodbcoreclientinterfaces.MongoClient
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	collectionRef       *mongo.Collection
+	collectionName      string
+	timeout             time.Duration
 }
 
-func NewBasicOperation(mongoClient mongodbcoreclientinterfaces.MongoClient) (mongodbcoreoperationinterfaces.BasicOperation, error) {
+func NewBasicOperation(
+	mongoClient mongodbcoreclientinterfaces.MongoClient,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+) (mongodbcoreoperationinterfaces.BasicOperation, error) {
 	return &basicOperation{
-		mongoClient: mongoClient,
+		mongoClient:         mongoClient,
+		mapProcessorUtility: mapProcessorUtility,
 	}, nil
 }
 
@@ -51,15 +57,15 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, operationOpt
 	defer cancel()
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res = bscOperation.collectionRef.FindOne(*operationOptions.Session, bson.M{"_id": ID})
 	} else {
 		res = bscOperation.collectionRef.FindOne(ctx, bson.M{"_id": ID})
 	}
 
 	var objectReturn interface{}
-	res.Decode(&objectReturn)
-	if &objectReturn == nil {
+	err := res.Decode(&objectReturn)
+	if err == mongo.ErrNoDocuments {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
 			fmt.Sprintf("/%s/find", bscOperation.collectionName),
@@ -74,6 +80,8 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
+	bscOperation.mapProcessorUtility.RemoveNil(query)
+
 	var bsonFilter bson.M
 	data, err := bson.Marshal(query)
 	if err != nil {
@@ -86,7 +94,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	bson.Unmarshal(data, &bsonFilter)
 
 	var res *mongo.SingleResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res = bscOperation.collectionRef.FindOne(*operationOptions.Session, bsonFilter)
 	} else {
 		res = bscOperation.collectionRef.FindOne(ctx, bsonFilter)
@@ -101,8 +109,10 @@ func (bscOperation *basicOperation) Find(
 	cursorDecoder func(cursorObject *mongo.Cursor) (interface{}, error),
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*bool, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*20*time.Second)
 	defer cancel()
+
+	bscOperation.mapProcessorUtility.RemoveNil(query)
 
 	var bsonFilter bson.M
 	data, err := bson.Marshal(query)
@@ -131,15 +141,15 @@ func (bscOperation *basicOperation) Find(
 		bson.Unmarshal(data, &bsonFilter)
 	}
 
-	var opts *options.FindOptions
+	opts := &options.FindOptions{}
 	opts.SetLimit(int64(10))
 	if paginationOpt.QueryLimit != nil {
-		opts.SetSort(bson.M{"_id": -1})
+		opts.SetSort(bson.M{"_id": 1})
 		opts.SetLimit(int64(*paginationOpt.QueryLimit))
 	}
 
 	var curr *mongo.Cursor
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		curr, err = bscOperation.collectionRef.Find(*operationOptions.Session, bsonFilter, opts)
 	} else {
 		curr, err = bscOperation.collectionRef.Find(ctx, bsonFilter, opts)
@@ -164,17 +174,22 @@ func (bscOperation *basicOperation) Find(
 		}
 	}
 
-	var output *bool
-	*output = true
-	return output, err
+	var output bool
+	output = true
+	return &output, err
 }
 
 func (bscOperation *basicOperation) Create(input interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*mongodbcoretypes.CreateOperationOutput, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
-	var bsonObject bson.D
-	data, err := bson.Marshal(input)
+	var createDataMap map[string]interface{}
+	bsonTemp, err := bson.Marshal(input)
+	bson.Unmarshal(bsonTemp, &createDataMap)
+	bscOperation.mapProcessorUtility.RemoveNil(createDataMap)
+
+	var bsonObject bson.M
+	data, err := bson.Marshal(createDataMap)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
@@ -185,7 +200,7 @@ func (bscOperation *basicOperation) Create(input interface{}, operationOptions *
 	bson.Unmarshal(data, &bsonObject)
 
 	var res *mongo.InsertOneResult
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		res, err = bscOperation.collectionRef.InsertOne(*operationOptions.Session, bsonObject)
 	} else {
 		res, err = bscOperation.collectionRef.InsertOne(ctx, bsonObject)
@@ -209,8 +224,13 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
-	var bsonObject bson.D
-	data, err := bson.Marshal(updateData)
+	var updateDataMap map[string]interface{}
+	bsonTemp, err := bson.Marshal(updateData)
+	bson.Unmarshal(bsonTemp, &updateDataMap)
+	bscOperation.mapProcessorUtility.RemoveNil(updateDataMap)
+
+	var bsonObject bson.M
+	data, err := bson.Marshal(updateDataMap)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
@@ -219,18 +239,19 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 		)
 	}
 	bson.Unmarshal(data, &bsonObject)
+	delete(bsonObject, "_id")
 
-	if &(*operationOptions).Session != nil {
+	if operationOptions.Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			*operationOptions.Session,
 			bson.M{"_id": ID},
-			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
+			bson.M{"$set": bsonObject},
 		)
 	} else {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			ctx,
 			bson.M{"_id": ID},
-			bson.D{primitive.E{Key: "$set", Value: bsonObject}},
+			bson.M{"$set": bsonObject},
 		)
 	}
 

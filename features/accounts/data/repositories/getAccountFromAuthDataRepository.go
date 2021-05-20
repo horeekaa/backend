@@ -34,7 +34,7 @@ func NewGetAccountFromAuthDataRepository(
 func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	input accountdomainrepositorytypes.GetAccountFromAuthDataInput,
 ) (*model.Account, error) {
-	user := input.Context.Value(&authenticationcoremodels.UserContextKey{Name: "user"})
+	user := input.Context.Value(authenticationcoremodels.UserContextKey)
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
@@ -43,8 +43,8 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 		)
 	}
 
-	storedAccountID := user.(auth.UserRecord).CustomClaims[firebaseauthcoretypes.FirebaseCustomClaimsAccountIDKey]
-	if &storedAccountID != nil {
+	storedAccountID := user.(*auth.UserRecord).CustomClaims[firebaseauthcoretypes.FirebaseCustomClaimsAccountIDKey]
+	if storedAccountID != nil {
 		storedAccountID = (storedAccountID).(string)
 		unmarshaledAccountID, _ := mongomarshaler.UnmarshalObjectID(storedAccountID)
 
@@ -63,7 +63,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 
 	account, err := getAccFromAuthDataRepo.accountDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
-			"email": user.(auth.UserRecord).Email,
+			"email": user.(*auth.UserRecord).Email,
 		},
 		&mongodbcoretypes.OperationOptions{},
 	)
@@ -77,9 +77,9 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	if account != nil {
 		_, err = getAccFromAuthDataRepo.firebaseDataSource.SetRoleInAuthUserData(
 			input.Context,
-			user.(auth.UserRecord).UID,
+			user.(*auth.UserRecord).UID,
 			model.AccountTypePerson.String(),
-			account.ID.String(),
+			account.ID.Hex(),
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(

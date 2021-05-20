@@ -19,6 +19,7 @@ func (_ *MasterDependency) Bind() {
 		&loggingdependencies.LoggingDependency{},
 		&memberaccessrefdependencies.MemberAccessRefDependency{},
 		&organizationdependencies.OrganizationDependency{},
+		&accountdependencies.AccountDependency{},
 	}
 
 	for _, reg := range registrationList {

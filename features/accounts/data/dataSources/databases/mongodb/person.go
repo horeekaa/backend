@@ -1,6 +1,7 @@
 package mongodbaccountdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -24,15 +25,27 @@ func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Basi
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	res, err := prsnDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	res, err := prsnDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+
 	return &output, err
 }
 
@@ -43,12 +56,12 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 ) ([]*model.Person, error) {
 	var persons = []*model.Person{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var person *model.Person
-		err := cursor.Decode(person)
+		var person model.Person
+		err := cursor.Decode(&person)
 		if err != nil {
 			return nil, err
 		}
-		persons = append(persons, person)
+		persons = append(persons, &person)
 		return nil, nil
 	}
 
@@ -74,13 +87,16 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 		return nil, err
 	}
 
-	personOutput := output.Object.(model.Person)
-	personOutput.ID = output.ID
+	var outputModel model.Person
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &personOutput, err
+	return &outputModel, err
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	updateData.ID = ID
 	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -90,10 +106,14 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	res, err := prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Person
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setPersonDefaultValuesOutput struct {

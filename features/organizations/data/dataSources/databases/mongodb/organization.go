@@ -1,6 +1,7 @@
 package mongodborganizationdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -24,15 +25,27 @@ func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterface
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	res, err := orgDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
-	res.Decode(&output)
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+
 	return &output, err
 }
 
@@ -43,12 +56,12 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 ) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var organization *model.Organization
-		err := cursor.Decode(organization)
+		var organization model.Organization
+		err := cursor.Decode(&organization)
 		if err != nil {
 			return nil, err
 		}
-		organizations = append(organizations, organization)
+		organizations = append(organizations, &organization)
 		return nil, nil
 	}
 
@@ -74,13 +87,16 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Creat
 		return nil, err
 	}
 
-	organizationOutput := output.Object.(model.Organization)
-	organizationOutput.ID = output.ID
+	var outputModel model.Organization
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &organizationOutput, err
+	return &outputModel, err
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
+	updateData.ID = ID
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -90,10 +106,14 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 	}
 
 	res, err := orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateOrganization, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Organization
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setorganizationDefaultValuesOutput struct {

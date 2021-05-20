@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
@@ -13,14 +14,17 @@ import (
 
 type updateOrganizationTransactionComponent struct {
 	organizationDataSource             databaseorganizationdatasourceinterfaces.OrganizationDataSource
+	mapProcessorUtility                coreutilityinterfaces.MapProcessorUtility
 	updateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.UpdateOrganizationUsecaseComponent
 }
 
 func NewUpdateOrganizationTransactionComponent(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (organizationdomainrepositoryinterfaces.UpdateOrganizationTransactionComponent, error) {
 	return &updateOrganizationTransactionComponent{
 		organizationDataSource: organizationDataSource,
+		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -69,7 +73,7 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 			)
 		}
 
-		if &existingOrganization.PreviousEntity.ID != nil &&
+		if existingOrganization.PreviousEntity != nil &&
 			*updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
 			replacedProposalStatus := model.EntityProposalStatusReplaced
 			previousOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
@@ -100,12 +104,19 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	var combinedOrganization model.CreateOrganization
 	ja, _ := json.Marshal(existingOrganization)
 	json.Unmarshal(ja, &combinedOrganization)
-	jb, _ := json.Marshal(updateOrganization)
+
+	var updateOrganizationMap map[string]interface{}
+	jsonTemp, _ := json.Marshal(updateOrganization)
+	json.Unmarshal(jsonTemp, &updateOrganizationMap)
+
+	updateOrgTrx.mapProcessorUtility.RemoveNil(updateOrganizationMap)
+
+	jb, _ := json.Marshal(updateOrganizationMap)
 	json.Unmarshal(jb, &combinedOrganization)
 	proposedProposalStatus := model.EntityProposalStatusProposed
 	combinedOrganization.ProposalStatus = &proposedProposalStatus
 
-	combinedOrganization.PreviousEntity.ID = &existingOrganization.ID
+	combinedOrganization.PreviousEntity = &model.ObjectIDOnly{ID: &existingOrganization.ID}
 
 	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Create(
 		&combinedOrganization,

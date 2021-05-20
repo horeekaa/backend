@@ -1,13 +1,12 @@
 package organizationdomainrepositories
 
 import (
-	"encoding/json"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getOrganizationRepository struct {
@@ -28,8 +27,8 @@ func (getOrgRepo *getOrganizationRepository) Execute(filterFields *model.Organiz
 	}
 
 	var filterFieldsMap map[string]interface{}
-	data, _ := json.Marshal(filterFields)
-	json.Unmarshal(data, &filterFieldsMap)
+	data, _ := bson.Marshal(filterFields)
+	bson.Unmarshal(data, &filterFieldsMap)
 
 	organization, err := getOrgRepo.organizationDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,

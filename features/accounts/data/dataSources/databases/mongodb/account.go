@@ -1,6 +1,7 @@
 package mongodbaccountdatasources
 
 import (
+	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
@@ -24,16 +25,28 @@ func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 
 func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	res, err := accDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
 	res.Decode(&output)
-	return &output, err
+	return &output, nil
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	res, err := accDataSourceMongo.basicOperation.FindOne(query, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
-	res.Decode(&output)
-	return &output, err
+	err = res.Decode(&output)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+
+	return &output, nil
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) Find(
@@ -43,12 +56,12 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 ) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var account *model.Account
-		err := cursor.Decode(account)
+		var account model.Account
+		err := cursor.Decode(&account)
 		if err != nil {
 			return nil, err
 		}
-		accounts = append(accounts, account)
+		accounts = append(accounts, &account)
 		return nil, nil
 	}
 
@@ -74,13 +87,16 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 		return nil, err
 	}
 
-	accountOutput := output.Object.(model.Account)
-	accountOutput.ID = output.ID
+	var outputModel model.Account
+	jsonTemp, _ := json.Marshal(output.Object)
+	json.Unmarshal(jsonTemp, &outputModel)
+	outputModel.ID = output.ID
 
-	return &accountOutput, err
+	return &outputModel, err
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	updateData.ID = ID
 	defaultedInput, err := accDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
 		operationOptions,
@@ -90,10 +106,14 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	res, err := accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
+	if err != nil {
+		return nil, err
+	}
+
 	var output model.Account
 	res.Decode(&output)
 
-	return &output, err
+	return &output, nil
 }
 
 type setAccountDefaultValuesOutput struct {
@@ -106,8 +126,8 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 	defaultAccountType := model.AccountTypePerson
 	currentTime := time.Now()
 
-	updateInput := input.(model.UpdateAccount)
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
+		updateInput := input.(model.UpdateAccount)
 		existingObject, err := accDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -134,7 +154,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 		createInput.Type = defaultAccountType
 	}
 	if createInput.DeviceTokens == nil {
-		createInput.DeviceTokens = []*string{}
+		createInput.DeviceTokens = []string{}
 	}
 	createInput.CreatedAt = &currentTime
 	createInput.UpdatedAt = &currentTime
