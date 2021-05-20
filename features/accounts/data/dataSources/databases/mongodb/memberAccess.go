@@ -56,12 +56,12 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 ) ([]*model.MemberAccess, error) {
 	var memberAccesses = []*model.MemberAccess{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var memberAccess *model.MemberAccess
-		err := cursor.Decode(memberAccess)
+		var memberAccess model.MemberAccess
+		err := cursor.Decode(&memberAccess)
 		if err != nil {
 			return nil, err
 		}
-		memberAccesses = append(memberAccesses, memberAccess)
+		memberAccesses = append(memberAccesses, &memberAccess)
 		return nil, nil
 	}
 

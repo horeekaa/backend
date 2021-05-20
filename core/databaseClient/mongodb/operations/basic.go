@@ -109,7 +109,7 @@ func (bscOperation *basicOperation) Find(
 	cursorDecoder func(cursorObject *mongo.Cursor) (interface{}, error),
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*bool, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*20*time.Second)
 	defer cancel()
 
 	bscOperation.mapProcessorUtility.RemoveNil(query)
@@ -141,10 +141,10 @@ func (bscOperation *basicOperation) Find(
 		bson.Unmarshal(data, &bsonFilter)
 	}
 
-	var opts *options.FindOptions
+	opts := &options.FindOptions{}
 	opts.SetLimit(int64(10))
 	if paginationOpt.QueryLimit != nil {
-		opts.SetSort(bson.M{"_id": -1})
+		opts.SetSort(bson.M{"_id": 1})
 		opts.SetLimit(int64(*paginationOpt.QueryLimit))
 	}
 
@@ -174,9 +174,9 @@ func (bscOperation *basicOperation) Find(
 		}
 	}
 
-	var output *bool
-	*output = true
-	return output, err
+	var output bool
+	output = true
+	return &output, err
 }
 
 func (bscOperation *basicOperation) Create(input interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*mongodbcoretypes.CreateOperationOutput, error) {

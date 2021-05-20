@@ -56,12 +56,12 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 ) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var memberAccessRef *model.MemberAccessRef
-		err := cursor.Decode(memberAccessRef)
+		var memberAccessRef model.MemberAccessRef
+		err := cursor.Decode(&memberAccessRef)
 		if err != nil {
 			return nil, err
 		}
-		memberAccessRefs = append(memberAccessRefs, memberAccessRef)
+		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
 		return nil, nil
 	}
 

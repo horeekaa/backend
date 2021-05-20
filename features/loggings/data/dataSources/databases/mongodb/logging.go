@@ -56,12 +56,12 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 ) ([]*model.Logging, error) {
 	var loggings = []*model.Logging{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var logging *model.Logging
-		err := cursor.Decode(logging)
+		var logging model.Logging
+		err := cursor.Decode(&logging)
 		if err != nil {
 			return nil, err
 		}
-		loggings = append(loggings, logging)
+		loggings = append(loggings, &logging)
 		return nil, nil
 	}
 

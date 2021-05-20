@@ -56,12 +56,12 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 ) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var account *model.Account
-		err := cursor.Decode(account)
+		var account model.Account
+		err := cursor.Decode(&account)
 		if err != nil {
 			return nil, err
 		}
-		accounts = append(accounts, account)
+		accounts = append(accounts, &account)
 		return nil, nil
 	}
 

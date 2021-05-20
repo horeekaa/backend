@@ -56,12 +56,12 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 ) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var organization *model.Organization
-		err := cursor.Decode(organization)
+		var organization model.Organization
+		err := cursor.Decode(&organization)
 		if err != nil {
 			return nil, err
 		}
-		organizations = append(organizations, organization)
+		organizations = append(organizations, &organization)
 		return nil, nil
 	}
 

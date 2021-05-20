@@ -56,12 +56,12 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 ) ([]*model.Person, error) {
 	var persons = []*model.Person{}
 	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
-		var person *model.Person
-		err := cursor.Decode(person)
+		var person model.Person
+		err := cursor.Decode(&person)
 		if err != nil {
 			return nil, err
 		}
-		persons = append(persons, person)
+		persons = append(persons, &person)
 		return nil, nil
 	}
 
