@@ -6,6 +6,8 @@ import (
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
@@ -15,14 +17,14 @@ import (
 
 type getAllOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllOrganizationRepo           organizationdomainrepositoryinterfaces.GetAllOrganizationRepository
 	getAllOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getAllOrganizationRepo organizationdomainrepositoryinterfaces.GetAllOrganizationRepository,
 ) (organizationpresentationusecaseinterfaces.GetAllOrganizationUsecase, error) {
 	return &getAllOrganizationUsecase{
@@ -79,7 +81,7 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 	}
 
 	_, err = getAllMmbAccRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
 			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
 			MemberAccessRefOptions: *getAllMmbAccRefUcase.getAllOrganizationAccessIdentity,

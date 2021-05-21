@@ -14,12 +14,14 @@ import (
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
 	memberaccessrefpresentationusecasetypes "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type updateMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo          accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository
 	getMemberAccessRefRepo              memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository
@@ -30,7 +32,7 @@ type updateMemberAccessRefUsecase struct {
 
 func NewUpdateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
 	getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,
@@ -106,7 +108,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	}()
 
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
 			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
 			MemberAccessRefOptions: *updateMmbAccessRefUcase.updateMemberAccessRefAccessIdentity,

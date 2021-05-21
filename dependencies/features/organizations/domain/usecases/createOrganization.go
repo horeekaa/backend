@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationpresentationusecases "github.com/horeekaa/backend/features/organizations/domain/usecases"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
@@ -15,7 +16,7 @@ func (_ *CreateOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
