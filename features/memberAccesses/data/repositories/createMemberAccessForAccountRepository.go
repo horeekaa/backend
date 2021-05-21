@@ -1,4 +1,4 @@
-package accountdomainrepositories
+package memberaccessdomainrepositories
 
 import (
 	"encoding/json"
@@ -8,24 +8,25 @@ import (
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
-	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
-	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type createMemberAccessForAccountRepository struct {
 	accountDataSource                            databaseaccountdatasourceinterfaces.AccountDataSource
-	memberAccessDataSource                       databaseaccountdatasourceinterfaces.MemberAccessDataSource
+	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	memberAccessRefDataSource                    databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
-	createMemberAccessForAccountUsecaseComponent accountdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent
+	createMemberAccessForAccountUsecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent
 }
 
 func NewCreateMemberAccessForAccountRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
-	memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
-) (accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository, error) {
+) (memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository, error) {
 	return &createMemberAccessForAccountRepository{
 		accountDataSource:         accountDataSource,
 		memberAccessDataSource:    memberAccessDataSource,
@@ -34,17 +35,17 @@ func NewCreateMemberAccessForAccountRepository(
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) SetValidation(
-	usecaseComponent accountdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent,
+	usecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent,
 ) (bool, error) {
 	createMbrAccForAccount.createMemberAccessForAccountUsecaseComponent = usecaseComponent
 	return true, nil
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute(
-	input accountdomainrepositorytypes.CreateMemberAccessForAccountInput,
-) (accountdomainrepositorytypes.CreateMemberAccessForAccountInput, error) {
+	input memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput,
+) (memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput, error) {
 	if &input.Account.ID == nil {
-		return accountdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
+		return memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/createMemberAccessForAccount",
 			nil,
@@ -53,7 +54,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 
 	if input.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased {
 		if input.Organization == nil || input.OrganizationType == "" {
-			return accountdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
+			return memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput{}, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess,
 				"/createMemberAccessForAccount",
 				nil,
@@ -68,7 +69,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
-	input accountdomainrepositorytypes.CreateMemberAccessForAccountInput,
+	input memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput,
 ) (*model.MemberAccess, error) {
 	validatedInput, err := createMbrAccForAccount.preExecute(input)
 	if err != nil {

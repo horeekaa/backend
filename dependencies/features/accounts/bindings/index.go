@@ -14,12 +14,9 @@ func (_ *AccountDependency) Bind() {
 	registrationList := [...]dependencybindinginterfaces.BindingInterface{
 		&firebaseauthdependencies.FirebaseAuthDependency{},
 		&mongodbaccountdatasourcedependencies.AccountDataSourceDependency{},
-		&mongodbaccountdatasourcedependencies.MemberAccessDataSourceDependency{},
 		&mongodbaccountdatasourcedependencies.PersonDataSourceDependency{},
 
-		&accountdomainrepositorydependencies.CreateMemberAccessForAccountDependency{},
 		&accountdomainrepositorydependencies.GetAccountDependency{},
-		&accountdomainrepositorydependencies.GetAccountMemberAccessDependency{},
 		&accountdomainrepositorydependencies.GetPersonDataFromAccountDependency{},
 		&accountdomainrepositorydependencies.CreateAccountFromAuthDataDependency{},
 		&accountdomainrepositorydependencies.GetAccountFromAuthDataDependency{},

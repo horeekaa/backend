@@ -1,4 +1,4 @@
-package accountdomainrepositories
+package memberaccessdomainrepositories
 
 import (
 	"encoding/json"
@@ -9,23 +9,24 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
-	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
-	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type getAccountMemberAccessRepository struct {
 	accountDataSource                      databaseaccountdatasourceinterfaces.AccountDataSource
-	memberAccessDataSource                 databaseaccountdatasourceinterfaces.MemberAccessDataSource
+	memberAccessDataSource                 databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
-	getAccountMemberAccessUsecaseComponent accountdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent
+	getAccountMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent
 }
 
 func NewGetAccountMemberAccessRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
-	memberAccessDataSource databaseaccountdatasourceinterfaces.MemberAccessDataSource,
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-) (accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository, error) {
+) (memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository, error) {
 	return &getAccountMemberAccessRepository{
 		accountDataSource:      accountDataSource,
 		memberAccessDataSource: memberAccessDataSource,
@@ -34,17 +35,17 @@ func NewGetAccountMemberAccessRepository(
 }
 
 func (getAccountMemberAccess *getAccountMemberAccessRepository) SetValidation(
-	usecaseComponent accountdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent,
+	usecaseComponent memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent,
 ) (bool, error) {
 	getAccountMemberAccess.getAccountMemberAccessUsecaseComponent = usecaseComponent
 	return true, nil
 }
 
 func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
-	input accountdomainrepositorytypes.GetAccountMemberAccessInput,
-) (accountdomainrepositorytypes.GetAccountMemberAccessInput, error) {
+	input memberaccessdomainrepositorytypes.GetAccountMemberAccessInput,
+) (memberaccessdomainrepositorytypes.GetAccountMemberAccessInput, error) {
 	if &input.Account.ID == nil {
-		return accountdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
+		return memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
 			"/getAccountMemberAccess",
 			nil,
@@ -56,7 +57,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 	return getAccountMemberAccess.getAccountMemberAccessUsecaseComponent.Validation(input)
 }
 
-func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input accountdomainrepositorytypes.GetAccountMemberAccessInput) (*model.MemberAccess, error) {
+func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input memberaccessdomainrepositorytypes.GetAccountMemberAccessInput) (*model.MemberAccess, error) {
 	preExecuteOutput, err := getAccountMemberAccess.preExecute(input)
 	if err != nil {
 		return nil, err
