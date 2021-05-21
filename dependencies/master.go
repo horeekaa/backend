@@ -16,11 +16,13 @@ func (_ *MasterDependency) Bind() {
 	registrationList := []dependencybindinginterfaces.BindingInterface{
 		&coredependencies.CoreDependency{},
 
+		&memberaccessdependencies.MemberAccessDependency{},
 		&accountdependencies.AccountDependency{},
 		&loggingdependencies.LoggingDependency{},
 		&memberaccessrefdependencies.MemberAccessRefDependency{},
 		&organizationdependencies.OrganizationDependency{},
 		&memberaccessdependencies.MemberAccessDependency{},
+		&accountdependencies.AccountDependency{},
 	}
 
 	for _, reg := range registrationList {
