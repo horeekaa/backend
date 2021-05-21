@@ -8,14 +8,16 @@ import (
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type loginUsecase struct {
 	getAccountFromAuthDataRepo         accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	createAccountFromAuthDataRepo      accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository
-	createMemberAccessForAccountRepo   accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository
-	getAccountMemberAccessRepository   accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	createMemberAccessForAccountRepo   memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository
+	getAccountMemberAccessRepository   memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
 	loginAccessIdentity                *model.MemberAccessRefOptionsInput
 }
@@ -23,8 +25,8 @@ type loginUsecase struct {
 func NewLoginUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
-	createMemberAccessForAccountRepo accountdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
-	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	createMemberAccessForAccountRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
+	getAccountMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 ) (accountpresentationusecaseinterfaces.LoginUsecase, error) {
 	return &loginUsecase{
@@ -85,7 +87,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		}
 
 		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
-			accountdomainrepositorytypes.CreateMemberAccessForAccountInput{
+			memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput{
 				Account:             account,
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
 			},
@@ -99,7 +101,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	}
 
 	_, err = loginUcase.getAccountMemberAccessRepository.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
 			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
 			MemberAccessRefOptions: *loginUcase.loginAccessIdentity,

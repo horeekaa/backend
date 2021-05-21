@@ -13,12 +13,14 @@ import (
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
 	memberaccessrefpresentationusecasetypes "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type createMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo          accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository
 	logEntityProposalActivityRepo       loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
@@ -27,7 +29,7 @@ type createMemberAccessRefUsecase struct {
 
 func NewCreateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -99,7 +101,7 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 	}()
 
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
 			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
 			MemberAccessRefOptions: *createMmbAccessRefUcase.createMemberAccessRefAccessIdentity,

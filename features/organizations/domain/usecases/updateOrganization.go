@@ -11,6 +11,8 @@ import (
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
 	organizationpresentationusecasetypes "github.com/horeekaa/backend/features/organizations/presentation/usecases/types"
@@ -19,7 +21,7 @@ import (
 
 type updateOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateOrganizationRepo           organizationdomainrepositoryinterfaces.UpdateOrganizationRepository
 	getOrganizationRepo              organizationdomainrepositoryinterfaces.GetOrganizationRepository
@@ -30,7 +32,7 @@ type updateOrganizationUsecase struct {
 
 func NewUpdateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateOrganizationRepo organizationdomainrepositoryinterfaces.UpdateOrganizationRepository,
 	getOrganizationRepo organizationdomainrepositoryinterfaces.GetOrganizationRepository,
@@ -106,7 +108,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 	}()
 
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			Account:                account,
 			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
 			MemberAccessRefOptions: *updateMmbAccessRefUcase.updateOrganizationAccessIdentity,
