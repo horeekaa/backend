@@ -5,22 +5,49 @@ enum MemberAccessStatus {
 
 input CreateMemberAccess {
   account: ObjectIDOnly!
-  organization: ObjectIDOnly
+  organization: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptionsInput!
   defaultAccess: ObjectIDOnly
   status: MemberAccessStatus!
+  previousEntity: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
 
 input UpdateMemberAccess {
   _id: ObjectID!
+  organization: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
+  defaultAccess: ObjectIDOnly
   access: MemberAccessRefOptionsInput
   status: MemberAccessStatus
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
   updatedAt: Time
+}
+
+input MemberAccessFilterFields {
+  _id: ObjectID
+  account: ObjectIDOnly
+  organization: AttachOrganizationInput
+  organizationMembershipRole: OrganizationMembershipRole
+  memberAccessRefType: MemberAccessRefType
+  access: MemberAccessRefOptionsInput
+  defaultAccess: ObjectIDOnly
+  status: MemberAccessStatus
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  previousEntity: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
 }
 
 type MemberAccess {
@@ -32,6 +59,11 @@ type MemberAccess {
   access: MemberAccessRefOptions!
   defaultAccess: MemberAccessRef!
   status: MemberAccessStatus!
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  approvingAccount: Account
+  previousEntity: MemberAccess
+  correspondingLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }
