@@ -17,3 +17,13 @@ type GetAccountMemberAccessInput struct {
 	MemberAccessRefType    model.MemberAccessRefType
 	MemberAccessRefOptions model.MemberAccessRefOptionsInput
 }
+
+type UpdateMemberAccessOutput struct {
+	PreviousMemberAccess *model.MemberAccess
+	UpdatedMemberAccess  *model.MemberAccess
+}
+
+type GetAllMemberAccessInput struct {
+	FilterFields  *model.MemberAccessFilterFields
+	PaginationOpt *model.PaginationOptionInput
+}
