@@ -87,8 +87,8 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		}
 
 		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
-			memberaccessdomainrepositorytypes.CreateMemberAccessForAccountInput{
-				Account:             account,
+			&model.CreateMemberAccess{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
 			},
 		)
