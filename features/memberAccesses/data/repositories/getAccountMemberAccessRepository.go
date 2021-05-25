@@ -1,34 +1,29 @@
 package memberaccessdomainrepositories
 
 import (
-	"encoding/json"
-
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
-	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAccountMemberAccessRepository struct {
-	accountDataSource                      databaseaccountdatasourceinterfaces.AccountDataSource
 	memberAccessDataSource                 databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 	getAccountMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent
 }
 
 func NewGetAccountMemberAccessRepository(
-	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository, error) {
 	return &getAccountMemberAccessRepository{
-		accountDataSource:      accountDataSource,
 		memberAccessDataSource: memberAccessDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
@@ -42,50 +37,40 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) SetValidation(
 }
 
 func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
-	input memberaccessdomainrepositorytypes.GetAccountMemberAccessInput,
+	getAccMmbAccInput memberaccessdomainrepositorytypes.GetAccountMemberAccessInput,
 ) (memberaccessdomainrepositorytypes.GetAccountMemberAccessInput, error) {
-	if &input.Account.ID == nil {
-		return memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-			"/getAccountMemberAccess",
-			nil,
-		)
+	if !getAccMmbAccInput.QueryMode {
+		if &getAccMmbAccInput.MemberAccessFilterFields.Account == nil {
+			return memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
+				"/getAccountMemberAccess",
+				nil,
+			)
+		}
 	}
 	if getAccountMemberAccess.getAccountMemberAccessUsecaseComponent == nil {
-		return input, nil
+		return getAccMmbAccInput, nil
 	}
-	return getAccountMemberAccess.getAccountMemberAccessUsecaseComponent.Validation(input)
+	return getAccountMemberAccess.getAccountMemberAccessUsecaseComponent.Validation(getAccMmbAccInput)
 }
 
-func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input memberaccessdomainrepositorytypes.GetAccountMemberAccessInput) (*model.MemberAccess, error) {
-	preExecuteOutput, err := getAccountMemberAccess.preExecute(input)
+func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAccInput memberaccessdomainrepositorytypes.GetAccountMemberAccessInput) (*model.MemberAccess, error) {
+	validatedInput, err := getAccountMemberAccess.preExecute(getMmbAccInput)
 	if err != nil {
 		return nil, err
 	}
-
-	account, err := getAccountMemberAccess.accountDataSource.GetMongoDataSource().FindByID(
-		preExecuteOutput.Account.ID,
-		&mongodbcoretypes.OperationOptions{},
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAccountMemberAccess",
-			err,
-		)
+	if validatedInput.MemberAccessFilterFields == nil {
+		return nil, nil
 	}
-	var accessMap map[string]interface{}
-	jsonTemp, _ := json.Marshal(preExecuteOutput.MemberAccessRefOptions)
-	json.Unmarshal(jsonTemp, &accessMap)
+
+	var filterFieldsMap map[string]interface{}
+	data, _ := bson.Marshal(validatedInput.MemberAccessFilterFields)
+	bson.Unmarshal(data, &filterFieldsMap)
 
 	getMemberAccessQuery := make(map[string]interface{})
 	getAccountMemberAccess.mapProcessorUtility.FlattenMap(
 		"",
-		map[string]interface{}{
-			"account":             map[string]interface{}{"_id": account.ID},
-			"memberAccessRefType": preExecuteOutput.MemberAccessRefType,
-			"access":              accessMap,
-			"status":              model.MemberAccessStatusActive,
-		},
+		filterFieldsMap,
 		&getMemberAccessQuery,
 	)
 
@@ -99,7 +84,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(input me
 			err,
 		)
 	}
-	if memberAccess == nil {
+	if memberAccess == nil && !validatedInput.QueryMode {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
 			"/getAccountMemberAccess",

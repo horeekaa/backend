@@ -5,9 +5,8 @@ import (
 )
 
 type GetAccountMemberAccessInput struct {
-	Account                *model.Account
-	MemberAccessRefType    model.MemberAccessRefType
-	MemberAccessRefOptions model.MemberAccessRefOptionsInput
+	MemberAccessFilterFields *model.MemberAccessFilterFields
+	QueryMode                bool
 }
 
 type UpdateMemberAccessOutput struct {
