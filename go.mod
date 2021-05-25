@@ -7,6 +7,7 @@ require (
 	github.com/99designs/gqlgen v0.13.0
 	github.com/go-chi/chi v3.3.2+incompatible
 	github.com/golobby/container/v2 v2.1.2
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/thoas/go-funk v0.7.0
