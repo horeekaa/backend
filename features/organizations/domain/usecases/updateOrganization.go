@@ -107,11 +107,14 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		personChannel <- person
 	}()
 
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
-			MemberAccessRefOptions: *updateMmbAccessRefUcase.updateOrganizationAccessIdentity,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              updateMmbAccessRefUcase.updateOrganizationAccessIdentity,
+			},
 		},
 	)
 	if err != nil {

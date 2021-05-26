@@ -100,11 +100,14 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		}
 	}
 
+	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 	_, err = loginUcase.getAccountMemberAccessRepository.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
-			MemberAccessRefOptions: *loginUcase.loginAccessIdentity,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+				Access:              loginUcase.loginAccessIdentity,
+			},
 		},
 	)
 	if err != nil {

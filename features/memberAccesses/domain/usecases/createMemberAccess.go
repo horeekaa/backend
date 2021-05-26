@@ -99,11 +99,14 @@ func (createMmbAccessRefUcase *createMemberAccessUsecase) Execute(input memberac
 		personChannel <- person
 	}()
 
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
-			MemberAccessRefOptions: *createMmbAccessRefUcase.createMemberAccessAccessIdentity,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              createMmbAccessRefUcase.createMemberAccessAccessIdentity,
+			},
 		},
 	)
 	if err != nil {

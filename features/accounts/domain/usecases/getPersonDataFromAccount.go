@@ -83,11 +83,14 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		}
 		validatedInput.Account = account
 
+		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		_, err = getPersonDataFromAccountUsecase.getAccountMemberAccessRepository.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				Account:                validatedInput.Account,
-				MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
-				MemberAccessRefOptions: *getPersonDataFromAccountUsecase.getPersonDataFromAccountAccessIdentity,
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+					Access:              getPersonDataFromAccountUsecase.getPersonDataFromAccountAccessIdentity,
+				},
 			},
 		)
 		if err != nil {
