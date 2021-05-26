@@ -78,11 +78,14 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 		)
 	}
 
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
-			MemberAccessRefOptions: *getAllMmbAccUcase.getAllMemberAccessAccessIdentity,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              getAllMmbAccUcase.getAllMemberAccessAccessIdentity,
+			},
 		},
 	)
 	if err != nil {

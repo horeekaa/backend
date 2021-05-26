@@ -103,11 +103,14 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		personChannel <- person
 	}()
 
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
-			MemberAccessRefOptions: *updateMmbAccessUcase.updateMemberAccessIdentity,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              updateMmbAccessUcase.updateMemberAccessIdentity,
+			},
 		},
 	)
 	if err != nil {
@@ -134,7 +137,9 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 
 	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account: &model.Account{}, //validatedInput.UpdateMemberAccess.ID,
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account: &model.ObjectIDOnly{ID: &validatedInput.UpdateMemberAccess.ID},
+			},
 		},
 	)
 	if err != nil {
