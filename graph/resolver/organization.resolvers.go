@@ -50,30 +50,44 @@ func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model
 func (r *organizationResolver) ApprovingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
+
+	var filterFields *model.AccountFilterFields
+	if obj.ApprovingAccount != nil {
+		filterFields = &model.AccountFilterFields{}
+		filterFields.ID = &obj.ApprovingAccount.ID
+
+	}
 	return getAccountUsecase.Execute(
-		&model.AccountFilterFields{
-			ID: &obj.ApprovingAccount.ID,
-		},
+		filterFields,
 	)
 }
 
 func (r *organizationResolver) PreviousEntity(ctx context.Context, obj *model.Organization) (*model.Organization, error) {
 	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
 	container.Make(&getOrganizationUsecase)
+
+	var filterFields *model.OrganizationFilterFields
+	if obj.PreviousEntity != nil {
+		filterFields = &model.OrganizationFilterFields{}
+		filterFields.ID = &obj.PreviousEntity.ID
+	}
 	return getOrganizationUsecase.Execute(
-		&model.OrganizationFilterFields{
-			ID: &obj.PreviousEntity.ID,
-		},
+		filterFields,
 	)
 }
 
 func (r *organizationResolver) CorrespondingLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
 	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
 	container.Make(&getLoggingUsecase)
+
+	var filterFields *model.LoggingFilterFields
+	if obj.CorrespondingLog != nil {
+		filterFields = &model.LoggingFilterFields{}
+		filterFields.ID = &obj.CorrespondingLog.ID
+
+	}
 	return getLoggingUsecase.Execute(
-		&model.LoggingFilterFields{
-			ID: &obj.CorrespondingLog.ID,
-		},
+		filterFields,
 	)
 }
 
