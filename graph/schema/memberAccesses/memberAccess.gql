@@ -1,0 +1,8 @@
+extend type Mutation {
+    createMemberAccess(createMemberAccess: CreateMemberAccess!): MemberAccess!
+    updateMemberAccess(updateMemberAccess: UpdateMemberAccess!): MemberAccess!
+}
+
+extend type Query {
+    memberAccesses(filterFields: MemberAccessFilterFields, paginationOpt: PaginationOptionInput): [MemberAccess]!
+}
