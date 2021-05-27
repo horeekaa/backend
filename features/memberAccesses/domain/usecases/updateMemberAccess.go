@@ -138,8 +138,9 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account: &model.ObjectIDOnly{ID: &validatedInput.UpdateMemberAccess.ID},
+				ID: &validatedInput.UpdateMemberAccess.ID,
 			},
+			QueryMode: true,
 		},
 	)
 	if err != nil {
