@@ -21,7 +21,7 @@ type updateMemberAccessForAccountComponent struct {
 	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
 }
 
-func NewUpdateMemberAccessForAccountRepository(
+func NewUpdateMemberAccessForAccountTransactionComponent(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,

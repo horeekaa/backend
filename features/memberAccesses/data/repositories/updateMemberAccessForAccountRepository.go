@@ -13,7 +13,7 @@ type updateMemberAccessForAccountRepository struct {
 	mongoDBTransaction                               mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
-func NewUpdateMemberAccessRepository(
+func NewUpdateMemberAccessForAccountRepository(
 	updateMemberAccessRepositoryTransactionComponent memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository, error) {
