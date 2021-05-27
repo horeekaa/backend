@@ -30,10 +30,14 @@ func (r *memberAccessResolver) Account(ctx context.Context, obj *model.MemberAcc
 func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
 	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
 	container.Make(&getOrganizationUsecase)
+
+	var filterFields *model.OrganizationFilterFields
+	if obj.PreviousEntity != nil {
+		filterFields = &model.OrganizationFilterFields{}
+		filterFields.ID = &obj.Organization.ID
+	}
 	return getOrganizationUsecase.Execute(
-		&model.OrganizationFilterFields{
-			ID: &obj.Organization.ID,
-		},
+		filterFields,
 	)
 }
 
