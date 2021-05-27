@@ -20,6 +20,7 @@ func (_ *MemberAccessDependency) Bind() {
 
 		&memberaccesspresentationusecasedependencies.CreateMemberAccessUsecaseDependency{},
 		&memberaccesspresentationusecasedependencies.GetAllMemberAccessUsecaseDependency{},
+		&memberaccesspresentationusecasedependencies.GetMemberAccessUsecaseDependency{},
 		&memberaccesspresentationusecasedependencies.UpdateMemberAccessUsecaseDependency{},
 	}
 
