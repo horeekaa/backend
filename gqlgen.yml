@@ -55,6 +55,14 @@ models:
         resolver: true
       account:
         resolver: true
+      submittingAccount:
+        resolver: true
+      approvingAccount:
+        resolver: true
+      previousEntity:
+        resolver: true
+      correspondingLog:
+        resolver: true
   Logging:
     fields:
       createdByAccount:

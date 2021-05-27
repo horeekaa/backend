@@ -2,7 +2,7 @@
 ==========================================
 
 A [Go](https://golang.org/) backend using these services:
-- [Graphql](https://graphql.org/) with the flavour of [GqlGen](gqlgen.com)
+- [Graphql](https://graphql.org/) with the flavour of [GQLGen](https://gqlgen.com/)
 - [Google Firebase Authentication](https://firebase.google.com/products/auth)
 - [Google Cloud Platform's App engine](https://cloud.google.com/appengine/)
 - [Google Cloud Platform's Cloud Storage](https://cloud.google.com/storage/)

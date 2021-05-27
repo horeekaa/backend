@@ -6,6 +6,7 @@ import (
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecases "github.com/horeekaa/backend/features/memberAccessRefs/domain/usecases"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 )
 
 type GetAllMemberAccessRefUsecaseDependency struct{}
@@ -14,7 +15,7 @@ func (_ GetAllMemberAccessRefUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository,
 		) memberaccessrefpresentationusecaseinterfaces.GetAllMemberAccessRefUsecase {
 			getAllMemberAccessRefUcase, _ := memberaccessrefpresentationusecases.NewGetAllMemberAccessRefUsecase(

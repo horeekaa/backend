@@ -1,4 +1,4 @@
-package mongodbaccountdatasources
+package mongodbmemberaccessdatasources
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
+	mongodbmemberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,7 +16,7 @@ type memberAccessDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
 }
 
-func NewMemberAccessDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.MemberAccessDataSourceMongo, error) {
+func NewMemberAccessDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbmemberaccessdatasourceinterfaces.MemberAccessDataSourceMongo, error) {
 	basicOperation.SetCollection("memberaccesses")
 	return &memberAccessDataSourceMongo{
 		basicOperation: basicOperation,

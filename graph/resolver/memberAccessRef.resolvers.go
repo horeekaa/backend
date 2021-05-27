@@ -28,30 +28,44 @@ func (r *memberAccessRefResolver) SubmittingAccount(ctx context.Context, obj *mo
 func (r *memberAccessRefResolver) ApprovingAccount(ctx context.Context, obj *model.MemberAccessRef) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
+
+	var filterFields *model.AccountFilterFields
+	if obj.ApprovingAccount != nil {
+		filterFields = &model.AccountFilterFields{}
+		filterFields.ID = &obj.ApprovingAccount.ID
+
+	}
 	return getAccountUsecase.Execute(
-		&model.AccountFilterFields{
-			ID: &obj.ApprovingAccount.ID,
-		},
+		filterFields,
 	)
 }
 
 func (r *memberAccessRefResolver) PreviousEntity(ctx context.Context, obj *model.MemberAccessRef) (*model.MemberAccessRef, error) {
 	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
 	container.Make(&getMemberAccessRefUsecase)
+
+	var filterFields *model.MemberAccessRefFilterFields
+	if obj.PreviousEntity != nil {
+		filterFields = &model.MemberAccessRefFilterFields{}
+		filterFields.ID = &obj.PreviousEntity.ID
+	}
 	return getMemberAccessRefUsecase.Execute(
-		&model.MemberAccessRefFilterFields{
-			ID: &obj.PreviousEntity.ID,
-		},
+		filterFields,
 	)
 }
 
 func (r *memberAccessRefResolver) CorrespondingLog(ctx context.Context, obj *model.MemberAccessRef) (*model.Logging, error) {
 	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
 	container.Make(&getLoggingUsecase)
+
+	var filterFields *model.LoggingFilterFields
+	if obj.CorrespondingLog != nil {
+		filterFields = &model.LoggingFilterFields{}
+		filterFields.ID = &obj.CorrespondingLog.ID
+
+	}
 	return getLoggingUsecase.Execute(
-		&model.LoggingFilterFields{
-			ID: &obj.CorrespondingLog.ID,
-		},
+		filterFields,
 	)
 }
 

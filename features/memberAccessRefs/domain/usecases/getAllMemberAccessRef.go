@@ -10,19 +10,21 @@ import (
 	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
 	memberaccessrefpresentationusecasetypes "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type getAllMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo          accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository
 	getAllMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getAllMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository,
 ) (memberaccessrefpresentationusecaseinterfaces.GetAllMemberAccessRefUsecase, error) {
 	return &getAllMemberAccessRefUsecase{
@@ -78,11 +80,14 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 		)
 	}
 
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllMmbAccRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeOrganizationsBased,
-			MemberAccessRefOptions: *getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
+			},
 		},
 	)
 	if err != nil {

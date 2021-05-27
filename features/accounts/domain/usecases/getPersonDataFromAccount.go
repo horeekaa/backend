@@ -8,19 +8,21 @@ import (
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type getPersonDataFromAccountUsecase struct {
 	getAccountFromAuthDataRepo             accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepository       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepository       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepository     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	getPersonDataFromAccountAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetPersonDataFromAccountUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepository accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepository accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 ) (accountpresentationusecaseinterfaces.GetPersonDataFromAccountUsecase, error) {
 	return &getPersonDataFromAccountUsecase{
@@ -81,11 +83,14 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		}
 		validatedInput.Account = account
 
+		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		_, err = getPersonDataFromAccountUsecase.getAccountMemberAccessRepository.Execute(
-			accountdomainrepositorytypes.GetAccountMemberAccessInput{
-				Account:                validatedInput.Account,
-				MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
-				MemberAccessRefOptions: *getPersonDataFromAccountUsecase.getPersonDataFromAccountAccessIdentity,
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+					Access:              getPersonDataFromAccountUsecase.getPersonDataFromAccountAccessIdentity,
+				},
 			},
 		)
 		if err != nil {

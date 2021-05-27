@@ -10,6 +10,8 @@ import (
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
 	organizationpresentationusecasetypes "github.com/horeekaa/backend/features/organizations/presentation/usecases/types"
@@ -18,7 +20,7 @@ import (
 
 type createOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
 	logEntityProposalActivityRepo    loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
@@ -27,7 +29,7 @@ type createOrganizationUsecase struct {
 
 func NewCreateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-	getAccountMemberAccessRepo accountdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -98,11 +100,14 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 		personChannel <- person
 	}()
 
+	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
-		accountdomainrepositorytypes.GetAccountMemberAccessInput{
-			Account:                account,
-			MemberAccessRefType:    model.MemberAccessRefTypeAccountsBasics,
-			MemberAccessRefOptions: *createMmbAccessRefUcase.createOrganizationAccessIdentity,
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+				Access:              createMmbAccessRefUcase.createOrganizationAccessIdentity,
+			},
 		},
 	)
 	if err != nil {
