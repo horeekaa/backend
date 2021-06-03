@@ -81,7 +81,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	defer cancel()
 
 	bscOperation.mapProcessorUtility.RemoveNil(query)
-	var flattenedQuery map[string]interface{}
+	flattenedQuery := make(map[string]interface{})
 	bscOperation.mapProcessorUtility.FlattenMap(
 		"",
 		query,
@@ -119,7 +119,7 @@ func (bscOperation *basicOperation) Find(
 	defer cancel()
 
 	bscOperation.mapProcessorUtility.RemoveNil(query)
-	var flattenedQuery map[string]interface{}
+	flattenedQuery := make(map[string]interface{})
 	bscOperation.mapProcessorUtility.FlattenMap(
 		"",
 		query,
