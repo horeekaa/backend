@@ -325,9 +325,6 @@ func (updateOrgUcase *updateOrganizationUsecase) updateCorrespondingMemberAccess
 				Type: &updatedOrg.Type,
 			},
 			SubmittingAccount: &model.ObjectIDOnly{ID: &account.ID},
-			ProposalStatus: func(ep model.EntityProposalStatus) *model.EntityProposalStatus {
-				return &ep
-			}(model.EntityProposalStatusApproved),
 		}
 
 		var newObject interface{} = *updateMemberAccessData
@@ -337,7 +334,7 @@ func (updateOrgUcase *updateOrganizationUsecase) updateCorrespondingMemberAccess
 				CollectionName:   "MemberAccess",
 				CreatedByAccount: account,
 				Activity:         model.LoggedActivityUpdate,
-				ProposalStatus:   *updateMemberAccessData.ProposalStatus,
+				ProposalStatus:   model.EntityProposalStatusApproved,
 				NewObject:        &newObject,
 				ExistingObject:   &existingObject,
 				ExistingObjectID: func(t string) *string { return &t }(memberAccess.ID.Hex()),
@@ -366,7 +363,9 @@ func (updateOrgUcase *updateOrganizationUsecase) updateCorrespondingMemberAccess
 			&model.UpdateMemberAccess{
 				ID:               updatedMemberAccess.UpdatedMemberAccess.ID,
 				ApprovingAccount: &model.ObjectIDOnly{ID: &account.ID},
-				ProposalStatus:   &updatedMemberAccess.UpdatedMemberAccess.ProposalStatus,
+				ProposalStatus: func(ep model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &ep
+				}(model.EntityProposalStatusApproved),
 			},
 		)
 		if err != nil {
