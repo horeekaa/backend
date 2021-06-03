@@ -4,11 +4,9 @@ import (
 	"context"
 
 	firebase "firebase.google.com/go/v4"
-	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
-	"google.golang.org/api/option"
 )
 
 type firebaseServerlessClient struct {
@@ -16,9 +14,7 @@ type firebaseServerlessClient struct {
 }
 
 func (svlessClient *firebaseServerlessClient) Connect() (bool, error) {
-	opt := option.WithCredentialsFile(coreconfigs.GetEnvVariable(coreconfigs.FirebaseServiceAccountPath))
-	config := &firebase.Config{ProjectID: coreconfigs.GetEnvVariable(coreconfigs.FirebaseConfigProjectID)}
-	app, err := firebase.NewApp(context.Background(), config, opt)
+	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
