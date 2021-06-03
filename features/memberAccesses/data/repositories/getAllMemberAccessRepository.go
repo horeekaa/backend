@@ -29,7 +29,9 @@ func (getAllmmbAccRepo *getAllMemberAccessRepository) Execute(
 	data, _ := bson.Marshal(input.FilterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
+	var mongoPagination mongodbcoretypes.PaginationOptions
+	data, _ = bson.Marshal(input.PaginationOpt)
+	bson.Unmarshal(data, &mongoPagination)
 
 	memberAccesses, err := getAllmmbAccRepo.memberAccessDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
