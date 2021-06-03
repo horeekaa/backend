@@ -6,6 +6,7 @@ import (
 	"os"
 
 	authenticationmiddlewares "github.com/horeekaa/backend/http/middlewares/authentication"
+	"github.com/joho/godotenv"
 
 	masterdependencies "github.com/horeekaa/backend/dependencies"
 
@@ -20,6 +21,10 @@ import (
 const defaultPort = "8080"
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("Cannot load .env file!")
+	}
+
 	masterBind := &masterdependencies.MasterDependency{}
 	masterBind.Bind()
 

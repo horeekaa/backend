@@ -1,10 +1,7 @@
 package coreconfigs
 
 import (
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 // environment variable configuration keys
@@ -13,8 +10,8 @@ const (
 	DbConfigDBName  string = "DBCONFIG_DBNAME"
 	DbConfigTimeout string = "DBCONFIG_TIMEOUT"
 
-	FirebaseConfigProjectID                   string = "FIREBASECONFIG_PROJECT_ID"
-	FirebaseServiceAccountPath                string = "FIREBASECONFIG_SERVICE_ACCOUNT_PATH"
+	FirebaseConfig                            string = "FIREBASE_CONFIG"
+	GoogleApplicationCredentials              string = "GOOGLE_APPLICATION_CREDENTIALS"
 	FirebaseEmailActionCodeURL                string = "FIREBASECONFIG_EMAIL_ACTION_CODE_URL"
 	FirebaseEmailActionCodeAndroidPackageName string = "FIREBASECONFIG_EMAIL_ACTION_CODE_ANDROID_PACKAGENAME"
 	FirebaseEmailActionCodeAndroidInstallApp  string = "FIREBASECONFIG_EMAIL_ACTION_CODE_ANDROID_INSTALLAPP"
@@ -32,9 +29,5 @@ const (
 
 // GetEnvVariable will retrieve the value of the environment variable based on the input key
 func GetEnvVariable(key string) string {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("Cannot load .env file!")
-	}
-
 	return os.Getenv(key)
 }
