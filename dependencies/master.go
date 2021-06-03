@@ -23,6 +23,7 @@ func (_ *MasterDependency) Bind() {
 		&organizationdependencies.OrganizationDependency{},
 		&memberaccessdependencies.MemberAccessDependency{},
 		&accountdependencies.AccountDependency{},
+		&organizationdependencies.OrganizationDependency{},
 	}
 
 	for _, reg := range registrationList {
