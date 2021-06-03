@@ -138,7 +138,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(in
 	}
 	createInput := (input).(model.CreateMemberAccess)
 	if createInput.InvitationAccepted == nil {
-		*createInput.InvitationAccepted = false
+		createInput.InvitationAccepted = func(b bool) *bool { return &b }(false)
 	}
 
 	createInput.CreatedAt = &currentTime
