@@ -67,15 +67,8 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAc
 	data, _ := bson.Marshal(validatedInput.MemberAccessFilterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	getMemberAccessQuery := make(map[string]interface{})
-	getAccountMemberAccess.mapProcessorUtility.FlattenMap(
-		"",
-		filterFieldsMap,
-		&getMemberAccessQuery,
-	)
-
 	memberAccess, err := getAccountMemberAccess.memberAccessDataSource.GetMongoDataSource().FindOne(
-		getMemberAccessQuery,
+		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
