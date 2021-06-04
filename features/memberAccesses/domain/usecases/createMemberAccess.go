@@ -112,7 +112,7 @@ func (createMmbAccessRefUcase *createMemberAccessUsecase) Execute(input memberac
 	if duplicateMemberAccess != nil {
 		return nil, horeekaacoreerror.NewErrorObject(
 			horeekaacoreerrorenums.DuplicateAccessExist,
-			403,
+			409,
 			"/createMemberAccessUsecase",
 			nil,
 		)
