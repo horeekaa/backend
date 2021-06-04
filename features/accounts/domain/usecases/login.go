@@ -90,6 +90,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 			&model.CreateMemberAccess{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
+				InvitationAccepted:  func(b bool) *bool { return &b }(true),
 			},
 		)
 		if err != nil {

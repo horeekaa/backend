@@ -93,6 +93,49 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
+	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				ID: &validatedInput.UpdateMemberAccess.ID,
+			},
+			QueryMode: true,
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateMemberAccessUsecase",
+			err,
+		)
+	}
+	if validatedInput.UpdateMemberAccess.InvitationAccepted != nil {
+		if existingMemberAcc.Account.ID.Hex() != validatedInput.UpdateMemberAccess.ID.Hex() ||
+			existingMemberAcc.ProposalStatus != model.EntityProposalStatusApproved {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AcceptInvitationNotAllowed,
+				422,
+				"/updateMemberAccessUsecase",
+				nil,
+			)
+		}
+
+		updateMemberAccessOutput, err := updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
+			&model.UpdateMemberAccess{
+				ID:                 existingMemberAcc.ID,
+				InvitationAccepted: validatedInput.UpdateMemberAccess.InvitationAccepted,
+				ApprovingAccount:   &model.ObjectIDOnly{ID: &existingMemberAcc.ApprovingAccount.ID},
+				ProposalStatus:     &existingMemberAcc.ProposalStatus,
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateMemberAccessUsecase",
+				err,
+			)
+		}
+
+		return updateMemberAccessOutput.UpdatedMemberAccess, nil
+	}
+
 	personChannel := make(chan *model.Person)
 	errChannel := make(chan error)
 	go func() {
@@ -129,21 +172,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		}
 		break
 	case err := <-errChannel:
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
-			err,
-		)
-	}
-
-	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				ID: &validatedInput.UpdateMemberAccess.ID,
-			},
-			QueryMode: true,
-		},
-	)
-	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/updateMemberAccessUsecase",
 			err,

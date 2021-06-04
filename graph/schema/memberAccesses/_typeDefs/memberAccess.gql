@@ -5,6 +5,7 @@ enum MemberAccessStatus {
 
 input CreateMemberAccess {
   account: ObjectIDOnly!
+  invitationAccepted: Boolean
   organization: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
@@ -22,6 +23,7 @@ input CreateMemberAccess {
 
 input UpdateMemberAccess {
   _id: ObjectID!
+  invitationAccepted: Boolean
   organization: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   defaultAccess: ObjectIDOnly
@@ -36,6 +38,7 @@ input UpdateMemberAccess {
 
 input MemberAccessFilterFields {
   _id: ObjectID
+  invitationAccepted: Boolean
   account: ObjectIDOnly
   organization: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
@@ -52,6 +55,7 @@ input MemberAccessFilterFields {
 
 type MemberAccess {
   _id: ObjectID!
+  invitationAccepted: Boolean!
   account: Account!
   organization: Organization
   organizationMembershipRole: OrganizationMembershipRole

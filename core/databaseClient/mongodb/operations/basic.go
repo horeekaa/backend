@@ -81,9 +81,15 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, operat
 	defer cancel()
 
 	bscOperation.mapProcessorUtility.RemoveNil(query)
+	flattenedQuery := make(map[string]interface{})
+	bscOperation.mapProcessorUtility.FlattenMap(
+		"",
+		query,
+		&flattenedQuery,
+	)
 
 	var bsonFilter bson.M
-	data, err := bson.Marshal(query)
+	data, err := bson.Marshal(flattenedQuery)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
@@ -113,9 +119,15 @@ func (bscOperation *basicOperation) Find(
 	defer cancel()
 
 	bscOperation.mapProcessorUtility.RemoveNil(query)
+	flattenedQuery := make(map[string]interface{})
+	bscOperation.mapProcessorUtility.FlattenMap(
+		"",
+		query,
+		&flattenedQuery,
+	)
 
 	var bsonFilter bson.M
-	data, err := bson.Marshal(query)
+	data, err := bson.Marshal(flattenedQuery)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,

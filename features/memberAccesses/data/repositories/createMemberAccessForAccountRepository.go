@@ -75,7 +75,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		return nil, err
 	}
 
-	account, err := createMbrAccForAccount.accountDataSource.GetMongoDataSource().FindByID(*validatedCreateMemberAccess.Account.ID, &mongodbcoretypes.OperationOptions{})
+	_, err = createMbrAccForAccount.accountDataSource.GetMongoDataSource().FindByID(*validatedCreateMemberAccess.Account.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
 			"/createMemberAccessForAccount",
@@ -117,25 +117,12 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
 	json.Unmarshal(jsonTemp, &accesscreateMemberAccess)
 
-	createMemberAccessData := &model.CreateMemberAccess{
-		Account:             &model.ObjectIDOnly{ID: &account.ID},
-		MemberAccessRefType: validatedCreateMemberAccess.MemberAccessRefType,
-		Access:              &accesscreateMemberAccess,
-		Status:              model.MemberAccessStatusActive,
-		DefaultAccess:       &model.ObjectIDOnly{ID: &memberAccessRef.ID},
-	}
-	if validatedCreateMemberAccess.Organization != nil {
-		createMemberAccessData.Organization = &model.AttachOrganizationInput{
-			ID:   validatedCreateMemberAccess.Organization.ID,
-			Type: validatedCreateMemberAccess.Organization.Type,
-		}
-	}
-	if validatedCreateMemberAccess.OrganizationMembershipRole != nil {
-		createMemberAccessData.OrganizationMembershipRole = validatedCreateMemberAccess.OrganizationMembershipRole
-	}
+	validatedCreateMemberAccess.Access = &accesscreateMemberAccess
+	validatedCreateMemberAccess.Status = model.MemberAccessStatusActive
+	validatedCreateMemberAccess.DefaultAccess = &model.ObjectIDOnly{ID: &memberAccessRef.ID}
 
 	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
-		createMemberAccessData,
+		validatedCreateMemberAccess,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
