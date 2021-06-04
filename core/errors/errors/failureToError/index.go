@@ -104,7 +104,7 @@ func ConvertFailure(path string, errorObject interface{}) *horeekaacorebaseerror
 	if badGatewayError[errMsg] {
 		return horeekaacoreerror.NewErrorObject(
 			failure.Message,
-			503,
+			502,
 			path,
 			&failure,
 		)
