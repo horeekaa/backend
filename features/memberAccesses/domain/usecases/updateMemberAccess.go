@@ -108,7 +108,8 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 	if validatedInput.UpdateMemberAccess.InvitationAccepted != nil {
-		if existingMemberAcc.Account.ID.Hex() != validatedInput.UpdateMemberAccess.ID.Hex() {
+		if existingMemberAcc.Account.ID.Hex() != validatedInput.UpdateMemberAccess.ID.Hex() ||
+			existingMemberAcc.ProposalStatus != model.EntityProposalStatusApproved {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacoreerrorenums.AcceptInvitationNotAllowed,
 				422,
@@ -121,6 +122,8 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			&model.UpdateMemberAccess{
 				ID:                 existingMemberAcc.ID,
 				InvitationAccepted: validatedInput.UpdateMemberAccess.InvitationAccepted,
+				ApprovingAccount:   &model.ObjectIDOnly{ID: &existingMemberAcc.ApprovingAccount.ID},
+				ProposalStatus:     &existingMemberAcc.ProposalStatus,
 			},
 		)
 		if err != nil {
