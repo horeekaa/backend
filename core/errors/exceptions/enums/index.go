@@ -16,5 +16,9 @@ const (
 	IDNotFound                      string = "ID_NOT_FOUND"
 	DBConnectionFailed              string = "DB_CONNECTION_FAILED"
 
+	StoringImageFailed              string = "STORING_IMAGE_FAILED"
+	ClosingImageStoringWriterFailed string = "CLOSING_IMAGE_STORING_WRITER_FAILED"
+	DeleteImageFailed               string = "DELETE_IMAGE_FAILED"
+
 	ClientInitializationFailed string = "CLIENT_INITIALIZATION_FAILED"
 )
