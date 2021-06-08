@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	cloud.google.com/go v0.82.0 // indirect
-	cloud.google.com/go/storage v1.15.0 // indirect
+	cloud.google.com/go/storage v1.15.0
 	firebase.google.com/go/v4 v4.5.0
 	github.com/99designs/gqlgen v0.13.0
 	github.com/agnivade/levenshtein v1.1.1 // indirect
@@ -17,6 +17,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/klauspost/compress v1.12.3 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/thoas/go-funk v0.8.0
 	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
