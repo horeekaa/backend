@@ -7,7 +7,7 @@ import (
 	googlecloudstoragecoretypes "github.com/horeekaa/backend/core/storages/googleCloud/types"
 )
 
-type GSCBasicImageStoringOperation interface {
+type GCSBasicImageStoringOperation interface {
 	UploadImage(
 		ctx context.Context,
 		category storageenums.StorageCategory,

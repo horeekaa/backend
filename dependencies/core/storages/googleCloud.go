@@ -22,7 +22,7 @@ func (_ GoogleCloudStorageDependency) Bind() {
 	container.Singleton(
 		func(
 			gcsClient googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient,
-		) googlecloudstoragecoreoperationinterfaces.GSCBasicImageStoringOperation {
+		) googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation {
 			gcsImageStoreOps, _ := googlecloudstoragecoreoperations.NewGCSBasicImageStoringOperation(
 				gcsClient,
 			)

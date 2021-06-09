@@ -24,7 +24,7 @@ type gcsBasicImageStoringOperation struct {
 
 func NewGCSBasicImageStoringOperation(
 	gcsClient googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient,
-) (googlecloudstoragecoreoperationinterfaces.GSCBasicImageStoringOperation, error) {
+) (googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation, error) {
 	return &gcsBasicImageStoringOperation{
 		gcsClient,
 		coreconfigs.GetEnvVariable(coreconfigs.GoogleCloudConfigStorageBucketName),
