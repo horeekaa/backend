@@ -18,8 +18,10 @@ require (
 	github.com/klauspost/compress v1.12.3 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/satori/go.uuid v1.2.0
+	github.com/stretchr/testify v1.7.0
 	github.com/thoas/go-funk v0.8.0
 	github.com/vektah/gqlparser/v2 v2.2.0
+	github.com/vektra/mockery v1.1.2
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
 	go.mongodb.org/mongo-driver v1.5.2
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
