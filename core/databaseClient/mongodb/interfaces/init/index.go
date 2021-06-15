@@ -1,14 +1,20 @@
 package mongodbcoreclientinterfaces
 
 import (
+	"context"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 )
 
 type MongoClient interface {
 	Connect() (bool, error)
-	GetClient() (*mongo.Client, error)
 	GetDatabaseName() (string, error)
 	GetDatabaseTimeout() (time.Duration, error)
+	GetCollectionRef(collectionName string) (mongodbcorewrapperinterfaces.MongoCollectionRef, error)
+	CreateNewSession() (mongodbcorewrapperinterfaces.MongoSession, error)
+	CreateNewSessionContext(
+		ctx context.Context,
+		sess mongodbcorewrapperinterfaces.MongoSession,
+	) (mongodbcorewrapperinterfaces.MongoSessionContext, error)
 }

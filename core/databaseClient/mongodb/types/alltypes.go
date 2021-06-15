@@ -18,11 +18,6 @@ type OperationOptions struct {
 	Session *mongo.SessionContext
 }
 
-type CreateOperationOutput struct {
-	ID     primitive.ObjectID
-	Object interface{}
-}
-
 type PaginationOptions struct {
 	LastObjectID *primitive.ObjectID
 	QueryLimit   *int

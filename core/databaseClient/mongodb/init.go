@@ -5,12 +5,15 @@ import (
 	"strconv"
 	"time"
 
+	mongodbcorewrappers "github.com/horeekaa/backend/core/databaseClient/mongodb/wrappers"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
 	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	horeekaaexceptioncore "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaaexceptioncoreenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 )
@@ -64,17 +67,6 @@ func (mongoClient *mongoClient) Connect() (bool, error) {
 	return true, nil
 }
 
-func (mongoClient *mongoClient) GetClient() (*mongo.Client, error) {
-	if mongoClient.client == nil {
-		return nil, horeekaaexceptioncore.NewExceptionObject(
-			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
-			nil,
-		)
-	}
-	return mongoClient.client, nil
-}
-
 func (mongoClient *mongoClient) GetDatabaseName() (string, error) {
 	if &mongoClient.databaseName == nil {
 		return "", horeekaaexceptioncore.NewExceptionObject(
@@ -95,6 +87,40 @@ func (mongoClient *mongoClient) GetDatabaseTimeout() (time.Duration, error) {
 		)
 	}
 	return mongoClient.timeout, nil
+}
+
+func (mongoClient *mongoClient) GetCollectionRef(collectionName string) (mongodbcorewrapperinterfaces.MongoCollectionRef, error) {
+	if mongoClient.client == nil {
+		return nil, horeekaaexceptioncore.NewExceptionObject(
+			horeekaaexceptioncoreenums.ClientInitializationFailed,
+			"/newMongoClient",
+			nil,
+		)
+	}
+	colRef := mongoClient.client.Database(mongoClient.databaseName).Collection(collectionName)
+	return mongodbcorewrappers.NewMongoCollectionRef(colRef)
+}
+
+func (mongoClient *mongoClient) CreateNewSession() (mongodbcorewrapperinterfaces.MongoSession, error) {
+	if mongoClient.client == nil {
+		return nil, horeekaaexceptioncore.NewExceptionObject(
+			horeekaaexceptioncoreenums.ClientInitializationFailed,
+			"/newMongoClient",
+			nil,
+		)
+	}
+	session, err := mongoClient.client.StartSession()
+	if err != nil {
+		return nil, err
+	}
+	return session, nil
+}
+
+func (mongoClient *mongoClient) CreateNewSessionContext(
+	ctx context.Context,
+	sess mongodbcorewrapperinterfaces.MongoSession,
+) (mongodbcorewrapperinterfaces.MongoSessionContext, error) {
+	return mongo.NewSessionContext(ctx, sess), nil
 }
 
 // NewMongoClientRef is getter for the mongodb database reference currently used
