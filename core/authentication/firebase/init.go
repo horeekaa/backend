@@ -3,9 +3,8 @@ package firebaseauthcoreclients
 import (
 	"context"
 
-	auth "firebase.google.com/go/v4/auth"
-
 	firebaseauthcoreclientinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces"
+	firebaseauthcorewrapperinterfaces "github.com/horeekaa/backend/core/authentication/firebase/interfaces/wrappers"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
@@ -13,7 +12,7 @@ import (
 
 type firebaseAuthenticationClient struct {
 	firebaseServerlessClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient
-	client                   *auth.Client
+	client                   firebaseauthcorewrapperinterfaces.FirebaseAuthClient
 }
 
 func (fbAuthClient *firebaseAuthenticationClient) GetServerlessClient() (firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient, error) {
@@ -27,7 +26,7 @@ func (fbAuthClient *firebaseAuthenticationClient) GetServerlessClient() (firebas
 	return fbAuthClient.firebaseServerlessClient, nil
 }
 
-func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (*auth.Client, error) {
+func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (firebaseauthcorewrapperinterfaces.FirebaseAuthClient, error) {
 	if fbAuthClient.client == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
@@ -40,7 +39,7 @@ func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (*auth.Client,
 
 func (fbAuthClient *firebaseAuthenticationClient) InitializeClient(firebaseClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient) (bool, error) {
 	app, _ := firebaseClient.GetApp()
-	client, err := (*app).Auth(context.Background())
+	client, err := app.Auth(context.Background())
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
