@@ -7,10 +7,12 @@ import (
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebaseserverlesscoreclientinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces"
+	firebaseserverlesscorewrapperinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces/wrappers"
+	firebaseserverlesscorewrappers "github.com/horeekaa/backend/core/serverless/firebase/wrappers"
 )
 
 type firebaseServerlessClient struct {
-	app *firebase.App
+	app firebaseserverlesscorewrapperinterfaces.FirebaseApp
 }
 
 func (svlessClient *firebaseServerlessClient) Connect() (bool, error) {
@@ -23,11 +25,12 @@ func (svlessClient *firebaseServerlessClient) Connect() (bool, error) {
 		)
 	}
 
-	svlessClient.app = app
+	wrappedApp, _ := firebaseserverlesscorewrappers.NewFirebaseApp(app)
+	svlessClient.app = wrappedApp
 	return true, nil
 }
 
-func (svlessClient *firebaseServerlessClient) GetApp() (*firebase.App, error) {
+func (svlessClient *firebaseServerlessClient) GetApp() (firebaseserverlesscorewrapperinterfaces.FirebaseApp, error) {
 	if svlessClient.app == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
