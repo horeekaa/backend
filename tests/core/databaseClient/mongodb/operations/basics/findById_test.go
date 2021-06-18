@@ -1,4 +1,4 @@
-package mongodbcoreoperationtests
+package mongodbcorebasicoperationtests
 
 import (
 	"errors"
@@ -83,7 +83,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindByIdWithSession
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)
@@ -120,7 +120,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindByIdWithSession
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)
@@ -183,7 +183,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindByIdWithoutSess
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)
@@ -215,7 +215,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindByIdWithoutSess
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)

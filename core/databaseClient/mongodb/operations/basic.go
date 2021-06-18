@@ -67,14 +67,14 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, output inter
 	if err == mongo.ErrNoDocuments {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			fmt.Sprintf("/%s/findByID", bscOperation.collectionName),
 			nil,
 		)
 	}
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			fmt.Sprintf("/%s/findByID", bscOperation.collectionName),
 			nil,
 		)
 	}
