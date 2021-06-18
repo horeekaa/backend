@@ -3,34 +3,16 @@ package firebaseauthcoreclienttests
 import (
 	"errors"
 
-	firebaseauthcoremocks "github.com/horeekaa/backend/tests/mocks/core/authentication/firebase/interfaces/wrappers"
-
 	firebaseauthcoreclients "github.com/horeekaa/backend/core/authentication/firebase"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
-	firebaseserverlesscoreclientmocks "github.com/horeekaa/backend/tests/mocks/core/serverless/firebase/interfaces"
-	firebaseserverlesscoreappmocks "github.com/horeekaa/backend/tests/mocks/core/serverless/firebase/interfaces/wrappers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
 )
-
-type FirebaseAuthCoreClientTestSuite struct {
-	suite.Suite
-	mockedFBServerlessClient *firebaseserverlesscoreclientmocks.FirebaseServerlessClient
-	mockedFBApp              *firebaseserverlesscoreappmocks.FirebaseApp
-	mockedAuthClient         *firebaseauthcoremocks.FirebaseAuthClient
-}
-
-func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) SetupSuite() {
-	fbAuthSuite.mockedFBServerlessClient = &firebaseserverlesscoreclientmocks.FirebaseServerlessClient{}
-	fbAuthSuite.mockedFBApp = &firebaseserverlesscoreappmocks.FirebaseApp{}
-	fbAuthSuite.mockedAuthClient = &firebaseauthcoremocks.FirebaseAuthClient{}
-}
 
 func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnOK() {
 	fbAuthSuite.mockedFBApp.
-		On("Auth", mock.AnythingOfType("context.Context")).
+		On("Auth", mock.AnythingOfType("*context.emptyCtx")).
 		Return(fbAuthSuite.mockedAuthClient, nil).
 		Once()
 
@@ -58,7 +40,7 @@ func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnOK() {
 
 func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnError() {
 	fbAuthSuite.mockedFBApp.
-		On("Auth", mock.AnythingOfType("context.Context")).
+		On("Auth", mock.AnythingOfType("*context.emptyCtx")).
 		Return(nil, errors.New("Some Upstream Error")).
 		Once()
 
