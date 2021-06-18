@@ -1,4 +1,4 @@
-package mongodbcoreoperationtests
+package mongodbcorebasicoperationtests
 
 import "github.com/stretchr/testify/assert"
 
