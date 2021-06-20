@@ -51,7 +51,12 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
-	_, err := accDataSourceMongo.basicOperation.Find(query, paginationOpts, &accounts, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		account := dbItem.(model.Account)
+		accounts = append(accounts, &account)
+		return true, nil
+	}
+	_, err := accDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}

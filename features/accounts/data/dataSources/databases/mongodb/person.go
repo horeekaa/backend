@@ -51,7 +51,12 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Person, error) {
 	var persons = []*model.Person{}
-	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, &persons, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		person := dbItem.(model.Person)
+		persons = append(persons, &person)
+		return true, nil
+	}
+	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}

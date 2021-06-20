@@ -51,7 +51,12 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.MemberAccess, error) {
 	var memberAccesses = []*model.MemberAccess{}
-	_, err := memberAccDataSourceMongo.basicOperation.Find(query, paginationOpts, &memberAccesses, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		memberAccess := dbItem.(model.MemberAccess)
+		memberAccesses = append(memberAccesses, &memberAccess)
+		return true, nil
+	}
+	_, err := memberAccDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}

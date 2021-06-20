@@ -13,7 +13,7 @@ type BasicOperation interface {
 	Find(
 		query map[string]interface{},
 		paginationOpt *mongodbcoretypes.PaginationOptions,
-		output interface{},
+		fn func(dbItem interface{}) (bool, error),
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) (bool, error)
 	Create(input interface{}, output interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error)

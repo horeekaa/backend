@@ -51,7 +51,12 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
-	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, &organizations, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		organization := dbItem.(model.Organization)
+		organizations = append(organizations, &organization)
+		return true, nil
+	}
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}

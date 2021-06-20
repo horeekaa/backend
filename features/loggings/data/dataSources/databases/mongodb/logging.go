@@ -51,7 +51,12 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Logging, error) {
 	var loggings = []*model.Logging{}
-	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, &loggings, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		logging := dbItem.(model.Logging)
+		loggings = append(loggings, &logging)
+		return true, nil
+	}
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}

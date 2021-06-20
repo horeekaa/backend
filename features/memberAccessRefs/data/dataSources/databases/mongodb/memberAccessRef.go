@@ -51,7 +51,12 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
-	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, &memberAccessRefs, operationOptions)
+	appendingFn := func(dbItem interface{}) (bool, error) {
+		memberAccessRef := dbItem.(model.MemberAccessRef)
+		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
+		return true, nil
+	}
+	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
