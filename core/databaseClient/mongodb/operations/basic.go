@@ -233,6 +233,9 @@ func (bscOperation *basicOperation) Create(input interface{}, output interface{}
 	var res mongodbcorewrapperinterfaces.MongoInsertOneResult
 	if operationOptions.Session != nil {
 		res, err = bscOperation.collectionRef.InsertOne(operationOptions.Session, bsonObject)
+		if cmdErr, ok := err.(mongo.CommandError); ok && cmdErr.HasErrorLabel("TransientTransactionError") {
+			return false, err
+		}
 	} else {
 		res, err = bscOperation.collectionRef.InsertOne(ctx, bsonObject)
 	}
@@ -284,6 +287,9 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 			bson.M{"_id": ID},
 			bson.M{"$set": bsonObject},
 		)
+		if cmdErr, ok := err.(mongo.CommandError); ok && cmdErr.HasErrorLabel("TransientTransactionError") {
+			return false, err
+		}
 	} else {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			ctx,
