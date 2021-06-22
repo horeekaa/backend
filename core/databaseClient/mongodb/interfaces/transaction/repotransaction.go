@@ -2,6 +2,7 @@ package mongodbcoretransactioninterfaces
 
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type TransactionComponent interface {
@@ -12,4 +13,7 @@ type TransactionComponent interface {
 type MongoRepoTransaction interface {
 	SetTransaction(component TransactionComponent, transactionTitle string) bool
 	RunTransaction(input interface{}) (interface{}, error)
+	TransactionFn(
+		preTransactOutput interface{},
+	) func(sessCtx mongo.SessionContext) (interface{}, error)
 }

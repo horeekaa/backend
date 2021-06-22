@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
+
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -18,14 +20,12 @@ import (
 type mongoRepoTransaction struct {
 	component        mongodbcoretransactioninterfaces.TransactionComponent
 	mongoClient      mongodbcoreclientinterfaces.MongoClient
-	retryCounter     int
 	transactionTitle string
 }
 
 func NewMongoTransaction(mongoClient mongodbcoreclientinterfaces.MongoClient) (mongodbcoretransactioninterfaces.MongoRepoTransaction, error) {
 	return &mongoRepoTransaction{
-		mongoClient:  mongoClient,
-		retryCounter: 0,
+		mongoClient: mongoClient,
 	}, nil
 }
 
@@ -55,43 +55,17 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 			err,
 		)
 	}
-	if err = session.StartTransaction(); err != nil {
-		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.DBConnectionFailed,
-			"/mongoTransaction/startTransaction",
-			err,
-		)
-	}
 
 	timeout, err := mongoTrx.mongoClient.GetDatabaseTimeout()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout*time.Second))
 	defer cancel()
 	defer session.EndSession(ctx)
-	sc, _ := mongoTrx.mongoClient.CreateNewSessionContext(ctx, session)
-	result, err := mongoTrx.component.TransactionBody(&mongodbcoretypes.OperationOptions{
-		Session: sc,
-	}, preTransactOutput)
+
+	// session WithTransaction automatically start and commit or abort the session
+	result, err := session.WithTransaction(ctx, mongoTrx.TransactionFn(preTransactOutput))
 	if err != nil {
-		session.AbortTransaction(sc)
-		return nil, err
-	}
-
-	if err = session.CommitTransaction(sc); err != nil {
-		session.AbortTransaction(sc)
-
-		mongoTrx.retryCounter = mongoTrx.retryCounter + 1
-		if mongoTrx.retryCounter < 10 {
-			log.Printf("Retrying Transaction %s in 50ms", mongoTrx.transactionTitle)
-			time.Sleep(50 * time.Millisecond)
-			result, err = (*mongoTrx).RunTransaction(input)
-			if err != nil {
-				return nil, err
-			}
-			return result, nil
-		}
-
 		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.DBConnectionFailed,
+			horeekaacoreexceptionenums.UpstreamException,
 			"/mongoTransaction/commitTransaction",
 			err,
 		)
@@ -99,4 +73,19 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	log.Printf("Transaction %s successfully run", mongoTrx.transactionTitle)
 
 	return result, nil
+}
+
+func (mongoTrx *mongoRepoTransaction) TransactionFn(
+	preTransactOutput interface{},
+) func(sessCtx mongo.SessionContext) (interface{}, error) {
+	return func(sessCtx mongo.SessionContext) (interface{}, error) {
+		result, err := mongoTrx.component.TransactionBody(&mongodbcoretypes.OperationOptions{
+			Session: sessCtx,
+		}, preTransactOutput)
+		if err != nil {
+			return nil, err
+		}
+
+		return result, nil
+	}
 }

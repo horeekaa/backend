@@ -116,13 +116,6 @@ func (mongoClient *mongoClient) CreateNewSession() (mongodbcorewrapperinterfaces
 	return session, nil
 }
 
-func (mongoClient *mongoClient) CreateNewSessionContext(
-	ctx context.Context,
-	sess mongodbcorewrapperinterfaces.MongoSession,
-) (mongodbcorewrapperinterfaces.MongoSessionContext, error) {
-	return mongo.NewSessionContext(ctx, sess), nil
-}
-
 // NewMongoClientRef is getter for the mongodb database reference currently used
 func NewMongoClient() (mongodbcoreclientinterfaces.MongoClient, error) {
 	return &mongoClient{}, nil

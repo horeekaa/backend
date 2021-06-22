@@ -1,7 +1,6 @@
 package mongodbcoreclientinterfaces
 
 import (
-	"context"
 	"time"
 
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
@@ -13,8 +12,4 @@ type MongoClient interface {
 	GetDatabaseTimeout() (time.Duration, error)
 	GetCollectionRef(collectionName string) (mongodbcorewrapperinterfaces.MongoCollectionRef, error)
 	CreateNewSession() (mongodbcorewrapperinterfaces.MongoSession, error)
-	CreateNewSessionContext(
-		ctx context.Context,
-		sess mongodbcorewrapperinterfaces.MongoSession,
-	) (mongodbcorewrapperinterfaces.MongoSessionContext, error)
 }
