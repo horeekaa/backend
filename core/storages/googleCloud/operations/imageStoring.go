@@ -3,7 +3,6 @@ package googlecloudstoragecoreoperations
 import (
 	"context"
 	"fmt"
-	"io"
 	"strings"
 	"time"
 
@@ -47,7 +46,7 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) UploadImage(
 	)
 
 	wc := o.NewWriter(ctx)
-	if _, err := io.Copy(wc, file.File); err != nil {
+	if _, err := gcsBscImageStoringOps.gcsClient.CopyWrite(wc, file.File); err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.StoringImageFailed,
 			"/gcsBasicOperation/uploadImage",

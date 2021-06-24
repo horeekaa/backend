@@ -2,6 +2,7 @@ package googlecloudstoragecoreclients
 
 import (
 	"context"
+	"io"
 
 	"cloud.google.com/go/storage"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
@@ -40,4 +41,10 @@ func (storageClient *googleCloudStorageClient) GetObjectHandle(
 ) (googlecloudstoragecorewrapperinterfaces.GCSObjectHandle, error) {
 	o := storageClient.client.Bucket(bucketName).Object(objectPath)
 	return googlecloudstoragecorewrappers.NewGCSObjectHandle(o)
+}
+
+func (storageClient *googleCloudStorageClient) CopyWrite(
+	dst io.Writer, src io.Reader,
+) (written int64, err error) {
+	return io.Copy(dst, src)
 }
