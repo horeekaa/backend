@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	storageenums "github.com/horeekaa/backend/core/storages/enums"
@@ -23,10 +22,11 @@ type gcsBasicImageStoringOperation struct {
 
 func NewGCSBasicImageStoringOperation(
 	gcsClient googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient,
+	bucketName string,
 ) (googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation, error) {
 	return &gcsBasicImageStoringOperation{
 		gcsClient,
-		coreconfigs.GetEnvVariable(coreconfigs.GoogleCloudConfigStorageBucketName),
+		bucketName,
 	}, nil
 }
 

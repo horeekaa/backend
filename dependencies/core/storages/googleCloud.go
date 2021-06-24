@@ -2,6 +2,7 @@ package storagecoredependencies
 
 import (
 	"github.com/golobby/container/v2"
+	coreconfigs "github.com/horeekaa/backend/core/commons/configs"
 	googlecloudstoragecoreclients "github.com/horeekaa/backend/core/storages/googleCloud"
 	googlecloudstoragecoreclientinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/init"
 	googlecloudstoragecoreoperationinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/operations"
@@ -25,6 +26,7 @@ func (_ GoogleCloudStorageDependency) Bind() {
 		) googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation {
 			gcsImageStoreOps, _ := googlecloudstoragecoreoperations.NewGCSBasicImageStoringOperation(
 				gcsClient,
+				coreconfigs.GetEnvVariable(coreconfigs.GoogleCloudConfigStorageBucketName),
 			)
 			return gcsImageStoreOps
 		},
