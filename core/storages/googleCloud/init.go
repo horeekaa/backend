@@ -30,7 +30,6 @@ func (storageClient *googleCloudStorageClient) Initialize() (bool, error) {
 		)
 	}
 	storageClient.client = client
-	defer client.Close()
 
 	return true, nil
 }
