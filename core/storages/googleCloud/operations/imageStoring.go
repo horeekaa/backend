@@ -40,12 +40,13 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) UploadImage(
 	defer cancel()
 
 	objectPath := fmt.Sprintf("images/%s/%s.jpg", category, uuid.NewV4())
-	client, err := gcsBscImageStoringOps.gcsClient.GetClient()
-	if err != nil {
-		return "", err
-	}
 
-	wc := client.Bucket(gcsBscImageStoringOps.bucketName).Object(objectPath).NewWriter(ctx)
+	o, _ := gcsBscImageStoringOps.gcsClient.GetObjectHandle(
+		gcsBscImageStoringOps.bucketName,
+		objectPath,
+	)
+
+	wc := o.NewWriter(ctx)
 	if _, err := io.Copy(wc, file.File); err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.StoringImageFailed,
@@ -79,12 +80,11 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) DeleteImage(
 		splittedURL[len(splittedURL)-2],
 		splittedURL[len(splittedURL)-1],
 	)
-	client, err := gcsBscImageStoringOps.gcsClient.GetClient()
-	if err != nil {
-		return false, err
-	}
 
-	o := client.Bucket(gcsBscImageStoringOps.bucketName).Object(objectPath)
+	o, _ := gcsBscImageStoringOps.gcsClient.GetObjectHandle(
+		gcsBscImageStoringOps.bucketName,
+		objectPath,
+	)
 	if err := o.Delete(ctx); err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DeleteImageFailed,
