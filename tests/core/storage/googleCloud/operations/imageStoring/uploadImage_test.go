@@ -19,6 +19,13 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 		io.Reader
 	}{}
 
+	gcsOperationTestSuite.mockedGCSClient.
+		On(
+			"GetObjectHandle", gcsOperationTestSuite.bucketName, mock.AnythingOfType("string"),
+		).
+		Return(gcsOperationTestSuite.mockedGCSObjectHandle, nil).
+		Once()
+
 	gcsOperationTestSuite.mockedGCSClient.On(
 		"CopyWrite", mock.Anything, mock.Anything,
 	).Return(int64(1), nil).
@@ -62,6 +69,13 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 		io.Reader
 	}{}
 
+	gcsOperationTestSuite.mockedGCSClient.
+		On(
+			"GetObjectHandle", gcsOperationTestSuite.bucketName, mock.AnythingOfType("string"),
+		).
+		Return(gcsOperationTestSuite.mockedGCSObjectHandle, nil).
+		Once()
+
 	gcsOperationTestSuite.mockedGCSClient.On(
 		"CopyWrite", mock.Anything, mock.Anything,
 	).Return(int64(0), errors.New("Some Upstream Error")).
@@ -102,6 +116,13 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 	mockedFile := &struct {
 		io.Reader
 	}{}
+
+	gcsOperationTestSuite.mockedGCSClient.
+		On(
+			"GetObjectHandle", gcsOperationTestSuite.bucketName, mock.AnythingOfType("string"),
+		).
+		Return(gcsOperationTestSuite.mockedGCSObjectHandle, nil).
+		Once()
 
 	gcsOperationTestSuite.mockedGCSClient.On(
 		"CopyWrite", mock.Anything, mock.Anything,

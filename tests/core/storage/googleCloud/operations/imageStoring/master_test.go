@@ -7,7 +7,6 @@ import (
 	googlecloudstoragecoreoperations "github.com/horeekaa/backend/core/storages/googleCloud/operations"
 	googlecloudstoragecoreoperationmocks "github.com/horeekaa/backend/tests/mocks/core/storages/googleCloud/interfaces/init"
 	googlecloudstoragecoreoperationwrappermocks "github.com/horeekaa/backend/tests/mocks/core/storages/googleCloud/interfaces/wrappers"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -27,14 +26,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) SetupTest() {
 	gcsOperationTestSuite.mockedGCSObjectHandle = &googlecloudstoragecoreoperationwrappermocks.GCSObjectHandle{}
 	gcsOperationTestSuite.mockedGCSClient = &googlecloudstoragecoreoperationmocks.GoogleCloudStorageClient{}
 	gcsOperationTestSuite.bucketName = "MyBucket"
-	gcsOperationTestSuite.objectPath = "/my/object/path"
-
-	gcsOperationTestSuite.mockedGCSClient.
-		On(
-			"GetObjectHandle", gcsOperationTestSuite.bucketName, mock.AnythingOfType("string"),
-		).
-		Return(gcsOperationTestSuite.mockedGCSObjectHandle, nil).
-		Once()
+	gcsOperationTestSuite.objectPath = "/category/path"
 
 	basicGCSImageStoring, _ := googlecloudstoragecoreoperations.NewGCSBasicImageStoringOperation(
 		gcsOperationTestSuite.mockedGCSClient,
