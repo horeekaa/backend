@@ -136,7 +136,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 	}
 	createInput := (input).(model.CreateAccount)
 
-	if &createInput.Status == nil {
+	if createInput.Status == nil {
 		createInput.Status = &defaultAccountStatus
 	}
 	if &createInput.Type == nil {
