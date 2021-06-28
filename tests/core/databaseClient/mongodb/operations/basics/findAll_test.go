@@ -34,7 +34,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionO
 		On("Decode", mock.Anything).
 		Return(nil).
 		Run(func(args mock.Arguments) {
-			arg := args.Get(0).(*interface{})
+			arg := args.Get(0).(*model.Account)
 			*arg = mongodbbasicoperationfixtures.BasicOpsSingleResultOutput
 		}).
 		Times(3)
@@ -59,10 +59,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionO
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
@@ -103,7 +106,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionD
 		On("Decode", mock.Anything).
 		Return(nil).
 		Run(func(args mock.Arguments) {
-			arg := args.Get(0).(*interface{})
+			arg := args.Get(0).(*model.Account)
 			*arg = mongodbbasicoperationfixtures.BasicOpsSingleResultOutput
 		}).
 		Once()
@@ -132,10 +135,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionD
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
@@ -189,10 +195,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionU
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
@@ -233,7 +242,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 		On("Decode", mock.Anything).
 		Return(nil).
 		Run(func(args mock.Arguments) {
-			arg := args.Get(0).(*interface{})
+			arg := args.Get(0).(*model.Account)
 			*arg = mongodbbasicoperationfixtures.BasicOpsSingleResultOutput
 		}).
 		Times(3)
@@ -258,10 +267,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
@@ -297,7 +309,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 		On("Decode", mock.Anything).
 		Return(nil).
 		Run(func(args mock.Arguments) {
-			arg := args.Get(0).(*interface{})
+			arg := args.Get(0).(*model.Account)
 			*arg = mongodbbasicoperationfixtures.BasicOpsSingleResultOutput
 		}).
 		Once()
@@ -326,10 +338,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
@@ -377,10 +392,13 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 		Once()
 
 	var accounts []*model.Account
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		account := dbItem.(model.Account)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var account model.Account
+		if err := cursor.Decode(&account); err != nil {
+			return err
+		}
 		accounts = append(accounts, &account)
-		return true, nil
+		return nil
 	}
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Find(
 		map[string]interface{}{},
