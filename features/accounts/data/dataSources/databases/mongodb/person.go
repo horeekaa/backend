@@ -1,10 +1,10 @@
 package mongodbaccountdatasources
 
 import (
-	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -24,26 +24,23 @@ func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Basi
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	res, err := prsnDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.Person
+	_, err := prsnDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	var output model.Person
-	res.Decode(&output)
 	return &output, nil
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	res, err := prsnDataSourceMongo.basicOperation.FindOne(query, operationOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var output model.Person
-	err = res.Decode(&output)
+	_, err := prsnDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return &output, err
@@ -55,17 +52,15 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Person, error) {
 	var persons = []*model.Person{}
-	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
 		var person model.Person
-		err := cursor.Decode(&person)
-		if err != nil {
-			return nil, err
+		if err := cursor.Decode(&person); err != nil {
+			return err
 		}
 		persons = append(persons, &person)
-		return nil, nil
+		return nil
 	}
-
-	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
+	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +77,11 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 		return nil, err
 	}
 
-	output, err := prsnDataSourceMongo.basicOperation.Create(*defaultedInput.CreatePerson, operationOptions)
+	var outputModel model.Person
+	_, err = prsnDataSourceMongo.basicOperation.Create(*defaultedInput.CreatePerson, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var outputModel model.Person
-	jsonTemp, _ := json.Marshal(output.Object)
-	json.Unmarshal(jsonTemp, &outputModel)
-	outputModel.ID = output.ID
 
 	return &outputModel, err
 }
@@ -105,13 +96,11 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, 
 		return nil, err
 	}
 
-	res, err := prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, operationOptions)
+	var output model.Person
+	_, err = prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var output model.Person
-	res.Decode(&output)
 
 	return &output, nil
 }

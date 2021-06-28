@@ -1,10 +1,10 @@
 package mongodborganizationdatasources
 
 import (
-	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodborganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -24,26 +24,23 @@ func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterface
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
-	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.Organization
+	_, err := orgDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	var output model.Organization
-	res.Decode(&output)
 	return &output, nil
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
-	res, err := orgDataSourceMongo.basicOperation.FindOne(query, operationOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var output model.Organization
-	err = res.Decode(&output)
+	_, err := orgDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return &output, err
@@ -55,17 +52,15 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
-	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
 		var organization model.Organization
-		err := cursor.Decode(&organization)
-		if err != nil {
-			return nil, err
+		if err := cursor.Decode(&organization); err != nil {
+			return err
 		}
 		organizations = append(organizations, &organization)
-		return nil, nil
+		return nil
 	}
-
-	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +77,11 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Creat
 		return nil, err
 	}
 
-	output, err := orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateOrganization, operationOptions)
+	var outputModel model.Organization
+	_, err = orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateOrganization, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var outputModel model.Organization
-	jsonTemp, _ := json.Marshal(output.Object)
-	json.Unmarshal(jsonTemp, &outputModel)
-	outputModel.ID = output.ID
 
 	return &outputModel, err
 }
@@ -105,13 +96,11 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 		return nil, err
 	}
 
-	res, err := orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateOrganization, operationOptions)
+	var output model.Organization
+	_, err = orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateOrganization, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var output model.Organization
-	res.Decode(&output)
 
 	return &output, nil
 }

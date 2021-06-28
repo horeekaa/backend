@@ -1,10 +1,10 @@
 package mongodbaccountdatasources
 
 import (
-	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -24,26 +24,23 @@ func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	res, err := accDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.Account
+	_, err := accDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	var output model.Account
-	res.Decode(&output)
 	return &output, nil
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	res, err := accDataSourceMongo.basicOperation.FindOne(query, operationOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var output model.Account
-	err = res.Decode(&output)
+	_, err := accDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return &output, nil
@@ -55,17 +52,15 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Account, error) {
 	var accounts = []*model.Account{}
-	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
 		var account model.Account
-		err := cursor.Decode(&account)
-		if err != nil {
-			return nil, err
+		if err := cursor.Decode(&account); err != nil {
+			return err
 		}
 		accounts = append(accounts, &account)
-		return nil, nil
+		return nil
 	}
-
-	_, err := accDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
+	_, err := accDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +77,11 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 		return nil, err
 	}
 
-	output, err := accDataSourceMongo.basicOperation.Create(*defaultedInput.CreateAccount, operationOptions)
+	var outputModel model.Account
+	_, err = accDataSourceMongo.basicOperation.Create(*defaultedInput.CreateAccount, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var outputModel model.Account
-	jsonTemp, _ := json.Marshal(output.Object)
-	json.Unmarshal(jsonTemp, &outputModel)
-	outputModel.ID = output.ID
 
 	return &outputModel, err
 }
@@ -105,13 +96,11 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, 
 		return nil, err
 	}
 
-	res, err := accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, operationOptions)
+	var output model.Account
+	_, err = accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var output model.Account
-	res.Decode(&output)
 
 	return &output, nil
 }
@@ -147,7 +136,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 	}
 	createInput := (input).(model.CreateAccount)
 
-	if &createInput.Status == nil {
+	if createInput.Status == nil {
 		createInput.Status = &defaultAccountStatus
 	}
 	if &createInput.Type == nil {

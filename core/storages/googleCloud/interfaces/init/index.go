@@ -1,10 +1,13 @@
 package googlecloudstoragecoreclientinterfaces
 
 import (
-	"cloud.google.com/go/storage"
+	"io"
+
+	googlecloudstoragecorewrapperinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/wrappers"
 )
 
 type GoogleCloudStorageClient interface {
 	Initialize() (bool, error)
-	GetClient() (*storage.Client, error)
+	CopyWrite(dst io.Writer, src io.Reader) (written int64, err error)
+	GetObjectHandle(bucketName string, objectPath string) (googlecloudstoragecorewrapperinterfaces.GCSObjectHandle, error)
 }

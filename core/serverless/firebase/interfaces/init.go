@@ -1,10 +1,10 @@
 package firebaseserverlesscoreclientinterfaces
 
 import (
-	firebase "firebase.google.com/go/v4"
+	firebaseserverlesscorewrapperinterfaces "github.com/horeekaa/backend/core/serverless/firebase/interfaces/wrappers"
 )
 
 type FirebaseServerlessClient interface {
 	Connect() (bool, error)
-	GetApp() (*firebase.App, error)
+	GetApp() (firebaseserverlesscorewrapperinterfaces.FirebaseApp, error)
 }

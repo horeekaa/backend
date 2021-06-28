@@ -1,10 +1,10 @@
 package mongodbloggingdatasources
 
 import (
-	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
@@ -24,26 +24,23 @@ func NewLoggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
-	res, err := orgDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.Logging
+	_, err := orgDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	var output model.Logging
-	res.Decode(&output)
 	return &output, nil
 }
 
 func (orgDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
-	res, err := orgDataSourceMongo.basicOperation.FindOne(query, operationOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var output model.Logging
-	err = res.Decode(&output)
+	_, err := orgDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return &output, err
@@ -55,17 +52,15 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Logging, error) {
 	var loggings = []*model.Logging{}
-	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
 		var logging model.Logging
-		err := cursor.Decode(&logging)
-		if err != nil {
-			return nil, err
+		if err := cursor.Decode(&logging); err != nil {
+			return err
 		}
 		loggings = append(loggings, &logging)
-		return nil, nil
+		return nil
 	}
-
-	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, cursorDecoder, operationOptions)
+	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +77,11 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 		return nil, err
 	}
 
-	output, err := orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateLogging, operationOptions)
+	var outputModel model.Logging
+	_, err = orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateLogging, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var outputModel model.Logging
-	jsonTemp, _ := json.Marshal(output.Object)
-	json.Unmarshal(jsonTemp, &outputModel)
-	outputModel.ID = output.ID
 
 	return &outputModel, err
 }
@@ -105,13 +96,11 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, 
 		return nil, err
 	}
 
-	res, err := orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateLogging, operationOptions)
+	var output model.Logging
+	_, err = orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateLogging, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var output model.Logging
-	res.Decode(&output)
 
 	return &output, nil
 }

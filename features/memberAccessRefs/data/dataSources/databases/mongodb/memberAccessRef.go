@@ -1,10 +1,10 @@
 package mongodbmemberaccessrefdatasources
 
 import (
-	"encoding/json"
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -24,26 +24,23 @@ func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterf
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
-	res, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, operationOptions)
+	var output model.MemberAccessRef
+	_, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	var output model.MemberAccessRef
-	res.Decode(&output)
 	return &output, nil
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
-	res, err := orgMemberDataSourceMongo.basicOperation.FindOne(query, operationOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var output model.MemberAccessRef
-	err = res.Decode(&output)
+	_, err := orgMemberDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return &output, err
@@ -55,17 +52,15 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
-	cursorDecoder := func(cursor *mongo.Cursor) (interface{}, error) {
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
 		var memberAccessRef model.MemberAccessRef
-		err := cursor.Decode(&memberAccessRef)
-		if err != nil {
-			return nil, err
+		if err := cursor.Decode(&memberAccessRef); err != nil {
+			return err
 		}
 		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
-		return nil, nil
+		return nil
 	}
-
-	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, cursorDecoder, operationOptions)
+	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +77,11 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 		return nil, err
 	}
 
-	output, err := orgMemberDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMemberAccessRef, operationOptions)
+	var outputModel model.MemberAccessRef
+	_, err = orgMemberDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMemberAccessRef, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var outputModel model.MemberAccessRef
-	jsonTemp, _ := json.Marshal(output.Object)
-	json.Unmarshal(jsonTemp, &outputModel)
-	outputModel.ID = output.ID
 
 	return &outputModel, err
 }
@@ -105,13 +96,11 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primit
 		return nil, err
 	}
 
-	res, err := orgMemberDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccessRef, operationOptions)
+	var output model.MemberAccessRef
+	_, err = orgMemberDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccessRef, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	var output model.MemberAccessRef
-	res.Decode(&output)
 
 	return &output, nil
 }

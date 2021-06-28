@@ -1,8 +1,8 @@
 package mongodbcoretypes
 
 import (
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -15,12 +15,7 @@ type DefaultValuesOptions struct {
 }
 
 type OperationOptions struct {
-	Session *mongo.SessionContext
-}
-
-type CreateOperationOutput struct {
-	ID     primitive.ObjectID
-	Object interface{}
+	Session mongodbcorewrapperinterfaces.MongoSessionContext
 }
 
 type PaginationOptions struct {
