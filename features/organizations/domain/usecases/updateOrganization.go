@@ -294,7 +294,8 @@ func (updateOrgUcase *updateOrganizationUsecase) updateCorrespondingMemberAccess
 	account *model.Account,
 	accountInitials string,
 ) (*bool, error) {
-	memberAccessesToUpdate, err := updateOrgUcase.getAllMemberAccessRepo.Execute(
+	var memberAccessesToUpdate []*model.MemberAccess
+	memberAccesses, err := updateOrgUcase.getAllMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAllMemberAccessInput{
 			FilterFields: &model.MemberAccessFilterFields{
 				Organization: &model.AttachOrganizationInput{
@@ -312,60 +313,49 @@ func (updateOrgUcase *updateOrganizationUsecase) updateCorrespondingMemberAccess
 			err,
 		)
 	}
+	memberAccessesToUpdate = append(memberAccessesToUpdate, memberAccesses...)
+
+	memberAccesses, err = updateOrgUcase.getAllMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAllMemberAccessInput{
+			FilterFields: &model.MemberAccessFilterFields{
+				OrganizationLatestUpdate: &model.AttachOrganizationInput{
+					ID: &existingOrg.ID,
+				},
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+			},
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateOrganizationUsecase",
+			err,
+		)
+	}
+	memberAccessesToUpdate = append(memberAccessesToUpdate, memberAccesses...)
 
 	for _, memberAccess := range memberAccessesToUpdate {
 		if memberAccess.ProposalStatus == model.EntityProposalStatusReplaced {
 			continue
 		}
-
-		updateMemberAccessData := &model.UpdateMemberAccess{
-			ID: memberAccess.ID,
-			Organization: &model.AttachOrganizationInput{
-				ID:   &updatedOrg.ID,
-				Type: &updatedOrg.Type,
-			},
-			SubmittingAccount: &model.ObjectIDOnly{ID: &account.ID},
-		}
-
-		var newObject interface{} = *updateMemberAccessData
-		var existingObject interface{} = *memberAccess
-		logEntityProposal, err := updateOrgUcase.logEntityProposalActivityRepo.Execute(
-			loggingdomainrepositorytypes.LogEntityProposalActivityInput{
-				CollectionName:   "MemberAccess",
-				CreatedByAccount: account,
-				Activity:         model.LoggedActivityUpdate,
-				ProposalStatus:   model.EntityProposalStatusApproved,
-				NewObject:        &newObject,
-				ExistingObject:   &existingObject,
-				ExistingObjectID: func(t string) *string { return &t }(memberAccess.ID.Hex()),
-				CreatorInitial:   accountInitials,
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateOrganizationUsecase",
-				err,
-			)
-		}
-		updateMemberAccessData.CorrespondingLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-
-		updatedMemberAccess, err := updateOrgUcase.updateMemberAccessRepo.RunTransaction(
-			updateMemberAccessData,
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateOrganizationUsecase",
-				err,
-			)
+		if memberAccess.OrganizationLatestUpdate != nil {
+			if memberAccess.OrganizationLatestUpdate.ID != existingOrg.ID {
+				continue
+			}
 		}
 
 		_, err = updateOrgUcase.updateMemberAccessRepo.RunTransaction(
 			&model.UpdateMemberAccess{
-				ID:               updatedMemberAccess.UpdatedMemberAccess.ID,
+				ID:               memberAccess.ID,
 				ApprovingAccount: &model.ObjectIDOnly{ID: &account.ID},
 				ProposalStatus: func(ep model.EntityProposalStatus) *model.EntityProposalStatus {
 					return &ep
 				}(model.EntityProposalStatusApproved),
+				OrganizationLatestUpdate: &model.AttachOrganizationInput{
+					ID:   &updatedOrg.ID,
+					Type: &updatedOrg.Type,
+				},
 			},
 		)
 		if err != nil {

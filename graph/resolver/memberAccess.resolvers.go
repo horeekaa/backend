@@ -5,6 +5,7 @@ package graphresolver
 
 import (
 	"context"
+	"fmt"
 
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
@@ -41,6 +42,10 @@ func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.Memb
 	)
 }
 
+func (r *memberAccessResolver) OrganizationLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *memberAccessResolver) DefaultAccess(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccessRef, error) {
 	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
 	container.Make(&getMemberAccessRefUsecase)
@@ -49,6 +54,10 @@ func (r *memberAccessResolver) DefaultAccess(ctx context.Context, obj *model.Mem
 			ID: &obj.DefaultAccess.ID,
 		},
 	)
+}
+
+func (r *memberAccessResolver) DefaultAccessLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccessRef, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *memberAccessResolver) SubmittingAccount(ctx context.Context, obj *model.MemberAccess) (*model.Account, error) {
