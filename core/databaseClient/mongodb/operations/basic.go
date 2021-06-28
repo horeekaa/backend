@@ -130,7 +130,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, output
 func (bscOperation *basicOperation) Find(
 	query map[string]interface{},
 	paginationOpt *mongodbcoretypes.PaginationOptions,
-	fn func(dbItem interface{}) (bool, error),
+	appendingFn func(cursor mongodbcorewrapperinterfaces.MongoCursor) error,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*20*time.Second)
@@ -194,8 +194,7 @@ func (bscOperation *basicOperation) Find(
 	}
 
 	for curr.Next(ctx) {
-		var outputSingle interface{}
-		err := curr.Decode(&outputSingle)
+		err = appendingFn(curr)
 		if err != nil {
 			return false, horeekaacoreexception.NewExceptionObject(
 				horeekaacoreexceptionenums.QueryObjectFailed,
@@ -203,8 +202,6 @@ func (bscOperation *basicOperation) Find(
 				err,
 			)
 		}
-
-		fn(outputSingle)
 	}
 
 	return true, err

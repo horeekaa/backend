@@ -4,6 +4,7 @@ import (
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -51,10 +52,13 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.MemberAccessRef, error) {
 	var memberAccessRefs = []*model.MemberAccessRef{}
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		memberAccessRef := dbItem.(model.MemberAccessRef)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var memberAccessRef model.MemberAccessRef
+		if err := cursor.Decode(&memberAccessRef); err != nil {
+			return err
+		}
 		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
-		return true, nil
+		return nil
 	}
 	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, appendingFn, operationOptions)
 	if err != nil {

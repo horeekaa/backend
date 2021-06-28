@@ -4,6 +4,7 @@ import (
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -51,10 +52,13 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Person, error) {
 	var persons = []*model.Person{}
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		person := dbItem.(model.Person)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var person model.Person
+		if err := cursor.Decode(&person); err != nil {
+			return err
+		}
 		persons = append(persons, &person)
-		return true, nil
+		return nil
 	}
 	_, err := prsnDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {

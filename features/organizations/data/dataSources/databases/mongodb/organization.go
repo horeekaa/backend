@@ -4,6 +4,7 @@ import (
 	"time"
 
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mongodborganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
@@ -51,10 +52,13 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) ([]*model.Organization, error) {
 	var organizations = []*model.Organization{}
-	appendingFn := func(dbItem interface{}) (bool, error) {
-		organization := dbItem.(model.Organization)
+	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
+		var organization model.Organization
+		if err := cursor.Decode(&organization); err != nil {
+			return err
+		}
 		organizations = append(organizations, &organization)
-		return true, nil
+		return nil
 	}
 	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
