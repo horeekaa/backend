@@ -2,9 +2,9 @@ package masterdependencies
 
 import (
 	coredependencies "github.com/horeekaa/backend/dependencies/core/bindings"
-	"github.com/horeekaa/backend/dependencies/features/data/datasources/bindings"
-	"github.com/horeekaa/backend/dependencies/features/data/repositories/bindings"
-	"github.com/horeekaa/backend/dependencies/features/domain/usecases/bindings"
+	datasourcesdependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/bindings"
+	repositoriesdependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/bindings"
+	usecasesdependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/bindings"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
