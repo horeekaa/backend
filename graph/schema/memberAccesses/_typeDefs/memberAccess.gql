@@ -7,10 +7,12 @@ input CreateMemberAccess {
   account: ObjectIDOnly!
   invitationAccepted: Boolean
   organization: AttachOrganizationInput
+  organizationLatestUpdate: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptionsInput!
   defaultAccess: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnly
   status: MemberAccessStatus!
   previousEntity: ObjectIDOnly
   correspondingLog: ObjectIDOnly
@@ -25,8 +27,10 @@ input UpdateMemberAccess {
   _id: ObjectID!
   invitationAccepted: Boolean
   organization: AttachOrganizationInput
+  organizationLatestUpdate: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   defaultAccess: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnly
   access: MemberAccessRefOptionsInput
   status: MemberAccessStatus
   proposalStatus: EntityProposalStatus
@@ -41,10 +45,12 @@ input MemberAccessFilterFields {
   invitationAccepted: Boolean
   account: ObjectIDOnly
   organization: AttachOrganizationInput
+  organizationLatestUpdate: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType
   access: MemberAccessRefOptionsInput
   defaultAccess: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnly
   status: MemberAccessStatus
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -58,10 +64,12 @@ type MemberAccess {
   invitationAccepted: Boolean!
   account: Account!
   organization: Organization
+  organizationLatestUpdate: Organization
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptions!
   defaultAccess: MemberAccessRef!
+  defaultAccessLatestUpdate: MemberAccessRef
   status: MemberAccessStatus!
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!

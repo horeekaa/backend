@@ -32,7 +32,7 @@ func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.Memb
 	container.Make(&getOrganizationUsecase)
 
 	var filterFields *model.OrganizationFilterFields
-	if obj.PreviousEntity != nil {
+	if obj.Organization != nil {
 		filterFields = &model.OrganizationFilterFields{}
 		filterFields.ID = &obj.Organization.ID
 	}
@@ -41,7 +41,35 @@ func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.Memb
 	)
 }
 
+func (r *memberAccessResolver) OrganizationLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
+	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
+	container.Make(&getOrganizationUsecase)
+
+	var filterFields *model.OrganizationFilterFields
+	if obj.OrganizationLatestUpdate != nil {
+		filterFields = &model.OrganizationFilterFields{}
+		filterFields.ID = &obj.OrganizationLatestUpdate.ID
+	}
+	return getOrganizationUsecase.Execute(
+		filterFields,
+	)
+}
+
 func (r *memberAccessResolver) DefaultAccess(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccessRef, error) {
+	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
+	container.Make(&getMemberAccessRefUsecase)
+
+	var filterFields *model.MemberAccessRefFilterFields
+	if obj.DefaultAccessLatestUpdate != nil {
+		filterFields = &model.MemberAccessRefFilterFields{}
+		filterFields.ID = &obj.DefaultAccessLatestUpdate.ID
+	}
+	return getMemberAccessRefUsecase.Execute(
+		filterFields,
+	)
+}
+
+func (r *memberAccessResolver) DefaultAccessLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccessRef, error) {
 	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
 	container.Make(&getMemberAccessRefUsecase)
 	return getMemberAccessRefUsecase.Execute(

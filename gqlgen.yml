@@ -51,7 +51,11 @@ models:
     fields:
       defaultAccess:
         resolver: true
+      defaultAccessLatestUpdate:
+        resolver: true
       organization:
+        resolver: true
+      organizationLatestUpdate:
         resolver: true
       account:
         resolver: true

@@ -22,6 +22,8 @@ import (
 type updateMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAllMemberAccessRepo              memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository
+	updateMemberAccessRepo              memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository
 	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository
 	getMemberAccessRefRepo              memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository
@@ -33,6 +35,8 @@ type updateMemberAccessRefUsecase struct {
 func NewUpdateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+	getAllMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository,
+	updateMemberAccessRepo memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository,
 	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
 	getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,
@@ -42,6 +46,8 @@ func NewUpdateMemberAccessRefUsecase(
 	return &updateMemberAccessRefUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
+		getAllMemberAccessRepo,
+		updateMemberAccessRepo,
 		getPersonDataFromAccountRepo,
 		updateMemberAccessRefRepo,
 		getMemberAccessRefRepo,
@@ -196,6 +202,15 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 				err,
 			)
 		}
+		_, err = updateMmbAccessRefUcase.updateCorrespondingMemberAccess(
+			existingMemberAccRef,
+			updateMemberAccessRefOutput.UpdatedMemberAccessRef,
+			account,
+			accountInitials,
+		)
+		if err != nil {
+			return nil, err
+		}
 
 		return updateMemberAccessRefOutput.UpdatedMemberAccessRef, nil
 	}
@@ -257,9 +272,97 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 				err,
 			)
 		}
+		_, err := updateMmbAccessRefUcase.updateCorrespondingMemberAccess(
+			existingMemberAccRef,
+			updateMemberAccessRefOutput.UpdatedMemberAccessRef,
+			account,
+			accountInitials,
+		)
+		if err != nil {
+			return nil, err
+		}
 
 		return updateMemberAccessRefOutput.UpdatedMemberAccessRef, nil
 	}
 
 	return updateMemberAccessRefOutput.UpdatedMemberAccessRef, nil
+}
+
+func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) updateCorrespondingMemberAccess(
+	existingMmbAccRef *model.MemberAccessRef,
+	updatedMmbAccRef *model.MemberAccessRef,
+	account *model.Account,
+	accountInitials string,
+) (*bool, error) {
+	var memberAccessesToUpdate []*model.MemberAccess
+	memberAccesses, err := updateMmbAccessRefUcase.getAllMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAllMemberAccessInput{
+			FilterFields: &model.MemberAccessFilterFields{
+				DefaultAccess: &model.ObjectIDOnly{
+					ID: &existingMmbAccRef.ID,
+				},
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+			},
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateMemberAccessRefUsecase",
+			err,
+		)
+	}
+	memberAccessesToUpdate = append(memberAccessesToUpdate, memberAccesses...)
+
+	memberAccesses, err = updateMmbAccessRefUcase.getAllMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAllMemberAccessInput{
+			FilterFields: &model.MemberAccessFilterFields{
+				DefaultAccessLatestUpdate: &model.ObjectIDOnly{
+					ID: &existingMmbAccRef.ID,
+				},
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+			},
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateMemberAccessRefUsecase",
+			err,
+		)
+	}
+	memberAccessesToUpdate = append(memberAccessesToUpdate, memberAccesses...)
+
+	for _, memberAccess := range memberAccessesToUpdate {
+		if memberAccess.ProposalStatus == model.EntityProposalStatusReplaced {
+			continue
+		}
+		if memberAccess.DefaultAccessLatestUpdate != nil {
+			if memberAccess.DefaultAccessLatestUpdate.ID != existingMmbAccRef.ID {
+				continue
+			}
+		}
+
+		_, err = updateMmbAccessRefUcase.updateMemberAccessRepo.RunTransaction(
+			&model.UpdateMemberAccess{
+				ID:               memberAccess.ID,
+				ApprovingAccount: &model.ObjectIDOnly{ID: &account.ID},
+				ProposalStatus: func(ep model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &ep
+				}(model.EntityProposalStatusApproved),
+				DefaultAccessLatestUpdate: &model.ObjectIDOnly{
+					ID: &updatedMmbAccRef.ID,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateMemberAccessRefUsecase",
+				err,
+			)
+		}
+	}
+	return func(b bool) *bool { return &b }(true), nil
 }
