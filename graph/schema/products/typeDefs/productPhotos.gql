@@ -1,4 +1,4 @@
-input CreateProductDescriptivePhoto implements iCreateDescriptivePhoto {
+input CreateProductDescriptivePhoto {
   photo: Upload!
   photoUrl: String
   description: String
@@ -8,7 +8,7 @@ input CreateProductDescriptivePhoto implements iCreateDescriptivePhoto {
   productVariant: ObjectIDOnly
 }
 
-input UpdateProductDescriptivePhoto implements iUpdateDescriptivePhoto {
+input UpdateProductDescriptivePhoto {
   _id: ObjectID!
   photo: Upload
   photoUrl: String

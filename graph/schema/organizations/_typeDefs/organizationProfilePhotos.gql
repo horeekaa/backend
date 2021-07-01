@@ -1,4 +1,4 @@
-input CreateOrgProfileDescriptivePhoto implements iCreateDescriptivePhoto {
+input CreateOrgProfileDescriptivePhoto {
   photo: Upload!
   photoUrl: String
   description: String
@@ -7,7 +7,7 @@ input CreateOrgProfileDescriptivePhoto implements iCreateDescriptivePhoto {
   organization: ObjectIDOnly!
 }
 
-input UpdateOrgProfileDescriptivePhoto implements iUpdateDescriptivePhoto {
+input UpdateOrgProfileDescriptivePhoto {
   _id: ObjectID!
   photo: Upload
   photoUrl: String

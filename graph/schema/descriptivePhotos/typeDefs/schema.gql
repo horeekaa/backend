@@ -15,14 +15,7 @@ enum DescriptivePhotoType {
   LOCATION_MARK_OVERVIEW
 }
 
-interface iCreateDescriptivePhoto {
-  photo: Upload!
-  photoUrl: String
-  description: String
-  category: DescriptivePhotoCategory!
-}
-
-input CreateDescriptivePhoto implements iCreateDescriptivePhoto {
+input CreateDescriptivePhoto {
   photo: Upload!
   photoUrl: String
   description: String
@@ -31,15 +24,7 @@ input CreateDescriptivePhoto implements iCreateDescriptivePhoto {
   object: ObjectIDOnly
 }
 
-interface iUpdateDescriptivePhoto {
-  _id: ObjectID!
-  photo: Upload
-  photoUrl: String
-  description: String
-  isActive: Boolean
-}
-
-input UpdateDescriptivePhoto implements iUpdateDescriptivePhoto {
+input UpdateDescriptivePhoto {
   _id: ObjectID!
   photo: Upload
   photoUrl: String
