@@ -1,0 +1,17 @@
+input CreateProductDimension {
+  length: Int!
+  width: Int!
+  height: Int!
+}
+
+input UpdateProductDimension {
+  length: Int
+  width: Int
+  height: Int
+}
+
+type ProductDimension {
+  length: Int!
+  width: Int!
+  height: Int!
+}

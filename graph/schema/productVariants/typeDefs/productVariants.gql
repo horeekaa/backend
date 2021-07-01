@@ -1,0 +1,55 @@
+enum SellingUnitType {
+  KILOGRAMS
+  GRAMS
+  MILIGRAMS
+
+  LITERS
+  MILILITERS
+
+  PIECES
+  DOZENS
+
+  BOTTLES_750ML
+  BOTTLES_500ML
+  SACKS_25KG
+  SACKS_50KG
+}
+
+input CreateProductVariant {
+  name: String!
+  description: String
+  retailPrice: Int!
+  targetUnitCost: Int!
+  unitWeightInGrams: Int!
+  dimension: CreateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: ObjectIDOnly
+  product: ObjectIDOnly
+}
+
+input UpdateProductVariant {
+  _id: ObjectID!
+  name: String
+  description: String
+  retailPrice: Int
+  targetUnitCost: Int
+  unitWeightInGrams: Int
+  dimension: UpdateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+}
+
+type ProductVariant {
+  _id: ObjectID!
+  name: String!
+  description: String
+  retailPrice: Int!
+  targetUnitCost: Int!
+  unitWeightInGrams: Int!
+  dimension: ProductDimension
+  soldInUnit: SellingUnitType!
+  isActive: Boolean!
+  photo: ProductDescriptivePhoto
+  product: Product
+}
