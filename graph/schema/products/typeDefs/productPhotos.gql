@@ -1,0 +1,28 @@
+input CreateProductDescriptivePhoto implements iCreateDescriptivePhoto {
+  photo: Upload!
+  photoUrl: String
+  description: String
+  category: DescriptivePhotoCategory!
+  type: String!
+  product: ObjectIDOnly
+  productVariant: ObjectIDOnly
+}
+
+input UpdateProductDescriptivePhoto implements iUpdateDescriptivePhoto {
+  _id: ObjectID!
+  photo: Upload
+  photoUrl: String
+  description: String
+  isActive: Boolean
+  type: String
+}
+
+type ProductDescriptivePhoto implements iDescriptivePhoto {
+  _id: ObjectID!
+  photoUrl: String!
+  description: String
+  category: DescriptivePhotoCategory!
+  type: String!
+  product: Product
+  productVariant: ProductVariant
+}

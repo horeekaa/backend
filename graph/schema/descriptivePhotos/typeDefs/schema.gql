@@ -1,0 +1,64 @@
+enum DescriptivePhotoCategory {
+  ORGANIZATION_STALL
+  PRODUCT
+}
+
+enum DescriptivePhotoType {
+  FRONT_SIDE
+  LEFT_SIDE
+  RIGHT_SIDE
+  TOP_SIDE
+
+  FRONT_FACING
+  PRODUCTS_OVERVIEW
+  LOCATION_MARK_DETAIL
+  LOCATION_MARK_OVERVIEW
+}
+
+interface iCreateDescriptivePhoto {
+  photo: Upload!
+  photoUrl: String
+  description: String
+  category: DescriptivePhotoCategory!
+}
+
+input CreateDescriptivePhoto implements iCreateDescriptivePhoto {
+  photo: Upload!
+  photoUrl: String
+  description: String
+  category: DescriptivePhotoCategory!
+  type: DescriptivePhotoType!
+  object: ObjectIDOnly
+}
+
+interface iUpdateDescriptivePhoto {
+  _id: ObjectID!
+  photo: Upload
+  photoUrl: String
+  description: String
+  isActive: Boolean
+}
+
+input UpdateDescriptivePhoto implements iUpdateDescriptivePhoto {
+  _id: ObjectID!
+  photo: Upload
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  isActive: Boolean
+}
+
+interface iDescriptivePhoto {
+  _id: ObjectID!
+  photoUrl: String!
+  category: DescriptivePhotoCategory!
+  description: String
+}
+
+type DescriptivePhoto implements iDescriptivePhoto {
+  _id: ObjectID!
+  photoUrl: String!
+  category: DescriptivePhotoCategory!
+  description: String
+  type: DescriptivePhotoType!
+}
