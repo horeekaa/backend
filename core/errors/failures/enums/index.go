@@ -16,6 +16,7 @@ const (
 
 	DuplicateObjectExist string = "DUPLICATE_OBJECT_EXIST"
 	ObjectNotFound       string = "OBJECT_NOT_FOUND"
+	NothingToBeApproved  string = "NOTHING_TO_BE_APPROVED"
 
 	UpstreamFailures string = "UPSTREAM_FAILURES"
 	UnknownFailures  string = "UNKNOWN_FAILURES"
