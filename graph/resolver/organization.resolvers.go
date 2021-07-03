@@ -47,44 +47,28 @@ func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model
 	)
 }
 
-func (r *organizationResolver) ApprovingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
+func (r *organizationResolver) RecentApprovingAccount(ctx context.Context, obj *model.Organization) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
 
 	var filterFields *model.AccountFilterFields
-	if obj.ApprovingAccount != nil {
+	if obj.RecentApprovingAccount != nil {
 		filterFields = &model.AccountFilterFields{}
-		filterFields.ID = &obj.ApprovingAccount.ID
-
+		filterFields.ID = &obj.RecentApprovingAccount.ID
 	}
 	return getAccountUsecase.Execute(
 		filterFields,
 	)
 }
 
-func (r *organizationResolver) PreviousEntity(ctx context.Context, obj *model.Organization) (*model.Organization, error) {
-	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
-	container.Make(&getOrganizationUsecase)
-
-	var filterFields *model.OrganizationFilterFields
-	if obj.PreviousEntity != nil {
-		filterFields = &model.OrganizationFilterFields{}
-		filterFields.ID = &obj.PreviousEntity.ID
-	}
-	return getOrganizationUsecase.Execute(
-		filterFields,
-	)
-}
-
-func (r *organizationResolver) CorrespondingLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
+func (r *organizationResolver) RecentLog(ctx context.Context, obj *model.Organization) (*model.Logging, error) {
 	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
 	container.Make(&getLoggingUsecase)
 
 	var filterFields *model.LoggingFilterFields
-	if obj.CorrespondingLog != nil {
+	if obj.RecentLog != nil {
 		filterFields = &model.LoggingFilterFields{}
-		filterFields.ID = &obj.CorrespondingLog.ID
-
+		filterFields.ID = &obj.RecentLog.ID
 	}
 	return getLoggingUsecase.Execute(
 		filterFields,

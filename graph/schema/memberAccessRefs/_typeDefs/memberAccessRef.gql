@@ -1,73 +1,91 @@
 enum MemberAccessRefType {
-    ORGANIZATIONS_BASED
-    ACCOUNTS_BASICS
+  ORGANIZATIONS_BASED
+  ACCOUNTS_BASICS
 }
 
 input MemberAccessRefOptionsInput {
-    accountAccesses: AccountAccessesInput
-    manageMemberAccesses: ManageMemberAccessesInput
-    organizationAccesses: OrganizationAccessesInput
-    memberAccessRefAccesses: MemberAccessRefAccessesInput
+  accountAccesses: AccountAccessesInput
+  manageMemberAccesses: ManageMemberAccessesInput
+  organizationAccesses: OrganizationAccessesInput
+  memberAccessRefAccesses: MemberAccessRefAccessesInput
 }
 
 type MemberAccessRefOptions {
-    accountAccesses: AccountAccesses
-    manageMemberAccesses: ManageMemberAccesses
-    organizationAccesses: OrganizationAccesses
-    memberAccessRefAccesses: MemberAccessRefAccesses
+  accountAccesses: AccountAccesses
+  manageMemberAccesses: ManageMemberAccesses
+  organizationAccesses: OrganizationAccesses
+  memberAccessRefAccesses: MemberAccessRefAccesses
 }
 
 input CreateMemberAccessRef {
-    access: MemberAccessRefOptionsInput!
-    memberAccessRefType: MemberAccessRefType!
-    organizationMembershipRole: OrganizationMembershipRole
-    organizationType: OrganizationType
-    proposalStatus: EntityProposalStatus
-    submittingAccount: ObjectIDOnly
-    approvingAccount: ObjectIDOnly
-    previousEntity: ObjectIDOnly
-    correspondingLog: ObjectIDOnly
-    createdAt: Time
-    updatedAt: Time
+  access: MemberAccessRefOptionsInput!
+  memberAccessRefType: MemberAccessRefType!
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateMemberAccessRef {
+  access: MemberAccessRefOptionsInput!
+  memberAccessRefType: MemberAccessRefType!
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateMemberAccessRef
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
 }
 
 input UpdateMemberAccessRef {
-    _id: ObjectID!
-    access: MemberAccessRefOptionsInput
-    memberAccessRefType: MemberAccessRefType
-    organizationMembershipRole: OrganizationMembershipRole
-    organizationType: OrganizationType
-    proposalStatus: EntityProposalStatus
-    submittingAccount: ObjectIDOnly
-    approvingAccount: ObjectIDOnly
-    correspondingLog: ObjectIDOnly
-    updatedAt: Time
+  _id: ObjectID!
+  access: MemberAccessRefOptionsInput
+  memberAccessRefType: MemberAccessRefType
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalUpdateMemberAccessRef {
+  _id: ObjectID!
+  access: MemberAccessRefOptionsInput
+  memberAccessRefType: MemberAccessRefType
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateMemberAccessRef
+  recentLog: ObjectIDOnly
+  updatedAt: Time
 }
 
 input MemberAccessRefFilterFields {
-    _id: ObjectID
-    access: MemberAccessRefOptionsInput
-    memberAccessRefType: MemberAccessRefType
-    organizationMembershipRole: OrganizationMembershipRole
-    organizationType: OrganizationType
-    proposalStatus: EntityProposalStatus
-    submittingAccount: ObjectIDOnly
-    approvingAccount: ObjectIDOnly
-    previousEntity: ObjectIDOnly
-    correspondingLog: ObjectIDOnly
+  _id: ObjectID
+  access: MemberAccessRefOptionsInput
+  memberAccessRefType: MemberAccessRefType
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: ObjectIDOnly
+  recentLog: ObjectIDOnly
 }
 
 type MemberAccessRef {
-    _id: ObjectID!
-    access: MemberAccessRefOptions!
-    memberAccessRefType: MemberAccessRefType!
-    organizationMembershipRole: OrganizationMembershipRole
-    organizationType: OrganizationType
-    proposalStatus: EntityProposalStatus!
-    submittingAccount: Account!
-    approvingAccount: Account
-    previousEntity: MemberAccessRef
-    correspondingLog: Logging!
-    createdAt: Time!
-    updatedAt: Time!
+  _id: ObjectID!
+  access: MemberAccessRefOptions!
+  memberAccessRefType: MemberAccessRefType!
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: MemberAccessRef
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
 }
