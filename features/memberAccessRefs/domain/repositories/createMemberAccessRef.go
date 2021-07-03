@@ -5,10 +5,10 @@ import (
 )
 
 type CreateMemberAccessRefUsecaseComponent interface {
-	Validation(input *model.CreateMemberAccessRef) (*model.CreateMemberAccessRef, error)
+	Validation(input *model.InternalCreateMemberAccessRef) (*model.InternalCreateMemberAccessRef, error)
 }
 
 type CreateMemberAccessRefRepository interface {
 	SetValidation(usecaseComponent CreateMemberAccessRefUsecaseComponent) (bool, error)
-	Execute(input *model.CreateMemberAccessRef) (*model.MemberAccessRef, error)
+	Execute(input *model.InternalCreateMemberAccessRef) (*model.MemberAccessRef, error)
 }
