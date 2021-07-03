@@ -34,7 +34,7 @@ func (updateMmbAccRepo *updateMemberAccessForAccountRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
 	return updateMmbAccRepo.updateMemberAccessRepositoryTransactionComponent.PreTransaction(
-		input.(*model.UpdateMemberAccess),
+		input.(*model.InternalUpdateMemberAccess),
 	)
 }
 
@@ -44,12 +44,12 @@ func (updateMmbAccRepo *updateMemberAccessForAccountRepository) TransactionBody(
 ) (interface{}, error) {
 	return updateMmbAccRepo.updateMemberAccessRepositoryTransactionComponent.TransactionBody(
 		operationOption,
-		input.(*model.UpdateMemberAccess),
+		input.(*model.InternalUpdateMemberAccess),
 	)
 }
 
 func (updateMmbAccRepo *updateMemberAccessForAccountRepository) RunTransaction(
-	input *model.UpdateMemberAccess,
+	input *model.InternalUpdateMemberAccess,
 ) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error) {
 	output, err := updateMmbAccRepo.mongoDBTransaction.RunTransaction(input)
 	return (output).(*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput), err

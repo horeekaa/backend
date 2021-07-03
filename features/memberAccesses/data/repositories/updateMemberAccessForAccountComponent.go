@@ -34,14 +34,14 @@ func NewUpdateMemberAccessForAccountTransactionComponent(
 }
 
 func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) PreTransaction(
-	input *model.UpdateMemberAccess,
-) (*model.UpdateMemberAccess, error) {
+	input *model.InternalUpdateMemberAccess,
+) (*model.InternalUpdateMemberAccess, error) {
 	return input, nil
 }
 
 func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMemberAccess *model.UpdateMemberAccess,
+	updateMemberAccess *model.InternalUpdateMemberAccess,
 ) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error) {
 	existingMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccess.ID,
@@ -88,70 +88,36 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 		jsonTemp, _ := json.Marshal(memberAccessRef.Access)
 		json.Unmarshal(jsonTemp, &accessInput)
 		updateMemberAccess.Access = &accessInput
-		updateMemberAccess.DefaultAccess = &model.ObjectIDOnly{ID: &memberAccessRef.ID}
+		updateMemberAccess.DefaultAccess = &model.InternalUpdateMemberAccessRef{ID: memberAccessRef.ID}
 	}
 
-	if updateMemberAccess.ApprovingAccount != nil &&
+	fieldsToUpdateMemberAccess := &model.InternalUpdateMemberAccess{
+		ID: updateMemberAccess.ID,
+	}
+	jsonExistingOrg, _ := json.Marshal(existingMemberAccess)
+	jsonUpdateOrg, _ := json.Marshal(updateMemberAccess)
+	json.Unmarshal(jsonExistingOrg, fieldsToUpdateMemberAccess.ProposedChanges)
+	json.Unmarshal(jsonUpdateOrg, fieldsToUpdateMemberAccess.ProposedChanges)
+
+	if updateMemberAccess.RecentApprovingAccount != nil &&
 		updateMemberAccess.ProposalStatus != nil {
-		updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
-			existingMemberAccess.ID,
-			updateMemberAccess,
-			session,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
+		if existingMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusRejected {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.NothingToBeApproved,
 				"/updateMemberAccess",
-				err,
+				nil,
 			)
 		}
 
-		if existingMemberAccess.PreviousEntity != nil &&
-			*updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-			replacedProposalStatus := model.EntityProposalStatusReplaced
-			previousMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
-				existingMemberAccess.PreviousEntity.ID,
-				&model.UpdateMemberAccess{
-					ProposalStatus: &replacedProposalStatus,
-				},
-				session,
-			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateMemberAccess",
-					err,
-				)
-			}
-			return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-				PreviousMemberAccess: previousMemberAccess,
-				UpdatedMemberAccess:  updatedMemberAccess,
-			}, nil
+		if *updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonTemp, _ := json.Marshal(fieldsToUpdateMemberAccess.ProposedChanges)
+			json.Unmarshal(jsonTemp, fieldsToUpdateMemberAccess)
 		}
-
-		return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-			PreviousMemberAccess: existingMemberAccess,
-			UpdatedMemberAccess:  updatedMemberAccess,
-		}, nil
 	}
 
-	var combinedMemberAccess model.CreateMemberAccess
-	ja, _ := json.Marshal(existingMemberAccess)
-	json.Unmarshal(ja, &combinedMemberAccess)
-
-	var updateMemberAccessMap map[string]interface{}
-	jsonTemp, _ := json.Marshal(updateMemberAccess)
-	json.Unmarshal(jsonTemp, &updateMemberAccessMap)
-
-	updateMmbAccForAccountTrx.mapProcessorUtility.RemoveNil(updateMemberAccessMap)
-
-	jb, _ := json.Marshal(updateMemberAccessMap)
-	json.Unmarshal(jb, &combinedMemberAccess)
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	combinedMemberAccess.ProposalStatus = &proposedProposalStatus
-
-	combinedMemberAccess.PreviousEntity = &model.ObjectIDOnly{ID: &existingMemberAccess.ID}
-
-	updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Create(
-		&combinedMemberAccess,
+	updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
+		fieldsToUpdateMemberAccess.ID,
+		fieldsToUpdateMemberAccess,
 		session,
 	)
 	if err != nil {

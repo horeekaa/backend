@@ -41,8 +41,8 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) SetValidat
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute(
-	createMemberAccess *model.CreateMemberAccess,
-) (*model.CreateMemberAccess, error) {
+	createMemberAccess *model.InternalCreateMemberAccess,
+) (*model.InternalCreateMemberAccess, error) {
 	if &createMemberAccess.Account.ID == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
@@ -68,7 +68,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
-	createMemberAccess *model.CreateMemberAccess,
+	createMemberAccess *model.InternalCreateMemberAccess,
 ) (*model.MemberAccess, error) {
 	validatedCreateMemberAccess, err := createMbrAccForAccount.preExecute(createMemberAccess)
 	if err != nil {
@@ -119,18 +119,22 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 
 	validatedCreateMemberAccess.Access = &accesscreateMemberAccess
 	validatedCreateMemberAccess.Status = model.MemberAccessStatusActive
-	validatedCreateMemberAccess.DefaultAccess = &model.ObjectIDOnly{ID: &memberAccessRef.ID}
+	validatedCreateMemberAccess.DefaultAccess = &model.InternalUpdateMemberAccessRef{
+		ID: memberAccessRef.ID,
+	}
 
-	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
+	jsonTemp, _ = json.Marshal(validatedCreateMemberAccess)
+	json.Unmarshal(jsonTemp, validatedCreateMemberAccess.ProposedChanges)
+
+	newMemberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
 		validatedCreateMemberAccess,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccessForAccount",
+			"/createMemberAccess",
 			err,
 		)
 	}
-
-	return memberAccess, nil
+	return newMemberAccess, nil
 }

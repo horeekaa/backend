@@ -8,17 +8,17 @@ import (
 
 type UpdateMemberAccessForAccountTransactionComponent interface {
 	PreTransaction(
-		updateMemberAccessInput *model.UpdateMemberAccess,
-	) (*model.UpdateMemberAccess, error)
+		updateMemberAccessInput *model.InternalUpdateMemberAccess,
+	) (*model.InternalUpdateMemberAccess, error)
 
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
-		updateMemberAccessInput *model.UpdateMemberAccess,
+		updateMemberAccessInput *model.InternalUpdateMemberAccess,
 	) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error)
 }
 
 type UpdateMemberAccessForAccountRepository interface {
 	RunTransaction(
-		updateMemberAccessInput *model.UpdateMemberAccess,
+		updateMemberAccessInput *model.InternalUpdateMemberAccess,
 	) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error)
 }
