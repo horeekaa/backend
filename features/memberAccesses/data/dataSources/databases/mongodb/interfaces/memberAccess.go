@@ -14,6 +14,6 @@ type MemberAccessDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.MemberAccess, error)
-	Create(input *model.CreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
-	Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
+	Create(input *model.InternalCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
+	Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
 }

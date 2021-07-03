@@ -14,6 +14,6 @@ type OrganizationDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Organization, error)
-	Create(input *model.CreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
-	Update(ID primitive.ObjectID, updateData *model.UpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
+	Create(input *model.InternalCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
+	Update(ID primitive.ObjectID, updateData *model.InternalUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
 }

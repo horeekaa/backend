@@ -68,7 +68,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	return memberAccessRefs, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.CreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -86,7 +86,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 	return &outputModel, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	updateData.ID = ID
 	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -106,8 +106,8 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primit
 }
 
 type setMemberAccessRefDefaultValuesOutput struct {
-	CreateMemberAccessRef *model.CreateMemberAccessRef
-	UpdateMemberAccessRef *model.UpdateMemberAccessRef
+	CreateMemberAccessRef *model.InternalCreateMemberAccessRef
+	UpdateMemberAccessRef *model.InternalUpdateMemberAccessRef
 }
 
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
@@ -115,7 +115,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 	defaultProposalStatus := model.EntityProposalStatusProposed
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.UpdateMemberAccessRef)
+		updateInput := input.(model.InternalUpdateMemberAccessRef)
 		_, err := orgMemberDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -126,7 +126,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 			UpdateMemberAccessRef: &updateInput,
 		}, nil
 	}
-	createInput := (input).(model.CreateMemberAccessRef)
+	createInput := (input).(model.InternalCreateMemberAccessRef)
 	if createInput.ProposalStatus == nil {
 		createInput.ProposalStatus = &defaultProposalStatus
 	}
