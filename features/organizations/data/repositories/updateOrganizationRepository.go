@@ -41,7 +41,7 @@ func (updateOrgRepo *updateOrganizationRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
 	return updateOrgRepo.updateOrganizationTransactionComponent.PreTransaction(
-		input.(*model.UpdateOrganization),
+		input.(*model.InternalUpdateOrganization),
 	)
 }
 
@@ -51,12 +51,12 @@ func (updateOrgRepo *updateOrganizationRepository) TransactionBody(
 ) (interface{}, error) {
 	return updateOrgRepo.updateOrganizationTransactionComponent.TransactionBody(
 		operationOption,
-		input.(*model.UpdateOrganization),
+		input.(*model.InternalUpdateOrganization),
 	)
 }
 
 func (updateOrgRepo *updateOrganizationRepository) RunTransaction(
-	input *model.UpdateOrganization,
+	input *model.InternalUpdateOrganization,
 ) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error) {
 	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
 	return (output).(*organizationdomainrepositorytypes.UpdateOrganizationOutput), err

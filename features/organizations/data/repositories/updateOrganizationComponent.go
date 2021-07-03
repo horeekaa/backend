@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
@@ -14,17 +15,14 @@ import (
 
 type updateOrganizationTransactionComponent struct {
 	organizationDataSource             databaseorganizationdatasourceinterfaces.OrganizationDataSource
-	mapProcessorUtility                coreutilityinterfaces.MapProcessorUtility
 	updateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.UpdateOrganizationUsecaseComponent
 }
 
 func NewUpdateOrganizationTransactionComponent(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
-	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (organizationdomainrepositoryinterfaces.UpdateOrganizationTransactionComponent, error) {
 	return &updateOrganizationTransactionComponent{
 		organizationDataSource: organizationDataSource,
-		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -36,8 +34,8 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) SetValidation(
 }
 
 func (updateOrgTrx *updateOrganizationTransactionComponent) PreTransaction(
-	input *model.UpdateOrganization,
-) (*model.UpdateOrganization, error) {
+	input *model.InternalUpdateOrganization,
+) (*model.InternalUpdateOrganization, error) {
 	if updateOrgTrx.updateOrganizationUsecaseComponent == nil {
 		return input, nil
 	}
@@ -46,7 +44,7 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) PreTransaction(
 
 func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateOrganization *model.UpdateOrganization,
+	updateOrganization *model.InternalUpdateOrganization,
 ) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error) {
 	existingOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().FindByID(
 		updateOrganization.ID,
@@ -58,68 +56,33 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 			err,
 		)
 	}
+	fieldsToUpdateOrganization := &model.InternalUpdateOrganization{
+		ID: updateOrganization.ID,
+	}
+	jsonExistingOrg, _ := json.Marshal(existingOrganization)
+	jsonUpdateOrg, _ := json.Marshal(updateOrganization)
+	json.Unmarshal(jsonExistingOrg, fieldsToUpdateOrganization.ProposedChanges)
+	json.Unmarshal(jsonUpdateOrg, fieldsToUpdateOrganization.ProposedChanges)
 
-	if updateOrganization.ApprovingAccount != nil &&
+	if updateOrganization.RecentApprovingAccount != nil &&
 		updateOrganization.ProposalStatus != nil {
-		updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
-			existingOrganization.ID,
-			updateOrganization,
-			session,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
+		if existingOrganization.ProposedChanges.ProposalStatus == model.EntityProposalStatusRejected {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.NothingToBeApproved,
 				"/updateOrganization",
-				err,
+				nil,
 			)
 		}
 
-		if existingOrganization.PreviousEntity != nil &&
-			*updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
-			replacedProposalStatus := model.EntityProposalStatusReplaced
-			previousOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
-				existingOrganization.PreviousEntity.ID,
-				&model.UpdateOrganization{
-					ProposalStatus: &replacedProposalStatus,
-				},
-				session,
-			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateOrganization",
-					err,
-				)
-			}
-			return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-				PreviousOrganization: previousOrganization,
-				UpdatedOrganization:  updatedOrganization,
-			}, nil
+		if *updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonTemp, _ := json.Marshal(fieldsToUpdateOrganization.ProposedChanges)
+			json.Unmarshal(jsonTemp, fieldsToUpdateOrganization)
 		}
-
-		return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-			PreviousOrganization: existingOrganization,
-			UpdatedOrganization:  updatedOrganization,
-		}, nil
 	}
 
-	var combinedOrganization model.CreateOrganization
-	ja, _ := json.Marshal(existingOrganization)
-	json.Unmarshal(ja, &combinedOrganization)
-
-	var updateOrganizationMap map[string]interface{}
-	jsonTemp, _ := json.Marshal(updateOrganization)
-	json.Unmarshal(jsonTemp, &updateOrganizationMap)
-
-	updateOrgTrx.mapProcessorUtility.RemoveNil(updateOrganizationMap)
-
-	jb, _ := json.Marshal(updateOrganizationMap)
-	json.Unmarshal(jb, &combinedOrganization)
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	combinedOrganization.ProposalStatus = &proposedProposalStatus
-
-	combinedOrganization.PreviousEntity = &model.ObjectIDOnly{ID: &existingOrganization.ID}
-
-	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Create(
-		&combinedOrganization,
+	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
+		fieldsToUpdateOrganization.ID,
+		fieldsToUpdateOrganization,
 		session,
 	)
 	if err != nil {

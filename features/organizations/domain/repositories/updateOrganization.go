@@ -8,26 +8,26 @@ import (
 
 type UpdateOrganizationUsecaseComponent interface {
 	Validation(
-		updateOrganizationInput *model.UpdateOrganization,
-	) (*model.UpdateOrganization, error)
+		updateOrganizationInput *model.InternalUpdateOrganization,
+	) (*model.InternalUpdateOrganization, error)
 }
 
 type UpdateOrganizationTransactionComponent interface {
 	SetValidation(usecaseComponent UpdateOrganizationUsecaseComponent) (bool, error)
 
 	PreTransaction(
-		updateOrganizationInput *model.UpdateOrganization,
-	) (*model.UpdateOrganization, error)
+		updateOrganizationInput *model.InternalUpdateOrganization,
+	) (*model.InternalUpdateOrganization, error)
 
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
-		updateOrganizationInput *model.UpdateOrganization,
+		updateOrganizationInput *model.InternalUpdateOrganization,
 	) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error)
 }
 
 type UpdateOrganizationRepository interface {
 	SetValidation(usecaseComponent UpdateOrganizationUsecaseComponent) (bool, error)
 	RunTransaction(
-		updateOrganizationInput *model.UpdateOrganization,
+		updateOrganizationInput *model.InternalUpdateOrganization,
 	) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error)
 }
