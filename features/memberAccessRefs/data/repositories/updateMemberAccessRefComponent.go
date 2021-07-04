@@ -9,7 +9,6 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
-	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -45,7 +44,7 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) PreTransact
 func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	updateMemberAccessRef *model.InternalUpdateMemberAccessRef,
-) (*memberaccessrefdomainrepositorytypes.UpdateMemberAccessRefOutput, error) {
+) (*model.MemberAccessRef, error) {
 	existingMemberAccessRef, err := updateMmbAccRefTrx.memberAccessRefDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccessRef.ID,
 		session,
@@ -92,8 +91,5 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 		)
 	}
 
-	return &memberaccessrefdomainrepositorytypes.UpdateMemberAccessRefOutput{
-		PreviousMemberAccessRef: existingMemberAccessRef,
-		UpdatedMemberAccessRef:  updatedMemberAccessRef,
-	}, nil
+	return updatedMemberAccessRef, nil
 }

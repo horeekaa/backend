@@ -1,6 +1,7 @@
 package memberaccessrefpresentationusecases
 
 import (
+	"encoding/json"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -59,7 +60,6 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input me
 			)
 	}
 	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateMemberAccessRef.SubmittingAccount = nil
 	input.CreateMemberAccessRef.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
@@ -156,14 +156,17 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 			err,
 		)
 	}
+	memberAccessRefToCreate := &model.InternalCreateMemberAccessRef{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateMemberAccessRef)
+	json.Unmarshal(jsonTemp, memberAccessRefToCreate)
 
-	validatedInput.CreateMemberAccessRef.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	validatedInput.CreateMemberAccessRef.CorrespondingLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-	if *validatedInput.CreateMemberAccessRef.ProposalStatus == model.EntityProposalStatusApproved {
-		validatedInput.CreateMemberAccessRef.ApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
+	memberAccessRefToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
+	memberAccessRefToCreate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
+	if *memberAccessRefToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		memberAccessRefToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	}
 	createdMemberAccessRef, err := createMmbAccessRefUcase.createMemberAccessRefRepo.Execute(
-		validatedInput.CreateMemberAccessRef,
+		memberAccessRefToCreate,
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
