@@ -9,7 +9,6 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
-	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -45,7 +44,7 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) PreTransaction(
 func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	updateOrganization *model.InternalUpdateOrganization,
-) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error) {
+) (*model.Organization, error) {
 	existingOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().FindByID(
 		updateOrganization.ID,
 		session,
@@ -92,8 +91,5 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 		)
 	}
 
-	return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-		PreviousOrganization: existingOrganization,
-		UpdatedOrganization:  updatedOrganization,
-	}, nil
+	return updatedOrganization, nil
 }

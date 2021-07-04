@@ -4,7 +4,6 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
-	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -57,7 +56,7 @@ func (updateOrgRepo *updateOrganizationRepository) TransactionBody(
 
 func (updateOrgRepo *updateOrganizationRepository) RunTransaction(
 	input *model.InternalUpdateOrganization,
-) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error) {
+) (*model.Organization, error) {
 	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
-	return (output).(*organizationdomainrepositorytypes.UpdateOrganizationOutput), err
+	return (output).(*model.Organization), err
 }

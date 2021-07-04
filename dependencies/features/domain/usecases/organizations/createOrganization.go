@@ -19,7 +19,6 @@ func (_ *CreateOrganizationUsecaseDependency) Bind() {
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
-			createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 		) organizationpresentationusecaseinterfaces.CreateOrganizationUsecase {
 			organizationRefUcase, _ := organizationpresentationusecases.NewCreateOrganizationUsecase(
@@ -27,7 +26,6 @@ func (_ *CreateOrganizationUsecaseDependency) Bind() {
 				getAccountMemberAccessRepo,
 				getPersonDataFromAccountRepo,
 				createOrganizationRepo,
-				createMemberAccessRepo,
 				logEntityProposalActivityRepo,
 			)
 			return organizationRefUcase
