@@ -49,7 +49,7 @@ func NewCreateOrganizationUsecase(
 	}, nil
 }
 
-func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (organizationpresentationusecasetypes.CreateOrganizationUsecaseInput, error) {
+func (createOrganizationUcase *createOrganizationUsecase) validation(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (organizationpresentationusecasetypes.CreateOrganizationUsecaseInput, error) {
 	if &input.Context == nil {
 		return organizationpresentationusecasetypes.CreateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
@@ -64,13 +64,13 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) validation(input organ
 	return input, nil
 }
 
-func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (*model.Organization, error) {
-	validatedInput, err := createMmbAccessRefUcase.validation(input)
+func (createOrganizationUcase *createOrganizationUsecase) Execute(input organizationpresentationusecasetypes.CreateOrganizationUsecaseInput) (*model.Organization, error) {
+	validatedInput, err := createOrganizationUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := createMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
+	account, err := createOrganizationUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
 			Context: validatedInput.Context,
 		},
@@ -93,7 +93,7 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 	personChannel := make(chan *model.Person)
 	errChannel := make(chan error)
 	go func() {
-		person, err := createMmbAccessRefUcase.getPersonDataFromAccountRepo.Execute(account)
+		person, err := createOrganizationUcase.getPersonDataFromAccountRepo.Execute(account)
 		if err != nil {
 			errChannel <- err
 		}
@@ -101,12 +101,12 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 	}()
 
 	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
-	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
+	accMemberAccess, err := createOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
-				Access:              createMmbAccessRefUcase.createOrganizationAccessIdentity,
+				Access:              createOrganizationUcase.createOrganizationAccessIdentity,
 			},
 		},
 	)
@@ -140,7 +140,7 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 	}
 
 	var newObject interface{} = *validatedInput.CreateOrganization
-	logEntityProposal, err := createMmbAccessRefUcase.logEntityProposalActivityRepo.Execute(
+	logEntityProposal, err := createOrganizationUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
 			CollectionName:   "Organization",
 			CreatedByAccount: account,
@@ -166,7 +166,7 @@ func (createMmbAccessRefUcase *createOrganizationUsecase) Execute(input organiza
 	if *organizationToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		organizationToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	}
-	createdOrganization, err := createMmbAccessRefUcase.createOrganizationRepo.Execute(
+	createdOrganization, err := createOrganizationUcase.createOrganizationRepo.Execute(
 		organizationToCreate,
 	)
 	if err != nil {

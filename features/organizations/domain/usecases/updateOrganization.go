@@ -56,7 +56,7 @@ func NewUpdateOrganizationUsecase(
 	}, nil
 }
 
-func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput, error) {
+func (updateOrganizationUcase *updateOrganizationUsecase) validation(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput, error) {
 	if &input.Context == nil {
 		return organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
@@ -70,13 +70,13 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) validation(input organ
 	return input, nil
 }
 
-func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (*model.Organization, error) {
-	validatedInput, err := updateMmbAccessRefUcase.validation(input)
+func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput) (*model.Organization, error) {
+	validatedInput, err := updateOrganizationUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := updateMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
+	account, err := updateOrganizationUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
 			Context: validatedInput.Context,
 		},
@@ -99,7 +99,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 	personChannel := make(chan *model.Person)
 	errChannel := make(chan error)
 	go func() {
-		person, err := updateMmbAccessRefUcase.getPersonDataFromAccountRepo.Execute(account)
+		person, err := updateOrganizationUcase.getPersonDataFromAccountRepo.Execute(account)
 		if err != nil {
 			errChannel <- err
 		}
@@ -107,12 +107,12 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 	}()
 
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
-	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
+	accMemberAccess, err := updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              updateMmbAccessRefUcase.updateOrganizationAccessIdentity,
+				Access:              updateOrganizationUcase.updateOrganizationAccessIdentity,
 			},
 		},
 	)
@@ -138,7 +138,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 		)
 	}
 
-	existingOrganization, err := updateMmbAccessRefUcase.getOrganizationRepo.Execute(
+	existingOrganization, err := updateOrganizationUcase.getOrganizationRepo.Execute(
 		&model.OrganizationFilterFields{
 			ID: &validatedInput.UpdateOrganization.ID,
 		},
@@ -175,7 +175,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 			)
 		}
 
-		logApprovalActivity, err := updateMmbAccessRefUcase.logEntityApprovalActivityRepo.Execute(
+		logApprovalActivity, err := updateOrganizationUcase.logEntityApprovalActivityRepo.Execute(
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
 				PreviousLog:      existingOrganization.RecentLog,
 				ApprovingAccount: account,
@@ -192,7 +192,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 		organizationToUpdate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
 		organizationToUpdate.RecentLog = &model.ObjectIDOnly{ID: &logApprovalActivity.ID}
-		updateOrganizationOutput, err := updateMmbAccessRefUcase.updateOrganizationRepo.RunTransaction(
+		updateOrganizationOutput, err := updateOrganizationUcase.updateOrganizationRepo.RunTransaction(
 			organizationToUpdate,
 		)
 		if err != nil {
@@ -216,7 +216,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 	var newObject interface{} = *organizationToUpdate
 	var existingObject interface{} = *existingOrganization
-	logEntityProposal, err := updateMmbAccessRefUcase.logEntityProposalActivityRepo.Execute(
+	logEntityProposal, err := updateOrganizationUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
 			CollectionName:   "Organization",
 			CreatedByAccount: account,
@@ -237,7 +237,7 @@ func (updateMmbAccessRefUcase *updateOrganizationUsecase) Execute(input organiza
 
 	organizationToUpdate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	organizationToUpdate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-	updateOrganizationOutput, err := updateMmbAccessRefUcase.updateOrganizationRepo.RunTransaction(
+	updateOrganizationOutput, err := updateOrganizationUcase.updateOrganizationRepo.RunTransaction(
 		organizationToUpdate,
 	)
 	if err != nil {
