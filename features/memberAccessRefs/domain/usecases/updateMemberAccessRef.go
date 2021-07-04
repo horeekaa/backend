@@ -221,7 +221,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 			CollectionName:   "MemberAccessRef",
 			CreatedByAccount: account,
 			Activity:         model.LoggedActivityUpdate,
-			ProposalStatus:   *validatedInput.UpdateMemberAccessRef.ProposalStatus,
+			ProposalStatus:   *memberAccessRefToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
 			ExistingObjectID: func(t string) *string { return &t }(existingMemberAccRef.ID.Hex()),

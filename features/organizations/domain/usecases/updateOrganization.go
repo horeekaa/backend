@@ -221,7 +221,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			CollectionName:   "Organization",
 			CreatedByAccount: account,
 			Activity:         model.LoggedActivityUpdate,
-			ProposalStatus:   *validatedInput.UpdateOrganization.ProposalStatus,
+			ProposalStatus:   *organizationToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
 			ExistingObjectID: func(t string) *string { return &t }(existingOrganization.ID.Hex()),

@@ -272,7 +272,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			CollectionName:   "MemberAccess",
 			CreatedByAccount: account,
 			Activity:         model.LoggedActivityUpdate,
-			ProposalStatus:   *validatedInput.UpdateMemberAccess.ProposalStatus,
+			ProposalStatus:   *memberAccessToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
 			ExistingObjectID: func(t string) *string { return &t }(existingMemberAcc.ID.Hex()),
