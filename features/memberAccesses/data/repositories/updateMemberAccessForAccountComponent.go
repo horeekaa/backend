@@ -11,7 +11,6 @@ import (
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
-	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -42,7 +41,7 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) PreTrans
 func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	updateMemberAccess *model.InternalUpdateMemberAccess,
-) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error) {
+) (*model.MemberAccess, error) {
 	existingMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccess.ID,
 		session,
@@ -127,8 +126,5 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 		)
 	}
 
-	return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-		PreviousMemberAccess: existingMemberAccess,
-		UpdatedMemberAccess:  updatedMemberAccess,
-	}, nil
+	return updatedMemberAccess, nil
 }

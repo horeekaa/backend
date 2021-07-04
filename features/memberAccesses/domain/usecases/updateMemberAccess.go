@@ -1,6 +1,7 @@
 package memberaccesspresentationusecases
 
 import (
+	"encoding/json"
 	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
@@ -61,8 +62,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) validation(input memberac
 				nil,
 			)
 	}
-	input.UpdateMemberAccess.ApprovingAccount = nil
-	input.UpdateMemberAccess.SubmittingAccount = nil
 
 	return input, nil
 }
@@ -91,49 +90,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			"/updateMemberAccessUsecase",
 			nil,
 		)
-	}
-
-	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				ID: &validatedInput.UpdateMemberAccess.ID,
-			},
-			QueryMode: true,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
-			err,
-		)
-	}
-	if validatedInput.UpdateMemberAccess.InvitationAccepted != nil {
-		if existingMemberAcc.Account.ID.Hex() != account.ID.Hex() ||
-			existingMemberAcc.ProposalStatus != model.EntityProposalStatusApproved {
-			return nil, horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AcceptInvitationNotAllowed,
-				422,
-				"/updateMemberAccessUsecase",
-				nil,
-			)
-		}
-
-		updateMemberAccessOutput, err := updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
-			&model.UpdateMemberAccess{
-				ID:                 existingMemberAcc.ID,
-				InvitationAccepted: validatedInput.UpdateMemberAccess.InvitationAccepted,
-				ApprovingAccount:   &model.ObjectIDOnly{ID: &existingMemberAcc.ApprovingAccount.ID},
-				ProposalStatus:     &existingMemberAcc.ProposalStatus,
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessUsecase",
-				err,
-			)
-		}
-
-		return updateMemberAccessOutput.UpdatedMemberAccess, nil
 	}
 
 	personChannel := make(chan *model.Person)
@@ -178,8 +134,81 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
+	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				ID: &validatedInput.UpdateMemberAccess.ID,
+			},
+			QueryMode: true,
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateMemberAccessUsecase",
+			err,
+		)
+	}
+
+	memberAccessToUpdate := &model.InternalUpdateMemberAccess{
+		ID: validatedInput.UpdateMemberAccess.ID,
+	}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateMemberAccess)
+	json.Unmarshal(jsonTemp, memberAccessToUpdate)
+
+	if memberAccessToUpdate.InvitationAccepted != nil {
+		if existingMemberAcc.Account.ID.Hex() != account.ID.Hex() ||
+			existingMemberAcc.ProposalStatus != model.EntityProposalStatusApproved {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AcceptInvitationNotAllowed,
+				422,
+				"/updateMemberAccessUsecase",
+				nil,
+			)
+		}
+
+		var newObject interface{} = *memberAccessToUpdate
+		var existingObject interface{} = *existingMemberAcc
+		logEntityProposal, err := updateMmbAccessUcase.logEntityProposalActivityRepo.Execute(
+			loggingdomainrepositorytypes.LogEntityProposalActivityInput{
+				CollectionName:   "MemberAccess",
+				CreatedByAccount: existingMemberAcc.SubmittingAccount,
+				Activity:         model.LoggedActivityUpdate,
+				ProposalStatus:   model.EntityProposalStatusApproved,
+				NewObject:        &newObject,
+				ExistingObject:   &existingObject,
+				ExistingObjectID: func(t string) *string { return &t }(existingMemberAcc.ID.Hex()),
+				CreatorInitial:   accountInitials,
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateMemberAccessUsecase",
+				err,
+			)
+		}
+
+		memberAccessToUpdate.RecentApprovingAccount = &model.ObjectIDOnly{
+			ID: &existingMemberAcc.SubmittingAccount.ID,
+		}
+		memberAccessToUpdate.ProposalStatus = &existingMemberAcc.ProposalStatus
+		memberAccessToUpdate.RecentLog = &model.ObjectIDOnly{
+			ID: &logEntityProposal.ID,
+		}
+
+		updateMemberAccessOutput, err := updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
+			memberAccessToUpdate,
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateMemberAccessUsecase",
+				err,
+			)
+		}
+		return updateMemberAccessOutput, nil
+	}
+
 	// if user is only going to approve proposal
-	if validatedInput.UpdateMemberAccess.ProposalStatus != nil {
+	if memberAccessToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
@@ -199,10 +228,10 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 
 		logApprovalActivity, err := updateMmbAccessUcase.logEntityApprovalActivityRepo.Execute(
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
-				PreviousLog:      existingMemberAcc.CorrespondingLog,
+				PreviousLog:      existingMemberAcc.RecentLog,
 				ApprovingAccount: account,
 				ApproverInitial:  accountInitials,
-				ApprovalStatus:   *validatedInput.UpdateMemberAccess.ProposalStatus,
+				ApprovalStatus:   *memberAccessToUpdate.ProposalStatus,
 			},
 		)
 		if err != nil {
@@ -212,10 +241,10 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			)
 		}
 
-		validatedInput.UpdateMemberAccess.ApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
-		validatedInput.UpdateMemberAccess.CorrespondingLog = &model.ObjectIDOnly{ID: &logApprovalActivity.ID}
+		memberAccessToUpdate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
+		memberAccessToUpdate.RecentLog = &model.ObjectIDOnly{ID: &logApprovalActivity.ID}
 		updateMemberAccessOutput, err := updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
-			validatedInput.UpdateMemberAccess,
+			memberAccessToUpdate,
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
@@ -224,19 +253,19 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			)
 		}
 
-		return updateMemberAccessOutput.UpdatedMemberAccess, nil
+		return updateMemberAccessOutput, nil
 	}
 
-	validatedInput.UpdateMemberAccess.ProposalStatus =
+	memberAccessToUpdate.ProposalStatus =
 		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval != nil {
 		if *accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval {
-			validatedInput.UpdateMemberAccess.ProposalStatus =
+			memberAccessToUpdate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
 
-	var newObject interface{} = *validatedInput.UpdateMemberAccess
+	var newObject interface{} = *memberAccessToUpdate
 	var existingObject interface{} = *existingMemberAcc
 	logEntityProposal, err := updateMmbAccessUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
@@ -257,10 +286,10 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	validatedInput.UpdateMemberAccess.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	validatedInput.UpdateMemberAccess.CorrespondingLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
+	memberAccessToUpdate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
+	memberAccessToUpdate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
 	updateMemberAccessOutput, err := updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
-		validatedInput.UpdateMemberAccess,
+		memberAccessToUpdate,
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
@@ -269,24 +298,5 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	// user is going to update and directly has permission to approve the update
-	if *validatedInput.UpdateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-		updateMemberAccessOutput, err = updateMmbAccessUcase.updateMemberAccessRepo.RunTransaction(
-			&model.UpdateMemberAccess{
-				ID:               updateMemberAccessOutput.UpdatedMemberAccess.ID,
-				ApprovingAccount: &model.ObjectIDOnly{ID: &account.ID},
-				ProposalStatus:   validatedInput.UpdateMemberAccess.ProposalStatus,
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessUsecase",
-				err,
-			)
-		}
-
-		return updateMemberAccessOutput.UpdatedMemberAccess, nil
-	}
-
-	return updateMemberAccessOutput.UpdatedMemberAccess, nil
+	return updateMemberAccessOutput, nil
 }
