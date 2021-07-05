@@ -16,14 +16,12 @@ func (_ *CreateMemberAccessUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 		) memberaccesspresentationusecaseinterfaces.CreateMemberAccessUsecase {
 			createMmbAccUcase, _ := memberaccesspresentationusecases.NewCreateMemberAccessUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
-				getPersonDataFromAccountRepo,
 				createMemberAccessRepo,
 				logEntityProposalActivityRepo,
 			)

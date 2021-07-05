@@ -2,7 +2,6 @@ package memberaccessrefpresentationusecases
 
 import (
 	"encoding/json"
-	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
@@ -22,7 +21,6 @@ import (
 type createMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository
 	logEntityProposalActivityRepo       loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	createMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
@@ -31,14 +29,12 @@ type createMemberAccessRefUsecase struct {
 func NewCreateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (memberaccessrefpresentationusecaseinterfaces.CreateMemberAccessRefUsecase, error) {
 	return &createMemberAccessRefUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
-		getPersonDataFromAccountRepo,
 		createMemberAccessRefRepo,
 		logEntityProposalActivityRepo,
 		&model.MemberAccessRefOptionsInput{
@@ -90,16 +86,6 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 		)
 	}
 
-	personChannel := make(chan *model.Person)
-	errChannel := make(chan error)
-	go func() {
-		person, err := createMmbAccessRefUcase.getPersonDataFromAccountRepo.Execute(account)
-		if err != nil {
-			errChannel <- err
-		}
-		personChannel <- person
-	}()
-
 	memberAccessRefTypeOrganizationsBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -123,22 +109,6 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 		}
 	}
 
-	accountInitials := ""
-	select {
-	case person := <-personChannel:
-		accountInitials = fmt.Sprintf("XXXX%s", account.ID.Hex()[len(account.ID.Hex())-6:])
-		if person != nil {
-			accountInitials = person.FirstName
-		}
-
-		break
-	case err := <-errChannel:
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
-			err,
-		)
-	}
-
 	var newObject interface{} = *validatedInput.CreateMemberAccessRef
 	logEntityProposal, err := createMmbAccessRefUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
@@ -147,7 +117,6 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 			Activity:         model.LoggedActivityCreate,
 			ProposalStatus:   *validatedInput.CreateMemberAccessRef.ProposalStatus,
 			NewObject:        &newObject,
-			CreatorInitial:   accountInitials,
 		},
 	)
 	if err != nil {

@@ -2,7 +2,6 @@ package memberaccessrefpresentationusecases
 
 import (
 	"encoding/json"
-	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
@@ -23,7 +22,6 @@ import (
 type updateMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getPersonDataFromAccountRepo        accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository
 	getMemberAccessRefRepo              memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository
 	logEntityProposalActivityRepo       loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
@@ -34,7 +32,6 @@ type updateMemberAccessRefUsecase struct {
 func NewUpdateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
 	getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -43,7 +40,6 @@ func NewUpdateMemberAccessRefUsecase(
 	return &updateMemberAccessRefUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
-		getPersonDataFromAccountRepo,
 		updateMemberAccessRefRepo,
 		getMemberAccessRefRepo,
 		logEntityProposalActivityRepo,
@@ -96,16 +92,6 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		)
 	}
 
-	personChannel := make(chan *model.Person)
-	errChannel := make(chan error)
-	go func() {
-		person, err := updateMmbAccessRefUcase.getPersonDataFromAccountRepo.Execute(account)
-		if err != nil {
-			errChannel <- err
-		}
-		personChannel <- person
-	}()
-
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -117,21 +103,6 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		},
 	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessRefUsecase",
-			err,
-		)
-	}
-
-	accountInitials := ""
-	select {
-	case person := <-personChannel:
-		accountInitials = fmt.Sprintf("XXXX%s", account.ID.Hex()[len(account.ID.Hex())-6:])
-		if person != nil {
-			accountInitials = person.FirstName
-		}
-		break
-	case err := <-errChannel:
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/updateMemberAccessRefUsecase",
 			err,
@@ -179,7 +150,6 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
 				PreviousLog:      existingMemberAccRef.RecentLog,
 				ApprovingAccount: account,
-				ApproverInitial:  accountInitials,
 				ApprovalStatus:   *memberAccessRefToUpdate.ProposalStatus,
 			},
 		)
@@ -224,8 +194,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 			ProposalStatus:   *memberAccessRefToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
-			ExistingObjectID: func(t string) *string { return &t }(existingMemberAccRef.ID.Hex()),
-			CreatorInitial:   accountInitials,
+			ExistingObjectID: &model.ObjectIDOnly{ID: &existingMemberAccRef.ID},
 		},
 	)
 	if err != nil {

@@ -2,7 +2,6 @@ package organizationpresentationusecases
 
 import (
 	"encoding/json"
-	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
@@ -23,7 +22,6 @@ import (
 type updateOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateOrganizationRepo           organizationdomainrepositoryinterfaces.UpdateOrganizationRepository
 	getOrganizationRepo              organizationdomainrepositoryinterfaces.GetOrganizationRepository
 	logEntityProposalActivityRepo    loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
@@ -34,7 +32,6 @@ type updateOrganizationUsecase struct {
 func NewUpdateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateOrganizationRepo organizationdomainrepositoryinterfaces.UpdateOrganizationRepository,
 	getOrganizationRepo organizationdomainrepositoryinterfaces.GetOrganizationRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -43,7 +40,6 @@ func NewUpdateOrganizationUsecase(
 	return &updateOrganizationUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
-		getPersonDataFromAccountRepo,
 		updateOrganizationRepo,
 		getOrganizationRepo,
 		logEntityProposalActivityRepo,
@@ -96,16 +92,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		)
 	}
 
-	personChannel := make(chan *model.Person)
-	errChannel := make(chan error)
-	go func() {
-		person, err := updateOrganizationUcase.getPersonDataFromAccountRepo.Execute(account)
-		if err != nil {
-			errChannel <- err
-		}
-		personChannel <- person
-	}()
-
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -117,21 +103,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		},
 	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateOrganizationUsecase",
-			err,
-		)
-	}
-
-	accountInitials := ""
-	select {
-	case person := <-personChannel:
-		accountInitials = fmt.Sprintf("XXXX%s", account.ID.Hex()[len(account.ID.Hex())-6:])
-		if person != nil {
-			accountInitials = person.FirstName
-		}
-		break
-	case err := <-errChannel:
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/updateOrganizationUsecase",
 			err,
@@ -179,7 +150,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
 				PreviousLog:      existingOrganization.RecentLog,
 				ApprovingAccount: account,
-				ApproverInitial:  accountInitials,
 				ApprovalStatus:   *organizationToUpdate.ProposalStatus,
 			},
 		)
@@ -224,8 +194,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			ProposalStatus:   *organizationToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
-			ExistingObjectID: func(t string) *string { return &t }(existingOrganization.ID.Hex()),
-			CreatorInitial:   accountInitials,
+			ExistingObjectID: &model.ObjectIDOnly{ID: &existingOrganization.ID},
 		},
 	)
 	if err != nil {

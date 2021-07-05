@@ -17,7 +17,6 @@ func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			updateOrganizationRepo organizationdomainrepositoryinterfaces.UpdateOrganizationRepository,
 			getOrganizationRepo organizationdomainrepositoryinterfaces.GetOrganizationRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -26,7 +25,6 @@ func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 			updateOrganizationUsecase, _ := organizationpresentationusecases.NewUpdateOrganizationUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
-				getPersonDataFromAccountRepo,
 				updateOrganizationRepo,
 				getOrganizationRepo,
 				logEntityProposalActivityRepo,

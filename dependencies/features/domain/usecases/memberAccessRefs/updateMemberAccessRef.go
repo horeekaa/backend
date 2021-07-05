@@ -17,7 +17,6 @@ func (_ *UpdateMemberAccessRefUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-			getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 			updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
 			getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,
 			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
@@ -26,7 +25,6 @@ func (_ *UpdateMemberAccessRefUsecaseDependency) Bind() {
 			updateMemberAccessRefUsecase, _ := memberaccessrefpresentationusecases.NewUpdateMemberAccessRefUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
-				getPersonDataFromAccountRepo,
 				updateMemberAccessRefRepo,
 				getMemberAccessRefRepo,
 				logEntityProposalActivityRepo,

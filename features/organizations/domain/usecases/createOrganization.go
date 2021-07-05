@@ -2,7 +2,6 @@ package organizationpresentationusecases
 
 import (
 	"encoding/json"
-	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
@@ -22,7 +21,6 @@ import (
 type createOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getPersonDataFromAccountRepo     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
 	logEntityProposalActivityRepo    loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	createOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
@@ -31,14 +29,12 @@ type createOrganizationUsecase struct {
 func NewCreateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (organizationpresentationusecaseinterfaces.CreateOrganizationUsecase, error) {
 	return &createOrganizationUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
-		getPersonDataFromAccountRepo,
 		createOrganizationRepo,
 		logEntityProposalActivityRepo,
 		&model.MemberAccessRefOptionsInput{
@@ -90,16 +86,6 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		)
 	}
 
-	personChannel := make(chan *model.Person)
-	errChannel := make(chan error)
-	go func() {
-		person, err := createOrganizationUcase.getPersonDataFromAccountRepo.Execute(account)
-		if err != nil {
-			errChannel <- err
-		}
-		personChannel <- person
-	}()
-
 	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 	accMemberAccess, err := createOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -123,22 +109,6 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		}
 	}
 
-	accountInitials := ""
-	select {
-	case person := <-personChannel:
-		accountInitials = fmt.Sprintf("XXXX%s", account.ID.Hex()[len(account.ID.Hex())-6:])
-		if person != nil {
-			accountInitials = person.FirstName
-		}
-
-		break
-	case err := <-errChannel:
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
-			err,
-		)
-	}
-
 	var newObject interface{} = *validatedInput.CreateOrganization
 	logEntityProposal, err := createOrganizationUcase.logEntityProposalActivityRepo.Execute(
 		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
@@ -147,7 +117,6 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 			Activity:         model.LoggedActivityCreate,
 			ProposalStatus:   *validatedInput.CreateOrganization.ProposalStatus,
 			NewObject:        &newObject,
-			CreatorInitial:   accountInitials,
 		},
 	)
 	if err != nil {

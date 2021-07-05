@@ -2,7 +2,6 @@ package memberaccesspresentationusecases
 
 import (
 	"encoding/json"
-	"fmt"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
@@ -22,7 +21,6 @@ import (
 type updateMemberAccessUsecase struct {
 	getAccountFromAuthDataRepo    accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo    memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getPersonDataFromAccountRepo  accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	updateMemberAccessRepo        memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository
@@ -32,7 +30,6 @@ type updateMemberAccessUsecase struct {
 func NewUpdateMemberAccessUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	getPersonDataFromAccountRepo accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository,
 	updateMemberAccessRepo memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository,
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 	logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository,
@@ -40,7 +37,6 @@ func NewUpdateMemberAccessUsecase(
 	return &updateMemberAccessUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
-		getPersonDataFromAccountRepo,
 		updateMemberAccessRepo,
 		logEntityProposalActivityRepo,
 		logEntityApprovalActivityRepo,
@@ -92,16 +88,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	personChannel := make(chan *model.Person)
-	errChannel := make(chan error)
-	go func() {
-		person, err := updateMmbAccessUcase.getPersonDataFromAccountRepo.Execute(account)
-		if err != nil {
-			errChannel <- err
-		}
-		personChannel <- person
-	}()
-
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -113,21 +99,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		},
 	)
 	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
-			err,
-		)
-	}
-
-	accountInitials := ""
-	select {
-	case person := <-personChannel:
-		accountInitials = fmt.Sprintf("XXXX%s", account.ID.Hex()[len(account.ID.Hex())-6:])
-		if person != nil {
-			accountInitials = person.FirstName
-		}
-		break
-	case err := <-errChannel:
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/updateMemberAccessUsecase",
 			err,
@@ -176,8 +147,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 				ProposalStatus:   model.EntityProposalStatusApproved,
 				NewObject:        &newObject,
 				ExistingObject:   &existingObject,
-				ExistingObjectID: func(t string) *string { return &t }(existingMemberAcc.ID.Hex()),
-				CreatorInitial:   accountInitials,
+				ExistingObjectID: &model.ObjectIDOnly{ID: &existingMemberAcc.ID},
 			},
 		)
 		if err != nil {
@@ -230,7 +200,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			loggingdomainrepositorytypes.LogEntityApprovalActivityInput{
 				PreviousLog:      existingMemberAcc.RecentLog,
 				ApprovingAccount: account,
-				ApproverInitial:  accountInitials,
 				ApprovalStatus:   *memberAccessToUpdate.ProposalStatus,
 			},
 		)
@@ -275,8 +244,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			ProposalStatus:   *memberAccessToUpdate.ProposalStatus,
 			NewObject:        &newObject,
 			ExistingObject:   &existingObject,
-			ExistingObjectID: func(t string) *string { return &t }(existingMemberAcc.ID.Hex()),
-			CreatorInitial:   accountInitials,
+			ExistingObjectID: &model.ObjectIDOnly{ID: &existingMemberAcc.ID},
 		},
 	)
 	if err != nil {
