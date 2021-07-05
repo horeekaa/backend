@@ -11,23 +11,27 @@ import (
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
 type updateMemberAccessForAccountComponent struct {
 	memberAccessDataSource    databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	organizationDataSource    databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewUpdateMemberAccessForAccountTransactionComponent(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent, error) {
 	return &updateMemberAccessForAccountComponent{
 		memberAccessDataSource,
 		memberAccessRefDataSource,
+		organizationDataSource,
 		mapProcessorUtility,
 	}, nil
 }
@@ -63,6 +67,21 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 	}
 	if updateMemberAccess.Organization != nil {
 		queryMap["organizationType"] = *updateMemberAccess.Organization.Type
+
+		orgToUpdate, err := updateMmbAccForAccountTrx.organizationDataSource.GetMongoDataSource().FindByID(
+			updateMemberAccess.Organization.ID,
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateMemberAccess",
+				err,
+			)
+		}
+
+		jsonTemp, _ := json.Marshal(orgToUpdate)
+		json.Unmarshal(jsonTemp, updateMemberAccess.Organization)
+		json.Unmarshal(jsonTemp, updateMemberAccess.OrganizationLatestUpdate)
 	}
 
 	if queryMap["organizationMembershipRole"] != nil || queryMap["organizationType"] != nil {
@@ -87,7 +106,13 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 		jsonTemp, _ := json.Marshal(memberAccessRef.Access)
 		json.Unmarshal(jsonTemp, &accessInput)
 		updateMemberAccess.Access = &accessInput
-		updateMemberAccess.DefaultAccess = &model.InternalUpdateMemberAccessRef{ID: memberAccessRef.ID}
+
+		jsonTemp, _ = json.Marshal(memberAccessRef)
+		json.Unmarshal(jsonTemp, updateMemberAccess.DefaultAccess)
+
+		updateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
+			ID: &memberAccessRef.ID,
+		}
 	}
 
 	fieldsToUpdateMemberAccess := &model.InternalUpdateMemberAccess{

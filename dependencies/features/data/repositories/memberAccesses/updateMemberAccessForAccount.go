@@ -8,6 +8,7 @@ import (
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 )
 
 type UpdateMemberAccessForAccountDependency struct{}
@@ -17,11 +18,13 @@ func (_ UpdateMemberAccessForAccountDependency) Bind() {
 		func(
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent {
 			updateMemberAccessComponent, _ := memberaccessdomainrepositories.NewUpdateMemberAccessForAccountTransactionComponent(
 				memberAccessDataSource,
 				memberAccessRefDataSource,
+				organizationDataSource,
 				mapProcessorUtility,
 			)
 			return updateMemberAccessComponent
