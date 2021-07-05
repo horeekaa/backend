@@ -7,6 +7,7 @@ import (
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 )
 
 type CreateMemberAccessForAccountDependency struct{}
@@ -17,11 +18,13 @@ func (createMemberAccessForAccountDependency *CreateMemberAccessForAccountDepend
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 		) memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository {
 			createMemberAccessForAccountRepo, _ := memberaccessdomainrepositories.NewCreateMemberAccessForAccountRepository(
 				accountDataSource,
 				memberAccessDataSource,
 				memberAccessRefDataSource,
+				organizationDataSource,
 			)
 			return createMemberAccessForAccountRepo
 		},
