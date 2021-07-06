@@ -8,6 +8,11 @@ input CreateMemberAccess {
   invitationAccepted: Boolean
   organization: ObjectIDOnly!
   organizationMembershipRole: OrganizationMembershipRole
+  """
+  Note:
+  the field memberAccessRefType is commonly set to ORGANIZATION_BASED.
+  especially when inputting Organization ID
+  """
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptionsInput!
   status: MemberAccessStatus!

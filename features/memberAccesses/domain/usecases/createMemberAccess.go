@@ -95,6 +95,7 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 				ProposalStatus: func(m model.EntityProposalStatus) *model.EntityProposalStatus {
 					return &m
 				}(model.EntityProposalStatusApproved),
+				MemberAccessRefType: &validatedInput.CreateMemberAccess.MemberAccessRefType,
 			},
 			QueryMode: true,
 		},
