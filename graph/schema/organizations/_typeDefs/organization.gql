@@ -10,7 +10,7 @@ input CreateOrganization {
   type: OrganizationType!
   point: Int
   unfinalizedPoint: Int
-  profilePhotos: [NewOrganizationDescriptivePhoto]
+  profilePhotos: [ObjectIDOnly]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -30,7 +30,24 @@ input UpdateOrganization {
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
-  profilePhotos: [UpdateOrganizationDescriptivePhoto]
+  taxIdentification: UpdateIDCard
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  approvingAccount: ObjectIDOnly
+  correspondingLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input InternalUpdateOrganization {
+  _id: ObjectID!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+  creditAllowance: Int
+  rating: Float
+  ratingDescription: String
+  unfinalizedPoint: Int
+  profilePhotos: [ObjectIDOnly]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -69,7 +86,7 @@ type Organization {
   ratingDescription: String
   point: Int!
   unfinalizedPoint: Int!
-  profilePhotos: [DescriptivePhoto]
+  profilePhotos: [OrgProfileDescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!
