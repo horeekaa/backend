@@ -84,5 +84,14 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAc
 			nil,
 		)
 	}
+	if memberAccess != nil {
+		if memberAccess.InvitationAccepted == false && !validatedInput.QueryMode {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+				"/getAccountMemberAccess",
+				nil,
+			)
+		}
+	}
 	return memberAccess, nil
 }
