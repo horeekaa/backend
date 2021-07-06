@@ -47,7 +47,7 @@ func (createOrgRepo *createOrganizationRepository) Execute(
 		return nil, err
 	}
 	jsonTemp, _ := json.Marshal(validatedInput)
-	json.Unmarshal(jsonTemp, validatedInput.ProposedChanges)
+	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
 
 	newOrganization, err := createOrgRepo.organizationDataSource.GetMongoDataSource().Create(
 		validatedInput,

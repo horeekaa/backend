@@ -60,8 +60,8 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 	}
 	jsonExistingOrg, _ := json.Marshal(existingMemberAccessRef)
 	jsonUpdateOrg, _ := json.Marshal(updateMemberAccessRef)
-	json.Unmarshal(jsonExistingOrg, fieldsToUpdateMemberAccessRef.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, fieldsToUpdateMemberAccessRef.ProposedChanges)
+	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateMemberAccessRef.ProposedChanges)
+	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateMemberAccessRef.ProposedChanges)
 
 	if updateMemberAccessRef.RecentApprovingAccount != nil &&
 		updateMemberAccessRef.ProposalStatus != nil {

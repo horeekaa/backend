@@ -107,8 +107,8 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		}
 
 		jsonTemp, _ := json.Marshal(orgToAdd)
-		json.Unmarshal(jsonTemp, validatedCreateMemberAccess.Organization)
-		json.Unmarshal(jsonTemp, validatedCreateMemberAccess.OrganizationLatestUpdate)
+		json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.Organization)
+		json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.OrganizationLatestUpdate)
 	}
 	if validatedCreateMemberAccess.OrganizationMembershipRole != nil {
 		queryMap["organizationMembershipRole"] = *validatedCreateMemberAccess.OrganizationMembershipRole
@@ -131,21 +131,19 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			nil,
 		)
 	}
-	var accesscreateMemberAccess model.MemberAccessRefOptionsInput
 	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
-	json.Unmarshal(jsonTemp, &accesscreateMemberAccess)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.Access)
 
-	validatedCreateMemberAccess.Access = &accesscreateMemberAccess
 	validatedCreateMemberAccess.Status = model.MemberAccessStatusActive
 
 	jsonTemp, _ = json.Marshal(memberAccessRef)
-	json.Unmarshal(jsonTemp, validatedCreateMemberAccess.DefaultAccess)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.DefaultAccess)
 	validatedCreateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
 		ID: &memberAccessRef.ID,
 	}
 
 	jsonTemp, _ = json.Marshal(validatedCreateMemberAccess)
-	json.Unmarshal(jsonTemp, validatedCreateMemberAccess.ProposedChanges)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.ProposedChanges)
 
 	newMemberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
 		validatedCreateMemberAccess,

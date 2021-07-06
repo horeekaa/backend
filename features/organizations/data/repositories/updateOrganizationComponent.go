@@ -60,8 +60,8 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	}
 	jsonExistingOrg, _ := json.Marshal(existingOrganization)
 	jsonUpdateOrg, _ := json.Marshal(updateOrganization)
-	json.Unmarshal(jsonExistingOrg, fieldsToUpdateOrganization.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, fieldsToUpdateOrganization.ProposedChanges)
+	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateOrganization.ProposedChanges)
+	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateOrganization.ProposedChanges)
 
 	if updateOrganization.RecentApprovingAccount != nil &&
 		updateOrganization.ProposalStatus != nil {

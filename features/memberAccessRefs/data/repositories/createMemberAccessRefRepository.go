@@ -47,7 +47,7 @@ func (createMmbAccRefRepo *createMemberAccessRefRepository) Execute(
 		return nil, err
 	}
 	jsonTemp, _ := json.Marshal(validatedInput)
-	json.Unmarshal(jsonTemp, validatedInput.ProposedChanges)
+	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
 
 	newMemberAccessRef, err := createMmbAccRefRepo.memberAccessRefDataSource.GetMongoDataSource().Create(
 		validatedInput,

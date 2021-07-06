@@ -80,8 +80,8 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 		}
 
 		jsonTemp, _ := json.Marshal(orgToUpdate)
-		json.Unmarshal(jsonTemp, updateMemberAccess.Organization)
-		json.Unmarshal(jsonTemp, updateMemberAccess.OrganizationLatestUpdate)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.Organization)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.OrganizationLatestUpdate)
 	}
 
 	if queryMap["organizationMembershipRole"] != nil || queryMap["organizationType"] != nil {
@@ -102,13 +102,11 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 				nil,
 			)
 		}
-		var accessInput model.MemberAccessRefOptionsInput
 		jsonTemp, _ := json.Marshal(memberAccessRef.Access)
-		json.Unmarshal(jsonTemp, &accessInput)
-		updateMemberAccess.Access = &accessInput
+		json.Unmarshal(jsonTemp, &updateMemberAccess.Access)
 
 		jsonTemp, _ = json.Marshal(memberAccessRef)
-		json.Unmarshal(jsonTemp, updateMemberAccess.DefaultAccess)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.DefaultAccess)
 
 		updateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
 			ID: &memberAccessRef.ID,
@@ -120,8 +118,8 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 	}
 	jsonExistingOrg, _ := json.Marshal(existingMemberAccess)
 	jsonUpdateOrg, _ := json.Marshal(updateMemberAccess)
-	json.Unmarshal(jsonExistingOrg, fieldsToUpdateMemberAccess.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, fieldsToUpdateMemberAccess.ProposedChanges)
+	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateMemberAccess.ProposedChanges)
+	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateMemberAccess.ProposedChanges)
 
 	if updateMemberAccess.RecentApprovingAccount != nil &&
 		updateMemberAccess.ProposalStatus != nil {
