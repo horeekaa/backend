@@ -81,7 +81,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 				)
 
 				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-					Name:     fmt.Sprint(tagString),
+					Name:     fmt.Sprint(*tagString),
 					Type:     reflect.TypeOf(field1).Kind().String(),
 					OldValue: fmt.Sprint(field2),
 					NewValue: fmt.Sprint(field1),
@@ -116,7 +116,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 				)
 
 				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-					Name:     fmt.Sprint(tagString),
+					Name:     fmt.Sprint(*tagString),
 					Type:     reflect.TypeOf(field).Kind().String(),
 					NewValue: fmt.Sprint(field),
 				})
@@ -152,9 +152,9 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 
 	loggingOutput, err := logEttPrpsalActivity.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: validatedInput.CollectionName,
-			Document:   validatedInput.ExistingObjectID,
-			FieldChanges:  fieldChanges,
+			Collection:   validatedInput.CollectionName,
+			Document:     validatedInput.ExistingObjectID,
+			FieldChanges: fieldChanges,
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: &validatedInput.CreatedByAccount.ID,
 			},
