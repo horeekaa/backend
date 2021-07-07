@@ -33,7 +33,7 @@ func NewGetAllMemberAccessRefUsecase(
 		getAllMemberAccessRefRepo,
 		&model.MemberAccessRefOptionsInput{
 			MemberAccessRefAccesses: &model.MemberAccessRefAccessesInput{
-				MemberAccessRefRead: func(b bool) *bool { return &b }(true),
+				MemberAccessRefReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil

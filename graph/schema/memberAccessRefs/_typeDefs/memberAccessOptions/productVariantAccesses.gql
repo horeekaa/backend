@@ -1,0 +1,13 @@
+input ProductVariantAccessesInput {
+  productVariantCreate: Boolean
+  productVariantUpdate: Boolean
+  productVariantReadAll: Boolean
+  productVariantApproval: Boolean
+}
+
+type ProductVariantAccesses {
+  productVariantCreate: Boolean
+  productVariantUpdate: Boolean
+  productVariantReadAll: Boolean
+  productVariantApproval: Boolean
+}

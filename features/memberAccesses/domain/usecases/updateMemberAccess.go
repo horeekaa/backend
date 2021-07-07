@@ -24,7 +24,9 @@ type updateMemberAccessUsecase struct {
 	updateMemberAccessRepo        memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository
 	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository
-	updateMemberAccessIdentity    *model.MemberAccessRefOptionsInput
+
+	updateMemberAccessIdentity           *model.MemberAccessRefOptionsInput
+	acceptInvitationMemberAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewUpdateMemberAccessUsecase(
@@ -43,6 +45,11 @@ func NewUpdateMemberAccessUsecase(
 		&model.MemberAccessRefOptionsInput{
 			ManageMemberAccesses: &model.ManageMemberAccessesInput{
 				MemberAccessUpdate: func(b bool) *bool { return &b }(true),
+			},
+		},
+		&model.MemberAccessRefOptionsInput{
+			ManageMemberAccesses: &model.ManageMemberAccessesInput{
+				MemberAccessAcceptInvitation: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
@@ -88,23 +95,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
-	accMemberAccess, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              updateMmbAccessUcase.updateMemberAccessIdentity,
-			},
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
-			err,
-		)
-	}
-
 	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
@@ -134,6 +124,22 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 				422,
 				"/updateMemberAccessUsecase",
 				nil,
+			)
+		}
+		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
+		_, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+					Access:              updateMmbAccessUcase.acceptInvitationMemberAccessIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateMemberAccessUsecase",
+				err,
 			)
 		}
 
@@ -175,6 +181,23 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			)
 		}
 		return updateMemberAccessOutput, nil
+	}
+
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
+	accMemberAccess, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
+		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				Account:             &model.ObjectIDOnly{ID: &account.ID},
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Access:              updateMmbAccessUcase.updateMemberAccessIdentity,
+			},
+		},
+	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateMemberAccessUsecase",
+			err,
+		)
 	}
 
 	// if user is only going to approve proposal
