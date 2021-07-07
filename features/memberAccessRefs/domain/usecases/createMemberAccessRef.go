@@ -86,12 +86,10 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 		)
 	}
 
-	memberAccessRefTypeOrganizationsBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganizationsBased,
 				Access:              createMmbAccessRefUcase.createMemberAccessRefAccessIdentity,
 			},
 		},
