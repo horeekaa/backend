@@ -1,14 +1,15 @@
-
 input OrganizationAccessesInput {
-    OrganizationApproval: Boolean
-    OrganizationRead: Boolean
-    OrganizationCreate: Boolean
-    OrganizationUpdate: Boolean
+  organizationApproval: Boolean
+  organizationRead: Boolean
+  organizationCreate: Boolean
+  organizationUpdate: Boolean
+  organizationReadAll: Boolean
 }
 
 type OrganizationAccesses {
-    OrganizationApproval: Boolean
-    OrganizationRead: Boolean
-    OrganizationCreate: Boolean
-    OrganizationUpdate: Boolean
+  organizationApproval: Boolean
+  organizationRead: Boolean
+  organizationCreate: Boolean
+  organizationUpdate: Boolean
+  organizationReadAll: Boolean
 }

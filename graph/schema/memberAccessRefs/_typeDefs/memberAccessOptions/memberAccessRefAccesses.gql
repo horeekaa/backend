@@ -1,14 +1,15 @@
- 
 input MemberAccessRefAccessesInput {
-    MemberAccessRefApproval: Boolean
-    MemberAccessRefRead: Boolean
-    MemberAccessRefCreate: Boolean
-    MemberAccessRefUpdate: Boolean
+  memberAccessRefApproval: Boolean
+  memberAccessRefRead: Boolean
+  memberAccessRefCreate: Boolean
+  memberAccessRefUpdate: Boolean
+  memberAccessRefReadAll: Boolean
 }
 
 type MemberAccessRefAccesses {
-    MemberAccessRefApproval: Boolean
-    MemberAccessRefRead: Boolean
-    MemberAccessRefCreate: Boolean
-    MemberAccessRefUpdate: Boolean
+  memberAccessRefApproval: Boolean
+  memberAccessRefRead: Boolean
+  memberAccessRefCreate: Boolean
+  memberAccessRefUpdate: Boolean
+  memberAccessRefReadAll: Boolean
 }
