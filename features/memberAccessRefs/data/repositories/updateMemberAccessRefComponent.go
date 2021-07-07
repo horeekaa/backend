@@ -7,6 +7,7 @@ import (
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -14,14 +15,17 @@ import (
 
 type updateMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource             databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	mapProcessorUtility                   coreutilityinterfaces.MapProcessorUtility
 	updateMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefUsecaseComponent
 }
 
 func NewUpdateMemberAccessRefTransactionComponent(
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefTransactionComponent, error) {
 	return &updateMemberAccessRefTransactionComponent{
 		memberAccessRefDataSource: memberAccessRefDataSource,
+		mapProcessorUtility:       mapProcessorUtility,
 	}, nil
 }
 
@@ -58,10 +62,17 @@ func (updateMmbAccRefTrx *updateMemberAccessRefTransactionComponent) Transaction
 	fieldsToUpdateMemberAccessRef := &model.InternalUpdateMemberAccessRef{
 		ID: updateMemberAccessRef.ID,
 	}
-	jsonExistingOrg, _ := json.Marshal(existingMemberAccessRef)
-	jsonUpdateOrg, _ := json.Marshal(updateMemberAccessRef)
-	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateMemberAccessRef.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateMemberAccessRef.ProposedChanges)
+	jsonExisting, _ := json.Marshal(existingMemberAccessRef)
+	json.Unmarshal(jsonExisting, &fieldsToUpdateMemberAccessRef.ProposedChanges)
+
+	var updateMemberAccessRefMap map[string]interface{}
+	jsonUpdate, _ := json.Marshal(updateMemberAccessRef)
+	json.Unmarshal(jsonUpdate, &updateMemberAccessRefMap)
+
+	updateMmbAccRefTrx.mapProcessorUtility.RemoveNil(updateMemberAccessRefMap)
+
+	jsonUpdate, _ = json.Marshal(updateMemberAccessRefMap)
+	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccessRef.ProposedChanges)
 
 	if updateMemberAccessRef.RecentApprovingAccount != nil &&
 		updateMemberAccessRef.ProposalStatus != nil {

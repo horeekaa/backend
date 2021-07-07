@@ -7,6 +7,7 @@ import (
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -14,14 +15,17 @@ import (
 
 type updateOrganizationTransactionComponent struct {
 	organizationDataSource             databaseorganizationdatasourceinterfaces.OrganizationDataSource
+	mapProcessorUtility                coreutilityinterfaces.MapProcessorUtility
 	updateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.UpdateOrganizationUsecaseComponent
 }
 
 func NewUpdateOrganizationTransactionComponent(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (organizationdomainrepositoryinterfaces.UpdateOrganizationTransactionComponent, error) {
 	return &updateOrganizationTransactionComponent{
 		organizationDataSource: organizationDataSource,
+		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -58,10 +62,17 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	fieldsToUpdateOrganization := &model.InternalUpdateOrganization{
 		ID: updateOrganization.ID,
 	}
-	jsonExistingOrg, _ := json.Marshal(existingOrganization)
-	jsonUpdateOrg, _ := json.Marshal(updateOrganization)
-	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateOrganization.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateOrganization.ProposedChanges)
+	jsonExisting, _ := json.Marshal(existingOrganization)
+	json.Unmarshal(jsonExisting, &fieldsToUpdateOrganization.ProposedChanges)
+
+	var updateOrganizationMap map[string]interface{}
+	jsonUpdate, _ := json.Marshal(updateOrganization)
+	json.Unmarshal(jsonUpdate, &updateOrganizationMap)
+
+	updateOrgTrx.mapProcessorUtility.RemoveNil(updateOrganizationMap)
+
+	jsonUpdate, _ = json.Marshal(updateOrganizationMap)
+	json.Unmarshal(jsonUpdate, &fieldsToUpdateOrganization.ProposedChanges)
 
 	if updateOrganization.RecentApprovingAccount != nil &&
 		updateOrganization.ProposalStatus != nil {

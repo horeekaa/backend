@@ -116,10 +116,17 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 	fieldsToUpdateMemberAccess := &model.InternalUpdateMemberAccess{
 		ID: updateMemberAccess.ID,
 	}
-	jsonExistingOrg, _ := json.Marshal(existingMemberAccess)
-	jsonUpdateOrg, _ := json.Marshal(updateMemberAccess)
-	json.Unmarshal(jsonExistingOrg, &fieldsToUpdateMemberAccess.ProposedChanges)
-	json.Unmarshal(jsonUpdateOrg, &fieldsToUpdateMemberAccess.ProposedChanges)
+	jsonExisting, _ := json.Marshal(existingMemberAccess)
+	json.Unmarshal(jsonExisting, &fieldsToUpdateMemberAccess.ProposedChanges)
+
+	var updateMemberAccessMap map[string]interface{}
+	jsonUpdate, _ := json.Marshal(updateMemberAccess)
+	json.Unmarshal(jsonUpdate, &updateMemberAccessMap)
+
+	updateMmbAccForAccountTrx.mapProcessorUtility.RemoveNil(updateMemberAccessMap)
+
+	jsonUpdate, _ = json.Marshal(updateMemberAccessMap)
+	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccess.ProposedChanges)
 
 	if updateMemberAccess.RecentApprovingAccount != nil &&
 		updateMemberAccess.ProposalStatus != nil {
