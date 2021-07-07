@@ -33,7 +33,7 @@ func NewGetAllOrganizationUsecase(
 		getAllOrganizationRepo,
 		&model.MemberAccessRefOptionsInput{
 			OrganizationAccesses: &model.OrganizationAccessesInput{
-				OrganizationRead: func(b bool) *bool { return &b }(true),
+				OrganizationReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil

@@ -31,7 +31,7 @@ func NewGetAllMemberAccessUsecase(
 		getAllMemberAccessRepo,
 		&model.MemberAccessRefOptionsInput{
 			ManageMemberAccesses: &model.ManageMemberAccessesInput{
-				MemberAccessRead: func(b bool) *bool { return &b }(true),
+				MemberAccessReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
