@@ -14,10 +14,12 @@ import (
 )
 
 type getAllMemberAccessUsecase struct {
-	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getAllMemberAccessRepo           memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository
-	getAllMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAllMemberAccessRepo     memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository
+
+	getAllMemberAccessAccessIdentity   *model.MemberAccessRefOptionsInput
+	getOwnedMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllMemberAccessUsecase(
@@ -32,6 +34,11 @@ func NewGetAllMemberAccessUsecase(
 		&model.MemberAccessRefOptionsInput{
 			ManageMemberAccesses: &model.ManageMemberAccessesInput{
 				MemberAccessReadAll: func(b bool) *bool { return &b }(true),
+			},
+		},
+		&model.MemberAccessRefOptionsInput{
+			ManageMemberAccesses: &model.ManageMemberAccessesInput{
+				MemberAccessReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
@@ -79,13 +86,14 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 	}
 
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
-	_, err = getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
+	memberAccess, err := getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Access:              getAllMmbAccUcase.getAllMemberAccessAccessIdentity,
 			},
+			QueryMode: true,
 		},
 	)
 	if err != nil {
@@ -93,6 +101,28 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 			"/getAllMemberAccessUsecase",
 			err,
 		)
+	}
+	if memberAccess == nil {
+		memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
+		_, err := getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+					Access:              getAllMmbAccUcase.getOwnedMemberAccessAccessIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/getAllMemberAccessUsecase",
+				err,
+			)
+		}
+
+		validatedInput.FilterFields.Account = &model.ObjectIDOnly{
+			ID: &account.ID,
+		}
 	}
 
 	memberAccesses, err := getAllMmbAccUcase.getAllMemberAccessRepo.Execute(

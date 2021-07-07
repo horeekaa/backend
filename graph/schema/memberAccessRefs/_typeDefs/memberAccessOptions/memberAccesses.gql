@@ -1,6 +1,6 @@
 input ManageMemberAccessesInput {
   memberAccessCreate: Boolean
-  memberAccessRead: Boolean
+  memberAccessReadOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean
   memberAccessAcceptInvitation: Boolean
@@ -9,7 +9,7 @@ input ManageMemberAccessesInput {
 
 type ManageMemberAccesses {
   memberAccessCreate: Boolean
-  memberAccessRead: Boolean
+  memberAccessReadOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean
   memberAccessAcceptInvitation: Boolean
