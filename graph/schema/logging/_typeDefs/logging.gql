@@ -1,44 +1,47 @@
 enum LoggedActivity {
-    CREATE
-    UPDATE
-    DELETE
+  CREATE
+  UPDATE
+  DELETE
 }
 
 input CreateLogging {
-	collection: String!
-    changeLog: String!
-    createdByAccount: ObjectIDOnly!
-    activity: LoggedActivity!
-    proposalStatus: EntityProposalStatus!
-    createdAt: Time
+  collection: String!
+  document: ObjectIDOnly!
+  fieldChanges: [FieldChangeDataInput]!
+  createdByAccount: ObjectIDOnly!
+  activity: LoggedActivity!
+  proposalStatus: EntityProposalStatus!
+  createdAt: Time
 }
 
 input UpdateLogging {
-    _id: ObjectID!
-    collection: String
-    changeLog: String
-    createdByAccount: ObjectIDOnly
-    activity: LoggedActivity
-    proposalStatus: EntityProposalStatus
-    updatedAt: Time
+  _id: ObjectID!
+  collection: String
+  document: ObjectIDOnly
+  fieldChanges: [FieldChangeDataInput]
+  createdByAccount: ObjectIDOnly
+  activity: LoggedActivity
+  proposalStatus: EntityProposalStatus
+  updatedAt: Time
 }
 
 input LoggingFilterFields {
-    _id: ObjectID
-    collection: String
-    changeLog: String
-    createdByAccount: ObjectIDOnly
-    activity: LoggedActivity
-    proposalStatus: EntityProposalStatus
+  _id: ObjectID
+  collection: String
+  document: ObjectIDOnly
+  createdByAccount: ObjectIDOnly
+  activity: LoggedActivity
+  proposalStatus: EntityProposalStatus
 }
 
 type Logging {
-    _id: ObjectID!
-    collection: String!
-    changeLog: String!
-    createdByAccount: Account!
-    activity: LoggedActivity!
-    proposalStatus: EntityProposalStatus!
-    createdAt: Time
-    updatedAt: Time
+  _id: ObjectID!
+  collection: String!
+  document: ObjectIDOnlyOutput!
+  fieldChanges: [FieldChangeData]!
+  createdByAccount: Account!
+  activity: LoggedActivity!
+  proposalStatus: EntityProposalStatus!
+  createdAt: Time
+  updatedAt: Time
 }

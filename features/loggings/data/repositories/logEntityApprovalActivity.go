@@ -1,7 +1,7 @@
 package loggingdomainrepositories
 
 import (
-	"fmt"
+	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -59,46 +59,23 @@ func (logEntityApprovalActivity *logEntityApprovalActivity) Execute(
 		)
 	}
 
-	changeLogString := ""
-	switch validatedInput.ApprovalStatus {
-	case model.EntityProposalStatusRejected:
-		changeLogString = fmt.Sprintf(
-			"%v rejected the following changes to collection %s:\n%s",
-			validatedInput.ApproverInitial,
-			previousLog.Collection,
-			previousLog.ChangeLog,
-		)
-		break
-
-	case model.EntityProposalStatusApproved:
-		changeLogString = fmt.Sprintf(
-			"%v approved the following changes to collection %s:\n%s",
-			validatedInput.ApproverInitial,
-			previousLog.Collection,
-			previousLog.ChangeLog,
-		)
-		break
-
-	case model.EntityProposalStatusRevisionNeeded:
-		changeLogString = fmt.Sprintf(
-			"%v asked revision for the following changes to collection %s:\n%s",
-			validatedInput.ApproverInitial,
-			previousLog.Collection,
-			previousLog.ChangeLog,
-		)
-		break
+	logToCreate := &model.CreateLogging{
+		Collection: previousLog.Collection,
+		CreatedByAccount: &model.ObjectIDOnly{
+			ID: &validatedInput.ApprovingAccount.ID,
+		},
+		Activity:       previousLog.Activity,
+		ProposalStatus: validatedInput.ApprovalStatus,
 	}
+	jsonTemp, _ := json.Marshal(
+		map[string]interface{}{
+			"FieldChanges": previousLog.FieldChanges,
+		},
+	)
+	json.Unmarshal(jsonTemp, logToCreate)
 
 	createdLog, err := logEntityApprovalActivity.loggingDataSource.GetMongoDataSource().Create(
-		&model.CreateLogging{
-			Collection: previousLog.Collection,
-			ChangeLog:  changeLogString,
-			CreatedByAccount: &model.ObjectIDOnly{
-				ID: &validatedInput.ApprovingAccount.ID,
-			},
-			Activity:       previousLog.Activity,
-			ProposalStatus: validatedInput.ApprovalStatus,
-		},
+		logToCreate,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {

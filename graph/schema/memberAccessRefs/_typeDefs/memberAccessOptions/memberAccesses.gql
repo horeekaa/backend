@@ -1,14 +1,17 @@
-
 input ManageMemberAccessesInput {
-    memberAccessCreate: Boolean
-    memberAccessRead: Boolean
-    memberAccessUpdate: Boolean
-    memberAccessApproval: Boolean
+  memberAccessCreate: Boolean
+  memberAccessReadOwned: Boolean
+  memberAccessUpdate: Boolean
+  memberAccessApproval: Boolean
+  memberAccessAcceptInvitation: Boolean
+  memberAccessReadAll: Boolean
 }
 
 type ManageMemberAccesses {
-    memberAccessCreate: Boolean
-    memberAccessRead: Boolean
-    memberAccessUpdate: Boolean
-    memberAccessApproval: Boolean
+  memberAccessCreate: Boolean
+  memberAccessReadOwned: Boolean
+  memberAccessUpdate: Boolean
+  memberAccessApproval: Boolean
+  memberAccessAcceptInvitation: Boolean
+  memberAccessReadAll: Boolean
 }

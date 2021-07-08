@@ -27,20 +27,6 @@ func (r *memberAccessResolver) Account(ctx context.Context, obj *model.MemberAcc
 	)
 }
 
-func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
-	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
-	container.Make(&getOrganizationUsecase)
-
-	var filterFields *model.OrganizationFilterFields
-	if obj.Organization != nil {
-		filterFields = &model.OrganizationFilterFields{}
-		filterFields.ID = &obj.Organization.ID
-	}
-	return getOrganizationUsecase.Execute(
-		filterFields,
-	)
-}
-
 func (r *memberAccessResolver) OrganizationLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
 	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
 	container.Make(&getOrganizationUsecase)
@@ -51,20 +37,6 @@ func (r *memberAccessResolver) OrganizationLatestUpdate(ctx context.Context, obj
 		filterFields.ID = &obj.OrganizationLatestUpdate.ID
 	}
 	return getOrganizationUsecase.Execute(
-		filterFields,
-	)
-}
-
-func (r *memberAccessResolver) DefaultAccess(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccessRef, error) {
-	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
-	container.Make(&getMemberAccessRefUsecase)
-
-	var filterFields *model.MemberAccessRefFilterFields
-	if obj.DefaultAccessLatestUpdate != nil {
-		filterFields = &model.MemberAccessRefFilterFields{}
-		filterFields.ID = &obj.DefaultAccessLatestUpdate.ID
-	}
-	return getMemberAccessRefUsecase.Execute(
 		filterFields,
 	)
 }
@@ -89,43 +61,28 @@ func (r *memberAccessResolver) SubmittingAccount(ctx context.Context, obj *model
 	)
 }
 
-func (r *memberAccessResolver) ApprovingAccount(ctx context.Context, obj *model.MemberAccess) (*model.Account, error) {
+func (r *memberAccessResolver) RecentApprovingAccount(ctx context.Context, obj *model.MemberAccess) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
 
 	var filterFields *model.AccountFilterFields
-	if obj.ApprovingAccount != nil {
+	if obj.RecentApprovingAccount != nil {
 		filterFields = &model.AccountFilterFields{}
-		filterFields.ID = &obj.ApprovingAccount.ID
-
+		filterFields.ID = &obj.RecentApprovingAccount.ID
 	}
 	return getAccountUsecase.Execute(
 		filterFields,
 	)
 }
 
-func (r *memberAccessResolver) PreviousEntity(ctx context.Context, obj *model.MemberAccess) (*model.MemberAccess, error) {
-	var getMemberAccessUsecase memberaccesspresentationusecaseinterfaces.GetMemberAccessUsecase
-	container.Make(&getMemberAccessUsecase)
-
-	var filterFields *model.MemberAccessFilterFields
-	if obj.PreviousEntity != nil {
-		filterFields = &model.MemberAccessFilterFields{}
-		filterFields.ID = &obj.PreviousEntity.ID
-	}
-	return getMemberAccessUsecase.Execute(
-		filterFields,
-	)
-}
-
-func (r *memberAccessResolver) CorrespondingLog(ctx context.Context, obj *model.MemberAccess) (*model.Logging, error) {
+func (r *memberAccessResolver) RecentLog(ctx context.Context, obj *model.MemberAccess) (*model.Logging, error) {
 	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
 	container.Make(&getLoggingUsecase)
 
 	var filterFields *model.LoggingFilterFields
-	if obj.CorrespondingLog != nil {
+	if obj.RecentLog != nil {
 		filterFields = &model.LoggingFilterFields{}
-		filterFields.ID = &obj.CorrespondingLog.ID
+		filterFields.ID = &obj.RecentLog.ID
 
 	}
 	return getLoggingUsecase.Execute(

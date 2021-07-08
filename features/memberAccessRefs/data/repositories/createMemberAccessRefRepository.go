@@ -1,6 +1,8 @@
 package memberaccessrefdomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
@@ -29,8 +31,8 @@ func (createMmbAccRefRepo *createMemberAccessRefRepository) SetValidation(
 }
 
 func (createMmbAccRefRepo *createMemberAccessRefRepository) preExecute(
-	input *model.CreateMemberAccessRef,
-) (*model.CreateMemberAccessRef, error) {
+	input *model.InternalCreateMemberAccessRef,
+) (*model.InternalCreateMemberAccessRef, error) {
 	if createMmbAccRefRepo.createMemberAccessRefUsecaseComponent == nil {
 		return input, nil
 	}
@@ -38,14 +40,16 @@ func (createMmbAccRefRepo *createMemberAccessRefRepository) preExecute(
 }
 
 func (createMmbAccRefRepo *createMemberAccessRefRepository) Execute(
-	input *model.CreateMemberAccessRef,
+	input *model.InternalCreateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
 	validatedInput, err := createMmbAccRefRepo.preExecute(input)
 	if err != nil {
 		return nil, err
 	}
+	jsonTemp, _ := json.Marshal(validatedInput)
+	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
 
-	newMemberMmbRefRepo, err := createMmbAccRefRepo.memberAccessRefDataSource.GetMongoDataSource().Create(
+	newMemberAccessRef, err := createMmbAccRefRepo.memberAccessRefDataSource.GetMongoDataSource().Create(
 		validatedInput,
 		&mongodbcoretypes.OperationOptions{},
 	)
@@ -55,5 +59,5 @@ func (createMmbAccRefRepo *createMemberAccessRefRepository) Execute(
 			err,
 		)
 	}
-	return newMemberMmbRefRepo, nil
+	return newMemberAccessRef, nil
 }

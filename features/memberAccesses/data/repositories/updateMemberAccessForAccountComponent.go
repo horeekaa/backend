@@ -11,38 +11,41 @@ import (
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
-	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
 type updateMemberAccessForAccountComponent struct {
 	memberAccessDataSource    databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	organizationDataSource    databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewUpdateMemberAccessForAccountTransactionComponent(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent, error) {
 	return &updateMemberAccessForAccountComponent{
 		memberAccessDataSource,
 		memberAccessRefDataSource,
+		organizationDataSource,
 		mapProcessorUtility,
 	}, nil
 }
 
 func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) PreTransaction(
-	input *model.UpdateMemberAccess,
-) (*model.UpdateMemberAccess, error) {
+	input *model.InternalUpdateMemberAccess,
+) (*model.InternalUpdateMemberAccess, error) {
 	return input, nil
 }
 
 func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMemberAccess *model.UpdateMemberAccess,
-) (*memberaccessdomainrepositorytypes.UpdateMemberAccessOutput, error) {
+	updateMemberAccess *model.InternalUpdateMemberAccess,
+) (*model.MemberAccess, error) {
 	existingMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccess.ID,
 		session,
@@ -64,6 +67,21 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 	}
 	if updateMemberAccess.Organization != nil {
 		queryMap["organizationType"] = *updateMemberAccess.Organization.Type
+
+		orgToUpdate, err := updateMmbAccForAccountTrx.organizationDataSource.GetMongoDataSource().FindByID(
+			updateMemberAccess.Organization.ID,
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateMemberAccess",
+				err,
+			)
+		}
+
+		jsonTemp, _ := json.Marshal(orgToUpdate)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.Organization)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.OrganizationLatestUpdate)
 	}
 
 	if queryMap["organizationMembershipRole"] != nil || queryMap["organizationType"] != nil {
@@ -84,74 +102,51 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 				nil,
 			)
 		}
-		var accessInput model.MemberAccessRefOptionsInput
 		jsonTemp, _ := json.Marshal(memberAccessRef.Access)
-		json.Unmarshal(jsonTemp, &accessInput)
-		updateMemberAccess.Access = &accessInput
-		updateMemberAccess.DefaultAccess = &model.ObjectIDOnly{ID: &memberAccessRef.ID}
+		json.Unmarshal(jsonTemp, &updateMemberAccess.Access)
+
+		jsonTemp, _ = json.Marshal(memberAccessRef)
+		json.Unmarshal(jsonTemp, &updateMemberAccess.DefaultAccess)
+
+		updateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
+			ID: &memberAccessRef.ID,
+		}
 	}
 
-	if updateMemberAccess.ApprovingAccount != nil &&
-		updateMemberAccess.ProposalStatus != nil {
-		updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
-			existingMemberAccess.ID,
-			updateMemberAccess,
-			session,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateMemberAccess",
-				err,
-			)
-		}
-
-		if existingMemberAccess.PreviousEntity != nil &&
-			*updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-			replacedProposalStatus := model.EntityProposalStatusReplaced
-			previousMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
-				existingMemberAccess.PreviousEntity.ID,
-				&model.UpdateMemberAccess{
-					ProposalStatus: &replacedProposalStatus,
-				},
-				session,
-			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateMemberAccess",
-					err,
-				)
-			}
-			return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-				PreviousMemberAccess: previousMemberAccess,
-				UpdatedMemberAccess:  updatedMemberAccess,
-			}, nil
-		}
-
-		return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-			PreviousMemberAccess: existingMemberAccess,
-			UpdatedMemberAccess:  updatedMemberAccess,
-		}, nil
+	fieldsToUpdateMemberAccess := &model.InternalUpdateMemberAccess{
+		ID: updateMemberAccess.ID,
 	}
-
-	var combinedMemberAccess model.CreateMemberAccess
-	ja, _ := json.Marshal(existingMemberAccess)
-	json.Unmarshal(ja, &combinedMemberAccess)
+	jsonExisting, _ := json.Marshal(existingMemberAccess)
+	json.Unmarshal(jsonExisting, &fieldsToUpdateMemberAccess.ProposedChanges)
 
 	var updateMemberAccessMap map[string]interface{}
-	jsonTemp, _ := json.Marshal(updateMemberAccess)
-	json.Unmarshal(jsonTemp, &updateMemberAccessMap)
+	jsonUpdate, _ := json.Marshal(updateMemberAccess)
+	json.Unmarshal(jsonUpdate, &updateMemberAccessMap)
 
 	updateMmbAccForAccountTrx.mapProcessorUtility.RemoveNil(updateMemberAccessMap)
 
-	jb, _ := json.Marshal(updateMemberAccessMap)
-	json.Unmarshal(jb, &combinedMemberAccess)
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	combinedMemberAccess.ProposalStatus = &proposedProposalStatus
+	jsonUpdate, _ = json.Marshal(updateMemberAccessMap)
+	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccess.ProposedChanges)
 
-	combinedMemberAccess.PreviousEntity = &model.ObjectIDOnly{ID: &existingMemberAccess.ID}
+	if updateMemberAccess.RecentApprovingAccount != nil &&
+		updateMemberAccess.ProposalStatus != nil {
+		if existingMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusRejected {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.NothingToBeApproved,
+				"/updateMemberAccess",
+				nil,
+			)
+		}
 
-	updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Create(
-		&combinedMemberAccess,
+		if *updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonTemp, _ := json.Marshal(fieldsToUpdateMemberAccess.ProposedChanges)
+			json.Unmarshal(jsonTemp, fieldsToUpdateMemberAccess)
+		}
+	}
+
+	updatedMemberAccess, err := updateMmbAccForAccountTrx.memberAccessDataSource.GetMongoDataSource().Update(
+		fieldsToUpdateMemberAccess.ID,
+		fieldsToUpdateMemberAccess,
 		session,
 	)
 	if err != nil {
@@ -161,8 +156,5 @@ func (updateMmbAccForAccountTrx *updateMemberAccessForAccountComponent) Transact
 		)
 	}
 
-	return &memberaccessdomainrepositorytypes.UpdateMemberAccessOutput{
-		PreviousMemberAccess: existingMemberAccess,
-		UpdatedMemberAccess:  updatedMemberAccess,
-	}, nil
+	return updatedMemberAccess, nil
 }

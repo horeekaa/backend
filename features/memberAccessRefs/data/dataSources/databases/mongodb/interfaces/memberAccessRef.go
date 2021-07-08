@@ -14,6 +14,6 @@ type MemberAccessRefDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.MemberAccessRef, error)
-	Create(input *model.CreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
-	Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
+	Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
+	Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
 }

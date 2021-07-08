@@ -35,6 +35,8 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
 
 	horeekaacorefailureenums.ExistingObjectAndItsIDMustNotBeNilForUpdateActivity: true,
+
+	horeekaacorefailureenums.NothingToBeApproved: true,
 }
 
 var generalError = map[string]bool{

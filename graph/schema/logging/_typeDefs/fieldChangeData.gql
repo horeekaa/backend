@@ -1,0 +1,13 @@
+input FieldChangeDataInput {
+  name: String!
+  type: String!
+  oldValue: String!
+  newValue: String!
+}
+
+type FieldChangeData {
+  name: String!
+  type: String!
+  oldValue: String!
+  newValue: String!
+}

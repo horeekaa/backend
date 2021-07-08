@@ -13,10 +13,21 @@ input CreateOrganization {
   profilePhotos: [ObjectIDOnly]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateOrganization {
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [ObjectIDOnly]
+  taxIdentification: NewIDCard
+  proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
-  approvingAccount: ObjectIDOnly
-  previousEntity: ObjectIDOnly
-  correspondingLog: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateOrganization
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -32,10 +43,6 @@ input UpdateOrganization {
   unfinalizedPoint: Int
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
-  submittingAccount: ObjectIDOnly
-  approvingAccount: ObjectIDOnly
-  correspondingLog: ObjectIDOnly
-  updatedAt: Time
 }
 
 input InternalUpdateOrganization {
@@ -51,8 +58,9 @@ input InternalUpdateOrganization {
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
-  approvingAccount: ObjectIDOnly
-  correspondingLog: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateOrganization
   updatedAt: Time
 }
 
@@ -71,9 +79,9 @@ input OrganizationFilterFields {
   ratingDescription: String
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
-  approvingAccount: ObjectIDOnly
-  previousEntity: ObjectIDOnly
-  correspondingLog: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: ObjectIDOnly
+  recentLog: ObjectIDOnly
 }
 
 type Organization {
@@ -90,9 +98,9 @@ type Organization {
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!
-  approvingAccount: Account
-  previousEntity: Organization
-  correspondingLog: Logging!
+  recentApprovingAccount: Account
+  proposedChanges: Organization
+  recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }

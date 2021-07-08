@@ -87,10 +87,13 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		}
 
 		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
-			&model.CreateMemberAccess{
+			&model.InternalCreateMemberAccess{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
 				InvitationAccepted:  func(b bool) *bool { return &b }(true),
+				ProposalStatus: func(ps model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &ps
+				}(model.EntityProposalStatusApproved),
 			},
 		)
 		if err != nil {

@@ -1,6 +1,8 @@
 package organizationdomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -29,8 +31,8 @@ func (createOrgRepo *createOrganizationRepository) SetValidation(
 }
 
 func (createOrgRepo *createOrganizationRepository) preExecute(
-	input *model.CreateOrganization,
-) (*model.CreateOrganization, error) {
+	input *model.InternalCreateOrganization,
+) (*model.InternalCreateOrganization, error) {
 	if createOrgRepo.createOrganizationUsecaseComponent == nil {
 		return input, nil
 	}
@@ -38,12 +40,14 @@ func (createOrgRepo *createOrganizationRepository) preExecute(
 }
 
 func (createOrgRepo *createOrganizationRepository) Execute(
-	input *model.CreateOrganization,
+	input *model.InternalCreateOrganization,
 ) (*model.Organization, error) {
 	validatedInput, err := createOrgRepo.preExecute(input)
 	if err != nil {
 		return nil, err
 	}
+	jsonTemp, _ := json.Marshal(validatedInput)
+	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
 
 	newOrganization, err := createOrgRepo.organizationDataSource.GetMongoDataSource().Create(
 		validatedInput,

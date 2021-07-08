@@ -11,6 +11,7 @@ import (
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -18,6 +19,7 @@ type createMemberAccessForAccountRepository struct {
 	accountDataSource                            databaseaccountdatasourceinterfaces.AccountDataSource
 	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	memberAccessRefDataSource                    databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	organizationDataSource                       databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	createMemberAccessForAccountUsecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountUsecaseComponent
 }
 
@@ -25,11 +27,13 @@ func NewCreateMemberAccessForAccountRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 ) (memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository, error) {
 	return &createMemberAccessForAccountRepository{
 		accountDataSource:         accountDataSource,
 		memberAccessDataSource:    memberAccessDataSource,
 		memberAccessRefDataSource: memberAccessRefDataSource,
+		organizationDataSource:    organizationDataSource,
 	}, nil
 }
 
@@ -41,8 +45,8 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) SetValidat
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute(
-	createMemberAccess *model.CreateMemberAccess,
-) (*model.CreateMemberAccess, error) {
+	createMemberAccess *model.InternalCreateMemberAccess,
+) (*model.InternalCreateMemberAccess, error) {
 	if &createMemberAccess.Account.ID == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
@@ -68,7 +72,7 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) preExecute
 }
 
 func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
-	createMemberAccess *model.CreateMemberAccess,
+	createMemberAccess *model.InternalCreateMemberAccess,
 ) (*model.MemberAccess, error) {
 	validatedCreateMemberAccess, err := createMbrAccForAccount.preExecute(createMemberAccess)
 	if err != nil {
@@ -91,6 +95,20 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 		if validatedCreateMemberAccess.Organization.Type != nil {
 			queryMap["organizationType"] = *validatedCreateMemberAccess.Organization.Type
 		}
+		orgToAdd, err := createMbrAccForAccount.organizationDataSource.GetMongoDataSource().FindByID(
+			validatedCreateMemberAccess.Organization.ID,
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createMemberAccess",
+				err,
+			)
+		}
+
+		jsonTemp, _ := json.Marshal(orgToAdd)
+		json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.Organization)
+		json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.OrganizationLatestUpdate)
 	}
 	if validatedCreateMemberAccess.OrganizationMembershipRole != nil {
 		queryMap["organizationMembershipRole"] = *validatedCreateMemberAccess.OrganizationMembershipRole
@@ -113,24 +131,29 @@ func (createMbrAccForAccount *createMemberAccessForAccountRepository) Execute(
 			nil,
 		)
 	}
-	var accesscreateMemberAccess model.MemberAccessRefOptionsInput
 	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
-	json.Unmarshal(jsonTemp, &accesscreateMemberAccess)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.Access)
 
-	validatedCreateMemberAccess.Access = &accesscreateMemberAccess
 	validatedCreateMemberAccess.Status = model.MemberAccessStatusActive
-	validatedCreateMemberAccess.DefaultAccess = &model.ObjectIDOnly{ID: &memberAccessRef.ID}
 
-	memberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
+	jsonTemp, _ = json.Marshal(memberAccessRef)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.DefaultAccess)
+	validatedCreateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
+		ID: &memberAccessRef.ID,
+	}
+
+	jsonTemp, _ = json.Marshal(validatedCreateMemberAccess)
+	json.Unmarshal(jsonTemp, &validatedCreateMemberAccess.ProposedChanges)
+
+	newMemberAccess, err := createMbrAccForAccount.memberAccessDataSource.GetMongoDataSource().Create(
 		validatedCreateMemberAccess,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccessForAccount",
+			"/createMemberAccess",
 			err,
 		)
 	}
-
-	return memberAccess, nil
+	return newMemberAccess, nil
 }

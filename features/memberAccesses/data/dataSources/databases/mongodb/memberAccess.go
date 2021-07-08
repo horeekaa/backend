@@ -68,7 +68,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 	return memberAccesses, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.CreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.InternalCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -86,7 +86,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 	return &outputModel, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	updateData.ID = ID
 	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -106,15 +106,15 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive
 }
 
 type setMemberAccessDefaultValuesOutput struct {
-	CreateMemberAccess *model.CreateMemberAccess
-	UpdateMemberAccess *model.UpdateMemberAccess
+	CreateMemberAccess *model.InternalCreateMemberAccess
+	UpdateMemberAccess *model.InternalUpdateMemberAccess
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessDefaultValuesOutput, error) {
 	var currentTime = time.Now()
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.UpdateMemberAccess)
+		updateInput := input.(model.InternalUpdateMemberAccess)
 		_, err := memberAccDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -125,7 +125,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(in
 			UpdateMemberAccess: &updateInput,
 		}, nil
 	}
-	createInput := (input).(model.CreateMemberAccess)
+	createInput := (input).(model.InternalCreateMemberAccess)
 	if createInput.InvitationAccepted == nil {
 		createInput.InvitationAccepted = func(b bool) *bool { return &b }(false)
 	}

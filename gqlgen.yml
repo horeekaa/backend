@@ -49,11 +49,7 @@ models:
         resolver: true
   MemberAccess:
     fields:
-      defaultAccess:
-        resolver: true
       defaultAccessLatestUpdate:
-        resolver: true
-      organization:
         resolver: true
       organizationLatestUpdate:
         resolver: true
@@ -61,11 +57,9 @@ models:
         resolver: true
       submittingAccount:
         resolver: true
-      approvingAccount:
+      recentApprovingAccount:
         resolver: true
-      previousEntity:
-        resolver: true
-      correspondingLog:
+      recentLog:
         resolver: true
   Logging:
     fields:
@@ -75,21 +69,17 @@ models:
     fields:
       submittingAccount:
         resolver: true
-      approvingAccount:
+      recentApprovingAccount:
         resolver: true
-      previousEntity:
-        resolver: true
-      correspondingLog:
+      recentLog:
         resolver: true
   Organization:
     fields:
       submittingAccount:
         resolver: true
-      approvingAccount:
+      recentApprovingAccount:
         resolver: true
-      previousEntity:
-        resolver: true
-      correspondingLog:
+      recentLog:
         resolver: true
 
   ID:

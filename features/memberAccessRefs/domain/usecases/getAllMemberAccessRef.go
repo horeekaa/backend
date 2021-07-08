@@ -33,7 +33,7 @@ func NewGetAllMemberAccessRefUsecase(
 		getAllMemberAccessRefRepo,
 		&model.MemberAccessRefOptionsInput{
 			MemberAccessRefAccesses: &model.MemberAccessRefAccessesInput{
-				MemberAccessRefRead: func(b bool) *bool { return &b }(true),
+				MemberAccessRefReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
@@ -80,13 +80,11 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 		)
 	}
 
-	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllMmbAccRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
+				Account: &model.ObjectIDOnly{ID: &account.ID},
+				Access:  getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
 			},
 		},
 	)

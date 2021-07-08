@@ -1,0 +1,13 @@
+input DescriptivePhotoAccessesInput {
+  descriptivePhotoCreate: Boolean
+  descriptivePhotoUpdate: Boolean
+  descriptivePhotoRead: Boolean
+  descriptivePhotoReadAll: Boolean
+}
+
+type DescriptivePhotoAccesses {
+  descriptivePhotoCreate: Boolean
+  descriptivePhotoUpdate: Boolean
+  descriptivePhotoRead: Boolean
+  descriptivePhotoReadAll: Boolean
+}

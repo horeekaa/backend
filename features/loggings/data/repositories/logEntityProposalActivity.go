@@ -2,6 +2,7 @@ package loggingdomainrepositories
 
 import (
 	"fmt"
+	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
@@ -56,15 +57,7 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 	if err != nil {
 		return nil, err
 	}
-	var changeLogString interface{} = ""
-	creatorInitial := fmt.Sprintf("%s ", validatedInput.CreatorInitial)
-	if validatedInput.ProposalStatus == model.EntityProposalStatusApproved {
-		changeLogString = fmt.Sprintf(
-			"%s approved the ",
-			creatorInitial,
-		)
-		creatorInitial = "self-"
-	}
+	fieldChanges := []*model.FieldChangeDataInput{}
 
 	switch validatedInput.Activity {
 	case model.LoggedActivityUpdate:
@@ -75,74 +68,74 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 				nil,
 			)
 		}
-		existingIDValue := *validatedInput.ExistingObjectID
-		changeLogString = fmt.Sprintf(
-			"%s %sproposed changes to %s with id **%s to the followings:\n",
-			changeLogString,
-			creatorInitial,
-			validatedInput.CollectionName,
-			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
-		)
 
 		logEttPrpsalActivity.structComparisonUtility.SetComparisonFunc(
-			func(tag interface{}, field1 interface{}, field2 interface{}, logString *interface{}) {
+			func(tag interface{}, field1 interface{}, field2 interface{}, tagString *interface{}) {
 				if field1 == field2 {
 					return
 				}
-				*logString = fmt.Sprintf(
-					"%v%v from %v to %v\n",
-					*logString,
+				*tagString = fmt.Sprintf(
+					"%v%v",
+					*tagString,
 					tag,
-					field2,
-					field1,
 				)
+
+				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
+					Name:     fmt.Sprint(*tagString),
+					Type:     reflect.TypeOf(field1).Kind().String(),
+					OldValue: fmt.Sprint(field2),
+					NewValue: fmt.Sprint(field1),
+				})
+				*tagString = ""
 			},
 		)
 		logEttPrpsalActivity.structComparisonUtility.SetPreDeepComparisonFunc(
-			func(tag interface{}, logString *interface{}) {
-				*logString = fmt.Sprintf(
+			func(tag interface{}, tagString *interface{}) {
+				*tagString = fmt.Sprintf(
 					"%v%v.",
-					*logString,
+					*tagString,
 					tag,
 				)
 			},
 		)
+		var tagString interface{} = ""
 		logEttPrpsalActivity.structComparisonUtility.CompareStructs(
 			*validatedInput.NewObject,
 			*validatedInput.ExistingObject,
-			&changeLogString,
+			&tagString,
 		)
 		break
 
 	case model.LoggedActivityCreate:
-		changeLogString = fmt.Sprintf(
-			"%s %sproposed creation to %s with the followings:\n",
-			changeLogString,
-			creatorInitial,
-			validatedInput.CollectionName,
-		)
 		logEttPrpsalActivity.structFieldIteratorUtility.SetIteratingFunc(
-			func(tag interface{}, field interface{}, logString *interface{}) {
-				*logString = fmt.Sprintf(
-					"%v%v with value %v\n",
-					*logString,
+			func(tag interface{}, field interface{}, tagString *interface{}) {
+				*tagString = fmt.Sprintf(
+					"%v%v",
+					*tagString,
 					tag,
-					field,
 				)
+
+				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
+					Name:     fmt.Sprint(*tagString),
+					Type:     reflect.TypeOf(field).Kind().String(),
+					NewValue: fmt.Sprint(field),
+				})
+				*tagString = ""
 			},
 		)
 		logEttPrpsalActivity.structFieldIteratorUtility.SetPreDeepIterateFunc(
-			func(tag interface{}, logString *interface{}) {
-				*logString = fmt.Sprintf(
+			func(tag interface{}, tagString *interface{}) {
+				*tagString = fmt.Sprintf(
 					"%v%v.",
-					*logString,
+					*tagString,
 					tag,
 				)
 			},
 		)
+		var tagString interface{} = ""
 		logEttPrpsalActivity.structFieldIteratorUtility.IterateStruct(
 			*validatedInput.NewObject,
-			&changeLogString,
+			&tagString,
 		)
 		break
 
@@ -154,21 +147,14 @@ func (logEttPrpsalActivity *logEntityProposalActivityRepository) Execute(
 				nil,
 			)
 		}
-		existingIDValue := *validatedInput.ExistingObjectID
-		changeLogString = fmt.Sprintf(
-			"%s %sproposed deletion to %s with id **%s\n",
-			changeLogString,
-			creatorInitial,
-			validatedInput.CollectionName,
-			string(existingIDValue[len(existingIDValue)-5:len(existingIDValue)-1]),
-		)
 		break
 	}
 
 	loggingOutput, err := logEttPrpsalActivity.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: validatedInput.CollectionName,
-			ChangeLog:  changeLogString.(string),
+			Collection:   validatedInput.CollectionName,
+			Document:     validatedInput.ExistingObjectID,
+			FieldChanges: fieldChanges,
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: &validatedInput.CreatedByAccount.ID,
 			},

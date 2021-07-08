@@ -4,7 +4,6 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
-	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -41,7 +40,7 @@ func (updateMmbAccRefRepo *updateMemberAccessRefRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
 	return updateMmbAccRefRepo.updateMemberAccessRefRepositoryTransactionComponent.PreTransaction(
-		input.(*model.UpdateMemberAccessRef),
+		input.(*model.InternalUpdateMemberAccessRef),
 	)
 }
 
@@ -51,13 +50,13 @@ func (updateMmbAccRefRepo *updateMemberAccessRefRepository) TransactionBody(
 ) (interface{}, error) {
 	return updateMmbAccRefRepo.updateMemberAccessRefRepositoryTransactionComponent.TransactionBody(
 		operationOption,
-		input.(*model.UpdateMemberAccessRef),
+		input.(*model.InternalUpdateMemberAccessRef),
 	)
 }
 
 func (updateMmbAccRefRepo *updateMemberAccessRefRepository) RunTransaction(
-	input *model.UpdateMemberAccessRef,
-) (*memberaccessrefdomainrepositorytypes.UpdateMemberAccessRefOutput, error) {
+	input *model.InternalUpdateMemberAccessRef,
+) (*model.MemberAccessRef, error) {
 	output, err := updateMmbAccRefRepo.mongoDBTransaction.RunTransaction(input)
-	return (output).(*memberaccessrefdomainrepositorytypes.UpdateMemberAccessRefOutput), err
+	return (output).(*model.MemberAccessRef), err
 }

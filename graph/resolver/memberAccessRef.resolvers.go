@@ -25,14 +25,14 @@ func (r *memberAccessRefResolver) SubmittingAccount(ctx context.Context, obj *mo
 	)
 }
 
-func (r *memberAccessRefResolver) ApprovingAccount(ctx context.Context, obj *model.MemberAccessRef) (*model.Account, error) {
+func (r *memberAccessRefResolver) RecentApprovingAccount(ctx context.Context, obj *model.MemberAccessRef) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
 
 	var filterFields *model.AccountFilterFields
-	if obj.ApprovingAccount != nil {
+	if obj.RecentApprovingAccount != nil {
 		filterFields = &model.AccountFilterFields{}
-		filterFields.ID = &obj.ApprovingAccount.ID
+		filterFields.ID = &obj.RecentApprovingAccount.ID
 
 	}
 	return getAccountUsecase.Execute(
@@ -40,28 +40,14 @@ func (r *memberAccessRefResolver) ApprovingAccount(ctx context.Context, obj *mod
 	)
 }
 
-func (r *memberAccessRefResolver) PreviousEntity(ctx context.Context, obj *model.MemberAccessRef) (*model.MemberAccessRef, error) {
-	var getMemberAccessRefUsecase memberaccessrefpresentationusecaseinterfaces.GetMemberAccessRefUsecase
-	container.Make(&getMemberAccessRefUsecase)
-
-	var filterFields *model.MemberAccessRefFilterFields
-	if obj.PreviousEntity != nil {
-		filterFields = &model.MemberAccessRefFilterFields{}
-		filterFields.ID = &obj.PreviousEntity.ID
-	}
-	return getMemberAccessRefUsecase.Execute(
-		filterFields,
-	)
-}
-
-func (r *memberAccessRefResolver) CorrespondingLog(ctx context.Context, obj *model.MemberAccessRef) (*model.Logging, error) {
+func (r *memberAccessRefResolver) RecentLog(ctx context.Context, obj *model.MemberAccessRef) (*model.Logging, error) {
 	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
 	container.Make(&getLoggingUsecase)
 
 	var filterFields *model.LoggingFilterFields
-	if obj.CorrespondingLog != nil {
+	if obj.RecentLog != nil {
 		filterFields = &model.LoggingFilterFields{}
-		filterFields.ID = &obj.CorrespondingLog.ID
+		filterFields.ID = &obj.RecentLog.ID
 
 	}
 	return getLoggingUsecase.Execute(

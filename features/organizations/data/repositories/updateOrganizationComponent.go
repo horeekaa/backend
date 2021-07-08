@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
-	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -36,8 +37,8 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) SetValidation(
 }
 
 func (updateOrgTrx *updateOrganizationTransactionComponent) PreTransaction(
-	input *model.UpdateOrganization,
-) (*model.UpdateOrganization, error) {
+	input *model.InternalUpdateOrganization,
+) (*model.InternalUpdateOrganization, error) {
 	if updateOrgTrx.updateOrganizationUsecaseComponent == nil {
 		return input, nil
 	}
@@ -46,8 +47,8 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) PreTransaction(
 
 func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateOrganization *model.UpdateOrganization,
-) (*organizationdomainrepositorytypes.UpdateOrganizationOutput, error) {
+	updateOrganization *model.InternalUpdateOrganization,
+) (*model.Organization, error) {
 	existingOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().FindByID(
 		updateOrganization.ID,
 		session,
@@ -58,68 +59,40 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 			err,
 		)
 	}
-
-	if updateOrganization.ApprovingAccount != nil &&
-		updateOrganization.ProposalStatus != nil {
-		updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
-			existingOrganization.ID,
-			updateOrganization,
-			session,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateOrganization",
-				err,
-			)
-		}
-
-		if existingOrganization.PreviousEntity != nil &&
-			*updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
-			replacedProposalStatus := model.EntityProposalStatusReplaced
-			previousOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
-				existingOrganization.PreviousEntity.ID,
-				&model.UpdateOrganization{
-					ProposalStatus: &replacedProposalStatus,
-				},
-				session,
-			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateOrganization",
-					err,
-				)
-			}
-			return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-				PreviousOrganization: previousOrganization,
-				UpdatedOrganization:  updatedOrganization,
-			}, nil
-		}
-
-		return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-			PreviousOrganization: existingOrganization,
-			UpdatedOrganization:  updatedOrganization,
-		}, nil
+	fieldsToUpdateOrganization := &model.InternalUpdateOrganization{
+		ID: updateOrganization.ID,
 	}
-
-	var combinedOrganization model.CreateOrganization
-	ja, _ := json.Marshal(existingOrganization)
-	json.Unmarshal(ja, &combinedOrganization)
+	jsonExisting, _ := json.Marshal(existingOrganization)
+	json.Unmarshal(jsonExisting, &fieldsToUpdateOrganization.ProposedChanges)
 
 	var updateOrganizationMap map[string]interface{}
-	jsonTemp, _ := json.Marshal(updateOrganization)
-	json.Unmarshal(jsonTemp, &updateOrganizationMap)
+	jsonUpdate, _ := json.Marshal(updateOrganization)
+	json.Unmarshal(jsonUpdate, &updateOrganizationMap)
 
 	updateOrgTrx.mapProcessorUtility.RemoveNil(updateOrganizationMap)
 
-	jb, _ := json.Marshal(updateOrganizationMap)
-	json.Unmarshal(jb, &combinedOrganization)
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	combinedOrganization.ProposalStatus = &proposedProposalStatus
+	jsonUpdate, _ = json.Marshal(updateOrganizationMap)
+	json.Unmarshal(jsonUpdate, &fieldsToUpdateOrganization.ProposedChanges)
 
-	combinedOrganization.PreviousEntity = &model.ObjectIDOnly{ID: &existingOrganization.ID}
+	if updateOrganization.RecentApprovingAccount != nil &&
+		updateOrganization.ProposalStatus != nil {
+		if existingOrganization.ProposedChanges.ProposalStatus == model.EntityProposalStatusRejected {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.NothingToBeApproved,
+				"/updateOrganization",
+				nil,
+			)
+		}
 
-	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Create(
-		&combinedOrganization,
+		if *updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonTemp, _ := json.Marshal(fieldsToUpdateOrganization.ProposedChanges)
+			json.Unmarshal(jsonTemp, fieldsToUpdateOrganization)
+		}
+	}
+
+	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
+		fieldsToUpdateOrganization.ID,
+		fieldsToUpdateOrganization,
 		session,
 	)
 	if err != nil {
@@ -129,8 +102,5 @@ func (updateOrgTrx *updateOrganizationTransactionComponent) TransactionBody(
 		)
 	}
 
-	return &organizationdomainrepositorytypes.UpdateOrganizationOutput{
-		PreviousOrganization: existingOrganization,
-		UpdatedOrganization:  updatedOrganization,
-	}, nil
+	return updatedOrganization, nil
 }

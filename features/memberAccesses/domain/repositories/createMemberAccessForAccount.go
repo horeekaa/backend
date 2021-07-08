@@ -5,10 +5,10 @@ import (
 )
 
 type CreateMemberAccessForAccountUsecaseComponent interface {
-	Validation(input *model.CreateMemberAccess) (*model.CreateMemberAccess, error)
+	Validation(input *model.InternalCreateMemberAccess) (*model.InternalCreateMemberAccess, error)
 }
 
 type CreateMemberAccessForAccountRepository interface {
 	SetValidation(usecaseComponent CreateMemberAccessForAccountUsecaseComponent) (bool, error)
-	Execute(input *model.CreateMemberAccess) (*model.MemberAccess, error)
+	Execute(input *model.InternalCreateMemberAccess) (*model.MemberAccess, error)
 }
