@@ -80,13 +80,11 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 		)
 	}
 
-	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllMmbAccRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
+				Account: &model.ObjectIDOnly{ID: &account.ID},
+				Access:  getAllMmbAccRefUcase.getAllMemberAccessRefAccessIdentity,
 			},
 		},
 	)

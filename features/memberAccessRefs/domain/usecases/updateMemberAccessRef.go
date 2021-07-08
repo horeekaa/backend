@@ -92,13 +92,11 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		)
 	}
 
-	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              updateMmbAccessRefUcase.updateMemberAccessRefAccessIdentity,
+				Account: &model.ObjectIDOnly{ID: &account.ID},
+				Access:  updateMmbAccessRefUcase.updateMemberAccessRefAccessIdentity,
 			},
 		},
 	)
