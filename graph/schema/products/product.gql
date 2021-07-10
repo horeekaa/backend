@@ -1,0 +1,8 @@
+extend type Mutation {
+    createProduct(createProduct: CreateProduct!): Product!
+    updateProduct(updateProduct: UpdateProduct!): Product!
+}
+
+extend type Query {
+    Products(filterFields: ProductFilterFields, paginationOpt: PaginationOptionInput): [Product]!
+}
