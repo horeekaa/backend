@@ -6,6 +6,7 @@ import (
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
+	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -38,6 +39,12 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.GetAllOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetOrganizationDependency{},
 		&organizationdomainrepositorydependencies.UpdateOrganizationDependency{},
+
+		&productdomainrepositorydependencies.CreateProductDependency{},
+		&productdomainrepositorydependencies.ProposeUpdateProductDependency{},
+		&productdomainrepositorydependencies.ApproveUpdateProductDependency{},
+		&productdomainrepositorydependencies.GetAllProductDependency{},
+		&productdomainrepositorydependencies.GetProductDependency{},
 	}
 
 	for _, reg := range registrationList {
