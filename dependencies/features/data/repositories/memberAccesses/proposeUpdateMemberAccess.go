@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
@@ -11,36 +12,40 @@ import (
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 )
 
-type UpdateMemberAccessForAccountDependency struct{}
+type ProposeUpdateMemberAccessDependency struct{}
 
-func (_ UpdateMemberAccessForAccountDependency) Bind() {
+func (_ *ProposeUpdateMemberAccessDependency) Bind() {
 	container.Singleton(
 		func(
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
-			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-		) memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent {
-			updateMemberAccessComponent, _ := memberaccessdomainrepositories.NewUpdateMemberAccessForAccountTransactionComponent(
+			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
+		) memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent {
+			proposeUpdateMemberAccessComponent, _ := memberaccessdomainrepositories.NewProposeUpdateMemberAccessTransactionComponent(
 				memberAccessDataSource,
-				memberAccessRefDataSource,
+				loggingDataSource,
 				organizationDataSource,
+				memberAccessRefDataSource,
 				mapProcessorUtility,
+				structComparisonUtility,
 			)
-			return updateMemberAccessComponent
+			return proposeUpdateMemberAccessComponent
 		},
 	)
 
 	container.Transient(
 		func(
-			trxComponent memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountTransactionComponent,
+			trxComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
-		) memberaccessdomainrepositoryinterfaces.UpdateMemberAccessForAccountRepository {
-			updateMemberAccessRepo, _ := memberaccessdomainrepositories.NewUpdateMemberAccessForAccountRepository(
+		) memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessRepository {
+			proposeUpdateMemberAccessRepo, _ := memberaccessdomainrepositories.NewProposeUpdateMemberAccessRepository(
 				trxComponent,
 				mongoDBTransaction,
 			)
-			return updateMemberAccessRepo
+			return proposeUpdateMemberAccessRepo
 		},
 	)
 }

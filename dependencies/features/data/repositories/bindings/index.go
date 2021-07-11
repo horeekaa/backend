@@ -25,10 +25,11 @@ func (_ *RepositoriesDependency) Bind() {
 		&loggingdomainrepositorydependencies.LogEntityApprovalActivityDependency{},
 		&loggingdomainrepositorydependencies.LogEntityProposalActivityDependency{},
 
-		&memberaccessdomainrepositorydependencies.CreateMemberAccessForAccountDependency{},
+		&memberaccessdomainrepositorydependencies.CreateMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAccountMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAllMemberAccessDependency{},
-		&memberaccessdomainrepositorydependencies.UpdateMemberAccessForAccountDependency{},
+		&memberaccessdomainrepositorydependencies.ProposeUpdateMemberAccessDependency{},
+		&memberaccessdomainrepositorydependencies.ApproveUpdateMemberAccessDependency{},
 
 		&memberaccessrefdomainrepositorydependencies.CreateMemberAccessRefDependency{},
 		&memberaccessrefdomainrepositorydependencies.GetAllMemberAccessRefDependency{},
