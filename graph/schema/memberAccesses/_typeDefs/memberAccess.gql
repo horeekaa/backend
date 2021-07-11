@@ -20,6 +20,7 @@ input CreateMemberAccess {
 }
 
 input InternalCreateMemberAccess {
+  _id: ObjectID!
   account: ObjectIDOnly!
   invitationAccepted: Boolean
   organization: InternalUpdateOrganization

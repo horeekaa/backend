@@ -16,4 +16,5 @@ type MemberAccessDataSourceMongo interface {
 	) ([]*model.MemberAccess, error)
 	Create(input *model.InternalCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
 	Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error)
+	GenerateObjectID() primitive.ObjectID
 }
