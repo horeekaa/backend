@@ -6,6 +6,7 @@ import (
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
 	memberaccesspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccesses"
 	organizationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/organizations"
+	productpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/products"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -35,6 +36,11 @@ func (_ *UsecasesDependency) Bind() {
 		&organizationpresentationusecasedependencies.GetAllOrganizationUsecaseDependency{},
 		&organizationpresentationusecasedependencies.GetOrganizationUsecaseDependency{},
 		&organizationpresentationusecasedependencies.UpdateOrganizationUsecaseDependency{},
+
+		&productpresentationusecasedependencies.CreateProductUsecaseDependency{},
+		&productpresentationusecasedependencies.GetAllProductUsecaseDependency{},
+		&productpresentationusecasedependencies.GetProductUsecaseDependency{},
+		&productpresentationusecasedependencies.UpdateProductUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {

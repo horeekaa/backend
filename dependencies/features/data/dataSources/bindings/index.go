@@ -7,6 +7,7 @@ import (
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
 	mongodbmemberaccessdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccesses/databases/mongodb"
 	mongodborganizationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/organizations/databases/mongodb"
+	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -21,6 +22,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbmemberaccessdatasourcedependencies.MemberAccessDataSourceDependency{},
 		&mongodbmemberaccessrefdatasourcedependencies.MemberAccessRefDataSourceDependency{},
 		&mongodborganizationdatasourcedependencies.OrganizationDataSourceDependency{},
+		&mongodbproductdatasourcedependencies.ProductDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {

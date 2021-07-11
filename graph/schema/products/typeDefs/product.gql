@@ -1,0 +1,85 @@
+input CreateProduct {
+  name: String!
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  variants: [ObjectIDOnly]
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateProduct {
+  _id: ObjectID!
+  name: String!
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateProduct {
+  _id: ObjectID!
+  name: String
+  description: String
+  priceRange: String
+  isActive: Boolean
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalUpdateProduct {
+  _id: ObjectID!
+  name: String
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input ProductFilterFields {
+  _id: ObjectID
+  name: String
+  description: String
+  priceRange: String
+  isActive: Boolean
+  syncedWithES: Boolean
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: ObjectIDOnly
+  recentLog: ObjectIDOnly
+}
+
+type Product {
+  _id: ObjectID!
+  name: String!
+  description: String
+  priceRange: String
+  isActive: Boolean!
+  photos: [ProductDescriptivePhoto]
+  variants: [ProductVariant]
+  syncedWithES: Boolean!
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: Product
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
