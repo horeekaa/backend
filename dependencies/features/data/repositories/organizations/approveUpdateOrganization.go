@@ -10,34 +10,34 @@ import (
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 )
 
-type CreateOrganizationDependency struct{}
+type ApproveUpdateOrganizationDependency struct{}
 
-func (_ *CreateOrganizationDependency) Bind() {
+func (_ *ApproveUpdateOrganizationDependency) Bind() {
 	container.Singleton(
 		func(
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
-		) organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent {
-			createOrganizationComponent, _ := organizationdomainrepositories.NewCreateOrganizationTransactionComponent(
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+		) organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent {
+			approveUpdateOrganizationComponent, _ := organizationdomainrepositories.NewApproveUpdateOrganizationTransactionComponent(
 				organizationDataSource,
 				loggingDataSource,
-				structFieldIteratorUtility,
+				mapProcessorUtility,
 			)
-			return createOrganizationComponent
+			return approveUpdateOrganizationComponent
 		},
 	)
 
 	container.Transient(
 		func(
-			trxComponent organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent,
+			trxComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
-		) organizationdomainrepositoryinterfaces.CreateOrganizationRepository {
-			createOrganizationRepo, _ := organizationdomainrepositories.NewCreateOrganizationRepository(
+		) organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository {
+			approveUpdateOrganizationRepo, _ := organizationdomainrepositories.NewApproveUpdateOrganizationRepository(
 				trxComponent,
 				mongoDBTransaction,
 			)
-			return createOrganizationRepo
+			return approveUpdateOrganizationRepo
 		},
 	)
 }

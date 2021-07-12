@@ -1,63 +1,62 @@
 package organizationdomainrepositories
 
 import (
-	"encoding/json"
-
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createOrganizationRepository struct {
-	organizationDataSource             databaseorganizationdatasourceinterfaces.OrganizationDataSource
-	createOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.CreateOrganizationUsecaseComponent
+	createOrganizationTransactionComponent organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent
+	mongoDBTransaction                     mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateOrganizationRepository(
-	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+	createOrganizationRepositoryTransactionComponent organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent,
+	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (organizationdomainrepositoryinterfaces.CreateOrganizationRepository, error) {
-	return &createOrganizationRepository{
-		organizationDataSource: organizationDataSource,
-	}, nil
+	createOrganizationRepo := &createOrganizationRepository{
+		createOrganizationRepositoryTransactionComponent,
+		mongoDBTransaction,
+	}
+
+	mongoDBTransaction.SetTransaction(
+		createOrganizationRepo,
+		"CreateOrganizationRepository",
+	)
+
+	return createOrganizationRepo, nil
 }
 
 func (createOrgRepo *createOrganizationRepository) SetValidation(
 	usecaseComponent organizationdomainrepositoryinterfaces.CreateOrganizationUsecaseComponent,
 ) (bool, error) {
-	createOrgRepo.createOrganizationUsecaseComponent = usecaseComponent
+	createOrgRepo.createOrganizationTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (createOrgRepo *createOrganizationRepository) preExecute(
-	input *model.InternalCreateOrganization,
-) (*model.InternalCreateOrganization, error) {
-	if createOrgRepo.createOrganizationUsecaseComponent == nil {
-		return input, nil
-	}
-	return createOrgRepo.createOrganizationUsecaseComponent.Validation(input)
+func (createOrgRepo *createOrganizationRepository) PreTransaction(
+	input interface{},
+) (interface{}, error) {
+	return createOrgRepo.createOrganizationTransactionComponent.PreTransaction(
+		input.(*model.InternalCreateOrganization),
+	)
 }
 
-func (createOrgRepo *createOrganizationRepository) Execute(
+func (createOrgRepo *createOrganizationRepository) TransactionBody(
+	operationOption *mongodbcoretypes.OperationOptions,
+	input interface{},
+) (interface{}, error) {
+	return createOrgRepo.createOrganizationTransactionComponent.TransactionBody(
+		operationOption,
+		input.(*model.InternalCreateOrganization),
+	)
+}
+
+func (createOrgRepo *createOrganizationRepository) RunTransaction(
 	input *model.InternalCreateOrganization,
 ) (*model.Organization, error) {
-	validatedInput, err := createOrgRepo.preExecute(input)
-	if err != nil {
-		return nil, err
-	}
-	jsonTemp, _ := json.Marshal(validatedInput)
-	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
-
-	newOrganization, err := createOrgRepo.organizationDataSource.GetMongoDataSource().Create(
-		validatedInput,
-		&mongodbcoretypes.OperationOptions{},
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createOrganization",
-			err,
-		)
-	}
-	return newOrganization, nil
+	output, err := createOrgRepo.mongoDBTransaction.RunTransaction(input)
+	return (output).(*model.Organization), err
 }
