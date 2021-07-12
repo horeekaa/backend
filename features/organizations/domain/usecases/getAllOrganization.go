@@ -16,10 +16,12 @@ import (
 )
 
 type getAllOrganizationUsecase struct {
-	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	getAllOrganizationRepo           organizationdomainrepositoryinterfaces.GetAllOrganizationRepository
+	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData
+	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	getAllOrganizationRepo     organizationdomainrepositoryinterfaces.GetAllOrganizationRepository
+
 	getAllOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
+	getOwnedOrganizationIdentity     *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllOrganizationUsecase(
@@ -36,10 +38,15 @@ func NewGetAllOrganizationUsecase(
 				OrganizationReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		&model.MemberAccessRefOptionsInput{
+			OrganizationAccesses: &model.OrganizationAccessesInput{
+				OrganizationReadOwned: func(b bool) *bool { return &b }(true),
+			},
+		},
 	}, nil
 }
 
-func (getAllMmbAccRefUcase *getAllOrganizationUsecase) validation(input organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput) (*organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput, error) {
+func (getAllOrgUcase *getAllOrganizationUsecase) validation(input organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput) (*organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput, error) {
 	if &input.Context == nil {
 		return &organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
@@ -52,15 +59,15 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) validation(input organiza
 	return &input, nil
 }
 
-func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
+func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 	input organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput,
 ) ([]*model.Organization, error) {
-	validatedInput, err := getAllMmbAccRefUcase.validation(input)
+	validatedInput, err := getAllOrgUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := getAllMmbAccRefUcase.getAccountFromAuthDataRepo.Execute(
+	account, err := getAllOrgUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
 			Context: validatedInput.Context,
 		},
@@ -81,13 +88,14 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 	}
 
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
-	_, err = getAllMmbAccRefUcase.getAccountMemberAccessRepo.Execute(
+	memberAccess, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              getAllMmbAccRefUcase.getAllOrganizationAccessIdentity,
+				Access:              getAllOrgUcase.getAllOrganizationAccessIdentity,
 			},
+			QueryMode: true,
 		},
 	)
 	if err != nil {
@@ -96,8 +104,30 @@ func (getAllMmbAccRefUcase *getAllOrganizationUsecase) Execute(
 			err,
 		)
 	}
+	if memberAccess == nil {
+		memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
+		_, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+					Access:              getAllOrgUcase.getOwnedOrganizationIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/getAllOrganizationUsecase",
+				err,
+			)
+		}
 
-	organizations, err := getAllMmbAccRefUcase.getAllOrganizationRepo.Execute(
+		validatedInput.FilterFields.SubmittingAccount = &model.ObjectIDOnly{
+			ID: &account.ID,
+		}
+	}
+
+	organizations, err := getAllOrgUcase.getAllOrganizationRepo.Execute(
 		organizationdomainrepositorytypes.GetAllOrganizationInput{
 			FilterFields:  validatedInput.FilterFields,
 			PaginationOpt: validatedInput.PaginationOps,

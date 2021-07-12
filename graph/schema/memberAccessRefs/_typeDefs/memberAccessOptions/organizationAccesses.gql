@@ -1,6 +1,6 @@
 input OrganizationAccessesInput {
   organizationApproval: Boolean
-  organizationRead: Boolean
+  organizationReadOwned: Boolean
   organizationCreate: Boolean
   organizationUpdate: Boolean
   organizationReadAll: Boolean
@@ -8,7 +8,7 @@ input OrganizationAccessesInput {
 
 type OrganizationAccesses {
   organizationApproval: Boolean
-  organizationRead: Boolean
+  organizationReadOwned: Boolean
   organizationCreate: Boolean
   organizationUpdate: Boolean
   organizationReadAll: Boolean
