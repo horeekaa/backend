@@ -23,6 +23,10 @@ func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterf
 	}, nil
 }
 
+func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	var output model.MemberAccessRef
 	_, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)

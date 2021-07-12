@@ -16,4 +16,5 @@ type MemberAccessRefDataSourceMongo interface {
 	) ([]*model.MemberAccessRef, error)
 	Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
 	Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
+	GenerateObjectID() primitive.ObjectID
 }

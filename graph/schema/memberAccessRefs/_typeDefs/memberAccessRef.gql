@@ -32,6 +32,7 @@ input CreateMemberAccessRef {
 }
 
 input InternalCreateMemberAccessRef {
+  _id: ObjectID!
   access: MemberAccessRefOptionsInput!
   memberAccessRefType: MemberAccessRefType!
   organizationMembershipRole: OrganizationMembershipRole
