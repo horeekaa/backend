@@ -18,12 +18,16 @@ func (_ *UpdateOrganizationUsecaseDependency) Bind() {
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			proposeUpdateOrganizationRepo organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationRepository,
 			approveUpdateOrganizationRepo organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository,
+			createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
+			getOrganizationRepo organizationdomainrepositoryinterfaces.GetOrganizationRepository,
 		) organizationpresentationusecaseinterfaces.UpdateOrganizationUsecase {
 			updateOrganizationUsecase, _ := organizationpresentationusecases.NewUpdateOrganizationUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				proposeUpdateOrganizationRepo,
 				approveUpdateOrganizationRepo,
+				createMemberAccessRepo,
+				getOrganizationRepo,
 			)
 			return updateOrganizationUsecase
 		},

@@ -17,11 +17,13 @@ func (_ *CreateOrganizationUsecaseDependency) Bind() {
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
+			createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
 		) organizationpresentationusecaseinterfaces.CreateOrganizationUsecase {
 			OrganizationRefUcase, _ := organizationpresentationusecases.NewCreateOrganizationUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				createOrganizationRepo,
+				createMemberAccessRepo,
 			)
 			return OrganizationRefUcase
 		},

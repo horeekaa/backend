@@ -20,6 +20,7 @@ type createOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
+	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	createOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
@@ -27,11 +28,13 @@ func NewCreateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
+	createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
 ) (organizationpresentationusecaseinterfaces.CreateOrganizationUsecase, error) {
 	return &createOrganizationUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		createOrganizationRepo,
+		createMemberAccessRepo,
 		&model.MemberAccessRefOptionsInput{
 			OrganizationAccesses: &model.OrganizationAccessesInput{
 				OrganizationCreate: func(b bool) *bool { return &b }(true),
@@ -116,6 +119,31 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			"/createOrganizationUsecase",
 			err,
+		)
+	}
+	if createdOrganization.ProposalStatus == model.EntityProposalStatusApproved {
+		createOrganizationUcase.createMemberAccessRepo.RunTransaction(
+			&model.InternalCreateMemberAccess{
+				Account: &model.ObjectIDOnly{
+					ID: &account.ID,
+				},
+				Organization: &model.InternalUpdateOrganization{
+					ID: createdOrganization.ID,
+				},
+				OrganizationMembershipRole: func(r model.OrganizationMembershipRole) *model.OrganizationMembershipRole {
+					return &r
+				}(model.OrganizationMembershipRoleOwner),
+				MemberAccessRefType: model.MemberAccessRefTypeOrganizationsBased,
+				SubmittingAccount: &model.ObjectIDOnly{
+					ID: &createdOrganization.RecentApprovingAccount.ID,
+				},
+				ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &e
+				}(model.EntityProposalStatusApproved),
+				InvitationAccepted: func(b bool) *bool {
+					return &b
+				}(true),
+			},
 		)
 	}
 
