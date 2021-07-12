@@ -34,7 +34,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&memberaccessrefdomainrepositorydependencies.CreateMemberAccessRefDependency{},
 		&memberaccessrefdomainrepositorydependencies.GetAllMemberAccessRefDependency{},
 		&memberaccessrefdomainrepositorydependencies.GetMemberAccessRefDependency{},
-		&memberaccessrefdomainrepositorydependencies.UpdateMemberAccessRefDependency{},
+		&memberaccessrefdomainrepositorydependencies.ProposeUpdateMemberAccessRefDependency{},
+		&memberaccessrefdomainrepositorydependencies.ApproveUpdateMemberAccessRefDependency{},
 
 		&organizationdomainrepositorydependencies.CreateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetAllOrganizationDependency{},

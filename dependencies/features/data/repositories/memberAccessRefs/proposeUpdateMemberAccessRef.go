@@ -10,34 +10,36 @@ import (
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 )
 
-type CreateMemberAccessRefDependency struct{}
+type ProposeUpdateMemberAccessRefDependency struct{}
 
-func (_ *CreateMemberAccessRefDependency) Bind() {
+func (_ *ProposeUpdateMemberAccessRefDependency) Bind() {
 	container.Singleton(
 		func(
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
-		) memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefTransactionComponent {
-			createMemberAccessRefComponent, _ := memberaccessrefdomainrepositories.NewCreateMemberAccessRefTransactionComponent(
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
+		) memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefTransactionComponent {
+			proposeUpdateMemberAccessRefComponent, _ := memberaccessrefdomainrepositories.NewProposeUpdateMemberAccessRefTransactionComponent(
 				memberAccessRefDataSource,
 				loggingDataSource,
-				structFieldIteratorUtility,
+				mapProcessorUtility,
+				structComparisonUtility,
 			)
-			return createMemberAccessRefComponent
+			return proposeUpdateMemberAccessRefComponent
 		},
 	)
 
 	container.Transient(
 		func(
-			trxComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefTransactionComponent,
+			trxComponent memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
-		) memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository {
-			updateMemberAccessRefRepo, _ := memberaccessrefdomainrepositories.NewCreateMemberAccessRefRepository(
+		) memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefRepository {
+			proposeUpdateMemberAccessRefRepo, _ := memberaccessrefdomainrepositories.NewProposeUpdateMemberAccessRefRepository(
 				trxComponent,
 				mongoDBTransaction,
 			)
-			return updateMemberAccessRefRepo
+			return proposeUpdateMemberAccessRefRepo
 		},
 	)
 }

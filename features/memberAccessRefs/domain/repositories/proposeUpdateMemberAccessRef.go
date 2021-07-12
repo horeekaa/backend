@@ -5,17 +5,17 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateMemberAccessRefUsecaseComponent interface {
+type ProposeUpdateMemberAccessRefUsecaseComponent interface {
 	Validation(
-		updateAccountAuthInput *model.InternalUpdateMemberAccessRef,
+		updateMemberAccessRefInput *model.InternalUpdateMemberAccessRef,
 	) (*model.InternalUpdateMemberAccessRef, error)
 }
 
-type UpdateMemberAccessRefTransactionComponent interface {
-	SetValidation(usecaseComponent UpdateMemberAccessRefUsecaseComponent) (bool, error)
+type ProposeUpdateMemberAccessRefTransactionComponent interface {
+	SetValidation(usecaseComponent ProposeUpdateMemberAccessRefUsecaseComponent) (bool, error)
 
 	PreTransaction(
-		updateAccountAuthInput *model.InternalUpdateMemberAccessRef,
+		updateMemberAccessRefInput *model.InternalUpdateMemberAccessRef,
 	) (*model.InternalUpdateMemberAccessRef, error)
 
 	TransactionBody(
@@ -24,8 +24,8 @@ type UpdateMemberAccessRefTransactionComponent interface {
 	) (*model.MemberAccessRef, error)
 }
 
-type UpdateMemberAccessRefRepository interface {
-	SetValidation(usecaseComponent UpdateMemberAccessRefUsecaseComponent) (bool, error)
+type ProposeUpdateMemberAccessRefRepository interface {
+	SetValidation(usecaseComponent ProposeUpdateMemberAccessRefUsecaseComponent) (bool, error)
 	RunTransaction(
 		updateMemberAccessRefInput *model.InternalUpdateMemberAccessRef,
 	) (*model.MemberAccessRef, error)
