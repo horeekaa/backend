@@ -16,6 +16,7 @@ input CreateOrganization {
 }
 
 input InternalCreateOrganization {
+  _id: ObjectID!
   name: String!
   phoneNumber: String!
   type: OrganizationType!
