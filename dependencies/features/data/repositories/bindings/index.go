@@ -22,8 +22,6 @@ func (_ *RepositoriesDependency) Bind() {
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
-		&loggingdomainrepositorydependencies.LogEntityApprovalActivityDependency{},
-		&loggingdomainrepositorydependencies.LogEntityProposalActivityDependency{},
 
 		&memberaccessdomainrepositorydependencies.CreateMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAccountMemberAccessDependency{},
