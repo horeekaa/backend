@@ -3,7 +3,6 @@ package organizationpresentationusecasedependencies
 import (
 	"github.com/golobby/container/v2"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
-	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationpresentationusecases "github.com/horeekaa/backend/features/organizations/domain/usecases"
@@ -18,15 +17,13 @@ func (_ *CreateOrganizationUsecaseDependency) Bind() {
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
-			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 		) organizationpresentationusecaseinterfaces.CreateOrganizationUsecase {
-			organizationRefUcase, _ := organizationpresentationusecases.NewCreateOrganizationUsecase(
+			OrganizationRefUcase, _ := organizationpresentationusecases.NewCreateOrganizationUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				createOrganizationRepo,
-				logEntityProposalActivityRepo,
 			)
-			return organizationRefUcase
+			return OrganizationRefUcase
 		},
 	)
 }

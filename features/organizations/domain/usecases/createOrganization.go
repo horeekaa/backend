@@ -8,8 +8,6 @@ import (
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
-	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
-	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
@@ -22,7 +20,6 @@ type createOrganizationUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
-	logEntityProposalActivityRepo    loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	createOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
@@ -30,13 +27,11 @@ func NewCreateOrganizationUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	createOrganizationRepo organizationdomainrepositoryinterfaces.CreateOrganizationRepository,
-	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (organizationpresentationusecaseinterfaces.CreateOrganizationUsecase, error) {
 	return &createOrganizationUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		createOrganizationRepo,
-		logEntityProposalActivityRepo,
 		&model.MemberAccessRefOptionsInput{
 			OrganizationAccesses: &model.OrganizationAccessesInput{
 				OrganizationCreate: func(b bool) *bool { return &b }(true),
@@ -109,33 +104,12 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		}
 	}
 
-	var newObject interface{} = *validatedInput.CreateOrganization
-	logEntityProposal, err := createOrganizationUcase.logEntityProposalActivityRepo.Execute(
-		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
-			CollectionName:   "Organization",
-			CreatedByAccount: account,
-			Activity:         model.LoggedActivityCreate,
-			ProposalStatus:   *validatedInput.CreateOrganization.ProposalStatus,
-			NewObject:        &newObject,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
-			err,
-		)
-	}
-
 	organizationToCreate := &model.InternalCreateOrganization{}
 	jsonTemp, _ := json.Marshal(validatedInput.CreateOrganization)
 	json.Unmarshal(jsonTemp, organizationToCreate)
 
 	organizationToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	organizationToCreate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-	if *organizationToCreate.ProposalStatus == model.EntityProposalStatusApproved {
-		organizationToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	}
-	createdOrganization, err := createOrganizationUcase.createOrganizationRepo.Execute(
+	createdOrganization, err := createOrganizationUcase.createOrganizationRepo.RunTransaction(
 		organizationToCreate,
 	)
 	if err != nil {
