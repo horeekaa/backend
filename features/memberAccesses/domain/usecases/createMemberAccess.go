@@ -8,8 +8,6 @@ import (
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
-	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
-	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	memberaccessdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/types"
 	memberaccesspresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccesses/presentation/usecases"
@@ -20,22 +18,19 @@ import (
 type createMemberAccessUsecase struct {
 	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository
-	logEntityProposalActivityRepo    loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
+	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	createMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewCreateMemberAccessUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-	createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
-	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
+	createMemberAccessRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
 ) (memberaccesspresentationusecaseinterfaces.CreateMemberAccessUsecase, error) {
 	return &createMemberAccessUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		createMemberAccessRepo,
-		logEntityProposalActivityRepo,
 		&model.MemberAccessRefOptionsInput{
 			ManageMemberAccesses: &model.ManageMemberAccessesInput{
 				MemberAccessCreate: func(b bool) *bool { return &b }(true),
@@ -115,12 +110,12 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
+	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              createMmbAccessUcase.createMemberAccessAccessIdentity,
 			},
 		},
@@ -138,33 +133,12 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 		}
 	}
 
-	var newObject interface{} = *validatedInput.CreateMemberAccess
-	logEntityProposal, err := createMmbAccessUcase.logEntityProposalActivityRepo.Execute(
-		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
-			CollectionName:   "MemberAccess",
-			CreatedByAccount: account,
-			Activity:         model.LoggedActivityCreate,
-			ProposalStatus:   *validatedInput.CreateMemberAccess.ProposalStatus,
-			NewObject:        &newObject,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessUsecase",
-			err,
-		)
-	}
-
 	memberAccessToCreate := &model.InternalCreateMemberAccess{}
 	jsonTemp, _ := json.Marshal(validatedInput.CreateMemberAccess)
 	json.Unmarshal(jsonTemp, memberAccessToCreate)
 
 	memberAccessToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	memberAccessToCreate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-	if *memberAccessToCreate.ProposalStatus == model.EntityProposalStatusApproved {
-		memberAccessToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	}
-	createdMemberAccess, err := createMmbAccessUcase.createMemberAccessRepo.Execute(
+	createdMemberAccess, err := createMmbAccessUcase.createMemberAccessRepo.RunTransaction(
 		memberAccessToCreate,
 	)
 	if err != nil {

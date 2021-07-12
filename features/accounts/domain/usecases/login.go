@@ -16,7 +16,7 @@ import (
 type loginUsecase struct {
 	getAccountFromAuthDataRepo         accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	createAccountFromAuthDataRepo      accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository
-	createMemberAccessForAccountRepo   memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository
+	createMemberAccessForAccountRepo   memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	getAccountMemberAccessRepository   memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
 	loginAccessIdentity                *model.MemberAccessRefOptionsInput
@@ -25,7 +25,7 @@ type loginUsecase struct {
 func NewLoginUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
-	createMemberAccessForAccountRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
+	createMemberAccessForAccountRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
 	getAccountMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 ) (accountpresentationusecaseinterfaces.LoginUsecase, error) {
@@ -86,7 +86,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 			)
 		}
 
-		_, err = loginUcase.createMemberAccessForAccountRepo.Execute(
+		_, err = loginUcase.createMemberAccessForAccountRepo.RunTransaction(
 			&model.InternalCreateMemberAccess{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: model.MemberAccessRefTypeAccountsBasics,
