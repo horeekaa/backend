@@ -1,63 +1,62 @@
 package memberaccessrefdomainrepositories
 
 import (
-	"encoding/json"
-
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createMemberAccessRefRepository struct {
-	memberAccessRefDataSource             databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
-	createMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefUsecaseComponent
+	createMemberAccessRefTransactionComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefTransactionComponent
+	mongoDBTransaction                        mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateMemberAccessRefRepository(
-	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	createMemberAccessRefRepositoryTransactionComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefTransactionComponent,
+	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository, error) {
-	return &createMemberAccessRefRepository{
-		memberAccessRefDataSource: memberAccessRefDataSource,
-	}, nil
+	createMemberAccessRefRepo := &createMemberAccessRefRepository{
+		createMemberAccessRefRepositoryTransactionComponent,
+		mongoDBTransaction,
+	}
+
+	mongoDBTransaction.SetTransaction(
+		createMemberAccessRefRepo,
+		"CreateMemberAccessRefRepository",
+	)
+
+	return createMemberAccessRefRepo, nil
 }
 
-func (createMmbAccRefRepo *createMemberAccessRefRepository) SetValidation(
+func (createProdRepo *createMemberAccessRefRepository) SetValidation(
 	usecaseComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefUsecaseComponent,
 ) (bool, error) {
-	createMmbAccRefRepo.createMemberAccessRefUsecaseComponent = usecaseComponent
+	createProdRepo.createMemberAccessRefTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (createMmbAccRefRepo *createMemberAccessRefRepository) preExecute(
-	input *model.InternalCreateMemberAccessRef,
-) (*model.InternalCreateMemberAccessRef, error) {
-	if createMmbAccRefRepo.createMemberAccessRefUsecaseComponent == nil {
-		return input, nil
-	}
-	return createMmbAccRefRepo.createMemberAccessRefUsecaseComponent.Validation(input)
+func (createProdRepo *createMemberAccessRefRepository) PreTransaction(
+	input interface{},
+) (interface{}, error) {
+	return createProdRepo.createMemberAccessRefTransactionComponent.PreTransaction(
+		input.(*model.InternalCreateMemberAccessRef),
+	)
 }
 
-func (createMmbAccRefRepo *createMemberAccessRefRepository) Execute(
+func (createProdRepo *createMemberAccessRefRepository) TransactionBody(
+	operationOption *mongodbcoretypes.OperationOptions,
+	input interface{},
+) (interface{}, error) {
+	return createProdRepo.createMemberAccessRefTransactionComponent.TransactionBody(
+		operationOption,
+		input.(*model.InternalCreateMemberAccessRef),
+	)
+}
+
+func (createProdRepo *createMemberAccessRefRepository) RunTransaction(
 	input *model.InternalCreateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
-	validatedInput, err := createMmbAccRefRepo.preExecute(input)
-	if err != nil {
-		return nil, err
-	}
-	jsonTemp, _ := json.Marshal(validatedInput)
-	json.Unmarshal(jsonTemp, &validatedInput.ProposedChanges)
-
-	newMemberAccessRef, err := createMmbAccRefRepo.memberAccessRefDataSource.GetMongoDataSource().Create(
-		validatedInput,
-		&mongodbcoretypes.OperationOptions{},
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccessRef",
-			err,
-		)
-	}
-	return newMemberAccessRef, nil
+	output, err := createProdRepo.mongoDBTransaction.RunTransaction(input)
+	return (output).(*model.MemberAccessRef), err
 }

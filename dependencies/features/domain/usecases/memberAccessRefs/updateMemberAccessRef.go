@@ -3,7 +3,6 @@ package memberaccessrefpresentationusecasedependencies
 import (
 	"github.com/golobby/container/v2"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
-	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecases "github.com/horeekaa/backend/features/memberAccessRefs/domain/usecases"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
@@ -17,18 +16,14 @@ func (_ *UpdateMemberAccessRefUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
-			updateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.UpdateMemberAccessRefRepository,
-			getMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository,
-			logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
-			logEntityApprovalActivityRepo loggingdomainrepositoryinterfaces.LogEntityApprovalActivityRepository,
+			proposeUpdateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefRepository,
+			approveUpdateMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.ApproveUpdateMemberAccessRefRepository,
 		) memberaccessrefpresentationusecaseinterfaces.UpdateMemberAccessRefUsecase {
 			updateMemberAccessRefUsecase, _ := memberaccessrefpresentationusecases.NewUpdateMemberAccessRefUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
-				updateMemberAccessRefRepo,
-				getMemberAccessRefRepo,
-				logEntityProposalActivityRepo,
-				logEntityApprovalActivityRepo,
+				proposeUpdateMemberAccessRefRepo,
+				approveUpdateMemberAccessRefRepo,
 			)
 			return updateMemberAccessRefUsecase
 		},
