@@ -15,7 +15,7 @@ func (loginUsecaseDpdcy *LoginUsecaseDependency) Bind() {
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			createAccountFromAuthDataRepo accountdomainrepositoryinterfaces.CreateAccountFromAuthDataRepository,
-			createMemberAccessForAccountRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessForAccountRepository,
+			createMemberAccessForAccountRepo memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository,
 			getAccountMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository,
 		) accountpresentationusecaseinterfaces.LoginUsecase {
