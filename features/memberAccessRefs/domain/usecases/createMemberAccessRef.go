@@ -8,8 +8,6 @@ import (
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
-	loggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/loggings/domain/repositories"
-	loggingdomainrepositorytypes "github.com/horeekaa/backend/features/loggings/domain/repositories/types"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefpresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases"
 	memberaccessrefpresentationusecasetypes "github.com/horeekaa/backend/features/memberAccessRefs/presentation/usecases/types"
@@ -22,7 +20,6 @@ type createMemberAccessRefUsecase struct {
 	getAccountFromAuthDataRepo          accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository
-	logEntityProposalActivityRepo       loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository
 	createMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
@@ -30,13 +27,11 @@ func NewCreateMemberAccessRefUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	createMemberAccessRefRepo memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository,
-	logEntityProposalActivityRepo loggingdomainrepositoryinterfaces.LogEntityProposalActivityRepository,
 ) (memberaccessrefpresentationusecaseinterfaces.CreateMemberAccessRefUsecase, error) {
 	return &createMemberAccessRefUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		createMemberAccessRefRepo,
-		logEntityProposalActivityRepo,
 		&model.MemberAccessRefOptionsInput{
 			MemberAccessRefAccesses: &model.MemberAccessRefAccessesInput{
 				MemberAccessRefCreate: func(b bool) *bool { return &b }(true),
@@ -89,8 +84,8 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				Access:              createMmbAccessRefUcase.createMemberAccessRefAccessIdentity,
+				Account: &model.ObjectIDOnly{ID: &account.ID},
+				Access:  createMmbAccessRefUcase.createMemberAccessRefAccessIdentity,
 			},
 		},
 	)
@@ -107,32 +102,12 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 		}
 	}
 
-	var newObject interface{} = *validatedInput.CreateMemberAccessRef
-	logEntityProposal, err := createMmbAccessRefUcase.logEntityProposalActivityRepo.Execute(
-		loggingdomainrepositorytypes.LogEntityProposalActivityInput{
-			CollectionName:   "MemberAccessRef",
-			CreatedByAccount: account,
-			Activity:         model.LoggedActivityCreate,
-			ProposalStatus:   *validatedInput.CreateMemberAccessRef.ProposalStatus,
-			NewObject:        &newObject,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
-			err,
-		)
-	}
 	memberAccessRefToCreate := &model.InternalCreateMemberAccessRef{}
 	jsonTemp, _ := json.Marshal(validatedInput.CreateMemberAccessRef)
 	json.Unmarshal(jsonTemp, memberAccessRefToCreate)
 
 	memberAccessRefToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	memberAccessRefToCreate.RecentLog = &model.ObjectIDOnly{ID: &logEntityProposal.ID}
-	if *memberAccessRefToCreate.ProposalStatus == model.EntityProposalStatusApproved {
-		memberAccessRefToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: &account.ID}
-	}
-	createdMemberAccessRef, err := createMmbAccessRefUcase.createMemberAccessRefRepo.Execute(
+	createdMemberAccessRef, err := createMmbAccessRefUcase.createMemberAccessRefRepo.RunTransaction(
 		memberAccessRefToCreate,
 	)
 	if err != nil {
