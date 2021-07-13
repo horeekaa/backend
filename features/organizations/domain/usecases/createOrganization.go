@@ -84,14 +84,24 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		)
 	}
 
-	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
+	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
 				Access:              createOrganizationUcase.createOrganizationAccessIdentity,
+				MemberAccessRefType: &memberAccessRefTypeOrganization,
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+				ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &e
+				}(model.EntityProposalStatusApproved),
+				InvitationAccepted: func(b bool) *bool {
+					return &b
+				}(true),
 			},
+			QueryMode: true,
 		},
 	)
 	if err != nil {
@@ -100,6 +110,26 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 			err,
 		)
 	}
+
+	if accMemberAccess == nil {
+		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
+		accMemberAccess, err = createOrganizationUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
+					Access:              createOrganizationUcase.createOrganizationAccessIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/createOrganizationUsecase",
+				err,
+			)
+		}
+	}
+
 	if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval != nil {
 		if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
 			validatedInput.CreateOrganization.ProposalStatus =
