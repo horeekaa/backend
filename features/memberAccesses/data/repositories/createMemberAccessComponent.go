@@ -186,7 +186,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	generatedObjectID := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: "memberAccesse",
+			Collection: "MemberAccess",
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
