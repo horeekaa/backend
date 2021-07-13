@@ -114,40 +114,21 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 		)
 	}
 	if memberAccess == nil {
-		memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
-		_, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
+		memberAccess, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 				MemberAccessFilterFields: &model.MemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
-					MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+					MemberAccessRefType: &memberAccessRefTypeOrganization,
 					Access:              getAllOrgUcase.getOwnedOrganizationIdentity,
-				},
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllOrganizationUsecase",
-				err,
-			)
-		}
-
-		validatedInput.FilterFields.SubmittingAccount = &model.ObjectIDOnly{
-			ID: &account.ID,
-		}
-
-		access, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
-			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
-					Account: &model.ObjectIDOnly{ID: &account.ID},
 					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
 						return &s
 					}(model.MemberAccessStatusActive),
 					ProposalStatus: func(m model.EntityProposalStatus) *model.EntityProposalStatus {
 						return &m
 					}(model.EntityProposalStatusApproved),
-					MemberAccessRefType: func(m model.MemberAccessRefType) *model.MemberAccessRefType {
-						return &m
-					}(model.MemberAccessRefTypeOrganizationsBased),
+					InvitationAccepted: func(b bool) *bool {
+						return &b
+					}(true),
 				},
 				QueryMode: true,
 			},
@@ -158,8 +139,30 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 				err,
 			)
 		}
-		if access != nil {
-			validatedInput.FilterFields.ID = &access.Organization.ID
+		if memberAccess != nil {
+			validatedInput.FilterFields.ID = &memberAccess.Organization.ID
+		}
+
+		if memberAccess == nil {
+			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
+			_, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
+				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+					MemberAccessFilterFields: &model.MemberAccessFilterFields{
+						Account:             &model.ObjectIDOnly{ID: &account.ID},
+						MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+						Access:              getAllOrgUcase.getOwnedOrganizationIdentity,
+					},
+				},
+			)
+			if err != nil {
+				return nil, horeekaacorefailuretoerror.ConvertFailure(
+					"/getAllOrganizationUsecase",
+					err,
+				)
+			}
+			validatedInput.FilterFields.SubmittingAccount = &model.ObjectIDOnly{
+				ID: &account.ID,
+			}
 		}
 	}
 
