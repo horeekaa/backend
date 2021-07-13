@@ -38,18 +38,6 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, updateProduct mode
 	)
 }
 
-func (r *queryResolver) Products(ctx context.Context, filterFields *model.ProductFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Product, error) {
-	var getProductsUsecase productpresentationusecaseinterfaces.GetAllProductUsecase
-	container.Make(&getProductsUsecase)
-	return getProductsUsecase.Execute(
-		productpresentationusecasetypes.GetAllProductUsecaseInput{
-			Context:       ctx,
-			FilterFields:  filterFields,
-			PaginationOps: paginationOpt,
-		},
-	)
-}
-
 func (r *productResolver) Photos(ctx context.Context, obj *model.Product) ([]*model.ProductDescriptivePhoto, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -93,6 +81,18 @@ func (r *productResolver) RecentLog(ctx context.Context, obj *model.Product) (*m
 	}
 	return getLoggingUsecase.Execute(
 		filterFields,
+	)
+}
+
+func (r *queryResolver) Products(ctx context.Context, filterFields *model.ProductFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Product, error) {
+	var getProductsUsecase productpresentationusecaseinterfaces.GetAllProductUsecase
+	container.Make(&getProductsUsecase)
+	return getProductsUsecase.Execute(
+		productpresentationusecasetypes.GetAllProductUsecaseInput{
+			Context:       ctx,
+			FilterFields:  filterFields,
+			PaginationOps: paginationOpt,
+		},
 	)
 }
 
