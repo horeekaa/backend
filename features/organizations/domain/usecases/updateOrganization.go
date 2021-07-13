@@ -18,13 +18,15 @@ import (
 )
 
 type updateOrganizationUsecase struct {
-	getAccountFromAuthDataRepo       accountdomainrepositoryinterfaces.GetAccountFromAuthData
-	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
-	proposeUpdateOrganizationRepo    organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationRepository
-	approveUpdateOrganizationRepo    organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository
-	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
-	getOrganizationRepo              organizationdomainrepositoryinterfaces.GetOrganizationRepository
-	updateOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
+	getAccountFromAuthDataRepo    accountdomainrepositoryinterfaces.GetAccountFromAuthData
+	getAccountMemberAccessRepo    memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	proposeUpdateOrganizationRepo organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationRepository
+	approveUpdateOrganizationRepo organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository
+	createMemberAccessRepo        memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
+	getOrganizationRepo           organizationdomainrepositoryinterfaces.GetOrganizationRepository
+
+	updateOrganizationAccessIdentity      *model.MemberAccessRefOptionsInput
+	updateOwnedOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewUpdateOrganizationUsecase(
@@ -45,6 +47,11 @@ func NewUpdateOrganizationUsecase(
 		&model.MemberAccessRefOptionsInput{
 			OrganizationAccesses: &model.OrganizationAccessesInput{
 				OrganizationUpdate: func(b bool) *bool { return &b }(true),
+			},
+		},
+		&model.MemberAccessRefOptionsInput{
+			OrganizationAccesses: &model.OrganizationAccessesInput{
+				OrganizationUpdateOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
@@ -97,7 +104,17 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Access:              updateOrganizationUcase.updateOrganizationAccessIdentity,
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+				ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &e
+				}(model.EntityProposalStatusApproved),
+				InvitationAccepted: func(b bool) *bool {
+					return &b
+				}(true),
 			},
+			QueryMode: true,
 		},
 	)
 	if err != nil {
@@ -112,6 +129,68 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	}
 	jsonTemp, _ := json.Marshal(validatedInput.UpdateOrganization)
 	json.Unmarshal(jsonTemp, organizationToUpdate)
+
+	existingOrganization, err := updateOrganizationUcase.getOrganizationRepo.Execute(
+		&model.OrganizationFilterFields{
+			ID: &organizationToUpdate.ID,
+		},
+	)
+	// if update across organizations is not allowed, check access for update owned organization
+	if accMemberAccess == nil {
+		memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
+		accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
+					MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+						return &s
+					}(model.MemberAccessStatusActive),
+					ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+						return &e
+					}(model.EntityProposalStatusApproved),
+					InvitationAccepted: func(b bool) *bool {
+						return &b
+					}(true),
+				},
+				QueryMode: true,
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/updateOrganizationUsecase",
+				err,
+			)
+		}
+
+		if accMemberAccess == nil {
+			accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
+				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+					MemberAccessFilterFields: &model.MemberAccessFilterFields{
+						Account:             &model.ObjectIDOnly{ID: &account.ID},
+						Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
+						MemberAccessRefType: &memberAccessRefTypeOrganization,
+					},
+				},
+			)
+			if err != nil {
+				return nil, horeekaacorefailuretoerror.ConvertFailure(
+					"/updateOrganizationUsecase",
+					err,
+				)
+			}
+
+			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
+				return nil, horeekaacoreerror.NewErrorObject(
+					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+					403,
+					"/updateOrganizationUsecase",
+					nil,
+				)
+			}
+		}
+	}
 
 	// if user is only going to approve proposal
 	if organizationToUpdate.ProposalStatus != nil {
@@ -131,11 +210,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 				nil,
 			)
 		}
-		existingOrganization, err := updateOrganizationUcase.getOrganizationRepo.Execute(
-			&model.OrganizationFilterFields{
-				ID: &organizationToUpdate.ID,
-			},
-		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
 				"/updateOrganizationUsecase",

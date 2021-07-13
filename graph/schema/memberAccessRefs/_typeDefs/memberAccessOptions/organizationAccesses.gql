@@ -1,15 +1,35 @@
 input OrganizationAccessesInput {
   organizationApproval: Boolean
+  """
+  When set to true, query on organizations() API will only return
+  (a) Organizations with submittingAccount equals to current account used OR
+  (b) Organizations with which the current account used get access from
+  """
   organizationReadOwned: Boolean
   organizationCreate: Boolean
   organizationUpdate: Boolean
+  """
+  When set to true, any update on organization will only be allowed for 
+  the current account's organization
+  """
+  organizationUpdateOwned: Boolean
   organizationReadAll: Boolean
 }
 
 type OrganizationAccesses {
   organizationApproval: Boolean
+  """
+  When set to true, query on organizations() API will only return
+  (a) Organizations with submittingAccount equals to current account used OR
+  (b) Organizations with which the current account used get access from
+  """
   organizationReadOwned: Boolean
   organizationCreate: Boolean
   organizationUpdate: Boolean
+  """
+  When set to true, any update on organization will only be allowed for 
+  the current account's organization
+  """
+  organizationUpdateOwned: Boolean
   organizationReadAll: Boolean
 }

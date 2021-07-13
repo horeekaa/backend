@@ -94,6 +94,15 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Access:              getAllOrgUcase.getAllOrganizationAccessIdentity,
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+				ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &e
+				}(model.EntityProposalStatusApproved),
+				InvitationAccepted: func(b bool) *bool {
+					return &b
+				}(true),
 			},
 			QueryMode: true,
 		},
@@ -124,6 +133,33 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 
 		validatedInput.FilterFields.SubmittingAccount = &model.ObjectIDOnly{
 			ID: &account.ID,
+		}
+
+		access, err := getAllOrgUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					Account: &model.ObjectIDOnly{ID: &account.ID},
+					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+						return &s
+					}(model.MemberAccessStatusActive),
+					ProposalStatus: func(m model.EntityProposalStatus) *model.EntityProposalStatus {
+						return &m
+					}(model.EntityProposalStatusApproved),
+					MemberAccessRefType: func(m model.MemberAccessRefType) *model.MemberAccessRefType {
+						return &m
+					}(model.MemberAccessRefTypeOrganizationsBased),
+				},
+				QueryMode: true,
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/getAllOrganizationUsecase",
+				err,
+			)
+		}
+		if access != nil {
+			validatedInput.FilterFields.ID = &access.Organization.ID
 		}
 	}
 
