@@ -137,13 +137,12 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	)
 	// if update across organizations is not allowed, check access for update owned organization
 	if accMemberAccess == nil {
-		memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 		accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 				MemberAccessFilterFields: &model.MemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
 					Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
-					MemberAccessRefType: &memberAccessRefTypeAccountBasics,
+					MemberAccessRefType: &memberAccessRefTypeOrganization,
 					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
 						return &s
 					}(model.MemberAccessStatusActive),
@@ -163,14 +162,25 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 				err,
 			)
 		}
+		if accMemberAccess != nil {
+			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
+				return nil, horeekaacoreerror.NewErrorObject(
+					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+					403,
+					"/updateOrganizationUsecase",
+					nil,
+				)
+			}
+		}
 
 		if accMemberAccess == nil {
+			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 			accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 					MemberAccessFilterFields: &model.MemberAccessFilterFields{
 						Account:             &model.ObjectIDOnly{ID: &account.ID},
 						Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
-						MemberAccessRefType: &memberAccessRefTypeOrganization,
+						MemberAccessRefType: &memberAccessRefTypeAccountBasics,
 					},
 				},
 			)
@@ -178,15 +188,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 				return nil, horeekaacorefailuretoerror.ConvertFailure(
 					"/updateOrganizationUsecase",
 					err,
-				)
-			}
-
-			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
-				return nil, horeekaacoreerror.NewErrorObject(
-					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					403,
-					"/updateOrganizationUsecase",
-					nil,
 				)
 			}
 		}
