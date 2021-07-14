@@ -14,8 +14,8 @@ import (
 
 type approveUpdateMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource                    databasememberAccessRefdatasourceinterfaces.MemberAccessRefDataSource
-	loggingDataSource                    databaseloggingdatasourceinterfaces.LoggingDataSource
-	mapProcessorUtility                  coreutilityinterfaces.MapProcessorUtility
+	loggingDataSource                            databaseloggingdatasourceinterfaces.LoggingDataSource
+	mapProcessorUtility                          coreutilityinterfaces.MapProcessorUtility
 	approveUpdateMemberAccessRefUsecaseComponent memberAccessRefdomainrepositoryinterfaces.ApproveUpdateMemberAccessRefUsecaseComponent
 }
 
@@ -25,9 +25,9 @@ func NewApproveUpdateMemberAccessRefTransactionComponent(
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (memberAccessRefdomainrepositoryinterfaces.ApproveUpdateMemberAccessRefTransactionComponent, error) {
 	return &approveUpdateMemberAccessRefTransactionComponent{
-		memberAccessRefDataSource:   memberAccessRefDataSource,
-		loggingDataSource:   loggingDataSource,
-		mapProcessorUtility: mapProcessorUtility,
+		memberAccessRefDataSource: memberAccessRefDataSource,
+		loggingDataSource:         loggingDataSource,
+		mapProcessorUtility:       mapProcessorUtility,
 	}, nil
 }
 
@@ -112,8 +112,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 
 	if updateMemberAccessRef.ProposalStatus != nil {
 		if *updateMemberAccessRef.ProposalStatus == model.EntityProposalStatusApproved {
-			jsonTemp, _ := json.Marshal(fieldsToUpdateMemberAccessRef.ProposedChanges)
-			json.Unmarshal(jsonTemp, fieldsToUpdateMemberAccessRef)
+			json.Unmarshal(jsonUpdate, fieldsToUpdateMemberAccessRef)
 		}
 	}
 
