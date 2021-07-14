@@ -144,8 +144,7 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 
 	if updateProduct.ProposalStatus != nil {
 		if *updateProduct.ProposalStatus == model.EntityProposalStatusApproved {
-			jsonTemp, _ := json.Marshal(fieldsToUpdateProduct.ProposedChanges)
-			json.Unmarshal(jsonTemp, fieldsToUpdateProduct)
+			json.Unmarshal(jsonUpdate, fieldsToUpdateProduct)
 		}
 	}
 

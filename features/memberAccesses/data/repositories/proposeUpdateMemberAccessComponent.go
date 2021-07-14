@@ -209,8 +209,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 
 	if updateMemberAccess.ProposalStatus != nil {
 		if *updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-			jsonTemp, _ := json.Marshal(fieldsToUpdateMemberAccess.ProposedChanges)
-			json.Unmarshal(jsonTemp, fieldsToUpdateMemberAccess)
+			json.Unmarshal(jsonUpdate, fieldsToUpdateMemberAccess)
 		}
 	}
 
