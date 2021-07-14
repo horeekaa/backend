@@ -144,8 +144,7 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 
 	if updateOrganization.ProposalStatus != nil {
 		if *updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
-			jsonTemp, _ := json.Marshal(fieldsToUpdateOrganization.ProposedChanges)
-			json.Unmarshal(jsonTemp, fieldsToUpdateOrganization)
+			json.Unmarshal(jsonUpdate, fieldsToUpdateOrganization)
 		}
 	}
 
