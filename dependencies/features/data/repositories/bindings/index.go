@@ -22,8 +22,6 @@ func (_ *RepositoriesDependency) Bind() {
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
-		&loggingdomainrepositorydependencies.LogEntityApprovalActivityDependency{},
-		&loggingdomainrepositorydependencies.LogEntityProposalActivityDependency{},
 
 		&memberaccessdomainrepositorydependencies.CreateMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAccountMemberAccessDependency{},
@@ -40,7 +38,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.CreateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetAllOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetOrganizationDependency{},
-		&organizationdomainrepositorydependencies.UpdateOrganizationDependency{},
+		&organizationdomainrepositorydependencies.ProposeUpdateOrganizationDependency{},
+		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
 
 		&productdomainrepositorydependencies.CreateProductDependency{},
 		&productdomainrepositorydependencies.ProposeUpdateProductDependency{},

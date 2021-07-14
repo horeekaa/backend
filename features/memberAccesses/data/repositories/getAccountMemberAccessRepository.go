@@ -62,6 +62,15 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAc
 	if validatedInput.MemberAccessFilterFields == nil {
 		return nil, nil
 	}
+	if !validatedInput.QueryMode {
+		validatedInput.MemberAccessFilterFields.InvitationAccepted = func(b bool) *bool { return &b }(true)
+		validatedInput.MemberAccessFilterFields.ProposalStatus = func(ep model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &ep
+		}(model.EntityProposalStatusApproved)
+		validatedInput.MemberAccessFilterFields.Status = func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+			return &s
+		}(model.MemberAccessStatusActive)
+	}
 
 	var filterFieldsMap map[string]interface{}
 	data, _ := bson.Marshal(validatedInput.MemberAccessFilterFields)
@@ -83,15 +92,6 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAc
 			"/getAccountMemberAccess",
 			nil,
 		)
-	}
-	if memberAccess != nil {
-		if memberAccess.InvitationAccepted == false && !validatedInput.QueryMode {
-			return nil, horeekaacorefailure.NewFailureObject(
-				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				"/getAccountMemberAccess",
-				nil,
-			)
-		}
 	}
 	return memberAccess, nil
 }

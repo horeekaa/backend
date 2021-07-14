@@ -5,14 +5,14 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateOrganizationUsecaseComponent interface {
+type ApproveUpdateOrganizationUsecaseComponent interface {
 	Validation(
 		updateOrganizationInput *model.InternalUpdateOrganization,
 	) (*model.InternalUpdateOrganization, error)
 }
 
-type UpdateOrganizationTransactionComponent interface {
-	SetValidation(usecaseComponent UpdateOrganizationUsecaseComponent) (bool, error)
+type ApproveUpdateOrganizationTransactionComponent interface {
+	SetValidation(usecaseComponent ApproveUpdateOrganizationUsecaseComponent) (bool, error)
 
 	PreTransaction(
 		updateOrganizationInput *model.InternalUpdateOrganization,
@@ -24,8 +24,8 @@ type UpdateOrganizationTransactionComponent interface {
 	) (*model.Organization, error)
 }
 
-type UpdateOrganizationRepository interface {
-	SetValidation(usecaseComponent UpdateOrganizationUsecaseComponent) (bool, error)
+type ApproveUpdateOrganizationRepository interface {
+	SetValidation(usecaseComponent ApproveUpdateOrganizationUsecaseComponent) (bool, error)
 	RunTransaction(
 		updateOrganizationInput *model.InternalUpdateOrganization,
 	) (*model.Organization, error)

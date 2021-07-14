@@ -1,5 +1,9 @@
 input ManageMemberAccessesInput {
   memberAccessCreate: Boolean
+  """
+  When set to true, query on MemberAccesses() API will only return
+  (a) MemberAccess with account field equals to current account used
+  """
   memberAccessReadOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean
@@ -9,6 +13,10 @@ input ManageMemberAccessesInput {
 
 type ManageMemberAccesses {
   memberAccessCreate: Boolean
+  """
+  When set to true, query on MemberAccesses() API will only return
+  (a) MemberAccess with account field equals to current account used
+  """
   memberAccessReadOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean

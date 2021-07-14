@@ -123,8 +123,6 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 		queryMap["organizationMembershipRole"] = *updateMemberAccess.OrganizationMembershipRole
 	}
 	if updateMemberAccess.Organization != nil {
-		queryMap["organizationType"] = *updateMemberAccess.Organization.Type
-
 		orgToUpdate, err := proposeUpdateMemberAccTrx.organizationDataSource.GetMongoDataSource().FindByID(
 			updateMemberAccess.Organization.ID,
 			session,
@@ -135,6 +133,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 				err,
 			)
 		}
+		queryMap["organizationType"] = orgToUpdate.Type
 
 		jsonTemp, _ := json.Marshal(orgToUpdate)
 		json.Unmarshal(jsonTemp, &updateMemberAccess.Organization)
@@ -210,8 +209,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 
 	if updateMemberAccess.ProposalStatus != nil {
 		if *updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-			jsonTemp, _ := json.Marshal(fieldsToUpdateMemberAccess.ProposedChanges)
-			json.Unmarshal(jsonTemp, fieldsToUpdateMemberAccess)
+			json.Unmarshal(jsonUpdate, fieldsToUpdateMemberAccess)
 		}
 	}
 

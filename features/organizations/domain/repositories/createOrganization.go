@@ -1,12 +1,32 @@
 package organizationdomainrepositoryinterfaces
 
-import "github.com/horeekaa/backend/model"
+import (
+	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	"github.com/horeekaa/backend/model"
+)
 
 type CreateOrganizationUsecaseComponent interface {
-	Validation(input *model.InternalCreateOrganization) (*model.InternalCreateOrganization, error)
+	Validation(
+		createOrganizationInput *model.InternalCreateOrganization,
+	) (*model.InternalCreateOrganization, error)
+}
+
+type CreateOrganizationTransactionComponent interface {
+	SetValidation(usecaseComponent CreateOrganizationUsecaseComponent) (bool, error)
+
+	PreTransaction(
+		createOrganizationInput *model.InternalCreateOrganization,
+	) (*model.InternalCreateOrganization, error)
+
+	TransactionBody(
+		session *mongodbcoretypes.OperationOptions,
+		createOrganizationInput *model.InternalCreateOrganization,
+	) (*model.Organization, error)
 }
 
 type CreateOrganizationRepository interface {
 	SetValidation(usecaseComponent CreateOrganizationUsecaseComponent) (bool, error)
-	Execute(input *model.InternalCreateOrganization) (*model.Organization, error)
+	RunTransaction(
+		createOrganizationInput *model.InternalCreateOrganization,
+	) (*model.Organization, error)
 }

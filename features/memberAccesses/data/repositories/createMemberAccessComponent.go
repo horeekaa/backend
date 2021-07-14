@@ -133,9 +133,6 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		"proposalStatus":      model.EntityProposalStatusApproved,
 	}
 	if input.Organization != nil {
-		if input.Organization.Type != nil {
-			queryMap["organizationType"] = *input.Organization.Type
-		}
 		orgToAdd, err := createMemberAccessTrx.organizationDataSource.GetMongoDataSource().FindByID(
 			input.Organization.ID,
 			session,
@@ -146,6 +143,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 				err,
 			)
 		}
+		queryMap["organizationType"] = orgToAdd.Type
 
 		jsonTemp, _ := json.Marshal(orgToAdd)
 		json.Unmarshal(jsonTemp, &input.Organization)
@@ -186,7 +184,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	generatedObjectID := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: "memberAccesse",
+			Collection: "MemberAccess",
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},

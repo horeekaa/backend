@@ -24,10 +24,10 @@ var TransactionOutput model.MemberAccess = model.MemberAccess{
 	MemberAccessRefType: model.MemberAccessRefTypeOrganizationsBased,
 	Access: &model.MemberAccessRefOptions{
 		OrganizationAccesses: &model.OrganizationAccesses{
-			OrganizationApproval: func(b bool) *bool { return &b }(true),
-			OrganizationCreate:   func(b bool) *bool { return &b }(true),
-			OrganizationRead:     func(b bool) *bool { return &b }(true),
-			OrganizationUpdate:   func(b bool) *bool { return &b }(true),
+			OrganizationApproval:  func(b bool) *bool { return &b }(true),
+			OrganizationCreate:    func(b bool) *bool { return &b }(true),
+			OrganizationReadOwned: func(b bool) *bool { return &b }(true),
+			OrganizationUpdate:    func(b bool) *bool { return &b }(true),
 		},
 	},
 	DefaultAccess:     &model.MemberAccessRef{ID: primitive.ObjectID{byte(255)}},

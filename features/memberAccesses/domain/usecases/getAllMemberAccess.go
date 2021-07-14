@@ -92,6 +92,15 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Access:              getAllMmbAccUcase.getAllMemberAccessAccessIdentity,
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusActive),
+				ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &e
+				}(model.EntityProposalStatusApproved),
+				InvitationAccepted: func(b bool) *bool {
+					return &b
+				}(true),
 			},
 			QueryMode: true,
 		},

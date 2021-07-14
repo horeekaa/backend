@@ -23,6 +23,10 @@ func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterface
 	}, nil
 }
 
+func (orgDataSourceMongo *organizationDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (orgDataSourceMongo *organizationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	var output model.Organization
 	_, err := orgDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
