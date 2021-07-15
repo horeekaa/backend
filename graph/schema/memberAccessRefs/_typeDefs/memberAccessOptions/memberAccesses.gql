@@ -5,6 +5,11 @@ input ManageMemberAccessesInput {
   (a) MemberAccess with account field equals to current account used
   """
   memberAccessReadOwned: Boolean
+  """
+  When set to true, query on MemberAccesses() API will only return
+  (a) MemberAccess with organization field equals to current organization where the account operates
+  """
+  memberAccessReadOrganizationOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean
   memberAccessAcceptInvitation: Boolean
@@ -18,6 +23,11 @@ type ManageMemberAccesses {
   (a) MemberAccess with account field equals to current account used
   """
   memberAccessReadOwned: Boolean
+  """
+  When set to true, query on MemberAccesses() API will only return
+  (a) MemberAccess with organization field equals to current organization where the account operates
+  """
+  memberAccessReadOrganizationOwned: Boolean
   memberAccessUpdate: Boolean
   memberAccessApproval: Boolean
   memberAccessAcceptInvitation: Boolean
