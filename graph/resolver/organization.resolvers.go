@@ -75,13 +75,13 @@ func (r *organizationResolver) RecentLog(ctx context.Context, obj *model.Organiz
 	)
 }
 
-func (r *queryResolver) Organizations(ctx context.Context, filterFields *model.OrganizationFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Organization, error) {
+func (r *queryResolver) Organizations(ctx context.Context, filterFields model.OrganizationFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Organization, error) {
 	var getOrganizationsUsecase organizationpresentationusecaseinterfaces.GetAllOrganizationUsecase
 	container.Make(&getOrganizationsUsecase)
 	return getOrganizationsUsecase.Execute(
 		organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput{
 			Context:       ctx,
-			FilterFields:  filterFields,
+			FilterFields:  &filterFields,
 			PaginationOps: paginationOpt,
 		},
 	)

@@ -112,13 +112,13 @@ func (r *mutationResolver) UpdateMemberAccess(ctx context.Context, updateMemberA
 	)
 }
 
-func (r *queryResolver) MemberAccesses(ctx context.Context, filterFields *model.MemberAccessFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MemberAccess, error) {
+func (r *queryResolver) MemberAccesses(ctx context.Context, filterFields model.MemberAccessFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MemberAccess, error) {
 	var getMemberAccesssUsecase memberaccesspresentationusecaseinterfaces.GetAllMemberAccessUsecase
 	container.Make(&getMemberAccesssUsecase)
 	return getMemberAccesssUsecase.Execute(
 		memberaccesspresentationusecasetypes.GetAllMemberAccessUsecaseInput{
 			Context:       ctx,
-			FilterFields:  filterFields,
+			FilterFields:  &filterFields,
 			PaginationOps: paginationOpt,
 		},
 	)

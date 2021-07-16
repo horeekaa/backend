@@ -84,13 +84,13 @@ func (r *productResolver) RecentLog(ctx context.Context, obj *model.Product) (*m
 	)
 }
 
-func (r *queryResolver) Products(ctx context.Context, filterFields *model.ProductFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Product, error) {
+func (r *queryResolver) Products(ctx context.Context, filterFields model.ProductFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.Product, error) {
 	var getProductsUsecase productpresentationusecaseinterfaces.GetAllProductUsecase
 	container.Make(&getProductsUsecase)
 	return getProductsUsecase.Execute(
 		productpresentationusecasetypes.GetAllProductUsecaseInput{
 			Context:       ctx,
-			FilterFields:  filterFields,
+			FilterFields:  &filterFields,
 			PaginationOps: paginationOpt,
 		},
 	)
