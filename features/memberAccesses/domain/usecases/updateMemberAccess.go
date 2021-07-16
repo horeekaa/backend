@@ -137,7 +137,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			)
 		}
 
-		memberAccessToUpdate.RecentApprovingAccount = &model.ObjectIDOnly{
+		memberAccessToUpdate.SubmittingAccount = &model.ObjectIDOnly{
 			ID: &existingMemberAcc.SubmittingAccount.ID,
 		}
 		memberAccessToUpdate.ProposalStatus = &existingMemberAcc.ProposalStatus

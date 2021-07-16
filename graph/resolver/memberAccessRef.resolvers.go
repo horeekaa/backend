@@ -77,13 +77,13 @@ func (r *mutationResolver) UpdateMemberAccessRef(ctx context.Context, updateMemb
 	)
 }
 
-func (r *queryResolver) MemberAccessRefs(ctx context.Context, filterFields *model.MemberAccessRefFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MemberAccessRef, error) {
+func (r *queryResolver) MemberAccessRefs(ctx context.Context, filterFields model.MemberAccessRefFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MemberAccessRef, error) {
 	var getMemberAccessRefsUsecase memberaccessrefpresentationusecaseinterfaces.GetAllMemberAccessRefUsecase
 	container.Make(&getMemberAccessRefsUsecase)
 	return getMemberAccessRefsUsecase.Execute(
 		memberaccessrefpresentationusecasetypes.GetAllMemberAccessRefUsecaseInput{
 			Context:       ctx,
-			FilterFields:  filterFields,
+			FilterFields:  &filterFields,
 			PaginationOps: paginationOpt,
 		},
 	)

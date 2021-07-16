@@ -11,6 +11,7 @@ import (
 	memberaccesspresentationusecaseinterfaces "github.com/horeekaa/backend/features/memberAccesses/presentation/usecases"
 	memberaccesspresentationusecasetypes "github.com/horeekaa/backend/features/memberAccesses/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type getAllMemberAccessUsecase struct {
@@ -18,9 +19,7 @@ type getAllMemberAccessUsecase struct {
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllMemberAccessRepo     memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository
 
-	getAllMemberAccessAccessIdentity         *model.MemberAccessRefOptionsInput
-	getOrganizationOwnedMemberAccessIdentity *model.MemberAccessRefOptionsInput
-	getOwnedMemberAccessAccessIdentity       *model.MemberAccessRefOptionsInput
+	getOwnedMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
 func NewGetAllMemberAccessUsecase(
@@ -32,16 +31,6 @@ func NewGetAllMemberAccessUsecase(
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		getAllMemberAccessRepo,
-		&model.MemberAccessRefOptionsInput{
-			ManageMemberAccesses: &model.ManageMemberAccessesInput{
-				MemberAccessReadAll: func(b bool) *bool { return &b }(true),
-			},
-		},
-		&model.MemberAccessRefOptionsInput{
-			ManageMemberAccesses: &model.ManageMemberAccessesInput{
-				MemberAccessReadOrganizationOwned: func(b bool) *bool { return &b }(true),
-			},
-		},
 		&model.MemberAccessRefOptionsInput{
 			ManageMemberAccesses: &model.ManageMemberAccessesInput{
 				MemberAccessReadOwned: func(b bool) *bool { return &b }(true),
@@ -97,7 +86,6 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              getAllMmbAccUcase.getAllMemberAccessAccessIdentity,
 				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
 					return &s
 				}(model.MemberAccessStatusActive),
@@ -117,39 +105,17 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 			err,
 		)
 	}
-	if memberAccess == nil {
-		memberAccess, err = getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
-			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
-					Account:             &model.ObjectIDOnly{ID: &account.ID},
-					MemberAccessRefType: &memberAccessRefTypeOrganization,
-					Access:              getAllMmbAccUcase.getOrganizationOwnedMemberAccessIdentity,
-					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
-						return &s
-					}(model.MemberAccessStatusActive),
-					ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
-						return &e
-					}(model.EntityProposalStatusApproved),
-					InvitationAccepted: func(b bool) *bool {
-						return &b
-					}(true),
-				},
-				QueryMode: true,
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllMemberAccessUsecase",
-				err,
-			)
-		}
-		if memberAccess != nil {
+
+	if accessible := funk.GetOrElse(
+		funk.Get(memberAccess, "Access.ManageMemberAccesses.MemberAccessReadAll"), false,
+	).(bool); !accessible {
+		if accessible := funk.GetOrElse(
+			funk.Get(memberAccess, "Access.ManageMemberAccesses.MemberAccessReadOrganizationOwned"), false,
+		).(bool); accessible {
 			validatedInput.FilterFields.Organization = &model.AttachOrganizationInput{
 				ID: &memberAccess.Organization.ID,
 			}
-		}
-
-		if memberAccess == nil {
+		} else {
 			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 			_, err := getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
 				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{

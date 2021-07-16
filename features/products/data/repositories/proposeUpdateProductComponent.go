@@ -143,6 +143,9 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateProduct.ProposedChanges)
 
 	if updateProduct.ProposalStatus != nil {
+		fieldsToUpdateProduct.RecentApprovingAccount = &model.ObjectIDOnly{
+			ID: updateProduct.SubmittingAccount.ID,
+		}
 		if *updateProduct.ProposalStatus == model.EntityProposalStatusApproved {
 			json.Unmarshal(jsonUpdate, fieldsToUpdateProduct)
 		}
