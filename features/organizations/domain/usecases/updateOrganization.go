@@ -15,6 +15,7 @@ import (
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
 	organizationpresentationusecasetypes "github.com/horeekaa/backend/features/organizations/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type updateOrganizationUsecase struct {
@@ -25,7 +26,6 @@ type updateOrganizationUsecase struct {
 	createMemberAccessRepo        memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	getOrganizationRepo           organizationdomainrepositoryinterfaces.GetOrganizationRepository
 
-	updateOrganizationAccessIdentity      *model.MemberAccessRefOptionsInput
 	updateOwnedOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
 }
 
@@ -44,11 +44,6 @@ func NewUpdateOrganizationUsecase(
 		approveUpdateOrganizationRepo,
 		createMemberAccessRepo,
 		getOrganizationRepo,
-		&model.MemberAccessRefOptionsInput{
-			OrganizationAccesses: &model.OrganizationAccessesInput{
-				OrganizationUpdate: func(b bool) *bool { return &b }(true),
-			},
-		},
 		&model.MemberAccessRefOptionsInput{
 			OrganizationAccesses: &model.OrganizationAccessesInput{
 				OrganizationUpdateOwned: func(b bool) *bool { return &b }(true),
@@ -103,7 +98,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
-				Access:              updateOrganizationUcase.updateOrganizationAccessIdentity,
 				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
 					return &s
 				}(model.MemberAccessStatusActive),
@@ -136,33 +130,9 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		},
 	)
 	// if update across organizations is not allowed, check access for update owned organization
-	if accMemberAccess == nil {
-		accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
-			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
-					Account:             &model.ObjectIDOnly{ID: &account.ID},
-					Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
-					MemberAccessRefType: &memberAccessRefTypeOrganization,
-					Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
-						return &s
-					}(model.MemberAccessStatusActive),
-					ProposalStatus: func(e model.EntityProposalStatus) *model.EntityProposalStatus {
-						return &e
-					}(model.EntityProposalStatusApproved),
-					InvitationAccepted: func(b bool) *bool {
-						return &b
-					}(true),
-				},
-				QueryMode: true,
-			},
-		)
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateOrganizationUsecase",
-				err,
-			)
-		}
-		if accMemberAccess != nil {
+	if accessible, ok := (funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdate")).(bool); !ok || !accessible {
+		accessible, ok := (funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdateOwned")).(bool)
+		if accessible && ok {
 			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
 				return nil, horeekaacoreerror.NewErrorObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
@@ -171,9 +141,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 					nil,
 				)
 			}
-		}
-
-		if accMemberAccess == nil {
+		} else {
 			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 			accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
