@@ -4,5 +4,5 @@ extend type Mutation {
 }
 
 extend type Query {
-    memberAccesses(filterFields: MemberAccessFilterFields, paginationOpt: PaginationOptionInput): [MemberAccess]!
+    memberAccesses(filterFields: MemberAccessFilterFields!, paginationOpt: PaginationOptionInput): [MemberAccess]!
 }

@@ -4,5 +4,5 @@ extend type Mutation {
 }
 
 extend type Query {
-    products(filterFields: ProductFilterFields, paginationOpt: PaginationOptionInput): [Product]!
+    products(filterFields: ProductFilterFields!, paginationOpt: PaginationOptionInput): [Product]!
 }
