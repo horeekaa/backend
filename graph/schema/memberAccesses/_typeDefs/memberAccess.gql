@@ -14,8 +14,7 @@ input CreateMemberAccess {
   especially when inputting Organization ID
   """
   memberAccessRefType: MemberAccessRefType!
-  access: MemberAccessRefOptionsInput!
-  status: MemberAccessStatus!
+  status: MemberAccessStatus
   proposalStatus: EntityProposalStatus
 }
 
