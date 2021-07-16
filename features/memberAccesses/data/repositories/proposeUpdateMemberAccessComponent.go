@@ -208,6 +208,9 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccess.ProposedChanges)
 
 	if updateMemberAccess.ProposalStatus != nil {
+		fieldsToUpdateMemberAccess.RecentApprovingAccount = &model.ObjectIDOnly{
+			ID: updateMemberAccess.SubmittingAccount.ID,
+		}
 		if *updateMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
 			json.Unmarshal(jsonUpdate, fieldsToUpdateMemberAccess)
 		}
