@@ -31,7 +31,7 @@ func NewGetPersonDataFromAccountUsecase(
 		getPersonDataFromAccountRepository,
 		&model.MemberAccessRefOptionsInput{
 			AccountAccesses: &model.AccountAccessesInput{
-				AccountViewProfile: func(b bool) *bool { return &b }(true),
+				AccountReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
 	}, nil
