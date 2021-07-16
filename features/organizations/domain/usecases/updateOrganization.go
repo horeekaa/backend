@@ -130,9 +130,12 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		},
 	)
 	// if update across organizations is not allowed, check access for update owned organization
-	if accessible, ok := (funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdate")).(bool); !ok || !accessible {
-		accessible, ok := (funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdateOwned")).(bool)
-		if accessible && ok {
+	if accessible := funk.GetOrElse(
+		funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdate"), false,
+	).(bool); !accessible {
+		if accessible := funk.GetOrElse(
+			funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdateOwned"), false,
+		).(bool); accessible {
 			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
 				return nil, horeekaacoreerror.NewErrorObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,

@@ -107,9 +107,12 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 			err,
 		)
 	}
-	if accessible, ok := (funk.Get(memberAccess, "Access.OrganizationAccesses.OrganizationReadAll")).(bool); !ok || !accessible {
-		accessible, ok := (funk.Get(memberAccess, "Access.OrganizationAccesses.OrganizationReadOwned")).(bool)
-		if accessible && ok {
+	if accessible := funk.GetOrElse(
+		funk.Get(memberAccess, "Access.OrganizationAccesses.OrganizationReadAll"), false,
+	).(bool); !accessible {
+		if accessible := funk.GetOrElse(
+			funk.Get(memberAccess, "Access.OrganizationAccesses.OrganizationReadOwned"), false,
+		).(bool); accessible {
 			validatedInput.FilterFields.ID = &memberAccess.Organization.ID
 		} else {
 			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
