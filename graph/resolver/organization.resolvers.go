@@ -8,6 +8,7 @@ import (
 
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
+	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	organizationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/organizations/presentation/usecases"
 	organizationpresentationusecasetypes "github.com/horeekaa/backend/features/organizations/presentation/usecases/types"
@@ -41,8 +42,10 @@ func (r *organizationResolver) SubmittingAccount(ctx context.Context, obj *model
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
 	return getAccountUsecase.Execute(
-		&model.AccountFilterFields{
-			ID: &obj.SubmittingAccount.ID,
+		accountpresentationusecasetypes.GetAccountInput{
+			FilterFields: &model.AccountFilterFields{
+				ID: &obj.SubmittingAccount.ID,
+			},
 		},
 	)
 }
@@ -57,7 +60,9 @@ func (r *organizationResolver) RecentApprovingAccount(ctx context.Context, obj *
 		filterFields.ID = &obj.RecentApprovingAccount.ID
 	}
 	return getAccountUsecase.Execute(
-		filterFields,
+		accountpresentationusecasetypes.GetAccountInput{
+			FilterFields: filterFields,
+		},
 	)
 }
 

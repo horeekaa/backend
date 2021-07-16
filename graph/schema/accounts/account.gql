@@ -4,5 +4,6 @@ extend type Mutation {
 }
 
 extend type Query {
+  account(filterFields: AccountFilterFields!): Account!
   person(account: ObjectIDOnly): Person!
 }

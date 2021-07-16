@@ -26,3 +26,8 @@ type GetAuthUserAndAttachToCtxInput struct {
 	AuthHeader string
 	Context    context.Context
 }
+
+type GetAccountInput struct {
+	Context      context.Context
+	FilterFields *model.AccountFilterFields
+}

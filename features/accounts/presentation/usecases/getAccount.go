@@ -1,9 +1,10 @@
 package accountpresentationusecaseinterfaces
 
 import (
+	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
 )
 
 type GetAccountUsecase interface {
-	Execute(input *model.AccountFilterFields) (*model.Account, error)
+	Execute(input accountpresentationusecasetypes.GetAccountInput) (*model.Account, error)
 }
