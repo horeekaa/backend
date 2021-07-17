@@ -129,6 +129,12 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			ID: &organizationToUpdate.ID,
 		},
 	)
+	if err != nil {
+		return nil, horeekaacorefailuretoerror.ConvertFailure(
+			"/updateOrganizationUsecase",
+			err,
+		)
+	}
 	// if update across organizations is not allowed, check access for update owned organization
 	if accessible := funk.GetOrElse(
 		funk.Get(accMemberAccess, "Access.OrganizationAccesses.OrganizationUpdate"), false,
@@ -180,12 +186,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 				403,
 				"/updateOrganizationUsecase",
 				nil,
-			)
-		}
-		if err != nil {
-			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateOrganizationUsecase",
-				err,
 			)
 		}
 
