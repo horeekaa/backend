@@ -1,0 +1,10 @@
+package databasedescriptivephotodatasourceinterfaces
+
+import (
+	mongodbdescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/mongodb/interfaces"
+)
+
+type DescriptivePhotoDataSource interface {
+	GetMongoDataSource() mongodbdescriptivephotodatasourceinterfaces.DescriptivePhotoDataSourceMongo
+	SetMongoDataSource(mongoRepo mongodbdescriptivephotodatasourceinterfaces.DescriptivePhotoDataSourceMongo) bool
+}

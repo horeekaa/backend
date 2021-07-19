@@ -3,6 +3,7 @@ package datasourcesdependencies
 import (
 	firebaseauthdependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/accounts/authentication"
 	mongodbaccountdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/accounts/databases/mongodb"
+	mongodbdescriptivephotodatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/descriptivePhotos/databases/mongodb"
 	mongodbloggingdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/loggings/databases/mongodb"
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
 	mongodbmemberaccessdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccesses/databases/mongodb"
@@ -23,6 +24,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbmemberaccessrefdatasourcedependencies.MemberAccessRefDataSourceDependency{},
 		&mongodborganizationdatasourcedependencies.OrganizationDataSourceDependency{},
 		&mongodbproductdatasourcedependencies.ProductDataSourceDependency{},
+		&mongodbdescriptivephotodatasourcedependencies.DescriptivePhotoDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {
