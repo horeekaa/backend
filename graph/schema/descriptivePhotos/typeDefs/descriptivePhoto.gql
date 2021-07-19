@@ -16,16 +16,25 @@ enum DescriptivePhotoType {
 }
 
 input CreateDescriptivePhoto {
-  photo: Upload!
+  photo: Upload
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType!
+}
+
+input InternalCreateDescriptivePhoto {
+  _id: ObjectID!
   photoUrl: String
   description: String
   category: DescriptivePhotoCategory!
   type: DescriptivePhotoType!
   object: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
 }
 
 input UpdateDescriptivePhoto {
-  _id: ObjectID!
+  _id: ObjectID
   photo: Upload
   photoUrl: String
   description: String
@@ -33,17 +42,23 @@ input UpdateDescriptivePhoto {
   isActive: Boolean
 }
 
-interface iDescriptivePhoto {
+input InternalUpdateDescriptivePhoto {
   _id: ObjectID!
-  photoUrl: String!
-  category: DescriptivePhotoCategory!
+  photoUrl: String
   description: String
+  type: DescriptivePhotoType
+  isActive: Boolean
+  updatedAt: Time
 }
 
-type DescriptivePhoto implements iDescriptivePhoto {
+type DescriptivePhoto {
   _id: ObjectID!
   photoUrl: String!
   category: DescriptivePhotoCategory!
   description: String
   type: DescriptivePhotoType!
+  object: ObjectIDOnlyOutput!
+  isActive: Boolean
+  createdAt: Time!
+  updatedAt: Time!
 }

@@ -10,7 +10,7 @@ input CreateOrganization {
   type: OrganizationType!
   point: Int
   unfinalizedPoint: Int
-  profilePhotos: [ObjectIDOnly]
+  profilePhotos: [CreateDescriptivePhoto]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
 }
@@ -42,6 +42,7 @@ input UpdateOrganization {
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
+  profilePhotos: [UpdateDescriptivePhoto]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
 }
@@ -95,7 +96,7 @@ type Organization {
   ratingDescription: String
   point: Int!
   unfinalizedPoint: Int!
-  profilePhotos: [OrgProfileDescriptivePhoto]
+  profilePhotos: [DescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!

@@ -3,7 +3,7 @@ input CreateProduct {
   description: String
   priceRange: String
   isActive: Boolean
-  photos: [ObjectIDOnly]
+  photos: [CreateDescriptivePhoto]
   variants: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
 }
@@ -32,6 +32,7 @@ input UpdateProduct {
   description: String
   priceRange: String
   isActive: Boolean
+  photos: [UpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
 }
 
@@ -72,7 +73,7 @@ type Product {
   description: String
   priceRange: String
   isActive: Boolean!
-  photos: [ProductDescriptivePhoto]
+  photos: [DescriptivePhoto]
   variants: [ProductVariant]
   syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus!
