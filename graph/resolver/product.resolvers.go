@@ -39,7 +39,7 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, updateProduct mode
 	)
 }
 
-func (r *productResolver) Photos(ctx context.Context, obj *model.Product) ([]*model.ProductDescriptivePhoto, error) {
+func (r *productResolver) Photos(ctx context.Context, obj *model.Product) ([]*model.DescriptivePhoto, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
