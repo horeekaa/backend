@@ -8,8 +8,8 @@ import (
 
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
-	storageenums "github.com/horeekaa/backend/core/storages/enums"
 	googlecloudstoragecoretypes "github.com/horeekaa/backend/core/storages/googleCloud/types"
+	"github.com/horeekaa/backend/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -43,7 +43,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		storageenums.ICProposal,
+		model.DescriptivePhotoCategoryOrganizationStall,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
@@ -88,7 +88,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		storageenums.ICProposal,
+		model.DescriptivePhotoCategoryOrganizationStall,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
@@ -141,7 +141,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		storageenums.ICProposal,
+		model.DescriptivePhotoCategoryOrganizationStall,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
