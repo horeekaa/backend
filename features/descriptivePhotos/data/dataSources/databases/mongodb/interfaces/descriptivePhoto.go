@@ -14,7 +14,6 @@ type DescriptivePhotoDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.DescriptivePhoto, error)
-	Create(input *model.InternalCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
-	Update(ID primitive.ObjectID, updateData *model.InternalUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
-	GenerateObjectID() primitive.ObjectID
+	Create(input *model.DatabaseCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
+	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
 }

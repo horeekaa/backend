@@ -23,10 +23,6 @@ func NewDescriptivePhotoDataSourceMongo(basicOperation mongodbcoreoperationinter
 	}, nil
 }
 
-func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) GenerateObjectID() primitive.ObjectID {
-	return primitive.NewObjectID()
-}
-
 func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
 	var output model.DescriptivePhoto
 	_, err := descPhotoDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
@@ -72,7 +68,7 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Find(
 	return descriptivePhotos, err
 }
 
-func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Create(input *model.InternalCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
+func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Create(input *model.DatabaseCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
 	defaultedInput, err := descPhotoDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -90,7 +86,7 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Create(input *m
 	return &outputModel, err
 }
 
-func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
+func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
 	updateData.ID = ID
 	defaultedInput, err := descPhotoDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -110,15 +106,15 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Update(ID primi
 }
 
 type setDescriptivePhotoDefaultValuesOutput struct {
-	CreateDescriptivePhoto *model.InternalCreateDescriptivePhoto
-	UpdateDescriptivePhoto *model.InternalUpdateDescriptivePhoto
+	CreateDescriptivePhoto *model.DatabaseCreateDescriptivePhoto
+	UpdateDescriptivePhoto *model.DatabaseUpdateDescriptivePhoto
 }
 
 func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setDescriptivePhotoDefaultValuesOutput, error) {
 	currentTime := time.Now()
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.InternalUpdateDescriptivePhoto)
+		updateInput := input.(model.DatabaseUpdateDescriptivePhoto)
 		_, err := descPhotoDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -129,7 +125,7 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValue
 			UpdateDescriptivePhoto: &updateInput,
 		}, nil
 	}
-	createInput := (input).(model.InternalCreateDescriptivePhoto)
+	createInput := (input).(model.DatabaseCreateDescriptivePhoto)
 	createInput.CreatedAt = &currentTime
 	createInput.UpdatedAt = &currentTime
 
