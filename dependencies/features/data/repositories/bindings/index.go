@@ -2,6 +2,7 @@ package repositoriesdependencies
 
 import (
 	accountdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/accounts"
+	descriptivephotodomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/descriptivePhotos"
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
@@ -46,6 +47,9 @@ func (_ *RepositoriesDependency) Bind() {
 		&productdomainrepositorydependencies.ApproveUpdateProductDependency{},
 		&productdomainrepositorydependencies.GetAllProductDependency{},
 		&productdomainrepositorydependencies.GetProductDependency{},
+
+		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
 	}
 
 	for _, reg := range registrationList {
