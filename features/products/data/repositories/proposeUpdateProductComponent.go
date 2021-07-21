@@ -127,7 +127,7 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 	}
 	updateProduct.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	fieldsToUpdateProduct := &model.InternalUpdateProduct{
+	fieldsToUpdateProduct := &model.DatabaseUpdateProduct{
 		ID: updateProduct.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingProduct)

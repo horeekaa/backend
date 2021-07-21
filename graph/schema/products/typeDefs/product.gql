@@ -14,6 +14,24 @@ input InternalCreateProduct {
   description: String
   priceRange: String
   isActive: Boolean
+  photos: [CreateDescriptivePhoto]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DatabaseCreateProduct {
+  _id: ObjectID!
+  name: String!
+  description: String
+  priceRange: String
+  isActive: Boolean
   photos: [ObjectIDOnly]
   variants: [ObjectIDOnly]
   syncedWithES: Boolean!
@@ -37,6 +55,23 @@ input UpdateProduct {
 }
 
 input InternalUpdateProduct {
+  _id: ObjectID!
+  name: String
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [UpdateDescriptivePhoto]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input DatabaseUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
