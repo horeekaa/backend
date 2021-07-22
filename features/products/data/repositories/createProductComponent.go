@@ -108,14 +108,13 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 		)
 	}
 
+	input.ID = generatedObjectID
+	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *input.ProposalStatus == model.EntityProposalStatusApproved {
 		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
 	}
 
-	productToCreate := &model.DatabaseCreateProduct{
-		ID:        generatedObjectID,
-		RecentLog: &model.ObjectIDOnly{ID: &loggingOutput.ID},
-	}
+	productToCreate := &model.DatabaseCreateProduct{}
 
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, productToCreate)
