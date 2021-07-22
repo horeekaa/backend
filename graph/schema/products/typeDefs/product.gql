@@ -14,7 +14,7 @@ input InternalCreateProduct {
   description: String
   priceRange: String
   isActive: Boolean
-  photos: [CreateDescriptivePhoto]
+  photos: [InternalCreateDescriptivePhoto]
   variants: [ObjectIDOnly]
   syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus
@@ -60,7 +60,7 @@ input InternalUpdateProduct {
   description: String
   priceRange: String
   isActive: Boolean
-  photos: [UpdateDescriptivePhoto]
+  photos: [InternalUpdateDescriptivePhoto]
   variants: [ObjectIDOnly]
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus

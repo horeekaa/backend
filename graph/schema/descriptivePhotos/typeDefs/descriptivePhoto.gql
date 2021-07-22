@@ -27,6 +27,7 @@ input CreateDescriptivePhoto {
 }
 
 input InternalCreateDescriptivePhoto {
+  _id: ObjectID
   photo: Upload
   photoUrl: String
   description: String
@@ -65,7 +66,11 @@ input UpdateDescriptivePhoto {
 }
 
 input InternalUpdateDescriptivePhoto {
-  _id: ObjectID!
+  _id: ObjectID
+  """
+  if photo/image is submitted in the request, then any submitted photoUrl will be overriden
+  by the new URL generated from the saved photo in server's storage.
+  """
   photo: Upload
   photoUrl: String
   description: String
