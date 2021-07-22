@@ -39,7 +39,7 @@ func (updateDescPhotoTrx *updateDescriptivePhotoTransactionComponent) Transactio
 	input *model.InternalUpdateDescriptivePhoto,
 ) (*model.DescriptivePhoto, error) {
 	existingDescPhoto, err := updateDescPhotoTrx.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
-		input.ID,
+		*input.ID,
 		session,
 	)
 	if err != nil {
