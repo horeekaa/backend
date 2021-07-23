@@ -117,6 +117,7 @@ type setProductDefaultValuesOutput struct {
 func (prodDataSourceMongo *productDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setProductDefaultValuesOutput, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
+	defaultIsActive := true
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
 		updateInput := input.(model.DatabaseUpdateProduct)
@@ -133,6 +134,9 @@ func (prodDataSourceMongo *productDataSourceMongo) setDefaultValues(input interf
 	createInput := (input).(model.DatabaseCreateProduct)
 	if createInput.ProposalStatus == nil {
 		createInput.ProposalStatus = &defaultProposalStatus
+	}
+	if createInput.IsActive == nil {
+		createInput.IsActive = &defaultIsActive
 	}
 	if createInput.Photos == nil {
 		createInput.Photos = []*model.ObjectIDOnly{}
