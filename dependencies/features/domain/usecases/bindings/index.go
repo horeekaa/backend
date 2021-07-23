@@ -2,6 +2,7 @@ package usecasesdependencies
 
 import (
 	accountpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/accounts"
+	descriptivephotopresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/descriptivePhotos"
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
 	memberaccesspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccesses"
@@ -36,6 +37,8 @@ func (_ *UsecasesDependency) Bind() {
 		&organizationpresentationusecasedependencies.GetAllOrganizationUsecaseDependency{},
 		&organizationpresentationusecasedependencies.GetOrganizationUsecaseDependency{},
 		&organizationpresentationusecasedependencies.UpdateOrganizationUsecaseDependency{},
+
+		&descriptivephotopresentationusecasedependencies.GetDescriptivePhotoUsecaseDependency{},
 
 		&productpresentationusecasedependencies.CreateProductUsecaseDependency{},
 		&productpresentationusecasedependencies.GetAllProductUsecaseDependency{},
