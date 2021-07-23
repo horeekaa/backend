@@ -58,6 +58,7 @@ func (createProdRepo *createProductRepository) TransactionBody(
 	if productToCreate.Photos != nil {
 		savedPhotos := []*model.InternalCreateDescriptivePhoto{}
 		for _, photo := range productToCreate.Photos {
+			photo.Category = model.DescriptivePhotoCategoryProduct
 			createdPhotoOutput, err := createProdRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
