@@ -88,6 +88,15 @@ input DatabaseUpdateDescriptivePhoto {
   updatedAt: Time
 }
 
+input DescriptivePhotoFilterFields {
+  _id: ObjectID
+  photoUrl: String
+  category: DescriptivePhotoCategory
+  type: DescriptivePhotoType
+  object: ObjectIDOnly
+  isActive: Boolean
+}
+
 type DescriptivePhoto {
   _id: ObjectID!
   photoUrl: String!

@@ -42,14 +42,15 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.ProposeUpdateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
 
+		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.GetDescriptivePhotoDependency{},
+
 		&productdomainrepositorydependencies.CreateProductDependency{},
 		&productdomainrepositorydependencies.ProposeUpdateProductDependency{},
 		&productdomainrepositorydependencies.ApproveUpdateProductDependency{},
 		&productdomainrepositorydependencies.GetAllProductDependency{},
 		&productdomainrepositorydependencies.GetProductDependency{},
-
-		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
-		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
 	}
 
 	for _, reg := range registrationList {
