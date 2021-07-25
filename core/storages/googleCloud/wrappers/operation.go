@@ -12,7 +12,7 @@ type gcsObjectHandle struct {
 }
 
 func (gcsHandle *gcsObjectHandle) NewWriter(ctx context.Context) googlecloudstoragecorewrapperinterfaces.GCSWriter {
-	return gcsHandle.NewWriter(ctx)
+	return gcsHandle.ObjectHandle.NewWriter(ctx)
 }
 
 func NewGCSObjectHandle(wrappedObjectHandle *storage.ObjectHandle) (googlecloudstoragecorewrapperinterfaces.GCSObjectHandle, error) {
