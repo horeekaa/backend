@@ -104,6 +104,7 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(descPhotoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Photo.File = descPhotoToUpdate.Photo.File
 			photoToCreate.Category = model.DescriptivePhotoCategoryProduct
 
 			savedPhoto, err := updateOrgRepo.createDescriptivePhotoComponent.TransactionBody(
