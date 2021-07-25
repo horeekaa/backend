@@ -107,6 +107,10 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	jsonTemp, _ := json.Marshal(validatedInput.UpdateProduct)
 	json.Unmarshal(jsonTemp, productToUpdate)
 
+	for i, descriptivePhoto := range validatedInput.UpdateProduct.Photos {
+		productToUpdate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+	}
+
 	// if user is only going to approve proposal
 	if productToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.ProductAccesses.ProductApproval == nil {
