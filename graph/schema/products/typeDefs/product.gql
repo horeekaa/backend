@@ -52,6 +52,14 @@ input UpdateProduct {
   isActive: Boolean
   photos: [UpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateProduct {
@@ -98,7 +106,7 @@ input ProductFilterFields {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ObjectIDOnly
+  proposedChanges: ProductFilterFields
   recentLog: ObjectIDOnly
 }
 
