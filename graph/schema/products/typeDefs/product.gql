@@ -1,7 +1,6 @@
 input CreateProduct {
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [CreateDescriptivePhoto]
   variants: [CreateProductVariant]
@@ -12,7 +11,6 @@ input InternalCreateProduct {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [InternalCreateDescriptivePhoto]
   variants: [InternalCreateProductVariant]
@@ -30,7 +28,6 @@ input DatabaseCreateProduct {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [ObjectIDOnly]
   variants: [ObjectIDOnly]
@@ -48,7 +45,6 @@ input UpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   """
   Leave the field null/empty array or fill it with updates to the product's photos.
@@ -73,7 +69,6 @@ input InternalUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [InternalUpdateDescriptivePhoto]
   variants: [InternalUpdateProductVariant]
@@ -90,7 +85,6 @@ input DatabaseUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [ObjectIDOnly]
   variants: [ObjectIDOnly]
@@ -107,7 +101,6 @@ input ProductFilterFields {
   _id: ObjectID
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
@@ -121,7 +114,6 @@ type Product {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean!
   photos: [DescriptivePhoto]
   variants: [ProductVariant]
