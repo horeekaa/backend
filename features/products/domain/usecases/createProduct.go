@@ -108,6 +108,10 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	jsonTemp, _ := json.Marshal(validatedInput.CreateProduct)
 	json.Unmarshal(jsonTemp, productToCreate)
 
+	for i, descriptivePhoto := range validatedInput.CreateProduct.Photos {
+		productToCreate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+	}
+
 	productToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdProduct, err := createProductUcase.createProductRepo.RunTransaction(
 		productToCreate,

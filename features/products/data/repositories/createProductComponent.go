@@ -114,11 +114,14 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
 	}
 
+	productToCreate := &model.DatabaseCreateProduct{}
+
 	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, &input.ProposedChanges)
+	json.Unmarshal(jsonTemp, productToCreate)
+	json.Unmarshal(jsonTemp, &productToCreate.ProposedChanges)
 
 	newProduct, err := createProductTrx.productDataSource.GetMongoDataSource().Create(
-		input,
+		productToCreate,
 		session,
 	)
 	if err != nil {

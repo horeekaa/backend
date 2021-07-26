@@ -8,10 +8,10 @@ import (
 
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
-	storageenums "github.com/horeekaa/backend/core/storages/enums"
 	googlecloudstoragecoreclientinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/init"
 	googlecloudstoragecoreoperationinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/operations"
 	googlecloudstoragecoretypes "github.com/horeekaa/backend/core/storages/googleCloud/types"
+	"github.com/horeekaa/backend/model"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -32,7 +32,7 @@ func NewGCSBasicImageStoringOperation(
 
 func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) UploadImage(
 	ctx context.Context,
-	category storageenums.StorageCategory,
+	category model.DescriptivePhotoCategory,
 	file googlecloudstoragecoretypes.GCSFileUpload,
 ) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)

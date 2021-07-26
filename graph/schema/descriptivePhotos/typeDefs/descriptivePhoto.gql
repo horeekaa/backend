@@ -1,0 +1,110 @@
+enum DescriptivePhotoCategory {
+  ORGANIZATION_STALL
+  PRODUCT
+}
+
+enum DescriptivePhotoType {
+  FRONT_SIDE
+  LEFT_SIDE
+  RIGHT_SIDE
+  TOP_SIDE
+
+  FRONT_FACING
+  PRODUCTS_OVERVIEW
+  LOCATION_MARK_DETAIL
+  LOCATION_MARK_OVERVIEW
+}
+
+input CreateDescriptivePhoto {
+  """
+  if photo/image is submitted in the request, then any submitted photoUrl will be overriden
+  by the new URL generated from the saved photo in server's storage.
+  """
+  photo: Upload
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType!
+}
+
+input InternalCreateDescriptivePhoto {
+  _id: ObjectID
+  photo: Upload
+  photoUrl: String
+  description: String
+  category: DescriptivePhotoCategory!
+  type: DescriptivePhotoType!
+  object: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DatabaseCreateDescriptivePhoto {
+  photoUrl: String
+  description: String
+  category: DescriptivePhotoCategory!
+  type: DescriptivePhotoType!
+  object: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+"""
+Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+(b) If not present, the request will create new object.
+"""
+input UpdateDescriptivePhoto {
+  _id: ObjectID
+  """
+  if photo/image is submitted in the request, then any submitted photoUrl will be overriden
+  by the new URL generated from the saved photo in server's storage.
+  """
+  photo: Upload
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  isActive: Boolean
+}
+
+input InternalUpdateDescriptivePhoto {
+  _id: ObjectID
+  """
+  if photo/image is submitted in the request, then any submitted photoUrl will be overriden
+  by the new URL generated from the saved photo in server's storage.
+  """
+  photo: Upload
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  isActive: Boolean
+  updatedAt: Time
+}
+
+input DatabaseUpdateDescriptivePhoto {
+  _id: ObjectID!
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  isActive: Boolean
+  updatedAt: Time
+}
+
+input DescriptivePhotoFilterFields {
+  _id: ObjectID
+  photoUrl: String
+  category: DescriptivePhotoCategory
+  type: DescriptivePhotoType
+  object: ObjectIDOnly
+  isActive: Boolean
+}
+
+type DescriptivePhoto {
+  _id: ObjectID!
+  photoUrl: String!
+  category: DescriptivePhotoCategory!
+  description: String
+  type: DescriptivePhotoType!
+  object: ObjectIDOnlyOutput!
+  isActive: Boolean
+  createdAt: Time!
+  updatedAt: Time!
+}

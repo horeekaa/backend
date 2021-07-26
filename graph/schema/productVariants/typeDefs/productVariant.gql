@@ -24,7 +24,7 @@ input CreateProductVariant {
   dimension: CreateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
-  photo: ObjectIDOnly
+  photo: CreateDescriptivePhoto
   product: ObjectIDOnly
 }
 
@@ -37,6 +37,7 @@ input UpdateProductVariant {
   unitWeightInGrams: Int
   dimension: UpdateProductDimension
   soldInUnit: SellingUnitType
+  photo: UpdateDescriptivePhoto
   isActive: Boolean
 }
 
@@ -50,6 +51,6 @@ type ProductVariant {
   dimension: ProductDimension
   soldInUnit: SellingUnitType!
   isActive: Boolean!
-  photo: ProductDescriptivePhoto
+  photo: DescriptivePhoto
   product: Product
 }

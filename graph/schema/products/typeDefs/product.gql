@@ -3,12 +3,30 @@ input CreateProduct {
   description: String
   priceRange: String
   isActive: Boolean
-  photos: [ObjectIDOnly]
+  photos: [CreateDescriptivePhoto]
   variants: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateProduct {
+  _id: ObjectID!
+  name: String!
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [InternalCreateDescriptivePhoto]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DatabaseCreateProduct {
   _id: ObjectID!
   name: String!
   description: String
@@ -32,10 +50,36 @@ input UpdateProduct {
   description: String
   priceRange: String
   isActive: Boolean
+  photos: [UpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateProduct {
+  _id: ObjectID!
+  name: String
+  description: String
+  priceRange: String
+  isActive: Boolean
+  photos: [InternalUpdateDescriptivePhoto]
+  variants: [ObjectIDOnly]
+  syncedWithES: Boolean
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateProduct
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input DatabaseUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
@@ -62,7 +106,7 @@ input ProductFilterFields {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ObjectIDOnly
+  proposedChanges: ProductFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -72,7 +116,7 @@ type Product {
   description: String
   priceRange: String
   isActive: Boolean!
-  photos: [ProductDescriptivePhoto]
+  photos: [DescriptivePhoto]
   variants: [ProductVariant]
   syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus!

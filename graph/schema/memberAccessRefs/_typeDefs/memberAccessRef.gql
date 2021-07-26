@@ -53,6 +53,14 @@ input UpdateMemberAccessRef {
   organizationMembershipRole: OrganizationMembershipRole
   organizationType: OrganizationType
   proposalStatus: EntityProposalStatus
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateMemberAccessRef {
@@ -78,7 +86,7 @@ input MemberAccessRefFilterFields {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ObjectIDOnly
+  proposedChanges: MemberAccessRefFilterFields
   recentLog: ObjectIDOnly
 }
 

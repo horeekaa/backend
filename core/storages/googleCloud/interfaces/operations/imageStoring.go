@@ -3,14 +3,14 @@ package googlecloudstoragecoreoperationinterfaces
 import (
 	"context"
 
-	storageenums "github.com/horeekaa/backend/core/storages/enums"
 	googlecloudstoragecoretypes "github.com/horeekaa/backend/core/storages/googleCloud/types"
+	"github.com/horeekaa/backend/model"
 )
 
 type GCSBasicImageStoringOperation interface {
 	UploadImage(
 		ctx context.Context,
-		category storageenums.StorageCategory,
+		category model.DescriptivePhotoCategory,
 		file googlecloudstoragecoretypes.GCSFileUpload,
 	) (string, error)
 	DeleteImage(

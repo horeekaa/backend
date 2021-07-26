@@ -10,7 +10,7 @@ input CreateOrganization {
   type: OrganizationType!
   point: Int
   unfinalizedPoint: Int
-  profilePhotos: [ObjectIDOnly]
+  profilePhotos: [CreateDescriptivePhoto]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
 }
@@ -42,8 +42,17 @@ input UpdateOrganization {
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
+  profilePhotos: [UpdateDescriptivePhoto]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateOrganization {
@@ -81,7 +90,7 @@ input OrganizationFilterFields {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ObjectIDOnly
+  proposedChanges: OrganizationFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -95,7 +104,7 @@ type Organization {
   ratingDescription: String
   point: Int!
   unfinalizedPoint: Int!
-  profilePhotos: [OrgProfileDescriptivePhoto]
+  profilePhotos: [DescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!

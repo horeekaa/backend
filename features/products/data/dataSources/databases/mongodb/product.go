@@ -72,7 +72,7 @@ func (prodDataSourceMongo *productDataSourceMongo) Find(
 	return products, err
 }
 
-func (prodDataSourceMongo *productDataSourceMongo) Create(input *model.InternalCreateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
+func (prodDataSourceMongo *productDataSourceMongo) Create(input *model.DatabaseCreateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
 	defaultedInput, err := prodDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -90,7 +90,7 @@ func (prodDataSourceMongo *productDataSourceMongo) Create(input *model.InternalC
 	return &outputModel, err
 }
 
-func (prodDataSourceMongo *productDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
+func (prodDataSourceMongo *productDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
 	updateData.ID = ID
 	defaultedInput, err := prodDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -110,16 +110,17 @@ func (prodDataSourceMongo *productDataSourceMongo) Update(ID primitive.ObjectID,
 }
 
 type setProductDefaultValuesOutput struct {
-	Createproduct *model.InternalCreateProduct
-	Updateproduct *model.InternalUpdateProduct
+	Createproduct *model.DatabaseCreateProduct
+	Updateproduct *model.DatabaseUpdateProduct
 }
 
 func (prodDataSourceMongo *productDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setProductDefaultValuesOutput, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
+	defaultIsActive := true
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.InternalUpdateProduct)
+		updateInput := input.(model.DatabaseUpdateProduct)
 		_, err := prodDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -130,9 +131,12 @@ func (prodDataSourceMongo *productDataSourceMongo) setDefaultValues(input interf
 			Updateproduct: &updateInput,
 		}, nil
 	}
-	createInput := (input).(model.InternalCreateProduct)
+	createInput := (input).(model.DatabaseCreateProduct)
 	if createInput.ProposalStatus == nil {
 		createInput.ProposalStatus = &defaultProposalStatus
+	}
+	if createInput.IsActive == nil {
+		createInput.IsActive = &defaultIsActive
 	}
 	if createInput.Photos == nil {
 		createInput.Photos = []*model.ObjectIDOnly{}
