@@ -1,0 +1,10 @@
+package databaseproductvariantdatasourceinterfaces
+
+import (
+	mongodbproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/mongodb/interfaces"
+)
+
+type ProductVariantDataSource interface {
+	GetMongoDataSource() mongodbproductvariantdatasourceinterfaces.ProductVariantDataSourceMongo
+	SetMongoDataSource(mongoRepo mongodbproductvariantdatasourceinterfaces.ProductVariantDataSourceMongo) bool
+}
