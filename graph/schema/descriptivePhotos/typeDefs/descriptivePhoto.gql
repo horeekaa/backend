@@ -1,6 +1,7 @@
 enum DescriptivePhotoCategory {
   ORGANIZATION_STALL
   PRODUCT
+  PRODUCT_VARIANT
 }
 
 enum DescriptivePhotoType {
