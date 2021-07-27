@@ -28,6 +28,7 @@ input CreateProductVariant {
 }
 
 input InternalCreateProductVariant {
+  _id: ObjectID
   name: String!
   description: String
   retailPrice: Int!
@@ -56,7 +57,11 @@ input DatabaseCreateProductVariant {
 }
 
 input UpdateProductVariant {
-  _id: ObjectID!
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
   name: String
   description: String
   retailPrice: Int
@@ -69,7 +74,7 @@ input UpdateProductVariant {
 }
 
 input InternalUpdateProductVariant {
-  _id: ObjectID!
+  _id: ObjectID
   name: String
   description: String
   retailPrice: Int
