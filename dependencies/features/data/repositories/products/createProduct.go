@@ -6,6 +6,7 @@ import (
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositories "github.com/horeekaa/backend/features/products/data/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
@@ -32,11 +33,13 @@ func (_ *CreateProductDependency) Bind() {
 	container.Transient(
 		func(
 			createProductComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent,
+			createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) productdomainrepositoryinterfaces.CreateProductRepository {
 			updateproductRepo, _ := productdomainrepositories.NewCreateProductRepository(
 				createProductComponent,
+				createProductVariantComponent,
 				createDescriptivePhotoComponent,
 				mongoDBTransaction,
 			)

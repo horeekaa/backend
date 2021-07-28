@@ -6,6 +6,7 @@ import (
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositories "github.com/horeekaa/backend/features/products/data/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
@@ -36,6 +37,8 @@ func (_ *ProposeUpdateProductDependency) Bind() {
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
+			updateProductVariantComponent productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent,
 			proposeUpdateProductComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) productdomainrepositoryinterfaces.ProposeUpdateProductRepository {
@@ -43,6 +46,8 @@ func (_ *ProposeUpdateProductDependency) Bind() {
 				productDataSource,
 				createDescriptivePhotoComponent,
 				updateDescriptivePhotoComponent,
+				createProductVariantComponent,
+				updateProductVariantComponent,
 				proposeUpdateProductComponent,
 				mongoDBTransaction,
 			)
