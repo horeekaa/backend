@@ -9,8 +9,6 @@ input MemberAccessRefOptionsInput {
   organizationAccesses: OrganizationAccessesInput
   memberAccessRefAccesses: MemberAccessRefAccessesInput
   productAccesses: ProductAccessesInput
-  productVariantAccesses: ProductVariantAccessesInput
-  descriptivePhotoAccesses: DescriptivePhotoAccessesInput
 }
 
 type MemberAccessRefOptions {
@@ -19,8 +17,6 @@ type MemberAccessRefOptions {
   organizationAccesses: OrganizationAccesses
   memberAccessRefAccesses: MemberAccessRefAccesses
   productAccesses: ProductAccesses
-  productVariantAccesses: ProductVariantAccesses
-  descriptivePhotoAccesses: DescriptivePhotoAccesses
 }
 
 input CreateMemberAccessRef {
