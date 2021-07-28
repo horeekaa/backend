@@ -29,17 +29,17 @@ func NewUpdateProductVariantTransactionComponent(
 	}, nil
 }
 
-func (updateDescPhotoTrx *updateProductVariantTransactionComponent) PreTransaction(
+func (updateProdVariantTrx *updateProductVariantTransactionComponent) PreTransaction(
 	updateProductVariantInput *model.InternalUpdateProductVariant,
 ) (*model.InternalUpdateProductVariant, error) {
 	return updateProductVariantInput, nil
 }
 
-func (updateDescPhotoTrx *updateProductVariantTransactionComponent) TransactionBody(
+func (updateProdVariantTrx *updateProductVariantTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalUpdateProductVariant,
 ) (*model.ProductVariant, error) {
-	_, err := updateDescPhotoTrx.productVariantDataSource.GetMongoDataSource().FindByID(
+	existingProductVariant, err := updateProdVariantTrx.productVariantDataSource.GetMongoDataSource().FindByID(
 		*input.ID,
 		session,
 	)
@@ -56,7 +56,7 @@ func (updateDescPhotoTrx *updateProductVariantTransactionComponent) TransactionB
 
 	if input.Photo != nil {
 		if input.Photo.ID != nil {
-			_, err := updateDescPhotoTrx.updateDescriptivePhotoComponent.TransactionBody(
+			_, err := updateProdVariantTrx.updateDescriptivePhotoComponent.TransactionBody(
 				session,
 				input.Photo,
 			)
@@ -68,11 +68,11 @@ func (updateDescPhotoTrx *updateProductVariantTransactionComponent) TransactionB
 			}
 		} else {
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
-			jsonTemp, _ := json.Marshal(input)
+			jsonTemp, _ := json.Marshal(input.Photo)
 			json.Unmarshal(jsonTemp, photoToCreate)
 			photoToCreate.Category = model.DescriptivePhotoCategoryProductVariant
 			photoToCreate.Photo.File = input.Photo.Photo.File
-			createdDescriptivePhoto, err := updateDescPhotoTrx.createDescriptivePhotoComponent.TransactionBody(
+			createdDescriptivePhoto, err := updateProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
 				session,
 				photoToCreate,
 			)
@@ -82,13 +82,29 @@ func (updateDescPhotoTrx *updateProductVariantTransactionComponent) TransactionB
 					err,
 				)
 			}
+
+			if existingProductVariant.Photo != nil {
+				_, err = updateProdVariantTrx.updateDescriptivePhotoComponent.TransactionBody(
+					session,
+					&model.InternalUpdateDescriptivePhoto{
+						ID:       &existingProductVariant.Photo.ID,
+						IsActive: func(b bool) *bool { return &b }(false),
+					},
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateProductVariant",
+						err,
+					)
+				}
+			}
 			productVariantToUpdate.Photo = &model.ObjectIDOnly{
 				ID: &createdDescriptivePhoto.ID,
 			}
 		}
 	}
 
-	updatedDescPhoto, err := updateDescPhotoTrx.productVariantDataSource.GetMongoDataSource().Update(
+	updatedDescPhoto, err := updateProdVariantTrx.productVariantDataSource.GetMongoDataSource().Update(
 		productVariantToUpdate.ID,
 		productVariantToUpdate,
 		session,
