@@ -55,6 +55,7 @@ func (_ *RepositoriesDependency) Bind() {
 
 		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
 	}
 
 	for _, reg := range registrationList {
