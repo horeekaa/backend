@@ -111,6 +111,10 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 		productToUpdate.Photos[i].Photo.File = descriptivePhoto.Photo.File
 	}
 
+	for i, productVariant := range validatedInput.UpdateProduct.Variants {
+		productToUpdate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+	}
+
 	// if user is only going to approve proposal
 	if productToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.ProductAccesses.ProductApproval == nil {

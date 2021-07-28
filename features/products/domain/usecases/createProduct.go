@@ -112,6 +112,10 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 		productToCreate.Photos[i].Photo.File = descriptivePhoto.Photo.File
 	}
 
+	for i, productVariant := range validatedInput.CreateProduct.Variants {
+		productToCreate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+	}
+
 	productToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdProduct, err := createProductUcase.createProductRepo.RunTransaction(
 		productToCreate,
