@@ -15,6 +15,7 @@ import (
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	productpresentationusecasetypes "github.com/horeekaa/backend/features/products/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type updateProductUsecase struct {
@@ -108,11 +109,15 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	json.Unmarshal(jsonTemp, productToUpdate)
 
 	for i, descriptivePhoto := range validatedInput.UpdateProduct.Photos {
-		productToUpdate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+		if descriptivePhoto.Photo != nil {
+			productToUpdate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+		}
 	}
 
 	for i, productVariant := range validatedInput.UpdateProduct.Variants {
-		productToUpdate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+		if funk.Get(productVariant, "Photo.Photo") != nil {
+			productToUpdate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+		}
 	}
 
 	// if user is only going to approve proposal

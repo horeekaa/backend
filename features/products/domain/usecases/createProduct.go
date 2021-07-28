@@ -14,6 +14,7 @@ import (
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	productpresentationusecasetypes "github.com/horeekaa/backend/features/products/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type createProductUsecase struct {
@@ -109,11 +110,15 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	json.Unmarshal(jsonTemp, productToCreate)
 
 	for i, descriptivePhoto := range validatedInput.CreateProduct.Photos {
-		productToCreate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+		if descriptivePhoto.Photo != nil {
+			productToCreate.Photos[i].Photo.File = descriptivePhoto.Photo.File
+		}
 	}
 
 	for i, productVariant := range validatedInput.CreateProduct.Variants {
-		productToCreate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+		if funk.Get(productVariant, "Photo.Photo") != nil {
+			productToCreate.Variants[i].Photo.Photo.File = productVariant.Photo.Photo.File
+		}
 	}
 
 	productToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}

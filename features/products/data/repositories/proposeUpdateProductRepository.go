@@ -111,7 +111,9 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(descPhotoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			photoToCreate.Photo.File = descPhotoToUpdate.Photo.File
+			if descPhotoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = descPhotoToUpdate.Photo.File
+			}
 			photoToCreate.Category = model.DescriptivePhotoCategoryProduct
 
 			savedPhoto, err := updateOrgRepo.createDescriptivePhotoComponent.TransactionBody(
@@ -165,7 +167,9 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 			variantToCreate := &model.InternalCreateProductVariant{}
 			jsonTemp, _ := json.Marshal(variantToUpdate)
 			json.Unmarshal(jsonTemp, variantToCreate)
-			variantToCreate.Photo.Photo.File = variantToUpdate.Photo.Photo.File
+			if funk.Get(variantToUpdate, "Photo.Photo") != nil {
+				variantToCreate.Photo.Photo.File = variantToUpdate.Photo.Photo.File
+			}
 
 			savedVariant, err := updateOrgRepo.createProductVariantComponent.TransactionBody(
 				operationOption,

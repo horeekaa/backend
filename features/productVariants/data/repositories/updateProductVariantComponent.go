@@ -9,6 +9,7 @@ import (
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type updateProductVariantTransactionComponent struct {
@@ -71,7 +72,9 @@ func (updateProdVariantTrx *updateProductVariantTransactionComponent) Transactio
 			jsonTemp, _ := json.Marshal(input.Photo)
 			json.Unmarshal(jsonTemp, photoToCreate)
 			photoToCreate.Category = model.DescriptivePhotoCategoryProductVariant
-			photoToCreate.Photo.File = input.Photo.Photo.File
+			if funk.Get(input, "Photo.Photo") != nil {
+				photoToCreate.Photo.File = input.Photo.Photo.File
+			}
 			createdDescriptivePhoto, err := updateProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
 				session,
 				photoToCreate,
