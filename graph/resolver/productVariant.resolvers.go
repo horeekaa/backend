@@ -6,7 +6,7 @@ package graphresolver
 import (
 	"context"
 
-	"github.com/golobby/container/v2"
+	container "github.com/golobby/container/v2"
 	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
