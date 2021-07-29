@@ -126,6 +126,7 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValue
 		}, nil
 	}
 	createInput := (input).(model.DatabaseCreateDescriptivePhoto)
+	createInput.IsActive = true
 	createInput.CreatedAt = &currentTime
 	createInput.UpdatedAt = &currentTime
 

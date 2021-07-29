@@ -45,6 +45,7 @@ input DatabaseCreateDescriptivePhoto {
   category: DescriptivePhotoCategory!
   type: DescriptivePhotoType!
   object: ObjectIDOnly
+  isActive: Boolean!
   createdAt: Time
   updatedAt: Time
 }
