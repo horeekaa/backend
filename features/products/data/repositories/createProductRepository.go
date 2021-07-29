@@ -80,7 +80,11 @@ func (createProdRepo *createProductRepository) TransactionBody(
 
 	if productToCreate.Variants != nil {
 		savedVariants := []*model.InternalCreateProductVariant{}
+		generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
 		for _, variant := range productToCreate.Variants {
+			variant.Product = &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			}
 			createdVariantOutput, err := createProdRepo.createProductVariantComponent.TransactionBody(
 				operationOption,
 				variant,

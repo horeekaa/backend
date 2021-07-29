@@ -170,6 +170,9 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 			if funk.Get(variantToUpdate, "Photo.Photo") != nil {
 				variantToCreate.Photo.Photo.File = variantToUpdate.Photo.Photo.File
 			}
+			variantToCreate.Product = &model.ObjectIDOnly{
+				ID: &existingProduct.ID,
+			}
 
 			savedVariant, err := updateOrgRepo.createProductVariantComponent.TransactionBody(
 				operationOption,

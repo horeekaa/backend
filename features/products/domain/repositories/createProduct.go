@@ -3,6 +3,7 @@ package productdomainrepositoryinterfaces
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CreateProductUsecaseComponent interface {
@@ -22,6 +23,9 @@ type CreateProductTransactionComponent interface {
 		session *mongodbcoretypes.OperationOptions,
 		createProductInput *model.InternalCreateProduct,
 	) (*model.Product, error)
+
+	GenerateNewObjectID() primitive.ObjectID
+	GetCurrentObjectID() primitive.ObjectID
 }
 
 type CreateProductRepository interface {

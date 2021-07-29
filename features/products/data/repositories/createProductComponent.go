@@ -12,6 +12,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type createProductTransactionComponent struct {
@@ -19,6 +20,7 @@ type createProductTransactionComponent struct {
 	loggingDataSource             databaseloggingdatasourceinterfaces.LoggingDataSource
 	structFieldIteratorUtility    coreutilityinterfaces.StructFieldIteratorUtility
 	createProductUsecaseComponent productdomainrepositoryinterfaces.CreateProductUsecaseComponent
+	generatedObjectID             *primitive.ObjectID
 }
 
 func NewCreateProductTransactionComponent(
@@ -31,6 +33,20 @@ func NewCreateProductTransactionComponent(
 		loggingDataSource:          loggingDataSource,
 		structFieldIteratorUtility: structFieldIteratorUtility,
 	}, nil
+}
+
+func (createProductTrx *createProductTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
+	generatedObjectID := createProductTrx.productDataSource.GetMongoDataSource().GenerateObjectID()
+	createProductTrx.generatedObjectID = &generatedObjectID
+	return *createProductTrx.generatedObjectID
+}
+
+func (createProductTrx *createProductTransactionComponent) GetCurrentObjectID() primitive.ObjectID {
+	if createProductTrx.generatedObjectID == nil {
+		generatedObjectID := createProductTrx.productDataSource.GetMongoDataSource().GenerateObjectID()
+		createProductTrx.generatedObjectID = &generatedObjectID
+	}
+	return *createProductTrx.generatedObjectID
 }
 
 func (createProductTrx *createProductTransactionComponent) SetValidation(
@@ -85,7 +101,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 		&tagString,
 	)
 
-	generatedObjectID := createProductTrx.productDataSource.GetMongoDataSource().GenerateObjectID()
+	generatedObjectID := createProductTrx.GetCurrentObjectID()
 	loggingOutput, err := createProductTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Product",
