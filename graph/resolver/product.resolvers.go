@@ -5,13 +5,13 @@ package graphresolver
 
 import (
 	"context"
-	"fmt"
 
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	productvariantpresentationusecaseinterfaces "github.com/horeekaa/backend/features/productVariants/presentation/usecases"
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	productpresentationusecasetypes "github.com/horeekaa/backend/features/products/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
@@ -63,7 +63,25 @@ func (r *productResolver) Photos(ctx context.Context, obj *model.Product) ([]*mo
 }
 
 func (r *productResolver) Variants(ctx context.Context, obj *model.Product) ([]*model.ProductVariant, error) {
-	panic(fmt.Errorf("not implemented"))
+	var getProductVariantUsecase productvariantpresentationusecaseinterfaces.GetProductVariantUsecase
+	container.Make(&getProductVariantUsecase)
+
+	productVariants := []*model.ProductVariant{}
+	if obj.Variants != nil {
+		for _, variant := range obj.Variants {
+			productVariant, err := getProductVariantUsecase.Execute(
+				&model.ProductVariantFilterFields{
+					ID: &variant.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			productVariants = append(productVariants, productVariant)
+		}
+	}
+	return productVariants, nil
 }
 
 func (r *productResolver) SubmittingAccount(ctx context.Context, obj *model.Product) (*model.Account, error) {

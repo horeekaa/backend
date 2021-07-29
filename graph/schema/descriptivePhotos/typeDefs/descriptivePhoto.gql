@@ -1,6 +1,7 @@
 enum DescriptivePhotoCategory {
   ORGANIZATION_STALL
   PRODUCT
+  PRODUCT_VARIANT
 }
 
 enum DescriptivePhotoType {
@@ -44,6 +45,7 @@ input DatabaseCreateDescriptivePhoto {
   category: DescriptivePhotoCategory!
   type: DescriptivePhotoType!
   object: ObjectIDOnly
+  isActive: Boolean!
   createdAt: Time
   updatedAt: Time
 }

@@ -20,25 +20,97 @@ input CreateProductVariant {
   description: String
   retailPrice: Int!
   targetUnitCost: Int!
-  unitWeightInGrams: Int!
+  estimatedUnitWeightInGrams: Int!
   dimension: CreateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: CreateDescriptivePhoto
+}
+
+input InternalCreateProductVariant {
+  _id: ObjectID
+  name: String!
+  description: String
+  retailPrice: Int!
+  targetUnitCost: Int!
+  estimatedUnitWeightInGrams: Int!
+  dimension: CreateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: InternalCreateDescriptivePhoto
   product: ObjectIDOnly
 }
 
+input DatabaseCreateProductVariant {
+  name: String!
+  description: String
+  retailPrice: Int!
+  targetUnitCost: Int!
+  estimatedUnitWeightInGrams: Int!
+  dimension: CreateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: ObjectIDOnly
+  product: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
 input UpdateProductVariant {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
+  name: String
+  description: String
+  retailPrice: Int
+  targetUnitCost: Int
+  estimatedUnitWeightInGrams: Int
+  dimension: UpdateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: UpdateDescriptivePhoto
+}
+
+input InternalUpdateProductVariant {
+  _id: ObjectID
+  name: String
+  description: String
+  retailPrice: Int
+  targetUnitCost: Int
+  estimatedUnitWeightInGrams: Int
+  dimension: UpdateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: InternalUpdateDescriptivePhoto
+}
+
+input DatabaseUpdateProductVariant {
   _id: ObjectID!
   name: String
   description: String
   retailPrice: Int
   targetUnitCost: Int
-  unitWeightInGrams: Int
+  estimatedUnitWeightInGrams: Int
   dimension: UpdateProductDimension
   soldInUnit: SellingUnitType
-  photo: UpdateDescriptivePhoto
   isActive: Boolean
+  photo: ObjectIDOnly
+  updatedAt: Time
+}
+
+input ProductVariantFilterFields {
+  _id: ObjectID
+  name: String
+  description: String
+  retailPrice: Int
+  targetUnitCost: Int
+  estimatedUnitWeightInGrams: Int
+  dimension: ProductDimensionFilterFields
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  product: ObjectIDOnly
 }
 
 type ProductVariant {
@@ -47,7 +119,7 @@ type ProductVariant {
   description: String
   retailPrice: Int!
   targetUnitCost: Int!
-  unitWeightInGrams: Int!
+  estimatedUnitWeightInGrams: Int!
   dimension: ProductDimension
   soldInUnit: SellingUnitType!
   isActive: Boolean!

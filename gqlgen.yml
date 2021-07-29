@@ -93,6 +93,12 @@ models:
         resolver: true
       variants:
         resolver: true
+  ProductVariant:
+    fields:
+      photo:
+        resolver: true
+      product:
+        resolver: true
 
   ID:
     model:

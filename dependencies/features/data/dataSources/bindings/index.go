@@ -8,6 +8,7 @@ import (
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
 	mongodbmemberaccessdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccesses/databases/mongodb"
 	mongodborganizationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/organizations/databases/mongodb"
+	mongodbproductvariantdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/productVariants/databases/mongodb"
 	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
@@ -24,6 +25,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbmemberaccessrefdatasourcedependencies.MemberAccessRefDataSourceDependency{},
 		&mongodborganizationdatasourcedependencies.OrganizationDataSourceDependency{},
 		&mongodbproductdatasourcedependencies.ProductDataSourceDependency{},
+		&mongodbproductvariantdatasourcedependencies.ProductVariantDataSourceDependency{},
 		&mongodbdescriptivephotodatasourcedependencies.DescriptivePhotoDataSourceDependency{},
 	}
 

@@ -1,10 +1,9 @@
 input CreateProduct {
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [CreateDescriptivePhoto]
-  variants: [ObjectIDOnly]
+  variants: [CreateProductVariant]
   proposalStatus: EntityProposalStatus
 }
 
@@ -12,10 +11,9 @@ input InternalCreateProduct {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [InternalCreateDescriptivePhoto]
-  variants: [ObjectIDOnly]
+  variants: [InternalCreateProductVariant]
   syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -30,7 +28,6 @@ input DatabaseCreateProduct {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [ObjectIDOnly]
   variants: [ObjectIDOnly]
@@ -48,9 +45,15 @@ input UpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
+  """
+  Leave the field null/empty array or fill it with updates to the product's photos.
+  (a) If ID is present, then it will be update operation(s) to existing photos.
+  (b) If ID is not present, then it will be additional photo(s)
+   appended to the list of product's photos.
+  """
   photos: [UpdateDescriptivePhoto]
+  variants: [UpdateProductVariant]
   proposalStatus: EntityProposalStatus
   """
   Leave the field empty, will be overriden by server.
@@ -66,10 +69,9 @@ input InternalUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [InternalUpdateDescriptivePhoto]
-  variants: [ObjectIDOnly]
+  variants: [InternalUpdateProductVariant]
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -83,7 +85,6 @@ input DatabaseUpdateProduct {
   _id: ObjectID!
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   photos: [ObjectIDOnly]
   variants: [ObjectIDOnly]
@@ -100,7 +101,6 @@ input ProductFilterFields {
   _id: ObjectID
   name: String
   description: String
-  priceRange: String
   isActive: Boolean
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
@@ -114,7 +114,6 @@ type Product {
   _id: ObjectID!
   name: String!
   description: String
-  priceRange: String
   isActive: Boolean!
   photos: [DescriptivePhoto]
   variants: [ProductVariant]

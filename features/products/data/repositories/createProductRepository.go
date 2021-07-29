@@ -6,23 +6,27 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
+	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createProductRepository struct {
 	createProductTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent
+	createProductVariantComponent     productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
 	createDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateProductRepository(
 	createProductRepositoryTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent,
+	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.CreateProductRepository, error) {
 	createProductRepo := &createProductRepository{
 		createProductRepositoryTransactionComponent,
+		createProductVariantComponent,
 		createDescriptivePhotoComponent,
 		mongoDBTransaction,
 	}
@@ -72,6 +76,28 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
 		productToCreate.Photos = savedPhotos
+	}
+
+	if productToCreate.Variants != nil {
+		savedVariants := []*model.InternalCreateProductVariant{}
+		generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
+		for _, variant := range productToCreate.Variants {
+			variant.Product = &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			}
+			createdVariantOutput, err := createProdRepo.createProductVariantComponent.TransactionBody(
+				operationOption,
+				variant,
+			)
+			if err != nil {
+				return nil, err
+			}
+			savedVariant := &model.InternalCreateProductVariant{}
+			jsonTemp, _ := json.Marshal(createdVariantOutput)
+			json.Unmarshal(jsonTemp, savedVariant)
+			savedVariants = append(savedVariants, savedVariant)
+		}
+		productToCreate.Variants = savedVariants
 	}
 
 	return createProdRepo.createProductTransactionComponent.TransactionBody(

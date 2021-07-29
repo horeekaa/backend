@@ -10,6 +10,12 @@ input UpdateProductDimension {
   height: Int
 }
 
+input ProductDimensionFilterFields {
+  length: Int
+  width: Int
+  height: Int
+}
+
 type ProductDimension {
   length: Int!
   width: Int!
