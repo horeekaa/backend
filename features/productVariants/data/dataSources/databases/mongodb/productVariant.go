@@ -23,6 +23,10 @@ func NewProductVariantDataSourceMongo(basicOperation mongodbcoreoperationinterfa
 	}, nil
 }
 
+func (prodVarDataSourceMongo *productVariantDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (prodVarDataSourceMongo *productVariantDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error) {
 	var output model.ProductVariant
 	_, err := prodVarDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)

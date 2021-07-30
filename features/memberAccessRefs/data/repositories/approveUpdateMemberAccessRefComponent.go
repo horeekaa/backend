@@ -112,6 +112,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 
 	if updateMemberAccessRef.ProposalStatus != nil {
 		if *updateMemberAccessRef.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonUpdate, _ := json.Marshal(fieldsToUpdateMemberAccessRef.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdateMemberAccessRef)
 		}
 	}

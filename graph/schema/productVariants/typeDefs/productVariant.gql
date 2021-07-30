@@ -42,6 +42,7 @@ input InternalCreateProductVariant {
 }
 
 input DatabaseCreateProductVariant {
+  _id: ObjectID!
   name: String!
   description: String
   retailPrice: Int!
