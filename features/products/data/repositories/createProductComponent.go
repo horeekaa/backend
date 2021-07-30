@@ -146,5 +146,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 			err,
 		)
 	}
+	createProductTrx.generatedObjectID = nil
+
 	return newProduct, nil
 }

@@ -88,6 +88,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 			err,
 		)
 	}
+	createProdVariantTrx.generatedObjectID = nil
 
 	return createdVariant, nil
 }
