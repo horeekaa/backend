@@ -72,6 +72,9 @@ func (updateProdVariantTrx *updateProductVariantTransactionComponent) Transactio
 			jsonTemp, _ := json.Marshal(input.Photo)
 			json.Unmarshal(jsonTemp, photoToCreate)
 			photoToCreate.Category = model.DescriptivePhotoCategoryProductVariant
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingProductVariant.ID,
+			}
 			if funk.Get(input, "Photo.Photo") != nil {
 				photoToCreate.Photo.File = input.Photo.Photo.File
 			}
