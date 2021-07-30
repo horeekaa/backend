@@ -112,6 +112,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 
 	if updateOrganization.ProposalStatus != nil {
 		if *updateOrganization.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonUpdate, _ := json.Marshal(fieldsToUpdateOrganization.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdateOrganization)
 		}
 	}
