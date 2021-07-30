@@ -59,10 +59,14 @@ func (createProdRepo *createProductRepository) TransactionBody(
 	input interface{},
 ) (interface{}, error) {
 	productToCreate := input.(*model.InternalCreateProduct)
+	generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
 	if productToCreate.Photos != nil {
 		savedPhotos := []*model.InternalCreateDescriptivePhoto{}
 		for _, photo := range productToCreate.Photos {
 			photo.Category = model.DescriptivePhotoCategoryProduct
+			photo.Object = &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			}
 			createdPhotoOutput, err := createProdRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
@@ -80,7 +84,6 @@ func (createProdRepo *createProductRepository) TransactionBody(
 
 	if productToCreate.Variants != nil {
 		savedVariants := []*model.InternalCreateProductVariant{}
-		generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
 		for _, variant := range productToCreate.Variants {
 			variant.Product = &model.ObjectIDOnly{
 				ID: &generatedObjectID,

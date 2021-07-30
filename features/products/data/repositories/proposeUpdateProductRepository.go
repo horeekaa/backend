@@ -115,6 +115,9 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 				photoToCreate.Photo.File = descPhotoToUpdate.Photo.File
 			}
 			photoToCreate.Category = model.DescriptivePhotoCategoryProduct
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingProduct.ID,
+			}
 
 			savedPhoto, err := updateOrgRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
