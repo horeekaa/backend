@@ -45,6 +45,7 @@ input UpdateOrganization {
   profilePhotos: [UpdateDescriptivePhoto]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   """
   Leave the field empty, will be overriden by server.
   """
@@ -67,6 +68,7 @@ input InternalUpdateOrganization {
   profilePhotos: [ObjectIDOnly]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
@@ -107,6 +109,7 @@ type Organization {
   profilePhotos: [DescriptivePhoto]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
   proposedChanges: Organization

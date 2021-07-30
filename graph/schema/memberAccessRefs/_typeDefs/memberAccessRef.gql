@@ -49,6 +49,7 @@ input UpdateMemberAccessRef {
   organizationMembershipRole: OrganizationMembershipRole
   organizationType: OrganizationType
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   """
   Leave the field empty, will be overriden by server.
   """
@@ -66,6 +67,7 @@ input InternalUpdateMemberAccessRef {
   organizationMembershipRole: OrganizationMembershipRole
   organizationType: OrganizationType
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: UpdateMemberAccessRef
@@ -93,6 +95,7 @@ type MemberAccessRef {
   organizationMembershipRole: OrganizationMembershipRole
   organizationType: OrganizationType
   proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
   proposedChanges: MemberAccessRef

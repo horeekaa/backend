@@ -55,6 +55,7 @@ input UpdateProduct {
   photos: [UpdateDescriptivePhoto]
   variants: [UpdateProductVariant]
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   """
   Leave the field empty, will be overriden by server.
   """
@@ -74,6 +75,7 @@ input InternalUpdateProduct {
   variants: [InternalUpdateProductVariant]
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: UpdateProduct
@@ -90,6 +92,7 @@ input DatabaseUpdateProduct {
   variants: [ObjectIDOnly]
   syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: UpdateProduct
@@ -119,6 +122,7 @@ type Product {
   variants: [ProductVariant]
   syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
   proposedChanges: Product
