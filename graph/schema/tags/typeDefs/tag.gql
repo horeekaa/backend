@@ -1,0 +1,119 @@
+input CreateTag {
+  name: String!
+  description: String
+  isActive: Boolean
+  photos: [CreateDescriptivePhoto]
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateTag {
+  _id: ObjectID!
+  name: String!
+  description: String
+  isActive: Boolean
+  photos: [InternalCreateDescriptivePhoto]
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DatabaseCreateTag {
+  _id: ObjectID!
+  name: String!
+  description: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateTag {
+  _id: ObjectID!
+  name: String
+  description: String
+  isActive: Boolean
+  """
+  Leave the field null/empty array or fill it with updates to the product's photos.
+  (a) If ID is present, then it will be update operation(s) to existing photos.
+  (b) If ID is not present, then it will be additional photo(s)
+   appended to the list of product's photos.
+  """
+  photos: [UpdateDescriptivePhoto]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdateTag {
+  _id: ObjectID!
+  name: String
+  description: String
+  isActive: Boolean
+  photos: [InternalUpdateDescriptivePhoto]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input DatabaseUpdateTag {
+  _id: ObjectID!
+  name: String
+  description: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input TagFilterFields {
+  _id: ObjectID
+  name: String
+  description: String
+  isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: TagFilterFields
+  recentLog: ObjectIDOnly
+}
+
+type Tag {
+  _id: ObjectID!
+  name: String!
+  description: String
+  isActive: Boolean!
+  photos: [DescriptivePhoto]
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: Tag
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
