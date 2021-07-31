@@ -10,6 +10,7 @@ import (
 	mongodborganizationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/organizations/databases/mongodb"
 	mongodbproductvariantdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/productVariants/databases/mongodb"
 	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
+	mongodbtagdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/tags/databases/mongodb"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -27,6 +28,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbproductdatasourcedependencies.ProductDataSourceDependency{},
 		&mongodbproductvariantdatasourcedependencies.ProductVariantDataSourceDependency{},
 		&mongodbdescriptivephotodatasourcedependencies.DescriptivePhotoDataSourceDependency{},
+		&mongodbtagdatasourcedependencies.TagDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {
