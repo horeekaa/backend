@@ -1,0 +1,13 @@
+input TagAccessesInput {
+  tagCreate: Boolean
+  tagUpdate: Boolean
+  tagReadAll: Boolean
+  tagApproval: Boolean
+}
+
+type TagAccesses {
+  tagCreate: Boolean
+  tagUpdate: Boolean
+  tagReadAll: Boolean
+  tagApproval: Boolean
+}
