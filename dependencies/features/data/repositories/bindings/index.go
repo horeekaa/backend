@@ -9,6 +9,7 @@ import (
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
 	productvariantdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/productVariants"
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
+	tagdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -56,6 +57,12 @@ func (_ *RepositoriesDependency) Bind() {
 		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
+
+		&tagdomainrepositorydependencies.CreateTagDependency{},
+		&tagdomainrepositorydependencies.ProposeUpdateTagDependency{},
+		&tagdomainrepositorydependencies.ApproveUpdateTagDependency{},
+		&tagdomainrepositorydependencies.GetAllTagDependency{},
+		&tagdomainrepositorydependencies.GetTagDependency{},
 	}
 
 	for _, reg := range registrationList {
