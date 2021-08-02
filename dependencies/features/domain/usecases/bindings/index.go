@@ -9,6 +9,7 @@ import (
 	organizationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/organizations"
 	productvariantpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/productVariants"
 	productpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/products"
+	tagpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
 
@@ -47,6 +48,11 @@ func (_ *UsecasesDependency) Bind() {
 		&productpresentationusecasedependencies.UpdateProductUsecaseDependency{},
 
 		&productvariantpresentationusecasedependencies.GetProductVariantUsecaseDependency{},
+
+		&tagpresentationusecasedependencies.CreateTagUsecaseDependency{},
+		&tagpresentationusecasedependencies.GetAllTagUsecaseDependency{},
+		&tagpresentationusecasedependencies.GetTagUsecaseDependency{},
+		&tagpresentationusecasedependencies.UpdateTagUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {
