@@ -39,7 +39,7 @@ func NewGetAllTagUsecase(
 	}, nil
 }
 
-func (getAllProdUcase *getAllTagUsecase) validation(input tagpresentationusecasetypes.GetAllTagUsecaseInput) (*tagpresentationusecasetypes.GetAllTagUsecaseInput, error) {
+func (getAllTagUcase *getAllTagUsecase) validation(input tagpresentationusecasetypes.GetAllTagUsecaseInput) (*tagpresentationusecasetypes.GetAllTagUsecaseInput, error) {
 	if &input.Context == nil {
 		return &tagpresentationusecasetypes.GetAllTagUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
@@ -52,15 +52,15 @@ func (getAllProdUcase *getAllTagUsecase) validation(input tagpresentationusecase
 	return &input, nil
 }
 
-func (getAllProdUcase *getAllTagUsecase) Execute(
+func (getAllTagUcase *getAllTagUsecase) Execute(
 	input tagpresentationusecasetypes.GetAllTagUsecaseInput,
 ) ([]*model.Tag, error) {
-	validatedInput, err := getAllProdUcase.validation(input)
+	validatedInput, err := getAllTagUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := getAllProdUcase.getAccountFromAuthDataRepo.Execute(
+	account, err := getAllTagUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
 			Context: validatedInput.Context,
 		},
@@ -81,12 +81,12 @@ func (getAllProdUcase *getAllTagUsecase) Execute(
 	}
 
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
-	_, err = getAllProdUcase.getAccountMemberAccessRepo.Execute(
+	_, err = getAllTagUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.MemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
-				Access:              getAllProdUcase.getAllTagAccessIdentity,
+				Access:              getAllTagUcase.getAllTagAccessIdentity,
 			},
 		},
 	)
@@ -97,7 +97,7 @@ func (getAllProdUcase *getAllTagUsecase) Execute(
 		)
 	}
 
-	tags, err := getAllProdUcase.getAllTagRepo.Execute(
+	tags, err := getAllTagUcase.getAllTagRepo.Execute(
 		tagdomainrepositorytypes.GetAllTagInput{
 			FilterFields:  validatedInput.FilterFields,
 			PaginationOpt: validatedInput.PaginationOps,

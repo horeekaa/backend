@@ -15,7 +15,7 @@ import (
 )
 
 type proposeUpdateTagTransactionComponent struct {
-	TagDataSource                    databasetagdatasourceinterfaces.TagDataSource
+	tagDataSource                    databasetagdatasourceinterfaces.TagDataSource
 	loggingDataSource                databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility              coreutilityinterfaces.MapProcessorUtility
 	structComparisonUtility          coreutilityinterfaces.StructComparisonUtility
@@ -29,7 +29,7 @@ func NewProposeUpdateTagTransactionComponent(
 	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 ) (tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent, error) {
 	return &proposeUpdateTagTransactionComponent{
-		TagDataSource:           TagDataSource,
+		tagDataSource:           TagDataSource,
 		loggingDataSource:       loggingDataSource,
 		mapProcessorUtility:     mapProcessorUtility,
 		structComparisonUtility: structComparisonUtility,
@@ -56,7 +56,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	updateTag *model.InternalUpdateTag,
 ) (*model.Tag, error) {
-	existingTag, err := updateTagTrx.TagDataSource.GetMongoDataSource().FindByID(
+	existingTag, err := updateTagTrx.tagDataSource.GetMongoDataSource().FindByID(
 		updateTag.ID,
 		session,
 	)
@@ -151,7 +151,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 		}
 	}
 
-	updatedTag, err := updateTagTrx.TagDataSource.GetMongoDataSource().Update(
+	updatedTag, err := updateTagTrx.tagDataSource.GetMongoDataSource().Update(
 		fieldsToUpdateTag.ID,
 		fieldsToUpdateTag,
 		session,

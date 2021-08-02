@@ -35,27 +35,27 @@ func NewCreateTagRepository(
 	return createTagRepo, nil
 }
 
-func (createProdRepo *createTagRepository) SetValidation(
+func (createTagRepo *createTagRepository) SetValidation(
 	usecaseComponent tagdomainrepositoryinterfaces.CreateTagUsecaseComponent,
 ) (bool, error) {
-	createProdRepo.createTagTransactionComponent.SetValidation(usecaseComponent)
+	createTagRepo.createTagTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (createProdRepo *createTagRepository) PreTransaction(
+func (createTagRepo *createTagRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return createProdRepo.createTagTransactionComponent.PreTransaction(
+	return createTagRepo.createTagTransactionComponent.PreTransaction(
 		input.(*model.InternalCreateTag),
 	)
 }
 
-func (createProdRepo *createTagRepository) TransactionBody(
+func (createTagRepo *createTagRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
 	tagToCreate := input.(*model.InternalCreateTag)
-	generatedObjectID := createProdRepo.createTagTransactionComponent.GenerateNewObjectID()
+	generatedObjectID := createTagRepo.createTagTransactionComponent.GenerateNewObjectID()
 	if tagToCreate.Photos != nil {
 		savedPhotos := []*model.InternalCreateDescriptivePhoto{}
 		for _, photo := range tagToCreate.Photos {
@@ -63,7 +63,7 @@ func (createProdRepo *createTagRepository) TransactionBody(
 			photo.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
-			createdPhotoOutput, err := createProdRepo.createDescriptivePhotoComponent.TransactionBody(
+			createdPhotoOutput, err := createTagRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
 			)
@@ -78,15 +78,15 @@ func (createProdRepo *createTagRepository) TransactionBody(
 		tagToCreate.Photos = savedPhotos
 	}
 
-	return createProdRepo.createTagTransactionComponent.TransactionBody(
+	return createTagRepo.createTagTransactionComponent.TransactionBody(
 		operationOption,
 		tagToCreate,
 	)
 }
 
-func (createProdRepo *createTagRepository) RunTransaction(
+func (createTagRepo *createTagRepository) RunTransaction(
 	input *model.InternalCreateTag,
 ) (*model.Tag, error) {
-	output, err := createProdRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := createTagRepo.mongoDBTransaction.RunTransaction(input)
 	return (output).(*model.Tag), err
 }

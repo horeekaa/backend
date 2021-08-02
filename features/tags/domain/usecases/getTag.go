@@ -19,21 +19,21 @@ func NewGetTagUsecase(
 	}, nil
 }
 
-func (getProdUcase *getTagUsecase) validation(
+func (getTagUcase *getTagUsecase) validation(
 	input *model.TagFilterFields,
 ) (*model.TagFilterFields, error) {
 	return input, nil
 }
 
-func (getProdUcase *getTagUsecase) Execute(
+func (getTagUcase *getTagUsecase) Execute(
 	filterFields *model.TagFilterFields,
 ) (*model.Tag, error) {
-	validatedFilterFields, err := getProdUcase.validation(filterFields)
+	validatedFilterFields, err := getTagUcase.validation(filterFields)
 	if err != nil {
 		return nil, err
 	}
 
-	tag, err := getProdUcase.getTagRepository.Execute(
+	tag, err := getTagUcase.getTagRepository.Execute(
 		validatedFilterFields,
 	)
 	if err != nil {
