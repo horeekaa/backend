@@ -1,0 +1,87 @@
+enum TaggingType {
+  ORGANIZATION
+  PRODUCT
+  TAGGING
+}
+
+input CreateTagging {
+  tag: ObjectIDOnly!
+  """
+  The field is available for bulk insertion (as a list),
+  however it is stored separately on each document.
+  """
+  correlatedTags: [ObjectIDOnly]
+  """
+  The field is available for bulk insertion (as a list),
+  however it is stored separately on each document.
+  """
+  products: [ObjectIDOnly]
+  """
+  The field is available for bulk insertion (as a list),
+  however it is stored separately on each document.
+  """
+  organizations: [ObjectIDOnly]
+  isActive: Boolean
+}
+
+input InternalCreateTagging {
+  _id: ObjectID!
+  tag: ObjectIDOnly!
+  correlatedTags: [ObjectIDOnly]
+  products: [ObjectIDOnly]
+  organizations: [ObjectIDOnly]
+  isActive: Boolean
+  taggingType: TaggingType
+}
+
+input DatabaseCreateTagging {
+  _id: ObjectID!
+  tag: ObjectIDOnly!
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
+  isActive: Boolean
+  taggingType: TaggingType
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateTagging {
+  _id: ObjectID!
+  tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  isActive: Boolean
+}
+
+input InternalUpdateTagging {
+  _id: ObjectID!
+  tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
+  isActive: Boolean
+}
+
+input DatabaseUpdateTagging {
+  _id: ObjectID!
+  tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
+  isActive: Boolean
+  taggingType: TaggingType
+  updatedAt: Time
+}
+
+type Tagging {
+  _id: ObjectID!
+  tag: Tag
+  correlatedTag: Tagging
+  product: Product
+  organization: Organization
+  isActive: Boolean!
+  taggingType: TaggingType
+  createdAt: Time!
+  updatedAt: Time!
+}

@@ -2,6 +2,8 @@ input CreateTag {
   name: String!
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [CreateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
 }
@@ -11,6 +13,8 @@ input InternalCreateTag {
   name: String!
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [InternalCreateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -26,6 +30,8 @@ input DatabaseCreateTag {
   name: String!
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -41,6 +47,8 @@ input UpdateTag {
   name: String
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   """
   Leave the field null/empty array or fill it with updates to the product's photos.
   (a) If ID is present, then it will be update operation(s) to existing photos.
@@ -65,6 +73,8 @@ input InternalUpdateTag {
   name: String
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [InternalUpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -80,6 +90,8 @@ input DatabaseUpdateTag {
   name: String
   description: String
   isActive: Boolean
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -107,6 +119,8 @@ type Tag {
   name: String!
   description: String
   isActive: Boolean!
+  startActivePeriod: Time
+  endActivePeriod: Time
   photos: [DescriptivePhoto]
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
