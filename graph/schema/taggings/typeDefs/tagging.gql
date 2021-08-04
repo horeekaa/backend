@@ -6,6 +6,10 @@ enum TaggingType {
 
 input CreateTagging {
   tag: ObjectIDOnly!
+}
+
+input BulkCreateTagging {
+  tag: ObjectIDOnly!
   """
   The field is available for bulk insertion (as a list),
   however it is stored separately on each document.
@@ -47,10 +51,17 @@ input DatabaseCreateTagging {
 }
 
 input UpdateTagging {
-  _id: ObjectID!
+  _id: ObjectID
+  tag: ObjectIDOnly
+  isActive: Boolean
+}
+
+input BulkUpdateTagging {
+  _id: [ObjectID]
   tag: ObjectIDOnly
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
+  organization: ObjectIDOnly
   isActive: Boolean
 }
 
@@ -76,7 +87,7 @@ input DatabaseUpdateTagging {
 
 type Tagging {
   _id: ObjectID!
-  tag: Tag
+  tag: Tag!
   correlatedTag: Tagging
   product: Product
   organization: Organization
