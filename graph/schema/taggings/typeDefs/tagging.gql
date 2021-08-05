@@ -57,7 +57,7 @@ input UpdateTagging {
 }
 
 input BulkUpdateTagging {
-  _id: [ObjectID]
+  IDs: [ObjectID]
   tag: ObjectIDOnly
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
@@ -66,7 +66,7 @@ input BulkUpdateTagging {
 }
 
 input InternalUpdateTagging {
-  _id: ObjectID!
+  IDs: [ObjectID]
   tag: ObjectIDOnly
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
@@ -85,10 +85,19 @@ input DatabaseUpdateTagging {
   updatedAt: Time
 }
 
+input TaggingFilterFields {
+  _id: ObjectID
+  tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
+  isActive: Boolean
+}
+
 type Tagging {
   _id: ObjectID!
   tag: Tag!
-  correlatedTag: Tagging
+  correlatedTag: Tag
   product: Product
   organization: Organization
   isActive: Boolean!
