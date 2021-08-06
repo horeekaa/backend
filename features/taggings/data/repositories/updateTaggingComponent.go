@@ -94,9 +94,10 @@ func (updateTaggingTrx *updateTaggingTransactionComponent) TransactionBody(
 			)
 		}
 	}
+
+	jsonTemp, _ := json.Marshal(input)
 	for _, id := range input.IDs {
 		tagToUpdate := &model.DatabaseUpdateTagging{}
-		jsonTemp, _ := json.Marshal(input)
 		json.Unmarshal(jsonTemp, tagToUpdate)
 		updatedTagging, err := updateTaggingTrx.taggingDataSource.GetMongoDataSource().Update(
 			*id,
