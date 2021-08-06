@@ -43,8 +43,8 @@ func (updateTaggingTrx *updateTaggingTransactionComponent) SetValidation(
 }
 
 func (updateTaggingTrx *updateTaggingTransactionComponent) PreTransaction(
-	input *model.InternalUpdateTagging,
-) (*model.InternalUpdateTagging, error) {
+	input *model.InternalBulkUpdateTagging,
+) (*model.InternalBulkUpdateTagging, error) {
 	if updateTaggingTrx.updateTaggingUsecaseComponent == nil {
 		return input, nil
 	}
@@ -53,7 +53,7 @@ func (updateTaggingTrx *updateTaggingTransactionComponent) PreTransaction(
 
 func (updateTaggingTrx *updateTaggingTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	input *model.InternalUpdateTagging,
+	input *model.InternalBulkUpdateTagging,
 ) ([]*model.Tagging, error) {
 	taggings := []*model.Tagging{}
 	if input.CorrelatedTag != nil {

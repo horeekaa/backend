@@ -7,26 +7,26 @@ import (
 
 type UpdateTaggingUsecaseComponent interface {
 	Validation(
-		updateTaggingInput *model.InternalUpdateTagging,
-	) (*model.InternalUpdateTagging, error)
+		updateTaggingInput *model.InternalBulkUpdateTagging,
+	) (*model.InternalBulkUpdateTagging, error)
 }
 
 type UpdateTaggingTransactionComponent interface {
 	SetValidation(usecaseComponent UpdateTaggingUsecaseComponent) (bool, error)
 
 	PreTransaction(
-		updateTaggingInput *model.InternalUpdateTagging,
-	) (*model.InternalUpdateTagging, error)
+		updateTaggingInput *model.InternalBulkUpdateTagging,
+	) (*model.InternalBulkUpdateTagging, error)
 
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
-		updateTaggingInput *model.InternalUpdateTagging,
+		updateTaggingInput *model.InternalBulkUpdateTagging,
 	) ([]*model.Tagging, error)
 }
 
 type UpdateTaggingRepository interface {
 	SetValidation(usecaseComponent UpdateTaggingUsecaseComponent) (bool, error)
 	RunTransaction(
-		updateTaggingInput *model.InternalUpdateTagging,
+		updateTaggingInput *model.InternalBulkUpdateTagging,
 	) ([]*model.Tagging, error)
 }
