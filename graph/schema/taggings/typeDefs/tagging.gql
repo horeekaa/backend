@@ -66,6 +66,19 @@ input BulkUpdateTagging {
 }
 
 input InternalUpdateTagging {
+  _id: ObjectID
+  """
+  The `Tag` field is not required when updating. However,
+  when adding new `Tagging`, the `Tag` field becomes necessary.
+  """
+  tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
+  isActive: Boolean
+}
+
+input InternalBulkUpdateTagging {
   IDs: [ObjectID]
   tag: ObjectIDOnly
   correlatedTag: ObjectIDOnly
@@ -92,6 +105,7 @@ input TaggingFilterFields {
   product: ObjectIDOnly
   organization: ObjectIDOnly
   isActive: Boolean
+  taggingType: TaggingType
 }
 
 type Tagging {
