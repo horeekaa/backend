@@ -10,6 +10,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositories "github.com/horeekaa/backend/features/products/data/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 )
 
 type ProposeUpdateProductDependency struct{}
@@ -39,6 +40,8 @@ func (_ *ProposeUpdateProductDependency) Bind() {
 			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
 			createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 			updateProductVariantComponent productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent,
+			createTaggingComponent taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent,
+			updateTaggingComponent taggingdomainrepositoryinterfaces.UpdateTaggingTransactionComponent,
 			proposeUpdateProductComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) productdomainrepositoryinterfaces.ProposeUpdateProductRepository {
@@ -48,6 +51,8 @@ func (_ *ProposeUpdateProductDependency) Bind() {
 				updateDescriptivePhotoComponent,
 				createProductVariantComponent,
 				updateProductVariantComponent,
+				createTaggingComponent,
+				updateTaggingComponent,
 				proposeUpdateProductComponent,
 				mongoDBTransaction,
 			)

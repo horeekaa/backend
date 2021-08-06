@@ -10,6 +10,7 @@ import (
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
 )
@@ -20,6 +21,8 @@ type proposeUpdateProductRepository struct {
 	updateDescriptivePhotoComponent          descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
 	createProductVariantComponent            productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
 	updateProductVariantComponent            productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent
+	createTaggingComponent                   taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent
+	updateTaggingComponent                   taggingdomainrepositoryinterfaces.UpdateTaggingTransactionComponent
 	proposeUpdateProductTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
@@ -30,6 +33,8 @@ func NewProposeUpdateProductRepository(
 	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
 	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 	updateProductVariantComponent productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent,
+	createTaggingComponent taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent,
+	updateTaggingComponent taggingdomainrepositoryinterfaces.UpdateTaggingTransactionComponent,
 	proposeUpdateProductRepositoryTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.ProposeUpdateProductRepository, error) {
@@ -39,6 +44,8 @@ func NewProposeUpdateProductRepository(
 		updateDescriptivePhotoComponent,
 		createProductVariantComponent,
 		updateProductVariantComponent,
+		createTaggingComponent,
+		updateTaggingComponent,
 		proposeUpdateProductRepositoryTransactionComponent,
 		mongoDBTransaction,
 	}
@@ -193,6 +200,72 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 			jsonTemp, _ := json.Marshal(
 				map[string]interface{}{
 					"Variants": savedVariants,
+				},
+			)
+			json.Unmarshal(jsonTemp, productToUpdate)
+		}
+	}
+
+	if productToUpdate.Taggings != nil {
+		savedTaggings := existingProduct.Taggings
+		for _, taggingToUpdate := range productToUpdate.Taggings {
+			if taggingToUpdate.ID != nil {
+				if !funk.Contains(
+					existingProduct.Taggings,
+					func(pv *model.Tagging) bool {
+						return pv.ID == *taggingToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
+				jsonTemp, _ := json.Marshal(taggingToUpdate)
+				json.Unmarshal(jsonTemp, bulkUpdateTagging)
+				jsonTemp, _ = json.Marshal(map[string]interface{}{
+					"IDs": []interface{}{taggingToUpdate.ID},
+				})
+				json.Unmarshal(jsonTemp, bulkUpdateTagging)
+
+				_, err := updateOrgRepo.updateTaggingComponent.TransactionBody(
+					operationOption,
+					bulkUpdateTagging,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdateProductRepository",
+						err,
+					)
+				}
+				continue
+			}
+
+			taggingToCreate := &model.InternalCreateTagging{}
+			jsonTemp, _ := json.Marshal(taggingToUpdate)
+			json.Unmarshal(jsonTemp, taggingToCreate)
+			taggingToCreate.Products = []*model.ObjectIDOnly{
+				{ID: &existingProduct.ID},
+			}
+			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+				return &tt
+			}(model.TaggingTypeProduct)
+
+			savedTagging, err := updateOrgRepo.createTaggingComponent.TransactionBody(
+				operationOption,
+				taggingToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdateProductRepository",
+					err,
+				)
+			}
+			savedTaggings = append(savedTaggings, savedTagging...)
+		}
+		if len(savedTaggings) > len(existingProduct.Taggings) {
+			jsonTemp, _ := json.Marshal(
+				map[string]interface{}{
+					"Taggings": savedTaggings,
 				},
 			)
 			json.Unmarshal(jsonTemp, productToUpdate)
