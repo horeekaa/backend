@@ -2,6 +2,8 @@ package taggingdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
@@ -10,23 +12,27 @@ import (
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 )
 
-type CreateTaggingDependency struct{}
+type BulkCreateTaggingDependency struct{}
 
-func (_ *CreateTaggingDependency) Bind() {
+func (_ *BulkCreateTaggingDependency) Bind() {
 	container.Singleton(
 		func(
 			taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
+			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
-		) taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent {
-			createTaggingComponent, _ := taggingdomainrepositories.NewCreateTaggingTransactionComponent(
+			structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
+		) taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent {
+			bulkCreateTaggingComponent, _ := taggingdomainrepositories.NewBulkCreateTaggingTransactionComponent(
 				taggingDataSource,
+				loggingDataSource,
 				tagDataSource,
 				organizationDataSource,
 				productDataSource,
+				structFieldIteratorUtility,
 			)
-			return createTaggingComponent
+			return bulkCreateTaggingComponent
 		},
 	)
 }

@@ -2,6 +2,8 @@ package taggingdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
@@ -10,23 +12,27 @@ import (
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 )
 
-type UpdateTaggingDependency struct{}
+type BulkApproveUpdateTaggingDependency struct{}
 
-func (_ *UpdateTaggingDependency) Bind() {
+func (_ *BulkApproveUpdateTaggingDependency) Bind() {
 	container.Singleton(
 		func(
 			taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
-		) taggingdomainrepositoryinterfaces.UpdateTaggingTransactionComponent {
-			updateTaggingComponent, _ := taggingdomainrepositories.NewUpdateTaggingTransactionComponent(
+			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+		) taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent {
+			bulkApproveUpdateTaggingComponent, _ := taggingdomainrepositories.NewBulkApproveUpdateTaggingTransactionComponent(
 				taggingDataSource,
 				tagDataSource,
 				organizationDataSource,
 				productDataSource,
+				loggingDataSource,
+				mapProcessorUtility,
 			)
-			return updateTaggingComponent
+			return bulkApproveUpdateTaggingComponent
 		},
 	)
 }

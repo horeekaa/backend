@@ -65,10 +65,11 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
 
-		&taggingdomainrepositorydependencies.CreateTaggingDependency{},
+		&taggingdomainrepositorydependencies.BulkCreateTaggingDependency{},
 		&taggingdomainrepositorydependencies.GetAllTaggingDependency{},
 		&taggingdomainrepositorydependencies.GetTaggingDependency{},
-		&taggingdomainrepositorydependencies.UpdateTaggingDependency{},
+		&taggingdomainrepositorydependencies.BulkProposeUpdateTaggingDependency{},
+		&taggingdomainrepositorydependencies.BulkApproveUpdateTaggingDependency{},
 	}
 
 	for _, reg := range registrationList {
