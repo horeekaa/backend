@@ -26,6 +26,7 @@ input BulkCreateTagging {
   """
   organizations: [ObjectIDOnly]
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateTagging {
@@ -36,6 +37,11 @@ input InternalCreateTagging {
   organizations: [ObjectIDOnly]
   isActive: Boolean
   taggingType: TaggingType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateTagging {
@@ -46,6 +52,11 @@ input DatabaseCreateTagging {
   organization: ObjectIDOnly
   isActive: Boolean
   taggingType: TaggingType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -63,6 +74,16 @@ input BulkUpdateTagging {
   product: ObjectIDOnly
   organization: ObjectIDOnly
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateTagging {
@@ -76,6 +97,16 @@ input InternalUpdateTagging {
   product: ObjectIDOnly
   organization: ObjectIDOnly
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalBulkUpdateTagging {
@@ -85,6 +116,12 @@ input InternalBulkUpdateTagging {
   product: ObjectIDOnly
   organization: ObjectIDOnly
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseUpdateTagging {
@@ -95,6 +132,12 @@ input DatabaseUpdateTagging {
   organization: ObjectIDOnly
   isActive: Boolean
   taggingType: TaggingType
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -106,6 +149,11 @@ input TaggingFilterFields {
   organization: ObjectIDOnly
   isActive: Boolean
   taggingType: TaggingType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateTag
+  recentLog: ObjectIDOnly
 }
 
 type Tagging {
@@ -116,6 +164,12 @@ type Tagging {
   organization: Organization
   isActive: Boolean!
   taggingType: TaggingType
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account
+  recentApprovingAccount: Account
+  proposedChanges: Tag
+  recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }
