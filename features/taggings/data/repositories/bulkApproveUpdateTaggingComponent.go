@@ -117,6 +117,10 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 				err,
 			)
 		}
+		if existingTagging.ProposalStatus == model.EntityProposalStatusApproved {
+			taggings = append(taggings, existingTagging)
+			continue
+		}
 
 		previousLog, err := bulkApproveUpdateTaggingComp.loggingDataSource.GetMongoDataSource().FindByID(
 			existingTagging.RecentLog.ID,
