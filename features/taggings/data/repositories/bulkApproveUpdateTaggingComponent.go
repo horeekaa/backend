@@ -152,6 +152,12 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 			logToCreate,
 			session,
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/bulkApproveUpdateTagging",
+				err,
+			)
+		}
 
 		taggingToUpdate.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
