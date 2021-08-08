@@ -16,7 +16,7 @@ type createProductRepository struct {
 	createProductTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent
 	createProductVariantComponent     productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
 	createDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
-	createTaggingComponent            taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent
+	bulkCreateTaggingComponent        taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -24,14 +24,14 @@ func NewCreateProductRepository(
 	createProductRepositoryTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent,
 	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-	createTaggingComponent taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent,
+	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.CreateProductRepository, error) {
 	createProductRepo := &createProductRepository{
 		createProductRepositoryTransactionComponent,
 		createProductVariantComponent,
 		createDescriptivePhotoComponent,
-		createTaggingComponent,
+		bulkCreateTaggingComponent,
 		mongoDBTransaction,
 	}
 
@@ -113,7 +113,10 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			tagging.Products = []*model.ObjectIDOnly{
 				{ID: &generatedObjectID},
 			}
-			createdTaggingOutput, err := createProdRepo.createTaggingComponent.TransactionBody(
+			tagging.ProposalStatus = productToCreate.ProposalStatus
+			tagging.SubmittingAccount = productToCreate.SubmittingAccount
+
+			createdTaggingOutput, err := createProdRepo.bulkCreateTaggingComponent.TransactionBody(
 				operationOption,
 				tagging,
 			)

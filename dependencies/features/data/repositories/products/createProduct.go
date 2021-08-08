@@ -36,7 +36,7 @@ func (_ *CreateProductDependency) Bind() {
 			createProductComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent,
 			createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-			createTaggingComponent taggingdomainrepositoryinterfaces.CreateTaggingTransactionComponent,
+			createTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) productdomainrepositoryinterfaces.CreateProductRepository {
 			updateproductRepo, _ := productdomainrepositories.NewCreateProductRepository(
