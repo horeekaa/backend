@@ -40,7 +40,7 @@ input InternalCreateTagging {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: UpdateTagging
   recentLog: ObjectIDOnly
 }
 
@@ -55,7 +55,7 @@ input DatabaseCreateTagging {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: UpdateTagging
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -64,6 +64,9 @@ input DatabaseCreateTagging {
 input UpdateTagging {
   _id: ObjectID
   tag: ObjectIDOnly
+  correlatedTag: ObjectIDOnly
+  product: ObjectIDOnly
+  organization: ObjectIDOnly
   isActive: Boolean
 }
 
@@ -120,7 +123,7 @@ input InternalBulkUpdateTagging {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: UpdateTagging
   recentLog: ObjectIDOnly
 }
 
@@ -136,7 +139,7 @@ input DatabaseUpdateTagging {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: UpdateTagging
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -152,7 +155,7 @@ input TaggingFilterFields {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: UpdateTagging
   recentLog: ObjectIDOnly
 }
 
@@ -168,7 +171,7 @@ type Tagging {
   proposalStatusReason: String
   submittingAccount: Account
   recentApprovingAccount: Account
-  proposedChanges: Tag
+  proposedChanges: Tagging
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
