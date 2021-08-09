@@ -48,14 +48,14 @@ func NewBulkCreateTaggingTransactionComponent(
 }
 
 func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
-	generatedObjectID := bulkCreateTaggingTrx.tagDataSource.GetMongoDataSource().GenerateObjectID()
+	generatedObjectID := bulkCreateTaggingTrx.taggingDataSource.GetMongoDataSource().GenerateObjectID()
 	bulkCreateTaggingTrx.generatedObjectID = &generatedObjectID
 	return *bulkCreateTaggingTrx.generatedObjectID
 }
 
 func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) GetCurrentObjectID() primitive.ObjectID {
 	if bulkCreateTaggingTrx.generatedObjectID == nil {
-		generatedObjectID := bulkCreateTaggingTrx.tagDataSource.GetMongoDataSource().GenerateObjectID()
+		generatedObjectID := bulkCreateTaggingTrx.taggingDataSource.GetMongoDataSource().GenerateObjectID()
 		bulkCreateTaggingTrx.generatedObjectID = &generatedObjectID
 	}
 	return *bulkCreateTaggingTrx.generatedObjectID

@@ -3,6 +3,7 @@ package taggingdomainrepositoryinterfaces
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type BulkCreateTaggingUsecaseComponent interface {
@@ -22,6 +23,9 @@ type BulkCreateTaggingTransactionComponent interface {
 		session *mongodbcoretypes.OperationOptions,
 		bulkCreateTaggingInput *model.InternalCreateTagging,
 	) ([]*model.Tagging, error)
+
+	GenerateNewObjectID() primitive.ObjectID
+	GetCurrentObjectID() primitive.ObjectID
 }
 
 type BulkCreateTaggingRepository interface {

@@ -16,4 +16,5 @@ type TaggingDataSourceMongo interface {
 	) ([]*model.Tagging, error)
 	Create(input *model.DatabaseCreateTagging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tagging, error)
 	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateTagging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tagging, error)
+	GenerateObjectID() primitive.ObjectID
 }

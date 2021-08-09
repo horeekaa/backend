@@ -23,6 +23,10 @@ func NewTaggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 	}, nil
 }
 
+func (taggingDataSourceMongo *taggingDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (taggingDataSourceMongo *taggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tagging, error) {
 	var output model.Tagging
 	_, err := taggingDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
