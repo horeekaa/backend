@@ -2,6 +2,7 @@ package taggingdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -35,6 +36,19 @@ func (_ *BulkProposeUpdateTaggingDependency) Bind() {
 				structComparisonUtility,
 			)
 			return bulkProposeUpdateTaggingComponent
+		},
+	)
+
+	container.Transient(
+		func(
+			bulkProposeUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
+			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
+		) taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingRepository {
+			bulkProposeUpdateTaggingRepo, _ := taggingdomainrepositories.NewBulkProposeUpdateTaggingRepository(
+				bulkProposeUpdateTaggingComponent,
+				mongoDBTransaction,
+			)
+			return bulkProposeUpdateTaggingRepo
 		},
 	)
 }

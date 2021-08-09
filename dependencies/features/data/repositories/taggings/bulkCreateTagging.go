@@ -2,6 +2,7 @@ package taggingdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -33,6 +34,19 @@ func (_ *BulkCreateTaggingDependency) Bind() {
 				structFieldIteratorUtility,
 			)
 			return bulkCreateTaggingComponent
+		},
+	)
+
+	container.Transient(
+		func(
+			bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
+			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
+		) taggingdomainrepositoryinterfaces.BulkCreateTaggingRepository {
+			bulkCreateTaggingRepo, _ := taggingdomainrepositories.NewBulkCreateTaggingRepository(
+				bulkCreateTaggingComponent,
+				mongoDBTransaction,
+			)
+			return bulkCreateTaggingRepo
 		},
 	)
 }
