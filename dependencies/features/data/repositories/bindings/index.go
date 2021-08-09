@@ -39,15 +39,25 @@ func (_ *RepositoriesDependency) Bind() {
 		&memberaccessrefdomainrepositorydependencies.ProposeUpdateMemberAccessRefDependency{},
 		&memberaccessrefdomainrepositorydependencies.ApproveUpdateMemberAccessRefDependency{},
 
+		&taggingdomainrepositorydependencies.BulkCreateTaggingDependency{},
+		&taggingdomainrepositorydependencies.GetAllTaggingDependency{},
+		&taggingdomainrepositorydependencies.GetTaggingDependency{},
+		&taggingdomainrepositorydependencies.BulkProposeUpdateTaggingDependency{},
+		&taggingdomainrepositorydependencies.BulkApproveUpdateTaggingDependency{},
+
+		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.GetDescriptivePhotoDependency{},
+
 		&organizationdomainrepositorydependencies.CreateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetAllOrganizationDependency{},
 		&organizationdomainrepositorydependencies.GetOrganizationDependency{},
 		&organizationdomainrepositorydependencies.ProposeUpdateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
 
-		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
-		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
-		&descriptivephotodomainrepositorydependencies.GetDescriptivePhotoDependency{},
+		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
 
 		&productdomainrepositorydependencies.CreateProductDependency{},
 		&productdomainrepositorydependencies.ProposeUpdateProductDependency{},
@@ -55,21 +65,11 @@ func (_ *RepositoriesDependency) Bind() {
 		&productdomainrepositorydependencies.GetAllProductDependency{},
 		&productdomainrepositorydependencies.GetProductDependency{},
 
-		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
-		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
-		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
-
 		&tagdomainrepositorydependencies.CreateTagDependency{},
 		&tagdomainrepositorydependencies.ProposeUpdateTagDependency{},
 		&tagdomainrepositorydependencies.ApproveUpdateTagDependency{},
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
-
-		&taggingdomainrepositorydependencies.BulkCreateTaggingDependency{},
-		&taggingdomainrepositorydependencies.GetAllTaggingDependency{},
-		&taggingdomainrepositorydependencies.GetTaggingDependency{},
-		&taggingdomainrepositorydependencies.BulkProposeUpdateTaggingDependency{},
-		&taggingdomainrepositorydependencies.BulkApproveUpdateTaggingDependency{},
 	}
 
 	for _, reg := range registrationList {
