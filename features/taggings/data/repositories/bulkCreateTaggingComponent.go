@@ -95,7 +95,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/createTagging",
+					"/bulkCreateTagging",
 					err,
 				)
 			}
@@ -120,7 +120,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/createTagging",
+					"/bulkCreateTagging",
 					err,
 				)
 			}
@@ -145,7 +145,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/createTagging",
+					"/bulkCreateTagging",
 					err,
 				)
 			}
@@ -211,7 +211,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createTag",
+				"/bulkCreateTagging",
 				err,
 			)
 		}
@@ -231,7 +231,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createTagging",
+				"/bulkCreateTagging",
 				err,
 			)
 		}
