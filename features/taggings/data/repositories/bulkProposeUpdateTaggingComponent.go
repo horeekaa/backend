@@ -80,6 +80,9 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 				err,
 			)
 		}
+		input.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+			return &tt
+		}(model.TaggingTypeTagging)
 	}
 
 	if input.Product != nil {
@@ -93,6 +96,9 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 				err,
 			)
 		}
+		input.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+			return &tt
+		}(model.TaggingTypeProduct)
 	}
 
 	if input.Organization != nil {
@@ -106,6 +112,9 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 				err,
 			)
 		}
+		input.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+			return &tt
+		}(model.TaggingTypeOrganization)
 	}
 
 	jsonTemp, _ := json.Marshal(input)

@@ -102,6 +102,9 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			taggingToCreate.CorrelatedTag = &model.ObjectIDOnly{
 				ID: &checkedCorrelatedTag.ID,
 			}
+			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+				return &tt
+			}(model.TaggingTypeTagging)
 
 			taggingsToCreate = append(taggingsToCreate, taggingToCreate)
 		}
@@ -124,6 +127,9 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			taggingToCreate.Organization = &model.ObjectIDOnly{
 				ID: &checkedOrganization.ID,
 			}
+			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+				return &tt
+			}(model.TaggingTypeOrganization)
 
 			taggingsToCreate = append(taggingsToCreate, taggingToCreate)
 		}
@@ -146,6 +152,9 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			taggingToCreate.Product = &model.ObjectIDOnly{
 				ID: &checkedProduct.ID,
 			}
+			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
+				return &tt
+			}(model.TaggingTypeProduct)
 
 			taggingsToCreate = append(taggingsToCreate, taggingToCreate)
 		}

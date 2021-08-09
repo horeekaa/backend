@@ -119,6 +119,7 @@ input InternalBulkUpdateTagging {
   product: ObjectIDOnly
   organization: ObjectIDOnly
   isActive: Boolean
+  taggingType: TaggingType
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly

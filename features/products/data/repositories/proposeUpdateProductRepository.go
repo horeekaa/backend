@@ -249,9 +249,6 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			taggingToCreate.Products = []*model.ObjectIDOnly{
 				{ID: &existingProduct.ID},
 			}
-			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
-				return &tt
-			}(model.TaggingTypeProduct)
 			taggingToCreate.ProposalStatus = productToUpdate.ProposalStatus
 			taggingToUpdate.SubmittingAccount = productToUpdate.SubmittingAccount
 
