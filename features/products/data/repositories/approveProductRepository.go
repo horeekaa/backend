@@ -89,10 +89,16 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 		}
 		bulkUpdateTagging.ProposalStatus = productToApprove.ProposalStatus
 
-		updateProdRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
+		_, err := updateProdRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
 			operationOption,
 			bulkUpdateTagging,
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/approveUpdateProductRepository",
+				err,
+			)
+		}
 	}
 
 	return updateProdRepo.approveUpdateProductTransactionComponent.TransactionBody(
