@@ -77,7 +77,7 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 		jsonTemp, _ := json.Marshal(map[string]interface{}{
 			"IDs": funk.Map(
 				existingProduct.ProposedChanges.Taggings,
-				func(_, tagging *model.Tag) interface{} {
+				func(_, tagging *model.Tagging) interface{} {
 					return tagging.ID
 				},
 			),
