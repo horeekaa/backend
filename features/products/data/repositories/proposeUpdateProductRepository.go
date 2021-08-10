@@ -250,7 +250,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				{ID: &existingProduct.ID},
 			}
 			taggingToCreate.ProposalStatus = productToUpdate.ProposalStatus
-			taggingToUpdate.SubmittingAccount = productToUpdate.SubmittingAccount
+			taggingToCreate.SubmittingAccount = productToUpdate.SubmittingAccount
 
 			savedTagging, err := updateProdRepo.bulkCreateTaggingComponent.TransactionBody(
 				operationOption,
@@ -284,5 +284,8 @@ func (updateProdRepo *proposeUpdateProductRepository) RunTransaction(
 	input *model.InternalUpdateProduct,
 ) (*model.Product, error) {
 	output, err := updateProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }

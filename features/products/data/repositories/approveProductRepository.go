@@ -111,5 +111,8 @@ func (updateProdRepo *approveUpdateProductRepository) RunTransaction(
 	input *model.InternalUpdateProduct,
 ) (*model.Product, error) {
 	output, err := updateProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }
