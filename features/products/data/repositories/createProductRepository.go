@@ -115,6 +115,7 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			}
 			tagging.ProposalStatus = productToCreate.ProposalStatus
 			tagging.SubmittingAccount = productToCreate.SubmittingAccount
+			tagging.IgnoreTaggedDocumentCheck = true
 
 			createdTaggingOutput, err := createProdRepo.bulkCreateTaggingComponent.TransactionBody(
 				operationOption,
@@ -142,5 +143,8 @@ func (createProdRepo *createProductRepository) RunTransaction(
 	input *model.InternalCreateProduct,
 ) (*model.Product, error) {
 	output, err := createProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }

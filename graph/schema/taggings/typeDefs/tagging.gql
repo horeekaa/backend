@@ -35,6 +35,12 @@ input InternalCreateTagging {
   correlatedTags: [ObjectIDOnly]
   products: [ObjectIDOnly]
   organizations: [ObjectIDOnly]
+  """
+  The field is exclusively for server-side use to ignore
+  correlatedTags, products, and organizations
+  document checks on each of the collection
+  """
+  ignoreTaggedDocumentCheck: Boolean!
   isActive: Boolean
   taggingType: TaggingType
   proposalStatus: EntityProposalStatus

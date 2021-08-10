@@ -89,18 +89,18 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		for _, correlatedTag := range input.CorrelatedTags {
 			taggingToCreate := &model.DatabaseCreateTagging{}
 			json.Unmarshal(jsonTemp, taggingToCreate)
-			checkedCorrelatedTag, err := bulkCreateTaggingTrx.tagDataSource.GetMongoDataSource().FindByID(
+			_, err := bulkCreateTaggingTrx.tagDataSource.GetMongoDataSource().FindByID(
 				*correlatedTag.ID,
 				session,
 			)
-			if err != nil {
+			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
 					"/bulkCreateTagging",
 					err,
 				)
 			}
 			taggingToCreate.CorrelatedTag = &model.ObjectIDOnly{
-				ID: &checkedCorrelatedTag.ID,
+				ID: correlatedTag.ID,
 			}
 			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
 				return &tt
@@ -114,18 +114,18 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		for _, organization := range input.Organizations {
 			taggingToCreate := &model.DatabaseCreateTagging{}
 			json.Unmarshal(jsonTemp, taggingToCreate)
-			checkedOrganization, err := bulkCreateTaggingTrx.organizationDataSource.GetMongoDataSource().FindByID(
+			_, err := bulkCreateTaggingTrx.organizationDataSource.GetMongoDataSource().FindByID(
 				*organization.ID,
 				session,
 			)
-			if err != nil {
+			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
 					"/bulkCreateTagging",
 					err,
 				)
 			}
 			taggingToCreate.Organization = &model.ObjectIDOnly{
-				ID: &checkedOrganization.ID,
+				ID: organization.ID,
 			}
 			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
 				return &tt
@@ -139,18 +139,18 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		for _, product := range input.Products {
 			taggingToCreate := &model.DatabaseCreateTagging{}
 			json.Unmarshal(jsonTemp, taggingToCreate)
-			checkedProduct, err := bulkCreateTaggingTrx.productDataSource.GetMongoDataSource().FindByID(
+			_, err := bulkCreateTaggingTrx.productDataSource.GetMongoDataSource().FindByID(
 				*product.ID,
 				session,
 			)
-			if err != nil {
+			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
 					"/bulkCreateTagging",
 					err,
 				)
 			}
 			taggingToCreate.Product = &model.ObjectIDOnly{
-				ID: &checkedProduct.ID,
+				ID: product.ID,
 			}
 			taggingToCreate.TaggingType = func(tt model.TaggingType) *model.TaggingType {
 				return &tt
