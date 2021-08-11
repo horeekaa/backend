@@ -73,31 +73,33 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 	}
 
 	if existingProduct.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
-		bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
-		jsonTemp, _ := json.Marshal(map[string]interface{}{
-			"IDs": funk.Map(
-				existingProduct.ProposedChanges.Taggings,
-				func(_, tagging *model.Tagging) interface{} {
-					return tagging.ID
-				},
-			),
-		})
-		json.Unmarshal(jsonTemp, bulkUpdateTagging)
+		if existingProduct.ProposedChanges.Taggings != nil {
+			bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
+			jsonTemp, _ := json.Marshal(map[string]interface{}{
+				"IDs": funk.Map(
+					existingProduct.ProposedChanges.Taggings,
+					func(_, tagging *model.Tagging) interface{} {
+						return tagging.ID
+					},
+				),
+			})
+			json.Unmarshal(jsonTemp, bulkUpdateTagging)
 
-		bulkUpdateTagging.RecentApprovingAccount = &model.ObjectIDOnly{
-			ID: productToApprove.RecentApprovingAccount.ID,
-		}
-		bulkUpdateTagging.ProposalStatus = productToApprove.ProposalStatus
+			bulkUpdateTagging.RecentApprovingAccount = &model.ObjectIDOnly{
+				ID: productToApprove.RecentApprovingAccount.ID,
+			}
+			bulkUpdateTagging.ProposalStatus = productToApprove.ProposalStatus
 
-		_, err := updateProdRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
-			operationOption,
-			bulkUpdateTagging,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/approveUpdateProductRepository",
-				err,
+			_, err := updateProdRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
+				operationOption,
+				bulkUpdateTagging,
 			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/approveUpdateProductRepository",
+					err,
+				)
+			}
 		}
 	}
 
