@@ -72,7 +72,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 	return organizations, err
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.InternalCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.DatabaseCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -90,7 +90,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Inter
 	return &outputModel, err
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
 	updateData.ID = ID
 	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -110,8 +110,8 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 }
 
 type setorganizationDefaultValuesOutput struct {
-	CreateOrganization *model.InternalCreateOrganization
-	UpdateOrganization *model.InternalUpdateOrganization
+	CreateOrganization *model.DatabaseCreateOrganization
+	UpdateOrganization *model.DatabaseUpdateOrganization
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setorganizationDefaultValuesOutput, error) {
@@ -120,7 +120,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input in
 	defaultPoint := 0
 
 	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.InternalUpdateOrganization)
+		updateInput := input.(model.DatabaseUpdateOrganization)
 		_, err := orgDataSourceMongo.FindByID(updateInput.ID, operationOptions)
 		if err != nil {
 			return nil, err
@@ -131,7 +131,7 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input in
 			UpdateOrganization: &updateInput,
 		}, nil
 	}
-	createInput := (input).(model.InternalCreateOrganization)
+	createInput := (input).(model.DatabaseCreateOrganization)
 	if createInput.ProposalStatus == nil {
 		createInput.ProposalStatus = &defaultProposalStatus
 	}

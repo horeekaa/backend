@@ -95,7 +95,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 
 	updateOrganization.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	fieldsToUpdateOrganization := &model.InternalUpdateOrganization{
+	fieldsToUpdateOrganization := &model.DatabaseUpdateOrganization{
 		ID: updateOrganization.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingOrganization.ProposedChanges)

@@ -127,7 +127,7 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 	}
 	updateOrganization.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	fieldsToUpdateOrganization := &model.InternalUpdateOrganization{
+	fieldsToUpdateOrganization := &model.DatabaseUpdateOrganization{
 		ID: updateOrganization.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingOrganization)

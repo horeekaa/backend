@@ -11,6 +11,7 @@ input CreateOrganization {
   point: Int
   unfinalizedPoint: Int
   profilePhotos: [CreateDescriptivePhoto]
+  taggings: [CreateTagging]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
 }
@@ -22,7 +23,25 @@ input InternalCreateOrganization {
   type: OrganizationType!
   point: Int
   unfinalizedPoint: Int
+  profilePhotos: [InternalCreateDescriptivePhoto]
+  taggings: [InternalCreateTagging]
+  taxIdentification: NewIDCard
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateOrganization
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreateOrganization {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
   profilePhotos: [ObjectIDOnly]
+  taggings: [ObjectIDOnly]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -43,6 +62,7 @@ input UpdateOrganization {
   ratingDescription: String
   unfinalizedPoint: Int
   profilePhotos: [UpdateDescriptivePhoto]
+  taggings: [UpdateTagging]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -65,7 +85,28 @@ input InternalUpdateOrganization {
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
+  profilePhotos: [InternalUpdateDescriptivePhoto]
+  taggings: [InternalUpdateTagging]
+  taxIdentification: UpdateIDCard
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateOrganization
+}
+
+input DatabaseUpdateOrganization {
+  _id: ObjectID!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+  creditAllowance: Int
+  rating: Float
+  ratingDescription: String
+  unfinalizedPoint: Int
   profilePhotos: [ObjectIDOnly]
+  taggings: [ObjectIDOnly]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -86,6 +127,7 @@ input OrganizationFilterFields {
   name: String
   phoneNumber: String
   type: OrganizationType
+  taggings: ObjectIDOnly
   creditAllowance: Int
   rating: Float
   ratingDescription: String
@@ -107,6 +149,7 @@ type Organization {
   point: Int!
   unfinalizedPoint: Int!
   profilePhotos: [DescriptivePhoto]
+  taggings: [Tagging]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
