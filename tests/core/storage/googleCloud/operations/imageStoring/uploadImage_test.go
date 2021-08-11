@@ -43,7 +43,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		model.DescriptivePhotoCategoryOrganizationStall,
+		model.DescriptivePhotoCategoryOrganizationProfile,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
@@ -88,7 +88,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		model.DescriptivePhotoCategoryOrganizationStall,
+		model.DescriptivePhotoCategoryOrganizationProfile,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
@@ -141,7 +141,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 
 	output, err := gcsOperationTestSuite.basicImageStoringUnderTest.UploadImage(
 		context.Background(),
-		model.DescriptivePhotoCategoryOrganizationStall,
+		model.DescriptivePhotoCategoryOrganizationProfile,
 		googlecloudstoragecoretypes.GCSFileUpload{
 			File: mockedFile,
 		},
