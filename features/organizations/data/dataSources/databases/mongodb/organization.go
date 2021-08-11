@@ -135,6 +135,12 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input in
 	if createInput.ProposalStatus == nil {
 		createInput.ProposalStatus = &defaultProposalStatus
 	}
+	if createInput.ProfilePhotos == nil {
+		createInput.ProfilePhotos = []*model.ObjectIDOnly{}
+	}
+	if createInput.Taggings == nil {
+		createInput.Taggings = []*model.ObjectIDOnly{}
+	}
 	createInput.Point = &defaultPoint
 	createInput.UnfinalizedPoint = &defaultPoint
 	createInput.CreatedAt = &currentTime

@@ -144,6 +144,9 @@ func (prodDataSourceMongo *productDataSourceMongo) setDefaultValues(input interf
 	if createInput.Variants == nil {
 		createInput.Variants = []*model.ObjectIDOnly{}
 	}
+	if createInput.Taggings == nil {
+		createInput.Taggings = []*model.ObjectIDOnly{}
+	}
 	createInput.CreatedAt = &currentTime
 	createInput.UpdatedAt = &currentTime
 
