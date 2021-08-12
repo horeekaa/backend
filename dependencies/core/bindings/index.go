@@ -3,6 +3,7 @@ package coredependencies
 import (
 	authenticationcoredependencies "github.com/horeekaa/backend/dependencies/core/authentication"
 	databaseclientdependencies "github.com/horeekaa/backend/dependencies/core/databaseClient"
+	messagingdependencies "github.com/horeekaa/backend/dependencies/core/messaging"
 	serverlesscoredependencies "github.com/horeekaa/backend/dependencies/core/serverless"
 	storagecoredependencies "github.com/horeekaa/backend/dependencies/core/storages"
 	coreutilitydependencies "github.com/horeekaa/backend/dependencies/core/utilities"
@@ -18,6 +19,7 @@ func (_ *CoreDependency) Bind() {
 		&coreutilitydependencies.MapProcessorUtilityDependency{},
 		&serverlesscoredependencies.FirebaseServerlessDependency{},
 		&authenticationcoredependencies.FirebaseAuthenticationDependency{},
+		&messagingdependencies.FirebaseMessagingDependency{},
 		&databaseclientdependencies.DatabaseDependency{},
 		&storagecoredependencies.GoogleCloudStorageDependency{},
 	}
