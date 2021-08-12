@@ -20,5 +20,7 @@ const (
 	ClosingImageStoringWriterFailed string = "CLOSING_IMAGE_STORING_WRITER_FAILED"
 	DeleteImageFailed               string = "DELETE_IMAGE_FAILED"
 
+	SendNotifMessageFailed string = "SEND_NOTIF_MESSAGE_FAILED"
+
 	ClientInitializationFailed string = "CLIENT_INITIALIZATION_FAILED"
 )
