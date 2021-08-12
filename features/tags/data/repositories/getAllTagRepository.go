@@ -28,6 +28,12 @@ func (getAllTagRepo *getAllTagRepository) Execute(
 	var filterFieldsMap map[string]interface{}
 	data, _ := bson.Marshal(input.FilterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
+	if input.FilterFields.Name != nil {
+		filterFieldsMap["name"] = map[string]interface{}{
+			"$regex":   *input.FilterFields.Name,
+			"$options": "i",
+		}
+	}
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
