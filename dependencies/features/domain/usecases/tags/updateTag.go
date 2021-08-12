@@ -1,0 +1,31 @@
+package tagpresentationusecasedependencies
+
+import (
+	"github.com/golobby/container/v2"
+	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
+	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	tagdomainrepositoryinterfaces "github.com/horeekaa/backend/features/tags/domain/repositories"
+	tagpresentationusecases "github.com/horeekaa/backend/features/tags/domain/usecases"
+	tagpresentationusecaseinterfaces "github.com/horeekaa/backend/features/tags/presentation/usecases"
+)
+
+type UpdateTagUsecaseDependency struct{}
+
+func (_ *UpdateTagUsecaseDependency) Bind() {
+	container.Singleton(
+		func(
+			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			proposeUpdateTagRepo tagdomainrepositoryinterfaces.ProposeUpdateTagRepository,
+			approveUpdateTagRepo tagdomainrepositoryinterfaces.ApproveUpdateTagRepository,
+		) tagpresentationusecaseinterfaces.UpdateTagUsecase {
+			updateTagUsecase, _ := tagpresentationusecases.NewUpdateTagUsecase(
+				getAccountFromAuthDataRepo,
+				getAccountMemberAccessRepo,
+				proposeUpdateTagRepo,
+				approveUpdateTagRepo,
+			)
+			return updateTagUsecase
+		},
+	)
+}

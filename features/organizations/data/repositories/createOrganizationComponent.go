@@ -12,6 +12,7 @@ import (
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type createOrganizationTransactionComponent struct {
@@ -19,6 +20,7 @@ type createOrganizationTransactionComponent struct {
 	loggingDataSource                  databaseloggingdatasourceinterfaces.LoggingDataSource
 	structFieldIteratorUtility         coreutilityinterfaces.StructFieldIteratorUtility
 	createOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.CreateOrganizationUsecaseComponent
+	generatedObjectID                  *primitive.ObjectID
 }
 
 func NewCreateOrganizationTransactionComponent(
@@ -31,6 +33,20 @@ func NewCreateOrganizationTransactionComponent(
 		loggingDataSource:          loggingDataSource,
 		structFieldIteratorUtility: structFieldIteratorUtility,
 	}, nil
+}
+
+func (createOrganizationTrx *createOrganizationTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
+	generatedObjectID := createOrganizationTrx.organizationDataSource.GetMongoDataSource().GenerateObjectID()
+	createOrganizationTrx.generatedObjectID = &generatedObjectID
+	return *createOrganizationTrx.generatedObjectID
+}
+
+func (createOrganizationTrx *createOrganizationTransactionComponent) GetCurrentObjectID() primitive.ObjectID {
+	if createOrganizationTrx.generatedObjectID == nil {
+		generatedObjectID := createOrganizationTrx.organizationDataSource.GetMongoDataSource().GenerateObjectID()
+		createOrganizationTrx.generatedObjectID = &generatedObjectID
+	}
+	return *createOrganizationTrx.generatedObjectID
 }
 
 func (createOrganizationTrx *createOrganizationTransactionComponent) SetValidation(
@@ -85,7 +101,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 		&tagString,
 	)
 
-	generatedObjectID := createOrganizationTrx.organizationDataSource.GetMongoDataSource().GenerateObjectID()
+	generatedObjectID := createOrganizationTrx.GetCurrentObjectID()
 	loggingOutput, err := createOrganizationTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Organization",
@@ -114,11 +130,14 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
 	}
 
+	organizationToCreate := &model.DatabaseCreateOrganization{}
+
 	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, &input.ProposedChanges)
+	json.Unmarshal(jsonTemp, organizationToCreate)
+	json.Unmarshal(jsonTemp, &organizationToCreate.ProposedChanges)
 
 	newOrganization, err := createOrganizationTrx.organizationDataSource.GetMongoDataSource().Create(
-		input,
+		organizationToCreate,
 		session,
 	)
 	if err != nil {
@@ -127,5 +146,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 			err,
 		)
 	}
+	createOrganizationTrx.generatedObjectID = nil
+
 	return newOrganization, nil
 }

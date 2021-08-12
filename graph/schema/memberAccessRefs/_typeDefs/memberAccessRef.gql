@@ -9,6 +9,8 @@ input MemberAccessRefOptionsInput {
   organizationAccesses: OrganizationAccessesInput
   memberAccessRefAccesses: MemberAccessRefAccessesInput
   productAccesses: ProductAccessesInput
+  tagAccesses: TagAccessesInput
+  bulkTaggingAccesses: BulkTaggingAccessesInput
 }
 
 type MemberAccessRefOptions {
@@ -17,6 +19,8 @@ type MemberAccessRefOptions {
   organizationAccesses: OrganizationAccesses
   memberAccessRefAccesses: MemberAccessRefAccesses
   productAccesses: ProductAccesses
+  tagAccesses: TagAccesses
+  bulkTaggingAccesses: BulkTaggingAccesses
 }
 
 input CreateMemberAccessRef {

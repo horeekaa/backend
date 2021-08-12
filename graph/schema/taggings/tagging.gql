@@ -1,0 +1,8 @@
+extend type Mutation {
+    bulkCreateTagging(bulkCreateTagging: BulkCreateTagging!): [Tagging]
+    bulkUpdateTagging(bulkUpdateTagging: BulkUpdateTagging!): [Tagging]
+}
+
+extend type Query {
+    taggings(filterFields: TaggingFilterFields!, paginationOpt: PaginationOptionInput): [Tagging]!
+}

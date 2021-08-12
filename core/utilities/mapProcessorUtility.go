@@ -3,6 +3,7 @@ package coreutilities
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 )
@@ -53,6 +54,13 @@ func (mapProcessorUtil *mapProcessorUtility) FlattenMap(
 				output,
 			)
 		default:
+			if strings.Contains(e.String(), "$") {
+				if (*output)[keyPrefix] == nil {
+					(*output)[keyPrefix] = map[string]interface{}{}
+				}
+				(*output)[keyPrefix].(map[string]interface{})[e.String()] = v.Interface()
+				continue
+			}
 			(*output)[fmt.Sprintf("%s%s", prefix, e.String())] = v.Interface()
 
 		}

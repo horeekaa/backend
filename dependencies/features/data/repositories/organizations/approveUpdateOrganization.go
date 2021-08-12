@@ -8,6 +8,7 @@ import (
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositories "github.com/horeekaa/backend/features/organizations/data/repositories"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 )
 
 type ApproveUpdateOrganizationDependency struct{}
@@ -31,10 +32,14 @@ func (_ *ApproveUpdateOrganizationDependency) Bind() {
 	container.Transient(
 		func(
 			trxComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent,
+			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+			bulkApproveUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository {
 			approveUpdateOrganizationRepo, _ := organizationdomainrepositories.NewApproveUpdateOrganizationRepository(
 				trxComponent,
+				organizationDataSource,
+				bulkApproveUpdateTaggingComponent,
 				mongoDBTransaction,
 			)
 			return approveUpdateOrganizationRepo

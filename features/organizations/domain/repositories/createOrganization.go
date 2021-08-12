@@ -3,6 +3,7 @@ package organizationdomainrepositoryinterfaces
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	"github.com/horeekaa/backend/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CreateOrganizationUsecaseComponent interface {
@@ -22,6 +23,9 @@ type CreateOrganizationTransactionComponent interface {
 		session *mongodbcoretypes.OperationOptions,
 		createOrganizationInput *model.InternalCreateOrganization,
 	) (*model.Organization, error)
+
+	GenerateNewObjectID() primitive.ObjectID
+	GetCurrentObjectID() primitive.ObjectID
 }
 
 type CreateOrganizationRepository interface {

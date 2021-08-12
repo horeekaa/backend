@@ -1,23 +1,35 @@
 package productdomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type approveUpdateProductRepository struct {
 	approveUpdateProductTransactionComponent productdomainrepositoryinterfaces.ApproveUpdateProductTransactionComponent
+	productDataSource                        databaseproductdatasourceinterfaces.ProductDataSource
+	bulkApproveUpdateTaggingComponent        taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewApproveUpdateProductRepository(
 	approveUpdateProductRepositoryTransactionComponent productdomainrepositoryinterfaces.ApproveUpdateProductTransactionComponent,
+	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	bulkApproveUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.ApproveUpdateProductRepository, error) {
 	approveUpdateProductRepo := &approveUpdateProductRepository{
 		approveUpdateProductRepositoryTransactionComponent,
+		productDataSource,
+		bulkApproveUpdateTaggingComponent,
 		mongoDBTransaction,
 	}
 
@@ -29,34 +41,80 @@ func NewApproveUpdateProductRepository(
 	return approveUpdateProductRepo, nil
 }
 
-func (updateOrgRepo *approveUpdateProductRepository) SetValidation(
+func (updateProdRepo *approveUpdateProductRepository) SetValidation(
 	usecaseComponent productdomainrepositoryinterfaces.ApproveUpdateProductUsecaseComponent,
 ) (bool, error) {
-	updateOrgRepo.approveUpdateProductTransactionComponent.SetValidation(usecaseComponent)
+	updateProdRepo.approveUpdateProductTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (updateOrgRepo *approveUpdateProductRepository) PreTransaction(
+func (updateProdRepo *approveUpdateProductRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.approveUpdateProductTransactionComponent.PreTransaction(
+	return updateProdRepo.approveUpdateProductTransactionComponent.PreTransaction(
 		input.(*model.InternalUpdateProduct),
 	)
 }
 
-func (updateOrgRepo *approveUpdateProductRepository) TransactionBody(
+func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.approveUpdateProductTransactionComponent.TransactionBody(
+	productToApprove := input.(*model.InternalUpdateProduct)
+	existingProduct, err := updateProdRepo.productDataSource.GetMongoDataSource().FindByID(
+		productToApprove.ID,
 		operationOption,
-		input.(*model.InternalUpdateProduct),
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/approveUpdateProductRepository",
+			err,
+		)
+	}
+
+	if existingProduct.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
+		if existingProduct.ProposedChanges.Taggings != nil {
+			bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
+			jsonTemp, _ := json.Marshal(map[string]interface{}{
+				"IDs": funk.Map(
+					existingProduct.ProposedChanges.Taggings,
+					func(_, tagging *model.Tagging) interface{} {
+						return tagging.ID
+					},
+				),
+			})
+			json.Unmarshal(jsonTemp, bulkUpdateTagging)
+
+			bulkUpdateTagging.RecentApprovingAccount = &model.ObjectIDOnly{
+				ID: productToApprove.RecentApprovingAccount.ID,
+			}
+			bulkUpdateTagging.ProposalStatus = productToApprove.ProposalStatus
+
+			_, err := updateProdRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
+				operationOption,
+				bulkUpdateTagging,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/approveUpdateProductRepository",
+					err,
+				)
+			}
+		}
+	}
+
+	return updateProdRepo.approveUpdateProductTransactionComponent.TransactionBody(
+		operationOption,
+		productToApprove,
 	)
 }
 
-func (updateOrgRepo *approveUpdateProductRepository) RunTransaction(
+func (updateProdRepo *approveUpdateProductRepository) RunTransaction(
 	input *model.InternalUpdateProduct,
 ) (*model.Product, error) {
-	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := updateProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }

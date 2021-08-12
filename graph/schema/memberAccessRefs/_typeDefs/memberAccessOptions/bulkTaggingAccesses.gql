@@ -1,0 +1,13 @@
+input BulkTaggingAccessesInput {
+  bulkTaggingCreate: Boolean
+  bulkTaggingUpdate: Boolean
+  bulkTaggingReadAll: Boolean
+  bulkTaggingApproval: Boolean
+}
+
+type BulkTaggingAccesses {
+  bulkTaggingCreate: Boolean
+  bulkTaggingUpdate: Boolean
+  bulkTaggingReadAll: Boolean
+  bulkTaggingApproval: Boolean
+}

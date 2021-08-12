@@ -10,6 +10,7 @@ import (
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
 )
@@ -20,6 +21,8 @@ type proposeUpdateProductRepository struct {
 	updateDescriptivePhotoComponent          descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
 	createProductVariantComponent            productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
 	updateProductVariantComponent            productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent
+	bulkCreateTaggingComponent               taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
+	bulkUpdateTaggingComponent               taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateProductTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
@@ -30,6 +33,8 @@ func NewProposeUpdateProductRepository(
 	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
 	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 	updateProductVariantComponent productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent,
+	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
+	bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 	proposeUpdateProductRepositoryTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.ProposeUpdateProductRepository, error) {
@@ -39,6 +44,8 @@ func NewProposeUpdateProductRepository(
 		updateDescriptivePhotoComponent,
 		createProductVariantComponent,
 		updateProductVariantComponent,
+		bulkCreateTaggingComponent,
+		bulkUpdateTaggingComponent,
 		proposeUpdateProductRepositoryTransactionComponent,
 		mongoDBTransaction,
 	}
@@ -51,27 +58,27 @@ func NewProposeUpdateProductRepository(
 	return proposeUpdateProductRepo, nil
 }
 
-func (updateOrgRepo *proposeUpdateProductRepository) SetValidation(
+func (updateProdRepo *proposeUpdateProductRepository) SetValidation(
 	usecaseComponent productdomainrepositoryinterfaces.ProposeUpdateProductUsecaseComponent,
 ) (bool, error) {
-	updateOrgRepo.proposeUpdateProductTransactionComponent.SetValidation(usecaseComponent)
+	updateProdRepo.proposeUpdateProductTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (updateOrgRepo *proposeUpdateProductRepository) PreTransaction(
+func (updateProdRepo *proposeUpdateProductRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.proposeUpdateProductTransactionComponent.PreTransaction(
+	return updateProdRepo.proposeUpdateProductTransactionComponent.PreTransaction(
 		input.(*model.InternalUpdateProduct),
 	)
 }
 
-func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
+func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
 	productToUpdate := input.(*model.InternalUpdateProduct)
-	existingProduct, err := updateOrgRepo.productDataSource.GetMongoDataSource().FindByID(
+	existingProduct, err := updateProdRepo.productDataSource.GetMongoDataSource().FindByID(
 		productToUpdate.ID,
 		operationOption,
 	)
@@ -95,7 +102,7 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 					continue
 				}
 
-				_, err := updateOrgRepo.updateDescriptivePhotoComponent.TransactionBody(
+				_, err := updateProdRepo.updateDescriptivePhotoComponent.TransactionBody(
 					operationOption,
 					descPhotoToUpdate,
 				)
@@ -119,7 +126,7 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 				ID: &existingProduct.ID,
 			}
 
-			savedPhoto, err := updateOrgRepo.createDescriptivePhotoComponent.TransactionBody(
+			savedPhoto, err := updateProdRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photoToCreate,
 			)
@@ -154,7 +161,7 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 					continue
 				}
 
-				_, err := updateOrgRepo.updateProductVariantComponent.TransactionBody(
+				_, err := updateProdRepo.updateProductVariantComponent.TransactionBody(
 					operationOption,
 					variantToUpdate,
 				)
@@ -177,7 +184,7 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 				ID: &existingProduct.ID,
 			}
 
-			savedVariant, err := updateOrgRepo.createProductVariantComponent.TransactionBody(
+			savedVariant, err := updateProdRepo.createProductVariantComponent.TransactionBody(
 				operationOption,
 				variantToCreate,
 			)
@@ -199,15 +206,86 @@ func (updateOrgRepo *proposeUpdateProductRepository) TransactionBody(
 		}
 	}
 
-	return updateOrgRepo.proposeUpdateProductTransactionComponent.TransactionBody(
+	if productToUpdate.Taggings != nil {
+		savedTaggings := existingProduct.Taggings
+		for _, taggingToUpdate := range productToUpdate.Taggings {
+			if taggingToUpdate.ID != nil {
+				if !funk.Contains(
+					existingProduct.Taggings,
+					func(pv *model.Tagging) bool {
+						return pv.ID == *taggingToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
+				jsonTemp, _ := json.Marshal(taggingToUpdate)
+				json.Unmarshal(jsonTemp, bulkUpdateTagging)
+				jsonTemp, _ = json.Marshal(map[string]interface{}{
+					"IDs": []interface{}{taggingToUpdate.ID},
+				})
+				json.Unmarshal(jsonTemp, bulkUpdateTagging)
+
+				bulkUpdateTagging.ProposalStatus = productToUpdate.ProposalStatus
+				bulkUpdateTagging.SubmittingAccount = productToUpdate.SubmittingAccount
+
+				_, err := updateProdRepo.bulkUpdateTaggingComponent.TransactionBody(
+					operationOption,
+					bulkUpdateTagging,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdateProductRepository",
+						err,
+					)
+				}
+				continue
+			}
+
+			taggingToCreate := &model.InternalCreateTagging{}
+			jsonTemp, _ := json.Marshal(taggingToUpdate)
+			json.Unmarshal(jsonTemp, taggingToCreate)
+			taggingToCreate.Products = []*model.ObjectIDOnly{
+				{ID: &existingProduct.ID},
+			}
+			taggingToCreate.ProposalStatus = productToUpdate.ProposalStatus
+			taggingToCreate.SubmittingAccount = productToUpdate.SubmittingAccount
+
+			savedTagging, err := updateProdRepo.bulkCreateTaggingComponent.TransactionBody(
+				operationOption,
+				taggingToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdateProductRepository",
+					err,
+				)
+			}
+			savedTaggings = append(savedTaggings, savedTagging...)
+		}
+		if len(savedTaggings) > len(existingProduct.Taggings) {
+			jsonTemp, _ := json.Marshal(
+				map[string]interface{}{
+					"Taggings": savedTaggings,
+				},
+			)
+			json.Unmarshal(jsonTemp, productToUpdate)
+		}
+	}
+
+	return updateProdRepo.proposeUpdateProductTransactionComponent.TransactionBody(
 		operationOption,
 		productToUpdate,
 	)
 }
 
-func (updateOrgRepo *proposeUpdateProductRepository) RunTransaction(
+func (updateProdRepo *proposeUpdateProductRepository) RunTransaction(
 	input *model.InternalUpdateProduct,
 ) (*model.Product, error) {
-	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := updateProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }

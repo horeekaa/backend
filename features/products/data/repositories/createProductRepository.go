@@ -8,6 +8,7 @@ import (
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -15,6 +16,7 @@ type createProductRepository struct {
 	createProductTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent
 	createProductVariantComponent     productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
 	createDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	bulkCreateTaggingComponent        taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -22,12 +24,14 @@ func NewCreateProductRepository(
 	createProductRepositoryTransactionComponent productdomainrepositoryinterfaces.CreateProductTransactionComponent,
 	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (productdomainrepositoryinterfaces.CreateProductRepository, error) {
 	createProductRepo := &createProductRepository{
 		createProductRepositoryTransactionComponent,
 		createProductVariantComponent,
 		createDescriptivePhotoComponent,
+		bulkCreateTaggingComponent,
 		mongoDBTransaction,
 	}
 
@@ -103,6 +107,32 @@ func (createProdRepo *createProductRepository) TransactionBody(
 		productToCreate.Variants = savedVariants
 	}
 
+	if productToCreate.Taggings != nil {
+		savedTaggings := []*model.InternalCreateTagging{}
+		for _, tagging := range productToCreate.Taggings {
+			tagging.Products = []*model.ObjectIDOnly{
+				{ID: &generatedObjectID},
+			}
+			tagging.ProposalStatus = productToCreate.ProposalStatus
+			tagging.SubmittingAccount = productToCreate.SubmittingAccount
+			tagging.IgnoreTaggedDocumentCheck = true
+
+			createdTaggingOutput, err := createProdRepo.bulkCreateTaggingComponent.TransactionBody(
+				operationOption,
+				tagging,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			savedTagging := &model.InternalCreateTagging{}
+			jsonTemp, _ := json.Marshal(createdTaggingOutput[0])
+			json.Unmarshal(jsonTemp, savedTagging)
+			savedTaggings = append(savedTaggings, savedTagging)
+		}
+		productToCreate.Taggings = savedTaggings
+	}
+
 	return createProdRepo.createProductTransactionComponent.TransactionBody(
 		operationOption,
 		productToCreate,
@@ -113,5 +143,8 @@ func (createProdRepo *createProductRepository) RunTransaction(
 	input *model.InternalCreateProduct,
 ) (*model.Product, error) {
 	output, err := createProdRepo.mongoDBTransaction.RunTransaction(input)
+	if err != nil {
+		return nil, err
+	}
 	return (output).(*model.Product), err
 }

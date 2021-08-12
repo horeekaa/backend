@@ -1,0 +1,8 @@
+extend type Mutation {
+    createTag(createTag: CreateTag!): Tag!
+    updateTag(updateTag: UpdateTag!): Tag!
+}
+
+extend type Query {
+    tags(filterFields: TagFilterFields!, paginationOpt: PaginationOptionInput): [Tag]!
+}

@@ -8,6 +8,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositories "github.com/horeekaa/backend/features/products/data/repositories"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
+	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 )
 
 type ApproveUpdateProductDependency struct{}
@@ -31,10 +32,14 @@ func (_ *ApproveUpdateProductDependency) Bind() {
 	container.Transient(
 		func(
 			trxComponent productdomainrepositoryinterfaces.ApproveUpdateProductTransactionComponent,
+			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+			bulkApproveUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) productdomainrepositoryinterfaces.ApproveUpdateProductRepository {
 			approveUpdateProductRepo, _ := productdomainrepositories.NewApproveUpdateProductRepository(
 				trxComponent,
+				productDataSource,
+				bulkApproveUpdateTaggingComponent,
 				mongoDBTransaction,
 			)
 			return approveUpdateProductRepo
