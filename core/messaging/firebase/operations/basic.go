@@ -34,3 +34,20 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMessage(ctx context.Co
 
 	return res, nil
 }
+
+func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMulticastMessage(ctx context.Context, message *firebasemessagingcoretypes.SentMulticastMessage) (*firebasemessagingcoretypes.BatchMessageResponse, error) {
+	client, _ := fbMsgBasicOps.firebaseMsgClient.GetMessagingClient()
+
+	res, err := client.SendMulticast(ctx, message.MulticastMessage)
+	if err != nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.SendNotifMessageFailed,
+			"/fbMsgBasicOperation/SendMulticastMessage",
+			err,
+		)
+	}
+
+	return &firebasemessagingcoretypes.BatchMessageResponse{
+		BatchResponse: res,
+	}, nil
+}
