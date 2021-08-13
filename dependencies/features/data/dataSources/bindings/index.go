@@ -7,6 +7,7 @@ import (
 	mongodbloggingdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/loggings/databases/mongodb"
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
 	mongodbmemberaccessdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccesses/databases/mongodb"
+	mongodbnotificationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/notifications/databases/mongodb"
 	mongodborganizationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/organizations/databases/mongodb"
 	mongodbproductvariantdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/productVariants/databases/mongodb"
 	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
@@ -31,6 +32,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbdescriptivephotodatasourcedependencies.DescriptivePhotoDataSourceDependency{},
 		&mongodbtagdatasourcedependencies.TagDataSourceDependency{},
 		&mongodbtaggingdatasourcedependencies.TaggingDataSourceDependency{},
+		&mongodbnotificationdatasourcedependencies.NotificationDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {

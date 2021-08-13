@@ -1,0 +1,67 @@
+enum NotificationCategory {
+  ORG_INVITATION
+  ORG_APPROVAL
+
+  NEW_PURCHASE_ORDER
+}
+
+input NotificationMessageInput {
+  title: String!
+  body: String!
+}
+
+type NotificationMessage {
+  title: String!
+  body: String!
+}
+
+input InternalCreateNotification {
+  message: NotificationMessageInput
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory!
+  recipientAccount: ObjectIDOnly!
+}
+
+input DatabaseCreateNotification {
+  message: NotificationMessageInput
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory!
+  recipientAccount: ObjectIDOnly!
+  createdAt: Time
+  updatedAt: Time
+}
+
+input InternalUpdateNotification {
+  _id: ObjectID!
+  message: NotificationMessageInput
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+}
+
+input DatabaseUpdateNotification {
+  _id: ObjectID!
+  message: NotificationMessageInput
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+  updatedAt: Time
+}
+
+input NotificationFilterFields {
+  _id: ObjectID
+  message: NotificationMessageInput
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+}
+
+type Notification {
+  _id: ObjectID!
+  message: NotificationMessage
+  payloadDataInJson: String
+  notificationCategory: NotificationCategory!
+  recipientAccount: Account!
+  createdAt: Time
+  updatedAt: Time
+}
