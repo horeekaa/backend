@@ -27,8 +27,8 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) GenerateObjectID
 	return primitive.NewObjectID()
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error) {
-	var output model.Notification
+func (notificationDataSourceMongo *notificationDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
+	var output model.DatabaseNotification
 	_, err := notificationDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
@@ -37,8 +37,8 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) FindByID(ID prim
 	return &output, nil
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error) {
-	var output model.Notification
+func (notificationDataSourceMongo *notificationDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
+	var output model.DatabaseNotification
 	_, err := notificationDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
@@ -54,10 +54,10 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Find(
 	query map[string]interface{},
 	paginationOpts *mongodbcoretypes.PaginationOptions,
 	operationOptions *mongodbcoretypes.OperationOptions,
-) ([]*model.Notification, error) {
-	var notifications = []*model.Notification{}
+) ([]*model.DatabaseNotification, error) {
+	var notifications = []*model.DatabaseNotification{}
 	appendingFn := func(cursor mongodbcorewrapperinterfaces.MongoCursor) error {
-		var notification model.Notification
+		var notification model.DatabaseNotification
 		if err := cursor.Decode(&notification); err != nil {
 			return err
 		}
@@ -72,7 +72,7 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Find(
 	return notifications, err
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error) {
+func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
 	defaultedInput, err := notificationDataSourceMongo.setDefaultValues(*input,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
 		operationOptions,
@@ -81,7 +81,7 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *mo
 		return nil, err
 	}
 
-	var outputModel model.Notification
+	var outputModel model.DatabaseNotification
 	_, err = notificationDataSourceMongo.basicOperation.Create(*defaultedInput.CreateNotification, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *mo
 	return &outputModel, err
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error) {
+func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
 	updateData.ID = ID
 	defaultedInput, err := notificationDataSourceMongo.setDefaultValues(*updateData,
 		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
@@ -100,7 +100,7 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primit
 		return nil, err
 	}
 
-	var output model.Notification
+	var output model.DatabaseNotification
 	_, err = notificationDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateNotification, &output, operationOptions)
 	if err != nil {
 		return nil, err

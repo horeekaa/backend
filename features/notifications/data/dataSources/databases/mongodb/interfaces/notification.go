@@ -7,14 +7,14 @@ import (
 )
 
 type NotificationDataSourceMongo interface {
-	FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error)
-	FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error)
+	FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
+	FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
 	Find(
 		query map[string]interface{},
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
-	) ([]*model.Notification, error)
-	Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.Notification, error)
+	) ([]*model.DatabaseNotification, error)
+	Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
+	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
 	GenerateObjectID() primitive.ObjectID
 }
