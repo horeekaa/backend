@@ -1,0 +1,15 @@
+input AccountForNotifPayloadInput {
+  _id: ObjectID!
+  status: AccountStatus!
+  statusReason: String
+  type: AccountType!
+  person: PersonForNotifPayloadInput!
+}
+
+type AccountForNotifPayload {
+  _id: ObjectID!
+  status: AccountStatus!
+  statusReason: String
+  type: AccountType!
+  person: PersonForNotifPayload!
+}

@@ -1,13 +1,9 @@
 enum NotificationCategory {
-  ORG_INVITATION
+  ORG_INVITATION_REQUEST
+  ORG_INVITATION_ACCEPTED
   ORG_APPROVAL
 
   NEW_PURCHASE_ORDER
-}
-
-input NotificationMessageInput {
-  title: String!
-  body: String!
 }
 
 type NotificationMessage {
@@ -15,16 +11,24 @@ type NotificationMessage {
   body: String!
 }
 
+input PayloadOptionsInput {
+  invitationRequestPayload: InvitationRequestPayloadInput
+  invitationAcceptedPayload: InvitationAcceptedPayloadInput
+}
+
+type PayloadOptions {
+  invitationRequestPayload: InvitationRequestPayload
+  invitationAcceptedPayload: InvitationAcceptedPayload
+}
+
 input InternalCreateNotification {
-  message: NotificationMessageInput
-  payloadDataInJson: String
+  payloadOptions: PayloadOptionsInput!
   notificationCategory: NotificationCategory!
   recipientAccount: ObjectIDOnly!
 }
 
 input DatabaseCreateNotification {
-  message: NotificationMessageInput
-  payloadDataInJson: String
+  payloadOptions: PayloadOptionsInput!
   notificationCategory: NotificationCategory!
   recipientAccount: ObjectIDOnly!
   createdAt: Time
@@ -33,16 +37,14 @@ input DatabaseCreateNotification {
 
 input InternalUpdateNotification {
   _id: ObjectID!
-  message: NotificationMessageInput
-  payloadDataInJson: String
+  payloadOptions: PayloadOptionsInput
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
 }
 
 input DatabaseUpdateNotification {
   _id: ObjectID!
-  message: NotificationMessageInput
-  payloadDataInJson: String
+  payloadOptions: PayloadOptionsInput
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
   updatedAt: Time
@@ -50,16 +52,22 @@ input DatabaseUpdateNotification {
 
 input NotificationFilterFields {
   _id: ObjectID
-  message: NotificationMessageInput
-  payloadDataInJson: String
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
 }
 
+type DatabaseNotification {
+  _id: ObjectID!
+  payloadOptions: PayloadOptions
+  notificationCategory: NotificationCategory!
+  recipientAccount: Account!
+  createdAt: Time
+  updatedAt: Time
+}
+
 type Notification {
   _id: ObjectID!
-  message: NotificationMessage
-  payloadDataInJson: String
+  message: NotificationMessage!
   notificationCategory: NotificationCategory!
   recipientAccount: Account!
   createdAt: Time

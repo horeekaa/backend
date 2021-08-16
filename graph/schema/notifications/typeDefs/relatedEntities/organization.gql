@@ -1,0 +1,13 @@
+input OrganizationForNotifPayloadInput {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+}
+
+type OrganizationForNotifPayload {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+}
