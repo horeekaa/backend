@@ -20,8 +20,8 @@ func (goLocalizeLocalizer *goLocalizeI18NLocalizer) Get(key string, replacements
 	nativeReplacements := []*localizations.Replacements{}
 
 	for _, replacement := range replacements {
-		nativeReplacement := replacement.Replacements
-		nativeReplacements = append(nativeReplacements, nativeReplacement)
+		nativeReplacement := localizations.Replacements(*replacement)
+		nativeReplacements = append(nativeReplacements, &nativeReplacement)
 	}
 	return goLocalizeLocalizer.Localizer.Get(key, nativeReplacements...)
 }
@@ -30,8 +30,8 @@ func (goLocalizeLocalizer *goLocalizeI18NLocalizer) GetWithLocale(locale, key st
 	nativeReplacements := []*localizations.Replacements{}
 
 	for _, replacement := range replacements {
-		nativeReplacement := replacement.Replacements
-		nativeReplacements = append(nativeReplacements, nativeReplacement)
+		nativeReplacement := localizations.Replacements(*replacement)
+		nativeReplacements = append(nativeReplacements, &nativeReplacement)
 	}
 	return goLocalizeLocalizer.Localizer.GetWithLocale(locale, key, nativeReplacements...)
 }
