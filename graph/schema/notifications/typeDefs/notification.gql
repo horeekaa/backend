@@ -24,15 +24,21 @@ type PayloadOptions {
 input InternalCreateNotification {
   payloadOptions: PayloadOptionsInput!
   notificationCategory: NotificationCategory!
-  recipientAccount: ObjectIDOnly!
+  recipientAccount: CreateAccount!
 }
 
 input DatabaseCreateNotification {
   payloadOptions: PayloadOptionsInput!
   notificationCategory: NotificationCategory!
   recipientAccount: ObjectIDOnly!
+  readFlag: Boolean!
   createdAt: Time
   updatedAt: Time
+}
+
+input UpdateNotification {
+  _id: ObjectID!
+  readFlag: Boolean
 }
 
 input InternalUpdateNotification {
@@ -40,6 +46,7 @@ input InternalUpdateNotification {
   payloadOptions: PayloadOptionsInput
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
+  readFlag: Boolean
 }
 
 input DatabaseUpdateNotification {
@@ -47,6 +54,7 @@ input DatabaseUpdateNotification {
   payloadOptions: PayloadOptionsInput
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
+  readFlag: Boolean
   updatedAt: Time
 }
 
@@ -54,6 +62,7 @@ input NotificationFilterFields {
   _id: ObjectID
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
+  readFlag: Boolean
 }
 
 type DatabaseNotification {
@@ -61,6 +70,7 @@ type DatabaseNotification {
   payloadOptions: PayloadOptions
   notificationCategory: NotificationCategory!
   recipientAccount: Account!
+  readFlag: Boolean!
   createdAt: Time
   updatedAt: Time
 }
@@ -70,6 +80,7 @@ type Notification {
   message: NotificationMessage!
   notificationCategory: NotificationCategory!
   recipientAccount: Account!
+  readFlag: Boolean!
   createdAt: Time
   updatedAt: Time
 }

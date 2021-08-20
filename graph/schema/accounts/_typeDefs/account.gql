@@ -18,9 +18,11 @@ input UpdateOtherAccount {
 }
 
 input CreateAccount {
+  _id: ObjectID
   email: String!
   status: AccountStatus
   statusReason: String
+  language: Language!
   type: AccountType!
   person: ObjectIDOnly
   deviceTokens: [String!]
@@ -31,8 +33,7 @@ input CreateAccount {
 input UpdateAccount {
   _id: ObjectID!
   email: String
-  status: AccountStatus
-  statusReason: String
+  language: Language
   type: AccountType
   person: ObjectIDOnly
   deviceTokens: [String!]
@@ -53,6 +54,7 @@ type Account {
   email: String!
   status: AccountStatus!
   statusReason: String
+  language: Language!
   type: AccountType!
   deviceTokens: [String!]!
   person: Person
