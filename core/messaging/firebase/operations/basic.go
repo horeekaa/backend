@@ -3,6 +3,7 @@ package firebasemessagingcoreoperations
 import (
 	"context"
 
+	"firebase.google.com/go/v4/messaging"
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebasemessagingcoreclientinterfaces "github.com/horeekaa/backend/core/messaging/firebase/interfaces/init"
@@ -23,7 +24,8 @@ func NewFirebaseMessagingBasicOperation(firebaseMsgClient firebasemessagingcorec
 func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMessage(ctx context.Context, message *firebasemessagingcoretypes.SentMessage) (string, error) {
 	client, _ := fbMsgBasicOps.firebaseMsgClient.GetMessagingClient()
 
-	res, err := client.Send(ctx, message.Message)
+	nativeMessage := messaging.Message(*message)
+	res, err := client.Send(ctx, &nativeMessage)
 	if err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.SendNotifMessageFailed,
@@ -38,7 +40,8 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMessage(ctx context.Co
 func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMulticastMessage(ctx context.Context, message *firebasemessagingcoretypes.SentMulticastMessage) (*firebasemessagingcoretypes.BatchMessageResponse, error) {
 	client, _ := fbMsgBasicOps.firebaseMsgClient.GetMessagingClient()
 
-	res, err := client.SendMulticast(ctx, message.MulticastMessage)
+	nativeMessage := messaging.MulticastMessage(*message)
+	res, err := client.SendMulticast(ctx, &nativeMessage)
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.SendNotifMessageFailed,
@@ -47,7 +50,6 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMulticastMessage(ctx c
 		)
 	}
 
-	return &firebasemessagingcoretypes.BatchMessageResponse{
-		BatchResponse: res,
-	}, nil
+	batchResponse := firebasemessagingcoretypes.BatchMessageResponse(*res)
+	return &batchResponse, nil
 }
