@@ -6,6 +6,7 @@ import (
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
+	notificationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
 	productvariantdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/productVariants"
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
@@ -70,6 +71,10 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.ApproveUpdateTagDependency{},
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
+
+		&notificationdomainrepositorydependencies.NotificationLocalizationBuilderDependency{},
+		&notificationdomainrepositorydependencies.CreateNotificationDependency{},
+		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
 	}
 
 	for _, reg := range registrationList {
