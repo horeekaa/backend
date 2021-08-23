@@ -15,3 +15,9 @@ type BulkUpdateNotificationTransactionComponent interface {
 		updateNotificationInput *model.InternalBulkUpdateNotification,
 	) ([]*model.Notification, error)
 }
+
+type BulkUpdateNotificationRepository interface {
+	RunTransaction(
+		bulkUpdateNotificationInput *model.InternalBulkUpdateNotification,
+	) ([]*model.Notification, error)
+}
