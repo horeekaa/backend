@@ -63,7 +63,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 
 	createNotifTrx.notifLocalizationBuilder.Execute(input, notificationToOutput)
 
-	createNotifTrx.firebaseMessaging.SendMulticastMessage(
+	_, err = createNotifTrx.firebaseMessaging.SendMulticastMessage(
 		context.Background(),
 		&firebasemessagingcoretypes.SentMulticastMessage{
 			Notification: &messaging.Notification{
@@ -73,6 +73,12 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 			Tokens: input.RecipientAccount.DeviceTokens,
 		},
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createNotification",
+			err,
+		)
+	}
 
 	return notificationToOutput, nil
 }
