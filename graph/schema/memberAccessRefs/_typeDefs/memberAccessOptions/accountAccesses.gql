@@ -4,6 +4,7 @@ input AccountAccessesInput {
     accountRead: Boolean
     accountLogin: Boolean
     accountAcceptInvitation: Boolean
+    accountUpdate: Boolean
 }
 
 type AccountAccesses {
@@ -11,4 +12,5 @@ type AccountAccesses {
     accountRead: Boolean
     accountLogin: Boolean
     accountAcceptInvitation: Boolean
+    accountUpdate: Boolean
 }
