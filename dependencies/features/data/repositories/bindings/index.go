@@ -75,6 +75,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&notificationdomainrepositorydependencies.NotificationLocalizationBuilderDependency{},
 		&notificationdomainrepositorydependencies.CreateNotificationDependency{},
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
+		&notificationdomainrepositorydependencies.GetAllNotificationDependency{},
 	}
 
 	for _, reg := range registrationList {
