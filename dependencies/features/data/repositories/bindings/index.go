@@ -7,6 +7,7 @@ import (
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
 	notificationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications"
+	notificationdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
 	productvariantdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/productVariants"
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
@@ -72,6 +73,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
 
+		&notificationdomainrepositoryutilitydependencies.InvitationPayloadLoaderDependency{},
 		&notificationdomainrepositorydependencies.NotificationLocalizationBuilderDependency{},
 		&notificationdomainrepositorydependencies.CreateNotificationDependency{},
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
