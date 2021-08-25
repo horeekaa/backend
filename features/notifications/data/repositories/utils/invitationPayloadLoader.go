@@ -31,9 +31,14 @@ func (invitationPyload *invitationPayloadLoader) Execute(
 	switch notification.NotificationCategory {
 	case model.NotificationCategoryOrgInvitationRequest:
 		memberAccess = notification.PayloadOptions.InvitationRequestPayload.MemberAccess
+		break
 
 	case model.NotificationCategoryOrgInvitationAccepted:
 		memberAccess = notification.PayloadOptions.InvitationAcceptedPayload.MemberAccess
+		break
+
+	default:
+		return false, nil
 	}
 
 	submittingAccountLoadedChan := make(chan bool)
