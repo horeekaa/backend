@@ -6,7 +6,7 @@ import (
 
 type NotificationLocalizationBuilder interface {
 	Execute(
-		input *model.InternalCreateNotification,
+		input *model.DatabaseNotification,
 		output *model.Notification,
 	) (bool, error)
 }

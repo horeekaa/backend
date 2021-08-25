@@ -58,10 +58,9 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	}
 
 	notificationToOutput := &model.Notification{}
-	jsonTemp, _ = json.Marshal(createdNotification)
 	json.Unmarshal(jsonTemp, notificationToOutput)
 
-	createNotifTrx.notifLocalizationBuilder.Execute(input, notificationToOutput)
+	createNotifTrx.notifLocalizationBuilder.Execute(createdNotification, notificationToOutput)
 
 	_, err = createNotifTrx.firebaseMessaging.SendMulticastMessage(
 		context.Background(),

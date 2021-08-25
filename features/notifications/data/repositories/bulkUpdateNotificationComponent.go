@@ -57,10 +57,7 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		jsonOutput, _ := json.Marshal(databaseNotification)
 		json.Unmarshal(jsonOutput, notification)
 
-		createdNotification := &model.InternalCreateNotification{}
-		json.Unmarshal(jsonOutput, createdNotification)
-
-		bulkUpdateNotificationComp.notifLocalizationBuilder.Execute(createdNotification, notification)
+		bulkUpdateNotificationComp.notifLocalizationBuilder.Execute(databaseNotification, notification)
 
 		notifications = append(notifications, notification)
 	}

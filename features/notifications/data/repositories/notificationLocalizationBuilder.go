@@ -20,7 +20,7 @@ func NewNotificationLocalizationBuilder(
 }
 
 func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
-	input *model.InternalCreateNotification,
+	input *model.DatabaseNotification,
 	output *model.Notification,
 ) (bool, error) {
 	notifLocalBuilder.goLocalizeI18N.Initialize(

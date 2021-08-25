@@ -51,12 +51,10 @@ func (getAllNotificationRepo *getAllNotificationRepository) Execute(
 	notifications := []*model.Notification{}
 	for _, notif := range databaseNotifs {
 		notification := &model.Notification{}
-		createdNotification := &model.InternalCreateNotification{}
 		jsonTemp, _ := json.Marshal(notif)
 		json.Unmarshal(jsonTemp, notification)
-		json.Unmarshal(jsonTemp, createdNotification)
 
-		getAllNotificationRepo.notifLocalizationBuilder.Execute(createdNotification, notification)
+		getAllNotificationRepo.notifLocalizationBuilder.Execute(notif, notification)
 
 		notifications = append(notifications, notification)
 	}
