@@ -25,9 +25,9 @@ func NewInvitationPayloadLoader(
 }
 
 func (invitationPyload *invitationPayloadLoader) Execute(
-	notification *model.DatabaseNotification,
+	notification *model.InternalCreateNotification,
 ) (bool, error) {
-	memberAccess := &model.MemberAccessForNotifPayload{}
+	memberAccess := &model.MemberAccessForNotifPayloadInput{}
 	switch notification.NotificationCategory {
 	case model.NotificationCategoryOrgInvitationRequest:
 		memberAccess = notification.PayloadOptions.InvitationRequestPayload.MemberAccess
