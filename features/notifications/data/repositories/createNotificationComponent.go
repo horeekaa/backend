@@ -11,19 +11,20 @@ import (
 	firebasemessagingcoretypes "github.com/horeekaa/backend/core/messaging/firebase/types"
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
 type createNotificationTransactionComponent struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	firebaseMessaging        firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
 }
 
 func NewCreateNotificationTransactionComponent(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 	firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder,
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 ) (notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent, error) {
 	return &createNotificationTransactionComponent{
 		notificationDataSource:   notificationDataSource,

@@ -6,6 +6,7 @@ import (
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositories "github.com/horeekaa/backend/features/notifications/data/repositories"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 )
 
 type BulkUpdateNotificationDependency struct{}
@@ -14,7 +15,7 @@ func (_ *BulkUpdateNotificationDependency) Bind() {
 	container.Singleton(
 		func(
 			notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
-			notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder,
+			notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 		) notificationdomainrepositoryinterfaces.BulkUpdateNotificationTransactionComponent {
 			bulkUpdateNotificationComponent, _ := notificationdomainrepositories.NewBulkUpdateNotificationTransactionComponent(
 				notificationDataSource,

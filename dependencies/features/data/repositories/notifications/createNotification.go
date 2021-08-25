@@ -6,6 +6,7 @@ import (
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositories "github.com/horeekaa/backend/features/notifications/data/repositories"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 )
 
 type CreateNotificationDependency struct{}
@@ -15,7 +16,7 @@ func (_ *CreateNotificationDependency) Bind() {
 		func(
 			notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 			firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
-			notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder,
+			notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 		) notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent {
 			createNotificationComponent, _ := notificationdomainrepositories.NewCreateNotificationTransactionComponent(
 				notificationDataSource,

@@ -74,7 +74,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.GetTagDependency{},
 
 		&notificationdomainrepositoryutilitydependencies.InvitationPayloadLoaderDependency{},
-		&notificationdomainrepositorydependencies.NotificationLocalizationBuilderDependency{},
+		&notificationdomainrepositoryutilitydependencies.NotificationLocalizationBuilderDependency{},
 		&notificationdomainrepositorydependencies.CreateNotificationDependency{},
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
 		&notificationdomainrepositorydependencies.GetAllNotificationDependency{},

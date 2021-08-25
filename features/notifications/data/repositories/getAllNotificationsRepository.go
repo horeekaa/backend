@@ -8,18 +8,19 @@ import (
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	notificationdomainrepositorytypes "github.com/horeekaa/backend/features/notifications/domain/repositories/types"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllNotificationRepository struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
 }
 
 func NewGetAllNotificationRepository(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder,
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 ) (notificationdomainrepositoryinterfaces.GetAllNotificationRepository, error) {
 	return &getAllNotificationRepository{
 		notificationDataSource,

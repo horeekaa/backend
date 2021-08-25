@@ -1,9 +1,9 @@
-package notificationdomainrepositories
+package notificationdomainrepositoryutilities
 
 import (
 	golocalizei18ncoreclientinterfaces "github.com/horeekaa/backend/core/i18n/go-localize/interfaces/init"
 	golocalizei18ncoretypes "github.com/horeekaa/backend/core/i18n/go-localize/types"
-	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -13,7 +13,7 @@ type notificationLocalizationBuilder struct {
 
 func NewNotificationLocalizationBuilder(
 	goLocalizeI18N golocalizei18ncoreclientinterfaces.GoLocalizeI18NClient,
-) (notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder, error) {
+) (notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder, error) {
 	return &notificationLocalizationBuilder{
 		goLocalizeI18N: goLocalizeI18N,
 	}, nil

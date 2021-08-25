@@ -1,4 +1,4 @@
-package notificationdomainrepositoryinterfaces
+package notificationdomainrepositoryutilityinterfaces
 
 import (
 	"github.com/horeekaa/backend/model"

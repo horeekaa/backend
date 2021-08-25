@@ -7,17 +7,18 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
 type bulkUpdateNotificationTransactionComponent struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
 }
 
 func NewBulkUpdateNotificationTransactionComponent(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
-	notifLocalizationBuilder notificationdomainrepositoryinterfaces.NotificationLocalizationBuilder,
+	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 ) (notificationdomainrepositoryinterfaces.BulkUpdateNotificationTransactionComponent, error) {
 	return &bulkUpdateNotificationTransactionComponent{
 		notificationDataSource:   notificationDataSource,
