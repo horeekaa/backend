@@ -19,23 +19,32 @@ type createNotificationTransactionComponent struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	firebaseMessaging        firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
+	invitationPayloadLoader  notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader
 }
 
 func NewCreateNotificationTransactionComponent(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 	firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
+	invitationPayloadLoader notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 ) (notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent, error) {
 	return &createNotificationTransactionComponent{
 		notificationDataSource:   notificationDataSource,
 		firebaseMessaging:        firebaseMessaging,
 		notifLocalizationBuilder: notifLocalizationBuilder,
+		invitationPayloadLoader:  invitationPayloadLoader,
 	}, nil
 }
 
-func (_ *createNotificationTransactionComponent) PreTransaction(
+func (createNotifTrx *createNotificationTransactionComponent) PreTransaction(
 	input *model.InternalCreateNotification,
 ) (*model.InternalCreateNotification, error) {
+	_, err := createNotifTrx.invitationPayloadLoader.Execute(
+		input,
+	)
+	if err != nil {
+		return nil, err
+	}
 	return input, nil
 }
 
