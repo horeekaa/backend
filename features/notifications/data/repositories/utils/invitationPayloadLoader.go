@@ -107,18 +107,5 @@ func (invitationPyload *invitationPayloadLoader) TransactionBody(
 		}
 	}
 
-	switch notification.NotificationCategory {
-	case model.NotificationCategoryOrgInvitationRequest:
-		jsonTemp, _ := json.Marshal(memberAccess.Account)
-		json.Unmarshal(jsonTemp, &notification.RecipientAccount)
-		break
-
-	case model.NotificationCategoryOrgInvitationAccepted:
-		jsonTemp, _ := json.Marshal(memberAccess.SubmittingAccount)
-		json.Unmarshal(jsonTemp, &notification.RecipientAccount)
-		break
-
-	}
-
 	return true, nil
 }
