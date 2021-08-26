@@ -74,6 +74,9 @@ func (approveUpdateMmbAccRepo *approveUpdateMemberAccessRepository) TransactionB
 					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
 				},
 			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &updatedMemberAccess.Account.ID,
+			},
 		}
 
 		jsonTemp, _ := json.Marshal(updatedMemberAccess)

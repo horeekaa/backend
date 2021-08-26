@@ -66,7 +66,7 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 
 	if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
 		updatedMemberAccess.Account.ID.Hex() == memberAccessToUpdate.SubmittingAccount.ID.Hex() &&
-		updatedMemberAccess.ProposalStatus == model.EntityProposalStatusApproved &&
+		updatedMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved &&
 		(funk.GetOrElse(
 			memberAccessToUpdate.InvitationAccepted,
 			false,
@@ -77,6 +77,9 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 				InvitationAcceptedPayload: &model.InvitationAcceptedPayloadInput{
 					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
 				},
+			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &updatedMemberAccess.SubmittingAccount.ID,
 			},
 		}
 

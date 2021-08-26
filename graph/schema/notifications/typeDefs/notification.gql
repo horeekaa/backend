@@ -24,7 +24,7 @@ type PayloadOptions {
 input InternalCreateNotification {
   payloadOptions: PayloadOptionsInput!
   notificationCategory: NotificationCategory!
-  recipientAccount: CreateAccount!
+  recipientAccount: ObjectIDOnly!
 }
 
 input DatabaseCreateNotification {

@@ -73,6 +73,9 @@ func (createProdRepo *createMemberAccessRepository) TransactionBody(
 					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
 				},
 			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &createdMemberAccess.Account.ID,
+			},
 		}
 
 		jsonTemp, _ := json.Marshal(createdMemberAccess)
