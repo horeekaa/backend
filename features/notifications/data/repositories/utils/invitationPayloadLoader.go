@@ -24,7 +24,8 @@ func NewInvitationPayloadLoader(
 	}, nil
 }
 
-func (invitationPyload *invitationPayloadLoader) Execute(
+func (invitationPyload *invitationPayloadLoader) TransactionBody(
+	operationOptions *mongodbcoretypes.OperationOptions,
 	notification *model.InternalCreateNotification,
 ) (bool, error) {
 	memberAccess := &model.MemberAccessForNotifPayloadInput{}
@@ -48,7 +49,7 @@ func (invitationPyload *invitationPayloadLoader) Execute(
 	go func() {
 		submittingAcc, err := invitationPyload.accountDataSource.GetMongoDataSource().FindByID(
 			memberAccess.SubmittingAccount.ID,
-			&mongodbcoretypes.OperationOptions{},
+			operationOptions,
 		)
 		if err != nil {
 			errChan <- err
@@ -58,7 +59,7 @@ func (invitationPyload *invitationPayloadLoader) Execute(
 
 		submittingPerson, err := invitationPyload.personDataSource.GetMongoDataSource().FindByID(
 			memberAccess.SubmittingAccount.Person.ID,
-			&mongodbcoretypes.OperationOptions{},
+			operationOptions,
 		)
 		if err != nil {
 			errChan <- err
@@ -73,7 +74,7 @@ func (invitationPyload *invitationPayloadLoader) Execute(
 	go func() {
 		invitedAcc, err := invitationPyload.accountDataSource.GetMongoDataSource().FindByID(
 			memberAccess.Account.ID,
-			&mongodbcoretypes.OperationOptions{},
+			operationOptions,
 		)
 		if err != nil {
 			errChan <- err
@@ -83,7 +84,7 @@ func (invitationPyload *invitationPayloadLoader) Execute(
 
 		invitedPerson, err := invitationPyload.personDataSource.GetMongoDataSource().FindByID(
 			memberAccess.Account.Person.ID,
-			&mongodbcoretypes.OperationOptions{},
+			operationOptions,
 		)
 		if err != nil {
 			errChan <- err

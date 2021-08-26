@@ -39,12 +39,6 @@ func NewCreateNotificationTransactionComponent(
 func (createNotifTrx *createNotificationTransactionComponent) PreTransaction(
 	input *model.InternalCreateNotification,
 ) (*model.InternalCreateNotification, error) {
-	_, err := createNotifTrx.invitationPayloadLoader.Execute(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
 	return input, nil
 }
 
@@ -52,6 +46,14 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateNotification,
 ) (*model.Notification, error) {
+	_, err := createNotifTrx.invitationPayloadLoader.TransactionBody(
+		session,
+		input,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	notificationToCreate := &model.DatabaseCreateNotification{}
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, notificationToCreate)
