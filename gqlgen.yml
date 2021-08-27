@@ -73,6 +73,10 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  Notification:
+    fields:
+      recipientAccount:
+        resolver: true
   Organization:
     fields:
       submittingAccount:

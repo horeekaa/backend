@@ -10,6 +10,7 @@ import (
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 )
 
@@ -39,10 +40,12 @@ func (createMemberAccessForAccountDependency *CreateMemberAccessDependency) Bind
 
 	container.Transient(
 		func(
+			createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			trxComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository {
 			updateMemberAccessRepo, _ := memberaccessdomainrepositories.NewCreateMemberAccessRepository(
+				createNotifComponent,
 				trxComponent,
 				mongoDBTransaction,
 			)

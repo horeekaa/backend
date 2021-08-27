@@ -6,6 +6,7 @@ import (
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
 	memberaccesspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccesses"
+	notificationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/notifications"
 	organizationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/organizations"
 	productvariantpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/productVariants"
 	productpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/products"
@@ -59,6 +60,9 @@ func (_ *UsecasesDependency) Bind() {
 		&taggingpresentationusecasedependencies.BulkUpdateTaggingUsecaseDependency{},
 		&taggingpresentationusecasedependencies.GetAllTaggingUsecaseDependency{},
 		&taggingpresentationusecasedependencies.GetTaggingUsecaseDependency{},
+
+		&notificationpresentationusecasedependencies.GetAllNotificationUsecaseDependency{},
+		&notificationpresentationusecasedependencies.BulkUpdateNotificationUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {

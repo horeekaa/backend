@@ -1,0 +1,13 @@
+input MemberAccessForNotifPayloadInput {
+  account: AccountForNotifPayloadInput!
+  organization: OrganizationForNotifPayloadInput!
+  organizationMembershipRole: OrganizationMembershipRole!
+  submittingAccount: AccountForNotifPayloadInput!
+}
+
+type MemberAccessForNotifPayload {
+  account: AccountForNotifPayload!
+  organization: OrganizationForNotifPayload!
+  organizationMembershipRole: OrganizationMembershipRole!
+  submittingAccount: AccountForNotifPayload!
+}

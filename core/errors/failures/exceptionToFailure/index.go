@@ -20,6 +20,12 @@ var upstreamFailure = map[string]bool{
 	horeekaacoreexceptionenums.UpstreamException:  true,
 
 	horeekaacoreexceptionenums.ClientInitializationFailed: true,
+
+	horeekaacoreexceptionenums.StoringImageFailed:              true,
+	horeekaacoreexceptionenums.ClosingImageStoringWriterFailed: true,
+	horeekaacoreexceptionenums.DeleteImageFailed:               true,
+
+	horeekaacoreexceptionenums.SendNotifMessageFailed: true,
 }
 
 var upstreamDuplicateFailure = map[string]bool{

@@ -122,9 +122,6 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interfa
 			return nil, err
 		}
 
-		if &(*existingObject).Status == nil {
-			updateInput.Status = &defaultAccountStatus
-		}
 		if &(*existingObject).Type == nil {
 			updateInput.Type = &defaultAccountType
 		}

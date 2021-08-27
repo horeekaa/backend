@@ -1,0 +1,7 @@
+extend type Mutation {
+    bulkUpdateNotification(bulkUpdateNotification: BulkUpdateNotification!): [Notification]
+}
+
+extend type Query {
+    notifications(filterFields: NotificationFilterFields!, paginationOpt: PaginationOptionInput): [Notification]!
+}

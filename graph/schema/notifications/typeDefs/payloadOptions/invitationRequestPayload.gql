@@ -1,0 +1,7 @@
+input InvitationRequestPayloadInput {
+  memberAccess: MemberAccessForNotifPayloadInput!
+}
+
+type InvitationRequestPayload {
+  memberAccess: MemberAccessForNotifPayload!
+}

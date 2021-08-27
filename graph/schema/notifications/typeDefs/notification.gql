@@ -1,0 +1,86 @@
+enum NotificationCategory {
+  ORG_INVITATION_REQUEST
+  ORG_INVITATION_ACCEPTED
+  ORG_APPROVAL
+
+  NEW_PURCHASE_ORDER
+}
+
+type NotificationMessage {
+  title: String!
+  body: String!
+}
+
+input PayloadOptionsInput {
+  invitationRequestPayload: InvitationRequestPayloadInput
+  invitationAcceptedPayload: InvitationAcceptedPayloadInput
+}
+
+type PayloadOptions {
+  invitationRequestPayload: InvitationRequestPayload
+  invitationAcceptedPayload: InvitationAcceptedPayload
+}
+
+input InternalCreateNotification {
+  payloadOptions: PayloadOptionsInput!
+  notificationCategory: NotificationCategory!
+  recipientAccount: ObjectIDOnly!
+}
+
+input DatabaseCreateNotification {
+  payloadOptions: PayloadOptionsInput!
+  notificationCategory: NotificationCategory!
+  recipientAccount: ObjectIDOnly!
+  readFlag: Boolean!
+  createdAt: Time
+  updatedAt: Time
+}
+
+input BulkUpdateNotification {
+  IDs: [ObjectID!]!
+  readFlag: Boolean
+}
+
+input InternalBulkUpdateNotification {
+  IDs: [ObjectID!]!
+  payloadOptions: PayloadOptionsInput
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+  readFlag: Boolean
+}
+
+input DatabaseUpdateNotification {
+  _id: ObjectID!
+  payloadOptions: PayloadOptionsInput
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+  readFlag: Boolean
+  updatedAt: Time
+}
+
+input NotificationFilterFields {
+  _id: ObjectID
+  notificationCategory: NotificationCategory
+  recipientAccount: ObjectIDOnly
+  readFlag: Boolean
+}
+
+type DatabaseNotification {
+  _id: ObjectID!
+  payloadOptions: PayloadOptions
+  notificationCategory: NotificationCategory!
+  recipientAccount: Account!
+  readFlag: Boolean!
+  createdAt: Time
+  updatedAt: Time
+}
+
+type Notification {
+  _id: ObjectID!
+  message: NotificationMessage!
+  notificationCategory: NotificationCategory!
+  recipientAccount: Account!
+  readFlag: Boolean!
+  createdAt: Time
+  updatedAt: Time
+}
