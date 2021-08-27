@@ -98,14 +98,10 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 
 	duplicateMemberAccess, err := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
-			"Account": &model.ObjectIDOnly{ID: input.Account.ID},
-			"Status": func(m model.MemberAccessStatus) *model.MemberAccessStatus {
-				return &m
-			}(model.MemberAccessStatusActive),
-			"ProposalStatus": func(m model.EntityProposalStatus) *model.EntityProposalStatus {
-				return &m
-			}(model.EntityProposalStatusApproved),
-			"MemberAccessRefType": input.MemberAccessRefType,
+			"account._id":         input.Account.ID,
+			"status":              model.MemberAccessStatusActive,
+			"proposalStatus":      model.EntityProposalStatusApproved,
+			"memberAccessRefType": input.MemberAccessRefType,
 		},
 		session,
 	)
