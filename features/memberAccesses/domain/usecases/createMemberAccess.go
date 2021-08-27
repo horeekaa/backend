@@ -80,36 +80,6 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 		)
 	}
 
-	duplicateMemberAccess, err := createMmbAccessUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
-				Account: &model.ObjectIDOnly{ID: validatedInput.CreateMemberAccess.Account.ID},
-				Status: func(m model.MemberAccessStatus) *model.MemberAccessStatus {
-					return &m
-				}(model.MemberAccessStatusActive),
-				ProposalStatus: func(m model.EntityProposalStatus) *model.EntityProposalStatus {
-					return &m
-				}(model.EntityProposalStatusApproved),
-				MemberAccessRefType: &validatedInput.CreateMemberAccess.MemberAccessRefType,
-			},
-			QueryMode: true,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessUsecase",
-			err,
-		)
-	}
-	if duplicateMemberAccess != nil {
-		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.DuplicateAccessExist,
-			409,
-			"/createMemberAccessUsecase",
-			nil,
-		)
-	}
-
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{

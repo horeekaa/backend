@@ -64,11 +64,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	// session WithTransaction automatically start and commit or abort the session
 	result, err := session.WithTransaction(ctx, mongoTrx.TransactionFn(preTransactOutput))
 	if err != nil {
-		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpstreamException,
-			"/mongoTransaction/commitTransaction",
-			err,
-		)
+		return nil, err
 	}
 	log.Printf("Transaction %s successfully run", mongoTrx.transactionTitle)
 

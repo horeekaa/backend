@@ -55,6 +55,9 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	if firstName == lastName {
 		lastName = ""
 	}
+	if firstName == "" {
+		firstName = strings.Split(user.(*auth.UserRecord).Email, "@")[0]
+	}
 	defaultNoOfRecentTransaction := 15
 
 	person, err := createAccFromAuthDataCom.personDataSource.GetMongoDataSource().Create(
