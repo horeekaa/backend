@@ -65,7 +65,7 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 	}
 
 	if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
-		updatedMemberAccess.Account.ID.Hex() == memberAccessToUpdate.SubmittingAccount.ID.Hex() &&
+		updatedMemberAccess.Account.ID.Hex() != memberAccessToUpdate.SubmittingAccount.ID.Hex() &&
 		updatedMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved &&
 		(funk.GetOrElse(
 			memberAccessToUpdate.InvitationAccepted,
