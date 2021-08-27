@@ -96,6 +96,33 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		)
 	}
 
+	duplicateMemberAccess, err := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().FindOne(
+		map[string]interface{}{
+			"Account": &model.ObjectIDOnly{ID: input.Account.ID},
+			"Status": func(m model.MemberAccessStatus) *model.MemberAccessStatus {
+				return &m
+			}(model.MemberAccessStatusActive),
+			"ProposalStatus": func(m model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &m
+			}(model.EntityProposalStatusApproved),
+			"MemberAccessRefType": input.MemberAccessRefType,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createMemberAccess",
+			err,
+		)
+	}
+	if duplicateMemberAccess != nil {
+		return nil, horeekaacorefailure.NewFailureObject(
+			horeekaacorefailureenums.DuplicateObjectExist,
+			"/createMemberAccess",
+			nil,
+		)
+	}
+
 	fieldChanges := []*model.FieldChangeDataInput{}
 	createMemberAccessTrx.structFieldIteratorUtility.SetIteratingFunc(
 		func(tag interface{}, field interface{}, tagString *interface{}) {
