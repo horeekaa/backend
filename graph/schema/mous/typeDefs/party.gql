@@ -1,0 +1,21 @@
+input PartyInput {
+  organization: ObjectIDOnly!
+  accountInCharge: ObjectIDOnly!
+  signature: SignatureInput
+}
+
+input InternalPartyInput {
+  organization: OrganizationForPartyInput!
+  accountInCharge: AccountForPartyInput!
+  signature: InternalSignatureInput
+  createdAt: Time
+  updatedAt: Time
+}
+
+type Party {
+  organization: OrganizationForParty!
+  accountInCharge: AccountForParty!
+  signature: Signature
+  createdAt: Time
+  updatedAt: Time
+}

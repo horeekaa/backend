@@ -1,0 +1,15 @@
+input AccountForPartyInput {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: PersonForPartyInput
+}
+
+type AccountForParty {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: PersonForParty
+}

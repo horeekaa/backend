@@ -1,0 +1,168 @@
+input CreateMOU {
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput!
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateMOU {
+  publicId: String
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateMOU
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreateMOU {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: InternalPartyInput!
+  secondParty: InternalPartyInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateMOU
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateMOU {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdateMOU {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateMOU
+}
+
+input DatabaseUpdateMOU {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: InternalPartyInput
+  secondParty: InternalPartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateMOU
+  updatedAt: Time
+}
+
+input MOUFilterFields {
+  _id: ObjectID
+  publicId: String
+  title: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateMOU
+}
+
+type MOU {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: Party!
+  secondParty: Party!
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: MOU
+  recentLog: Logging!
+  createdAt: Time
+  updatedAt: Time
+}
