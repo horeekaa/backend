@@ -50,7 +50,7 @@ input DatabaseCreateMOU {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateMOU
+  proposedChanges: DatabaseUpdateMOU
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -120,7 +120,7 @@ input DatabaseUpdateMOU {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMOU
+  proposedChanges: DatabaseUpdateMOU
   updatedAt: Time
 }
 
