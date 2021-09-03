@@ -1,4 +1,4 @@
-input CreateMOU {
+input CreateMou {
   title: String!
   description: String
   startDate: Time!
@@ -13,7 +13,7 @@ input CreateMOU {
   proposalStatus: EntityProposalStatus
 }
 
-input InternalCreateMOU {
+input InternalCreateMou {
   publicId: String
   title: String!
   description: String
@@ -29,11 +29,11 @@ input InternalCreateMOU {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateMOU
+  proposedChanges: UpdateMou
   recentLog: ObjectIDOnly
 }
 
-input DatabaseCreateMOU {
+input DatabaseCreateMou {
   _id: ObjectID!
   publicId: String!
   title: String!
@@ -50,13 +50,13 @@ input DatabaseCreateMOU {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMOU
+  proposedChanges: DatabaseUpdateMou
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
 
-input UpdateMOU {
+input UpdateMou {
   _id: ObjectID!
   title: String
   description: String
@@ -81,7 +81,7 @@ input UpdateMOU {
   recentApprovingAccount: ObjectIDOnly
 }
 
-input InternalUpdateMOU {
+input InternalUpdateMou {
   _id: ObjectID!
   title: String
   description: String
@@ -99,10 +99,10 @@ input InternalUpdateMOU {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMOU
+  proposedChanges: UpdateMou
 }
 
-input DatabaseUpdateMOU {
+input DatabaseUpdateMou {
   _id: ObjectID!
   title: String
   description: String
@@ -120,11 +120,11 @@ input DatabaseUpdateMOU {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMOU
+  proposedChanges: DatabaseUpdateMou
   updatedAt: Time
 }
 
-input MOUFilterFields {
+input MouFilterFields {
   _id: ObjectID
   publicId: String
   title: String
@@ -141,10 +141,10 @@ input MOUFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMOU
+  proposedChanges: UpdateMou
 }
 
-type MOU {
+type Mou {
   _id: ObjectID!
   publicId: String!
   title: String!
@@ -161,7 +161,7 @@ type MOU {
   proposalStatus: EntityProposalStatus!
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: MOU
+  proposedChanges: Mou
   recentLog: Logging!
   createdAt: Time
   updatedAt: Time
