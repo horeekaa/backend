@@ -4,6 +4,8 @@ import (
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
@@ -118,6 +120,15 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 					ID: &memberAccess.Organization.ID,
 				},
 			}
+		} else {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/getAllMouUsecase",
+				horeekaacorefailure.NewFailureObject(
+					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
+					"/getAllMouUsecase",
+					nil,
+				),
+			)
 		}
 	}
 
