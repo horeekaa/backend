@@ -1,0 +1,11 @@
+input AgreedProductVariantInput {
+  name: String
+  description: String
+  retailPrice: Int
+}
+
+type AgreedProductVariant {
+  name: String
+  description: String
+  retailPrice: Int
+}

@@ -1,0 +1,63 @@
+input CreateMouItem {
+  product: ObjectIDOnly!
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+}
+
+input InternalCreateMouItem {
+  _id: ObjectID
+  product: ObjectIDOnly!
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+}
+
+input DatabaseCreateMouItem {
+  _id: ObjectID!
+  product: ObjectIDOnly!
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateMouItem {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
+  product: ObjectIDOnly
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+}
+
+input InternalUpdateMouItem {
+  _id: ObjectID
+  product: ObjectIDOnly
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+}
+
+input DatabaseUpdateMouItem {
+  _id: ObjectID!
+  product: ObjectIDOnly
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+  updatedAt: Time
+}
+
+input MouItemFilterFields {
+  _id: ObjectID
+  product: ObjectIDOnly
+  agreedProduct: AgreedProductInput
+  isActive: Boolean
+}
+
+type MouItem {
+  _id: ObjectID!
+  product: Product!
+  agreedProduct: AgreedProduct
+  isActive: Boolean!
+  createdAt: Time!
+  updatedAt: Time!
+}
