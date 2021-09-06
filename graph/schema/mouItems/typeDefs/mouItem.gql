@@ -7,14 +7,14 @@ input CreateMouItem {
 input InternalCreateMouItem {
   _id: ObjectID
   product: ObjectIDOnly!
-  agreedProduct: AgreedProductInput
+  agreedProduct: InternalAgreedProductInput
   isActive: Boolean
 }
 
 input DatabaseCreateMouItem {
   _id: ObjectID!
   product: ObjectIDOnly!
-  agreedProduct: AgreedProductInput
+  agreedProduct: InternalAgreedProductInput
   isActive: Boolean
   createdAt: Time
   updatedAt: Time
@@ -34,14 +34,14 @@ input UpdateMouItem {
 input InternalUpdateMouItem {
   _id: ObjectID
   product: ObjectIDOnly
-  agreedProduct: AgreedProductInput
+  agreedProduct: InternalAgreedProductInput
   isActive: Boolean
 }
 
 input DatabaseUpdateMouItem {
   _id: ObjectID!
   product: ObjectIDOnly
-  agreedProduct: AgreedProductInput
+  agreedProduct: InternalAgreedProductInput
   isActive: Boolean
   updatedAt: Time
 }

@@ -4,8 +4,20 @@ input AgreedProductInput {
   variants: [AgreedProductVariantInput]
 }
 
+input InternalAgreedProductInput {
+  name: String
+  description: String
+  variants: [InternalAgreedProductVariantInput]
+  photos: [InternalAgreedDescriptivePhotoInput]
+  createdAt: Time
+  updatedAt: Time
+}
+
 type AgreedProduct {
   name: String
   description: String
   variants: [AgreedProductVariant]
+  photos: [AgreedDescriptivePhoto]
+  createdAt: Time
+  updatedAt: Time
 }
