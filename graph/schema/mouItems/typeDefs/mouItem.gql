@@ -9,6 +9,7 @@ input InternalCreateMouItem {
   product: ObjectIDOnly!
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
+  mou: ObjectIDOnly!
 }
 
 input DatabaseCreateMouItem {
@@ -16,6 +17,7 @@ input DatabaseCreateMouItem {
   product: ObjectIDOnly!
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
+  mou: ObjectIDOnly!
   createdAt: Time
   updatedAt: Time
 }
@@ -36,6 +38,7 @@ input InternalUpdateMouItem {
   product: ObjectIDOnly
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
+  mou: ObjectIDOnly
 }
 
 input DatabaseUpdateMouItem {
@@ -43,6 +46,7 @@ input DatabaseUpdateMouItem {
   product: ObjectIDOnly
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
+  mou: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -51,6 +55,7 @@ input MouItemFilterFields {
   product: ObjectIDOnly
   agreedProduct: AgreedProductInput
   isActive: Boolean
+  mou: ObjectIDOnly
 }
 
 type MouItem {
@@ -58,6 +63,7 @@ type MouItem {
   product: Product!
   agreedProduct: AgreedProduct
   isActive: Boolean!
+  mou: Mou!
   createdAt: Time!
   updatedAt: Time!
 }
