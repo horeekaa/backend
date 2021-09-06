@@ -12,6 +12,7 @@ input InternalAgreedProductVariantInput {
   description: String
   retailPrice: Int
   soldInUnit: SellingUnitType
+  photo: InternalAgreedDescriptivePhotoInput
   createdAt: Time
   updatedAt: Time
 }
@@ -22,6 +23,7 @@ type AgreedProductVariant {
   description: String!
   retailPrice: Int!
   soldInUnit: SellingUnitType
+  photo: AgreedDescriptivePhoto
   createdAt: Time
   updatedAt: Time
 }
