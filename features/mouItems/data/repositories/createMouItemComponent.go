@@ -59,7 +59,8 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 
 	createMouItemTrx.agreedProductLoader.TransactionBody(
 		session,
-		mouItemToCreate,
+		mouItemToCreate.Product,
+		mouItemToCreate.AgreedProduct,
 	)
 
 	createdVariant, err := createMouItemTrx.mouItemDataSource.GetMongoDataSource().Create(

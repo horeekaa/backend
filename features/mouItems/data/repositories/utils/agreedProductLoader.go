@@ -33,11 +33,15 @@ func NewAgreedProductLoader(
 
 func (agreedProdLoader *agreedProductLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	mouItem *model.DatabaseCreateMouItem,
+	product *model.ObjectIDOnly,
+	agreedProduct *model.InternalAgreedProductInput,
 ) (bool, error) {
-	mouItemOutput := *mouItem
+	agreedProductOutput := model.InternalAgreedProductInput{}
+	if agreedProduct != nil {
+		agreedProductOutput = *agreedProduct
+	}
 	existingProduct, err := agreedProdLoader.productDataSource.GetMongoDataSource().FindByID(
-		*mouItem.Product.ID,
+		*product.ID,
 		session,
 	)
 	if err != nil {
@@ -48,11 +52,11 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 	}
 
 	existingProductJson, _ := json.Marshal(existingProduct)
-	json.Unmarshal(existingProductJson, &mouItemOutput.AgreedProduct)
+	json.Unmarshal(existingProductJson, &agreedProductOutput)
 
-	for i := 0; i < len(mouItemOutput.AgreedProduct.Variants); i++ {
+	for i := 0; i < len(agreedProductOutput.Variants); i++ {
 		loadedVariant, err := agreedProdLoader.productVariantDataSource.GetMongoDataSource().FindByID(
-			mouItemOutput.AgreedProduct.Variants[i].ID,
+			agreedProductOutput.Variants[i].ID,
 			session,
 		)
 		if err != nil {
@@ -63,11 +67,11 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 		}
 
 		loadedVariantJson, _ := json.Marshal(loadedVariant)
-		json.Unmarshal(loadedVariantJson, &mouItemOutput.AgreedProduct.Variants[i])
+		json.Unmarshal(loadedVariantJson, &agreedProductOutput.Variants[i])
 	}
 
-	if mouItem.AgreedProduct != nil {
-		for _, variant := range mouItem.AgreedProduct.Variants {
+	if agreedProduct != nil {
+		for _, variant := range agreedProduct.Variants {
 			index := funk.IndexOf(
 				existingProduct.Variants,
 				func(pv *model.ProductVariant) bool {
@@ -85,10 +89,10 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 			agreedProdLoader.mapProcessorUtility.RemoveNil(agreedProductVariantMap)
 
 			agreedProductVariantJson, _ = json.Marshal(agreedProductVariantMap)
-			json.Unmarshal(agreedProductVariantJson, &mouItemOutput.AgreedProduct.Variants[index])
+			json.Unmarshal(agreedProductVariantJson, &agreedProductOutput.Variants[index])
 		}
 	}
 
-	mouItem = &mouItemOutput
+	agreedProduct = &agreedProductOutput
 	return true, nil
 }

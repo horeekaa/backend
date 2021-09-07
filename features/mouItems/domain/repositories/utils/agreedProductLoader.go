@@ -8,6 +8,7 @@ import (
 type AgreedProductLoader interface {
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
-		mouItem *model.DatabaseCreateMouItem,
+		product *model.ObjectIDOnly,
+		agreedProduct *model.InternalAgreedProductInput,
 	) (bool, error)
 }
