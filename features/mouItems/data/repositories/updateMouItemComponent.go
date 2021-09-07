@@ -40,13 +40,15 @@ func (updateMouItemTrx *updateMouItemDomainRepositories) TransactionBody(
 	jsonTemp, _ := json.Marshal(updateMouItemInput)
 	json.Unmarshal(jsonTemp, mouItemToUpdate)
 
-	updateMouItemTrx.agreedProductLoader.TransactionBody(
-		session,
-		mouItemToUpdate.Product,
-		mouItemToUpdate.AgreedProduct,
-	)
+	if mouItemToUpdate.Product != nil {
+		updateMouItemTrx.agreedProductLoader.TransactionBody(
+			session,
+			mouItemToUpdate.Product,
+			mouItemToUpdate.AgreedProduct,
+		)
+	}
 
-	updatedVariant, err := updateMouItemTrx.mouItemDataSource.GetMongoDataSource().Update(
+	updatedMouItem, err := updateMouItemTrx.mouItemDataSource.GetMongoDataSource().Update(
 		mouItemToUpdate.ID,
 		mouItemToUpdate,
 		session,
@@ -58,5 +60,5 @@ func (updateMouItemTrx *updateMouItemDomainRepositories) TransactionBody(
 		)
 	}
 
-	return updatedVariant, nil
+	return updatedMouItem, nil
 }
