@@ -6,6 +6,7 @@ import (
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
 	memberaccesspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccesses"
+	mouitempresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/mouItems"
 	moupresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/mous"
 	notificationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/notifications"
 	organizationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/organizations"
@@ -69,6 +70,8 @@ func (_ *UsecasesDependency) Bind() {
 		&moupresentationusecasedependencies.GetAllMouUsecaseDependency{},
 		moupresentationusecasedependencies.GetMouUsecaseDependency{},
 		&moupresentationusecasedependencies.UpdateMouUsecaseDependency{},
+
+		&mouitempresentationusecasedependencies.GetMouItemUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {
