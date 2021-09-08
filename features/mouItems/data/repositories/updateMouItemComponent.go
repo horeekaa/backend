@@ -11,28 +11,28 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type updateMouItemDomainRepositories struct {
+type updateMouItemTransactionComponent struct {
 	mouItemDataSource   databasemouitemdatasourceinterfaces.MouItemDataSource
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader
 }
 
-func NewUpdateMouItemDomainRepository(
+func NewUpdateMouItemTransactionComponent(
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader,
 ) (mouitemdomainrepositoryinterfaces.UpdateMouItemTransactionComponent, error) {
-	return &updateMouItemDomainRepositories{
+	return &updateMouItemTransactionComponent{
 		mouItemDataSource:   mouItemDataSource,
 		agreedProductLoader: agreedProductLoader,
 	}, nil
 }
 
-func (updateMouItemTrx *updateMouItemDomainRepositories) PreTransaction(
+func (updateMouItemTrx *updateMouItemTransactionComponent) PreTransaction(
 	input *model.InternalUpdateMouItem,
 ) (*model.InternalUpdateMouItem, error) {
 	return input, nil
 }
 
-func (updateMouItemTrx *updateMouItemDomainRepositories) TransactionBody(
+func (updateMouItemTrx *updateMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	updateMouItemInput *model.InternalUpdateMouItem,
 ) (*model.MouItem, error) {
