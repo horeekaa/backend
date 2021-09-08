@@ -6,6 +6,8 @@ import (
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
+	mouitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mouItems"
+	mouitemdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mouItems/utils"
 	moudomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mous"
 	moudomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mous/utils"
 	notificationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications"
@@ -87,6 +89,11 @@ func (_ *RepositoriesDependency) Bind() {
 		&moudomainrepositorydependencies.ApproveUpdateMouDependency{},
 		&moudomainrepositorydependencies.GetAllMouDependency{},
 		&moudomainrepositorydependencies.GetMouDependency{},
+
+		&mouitemdomainrepositoryutilitydependencies.AgreedProductLoaderDependency{},
+		&mouitemdomainrepositorydependencies.CreateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.UpdateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
 	}
 
 	for _, reg := range registrationList {
