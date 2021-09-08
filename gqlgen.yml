@@ -81,6 +81,14 @@ models:
         resolver: true
       recentLog:
         resolver: true
+      items:
+        resolver: true
+  MouItem:
+    fields:
+      product:
+        resolver: true
+      mou:
+        resolver: true
   Notification:
     fields:
       recipientAccount:

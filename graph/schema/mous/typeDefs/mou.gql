@@ -8,6 +8,7 @@ input CreateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [CreateMouItem]
   firstParty: PartyInput
   secondParty: PartyInput!
   proposalStatus: EntityProposalStatus
@@ -24,6 +25,7 @@ input InternalCreateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [InternalCreateMouItem]
   firstParty: PartyInput
   secondParty: PartyInput!
   proposalStatus: EntityProposalStatus
@@ -45,6 +47,7 @@ input DatabaseCreateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [ObjectIDOnly]
   firstParty: InternalPartyInput!
   secondParty: InternalPartyInput!
   proposalStatus: EntityProposalStatus
@@ -67,6 +70,7 @@ input UpdateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [UpdateMouItem]
   firstParty: PartyInput
   secondParty: PartyInput
   proposalStatus: EntityProposalStatus
@@ -92,6 +96,7 @@ input InternalUpdateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [InternalUpdateMouItem]
   firstParty: PartyInput
   secondParty: PartyInput
   proposalStatus: EntityProposalStatus
@@ -113,6 +118,7 @@ input DatabaseUpdateMou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [ObjectIDOnly]
   firstParty: InternalPartyInput
   secondParty: InternalPartyInput
   proposalStatus: EntityProposalStatus
@@ -156,6 +162,7 @@ type Mou {
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [MouItem]
   firstParty: Party!
   secondParty: Party!
   proposalStatus: EntityProposalStatus!
