@@ -1,23 +1,29 @@
 package moudomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createMouRepository struct {
 	createMouTransactionComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent
+	createMouItemComponent        mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent
 	mongoDBTransaction            mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateMouRepository(
 	createMouRepositoryTransactionComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent,
+	createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (moudomainrepositoryinterfaces.CreateMouRepository, error) {
 	createMouRepo := &createMouRepository{
 		createMouRepositoryTransactionComponent,
+		createMouItemComponent,
 		mongoDBTransaction,
 	}
 
@@ -42,6 +48,28 @@ func (createMouRepo *createMouRepository) TransactionBody(
 	input interface{},
 ) (interface{}, error) {
 	mouToCreate := input.(*model.InternalCreateMou)
+	generatedObjectID := createMouRepo.createMouTransactionComponent.GenerateNewObjectID()
+
+	if mouToCreate.Items != nil {
+		savedMouItems := []*model.InternalCreateMouItem{}
+		for _, mouItem := range mouToCreate.Items {
+			mouItem.Mou = &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			}
+			createdMouItemOutput, err := createMouRepo.createMouItemComponent.TransactionBody(
+				operationOption,
+				mouItem,
+			)
+			if err != nil {
+				return nil, err
+			}
+			savedMouItem := &model.InternalCreateMouItem{}
+			jsonTemp, _ := json.Marshal(createdMouItemOutput)
+			json.Unmarshal(jsonTemp, savedMouItem)
+			savedMouItems = append(savedMouItems, savedMouItem)
+		}
+		mouToCreate.Items = savedMouItems
+	}
 
 	return createMouRepo.createMouTransactionComponent.TransactionBody(
 		operationOption,

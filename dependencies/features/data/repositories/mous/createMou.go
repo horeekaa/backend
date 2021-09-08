@@ -5,6 +5,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositories "github.com/horeekaa/backend/features/mous/data/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
@@ -34,10 +35,12 @@ func (_ *CreateMouDependency) Bind() {
 	container.Transient(
 		func(
 			trxComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent,
+			createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) moudomainrepositoryinterfaces.CreateMouRepository {
 			createMouRepo, _ := moudomainrepositories.NewCreateMouRepository(
 				trxComponent,
+				createMouItemComponent,
 				mongoDBTransaction,
 			)
 			return createMouRepo
