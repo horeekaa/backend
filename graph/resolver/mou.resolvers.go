@@ -10,11 +10,34 @@ import (
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	mouitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/mouItems/presentation/usecases"
 	moupresentationusecaseinterfaces "github.com/horeekaa/backend/features/mous/presentation/usecases"
 	moupresentationusecasetypes "github.com/horeekaa/backend/features/mous/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
+
+func (r *mouResolver) Items(ctx context.Context, obj *model.Mou) ([]*model.MouItem, error) {
+	var getMouItemUsecase mouitempresentationusecaseinterfaces.GetMouItemUsecase
+	container.Make(&getMouItemUsecase)
+
+	mouItems := []*model.MouItem{}
+	if obj.Items != nil {
+		for _, item := range obj.Items {
+			mouItem, err := getMouItemUsecase.Execute(
+				&model.MouItemFilterFields{
+					ID: &item.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			mouItems = append(mouItems, mouItem)
+		}
+	}
+	return mouItems, nil
+}
 
 func (r *mouResolver) SubmittingAccount(ctx context.Context, obj *model.Mou) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
