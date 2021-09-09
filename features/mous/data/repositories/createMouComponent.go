@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -117,6 +118,13 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		)
 	}
 
+	splittedId := strings.Split(generatedObjectID.Hex(), "")
+	input.PublicID = func(s string) *string { return &s }(
+		strings.Join(
+			splittedId[len(splittedId)-9:],
+			"",
+		),
+	)
 	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *input.ProposalStatus == model.EntityProposalStatusApproved {
 		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
