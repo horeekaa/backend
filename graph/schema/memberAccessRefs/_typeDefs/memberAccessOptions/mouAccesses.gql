@@ -1,15 +1,15 @@
 input MouAccessesInput {
-  MouApproval: Boolean
-  MouReadOwned: Boolean
-  MouCreate: Boolean
-  MouUpdate: Boolean
-  MouReadAll: Boolean
+  mouApproval: Boolean
+  mouReadOwned: Boolean
+  mouCreate: Boolean
+  mouUpdate: Boolean
+  mouReadAll: Boolean
 }
 
 type MouAccesses {
-  MouApproval: Boolean
-  MouReadOwned: Boolean
-  MouCreate: Boolean
-  MouUpdate: Boolean
-  MouReadAll: Boolean
+  mouApproval: Boolean
+  mouReadOwned: Boolean
+  mouCreate: Boolean
+  mouUpdate: Boolean
+  mouReadAll: Boolean
 }
