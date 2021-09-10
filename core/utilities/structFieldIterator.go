@@ -43,6 +43,9 @@ func (structFieldIterator *structFieldIteratorUtility) IterateStruct(
 
 	for i := 0; i < itemType.NumField(); i++ {
 		itemTag := itemType.Field(i).Tag.Get("json")
+		if itemTag == "" {
+			continue
+		}
 		itemField := itemReflectValue.Field(i)
 		if reflect.ValueOf(itemField.Interface()) == reflect.Zero(reflect.TypeOf(itemField.Interface())) {
 			continue
