@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -118,10 +119,12 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		)
 	}
 
+	loc, _ := time.LoadLocation("Asia/Bangkok")
 	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	input.PublicID = func(s string) *string { return &s }(
+	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "-"); return &joinedString }(
+		time.Now().In(loc).Format("20060102"),
 		strings.Join(
-			splittedId[len(splittedId)-9:],
+			splittedId[len(splittedId)-4:],
 			"",
 		),
 	)
