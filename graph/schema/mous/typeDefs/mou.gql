@@ -9,7 +9,7 @@ input CreateMou {
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
   items: [CreateMouItem]
-  firstParty: PartyInput
+  firstParty: PartyInput!
   secondParty: PartyInput!
   proposalStatus: EntityProposalStatus
 }
@@ -26,7 +26,7 @@ input InternalCreateMou {
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
   items: [InternalCreateMouItem]
-  firstParty: PartyInput
+  firstParty: PartyInput!
   secondParty: PartyInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
