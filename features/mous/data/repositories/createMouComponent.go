@@ -121,11 +121,14 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "-"); return &joinedString }(
+	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+		"MOU",
 		time.Now().In(loc).Format("20060102"),
-		strings.Join(
-			splittedId[len(splittedId)-4:],
-			"",
+		strings.ToUpper(
+			strings.Join(
+				splittedId[len(splittedId)-4:],
+				"",
+			),
 		),
 	)
 	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
