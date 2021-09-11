@@ -1,0 +1,175 @@
+input CreateMou {
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [CreateMouItem]
+  firstParty: PartyInput!
+  secondParty: PartyInput!
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateMou {
+  publicId: String
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [InternalCreateMouItem]
+  firstParty: PartyInput!
+  secondParty: PartyInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: UpdateMou
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreateMou {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [ObjectIDOnly]
+  firstParty: InternalPartyInput!
+  secondParty: InternalPartyInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateMou
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateMou {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [UpdateMouItem]
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdateMou {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [InternalUpdateMouItem]
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateMou
+}
+
+input DatabaseUpdateMou {
+  _id: ObjectID!
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [ObjectIDOnly]
+  firstParty: InternalPartyInput
+  secondParty: InternalPartyInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdateMou
+  updatedAt: Time
+}
+
+input MouFilterFields {
+  _id: ObjectID
+  publicId: String
+  title: String
+  startDate: Time
+  endDate: Time
+  isActive: Boolean
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: UpdateMou
+}
+
+type Mou {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  items: [MouItem]
+  firstParty: Party!
+  secondParty: Party!
+  proposalStatus: EntityProposalStatus!
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: Mou
+  recentLog: Logging!
+  createdAt: Time
+  updatedAt: Time
+}

@@ -1,0 +1,29 @@
+input AgreedProductVariantInput {
+  _id: ObjectID!
+  name: String
+  description: String
+  retailPrice: Int
+  soldInUnit: SellingUnitType
+}
+
+input InternalAgreedProductVariantInput {
+  _id: ObjectID!
+  name: String
+  description: String
+  retailPrice: Int
+  soldInUnit: SellingUnitType
+  photo: InternalAgreedDescriptivePhotoInput
+  createdAt: Time
+  updatedAt: Time
+}
+
+type AgreedProductVariant {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  photo: AgreedDescriptivePhoto
+  createdAt: Time
+  updatedAt: Time
+}

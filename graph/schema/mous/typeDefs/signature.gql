@@ -1,0 +1,20 @@
+input SignatureInput {
+  """
+  The field is made for client to sign a contract of one party.
+  Once the client request is true, server will generate a timestamp and HEX ObjectID
+  which can be used as the digital signature
+  """
+  confirmSign: Boolean
+}
+
+input InternalSignatureInput {
+  _id: ObjectID!
+  account: AccountForPartyInput!
+  createdAt: Time!
+}
+
+type Signature {
+  _id: ObjectID!
+  account: AccountForParty!
+  createdAt: Time!
+}

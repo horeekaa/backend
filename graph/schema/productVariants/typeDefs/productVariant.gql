@@ -126,4 +126,6 @@ type ProductVariant {
   isActive: Boolean!
   photo: DescriptivePhoto
   product: Product
+  createdAt: Time
+  updatedAt: Time
 }

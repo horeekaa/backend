@@ -1,0 +1,8 @@
+extend type Mutation {
+    createMou(createMou: CreateMou!): Mou!
+    updateMou(updateMou: UpdateMou!): Mou!
+}
+
+extend type Query {
+    mous(filterFields: MouFilterFields!, paginationOpt: PaginationOptionInput): [Mou]!
+}

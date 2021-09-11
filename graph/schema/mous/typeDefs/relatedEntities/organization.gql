@@ -1,0 +1,13 @@
+input OrganizationForPartyInput {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+}
+
+type OrganizationForParty {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+}

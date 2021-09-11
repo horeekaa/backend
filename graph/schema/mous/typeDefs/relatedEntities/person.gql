@@ -1,0 +1,13 @@
+input PersonForPartyInput {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}
+
+type PersonForParty {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}
