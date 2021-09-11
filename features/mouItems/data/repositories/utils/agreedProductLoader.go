@@ -37,9 +37,6 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 	agreedProduct *model.InternalAgreedProductInput,
 ) (bool, error) {
 	agreedProductOutput := model.InternalAgreedProductInput{}
-	if agreedProduct != nil {
-		agreedProductOutput = *agreedProduct
-	}
 	existingProduct, err := agreedProdLoader.productDataSource.GetMongoDataSource().FindByID(
 		*product.ID,
 		session,
@@ -53,6 +50,17 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 
 	existingProductJson, _ := json.Marshal(existingProduct)
 	json.Unmarshal(existingProductJson, &agreedProductOutput)
+
+	if agreedProduct != nil {
+		var agreedProductMap map[string]interface{}
+		agreedProductUpdateJson, _ := json.Marshal(agreedProduct)
+		json.Unmarshal(agreedProductUpdateJson, &agreedProductMap)
+
+		agreedProdLoader.mapProcessorUtility.RemoveNil(agreedProductMap)
+
+		agreedProductUpdateJson, _ = json.Marshal(agreedProductMap)
+		json.Unmarshal(agreedProductUpdateJson, &agreedProductOutput)
+	}
 
 	for i := 0; i < len(agreedProductOutput.Variants); i++ {
 		loadedVariant, err := agreedProdLoader.productVariantDataSource.GetMongoDataSource().FindByID(
@@ -93,6 +101,6 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 		}
 	}
 
-	agreedProduct = &agreedProductOutput
+	*agreedProduct = agreedProductOutput
 	return true, nil
 }
