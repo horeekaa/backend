@@ -99,7 +99,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 
 	loggingOutput, err := updateMouTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: "mou",
+			Collection: "Mou",
 			Document: &model.ObjectIDOnly{
 				ID: &existingmou.ID,
 			},

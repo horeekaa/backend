@@ -98,7 +98,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	generatedObjectID := createMouTrx.GetCurrentObjectID()
 	loggingOutput, err := createMouTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: "mou",
+			Collection: "Mou",
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
