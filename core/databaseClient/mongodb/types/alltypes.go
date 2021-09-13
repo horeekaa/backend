@@ -5,15 +5,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const (
-	DefaultValuesUpdateType string = "UPDATE"
-	DefaultValuesCreateType string = "CREATE"
-)
-
-type DefaultValuesOptions struct {
-	DefaultValuesType string
-}
-
 type OperationOptions struct {
 	Session mongodbcorewrapperinterfaces.MongoSessionContext
 }
