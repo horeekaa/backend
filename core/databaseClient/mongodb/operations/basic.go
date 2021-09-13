@@ -257,16 +257,44 @@ func (bscOperation *basicOperation) Create(input interface{}, output interface{}
 	return true, nil
 }
 
-func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData interface{}, output interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error) {
+func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateData interface{}, output interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
 	defer cancel()
 
+	var updateCriteriaMap map[string]interface{}
+	bsonUpdateCriteria, err := bson.Marshal(updateCriteria)
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
+			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(bsonUpdateCriteria, &updateCriteriaMap)
+	bscOperation.mapProcessorUtility.RemoveNil(updateCriteriaMap)
+	flattenedUpdateCriteriaMap := make(map[string]interface{})
+	bscOperation.mapProcessorUtility.FlattenMap(
+		"",
+		updateCriteriaMap,
+		&flattenedUpdateCriteriaMap,
+	)
+	var bsonUpdateCriteriaObject bson.M
+	bsonUpdateCriteria, err = bson.Marshal(flattenedUpdateCriteriaMap)
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
+			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(bsonUpdateCriteria, &bsonUpdateCriteriaObject)
+
 	var updateDataMap map[string]interface{}
-	bsonTemp, err := bson.Marshal(updateData)
-	bson.Unmarshal(bsonTemp, &updateDataMap)
+	bsonUpdateData, err := bson.Marshal(updateData)
+	bson.Unmarshal(bsonUpdateData, &updateDataMap)
 	bscOperation.mapProcessorUtility.RemoveNil(updateDataMap)
 
-	var bsonObject bson.M
+	var bsonUpdateObject bson.M
 	data, err := bson.Marshal(updateDataMap)
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
@@ -275,14 +303,14 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 			err,
 		)
 	}
-	bson.Unmarshal(data, &bsonObject)
-	delete(bsonObject, "_id")
+	bson.Unmarshal(data, &bsonUpdateObject)
+	delete(bsonUpdateObject, "_id")
 
 	if operationOptions.Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			operationOptions.Session,
-			bson.M{"_id": ID},
-			bson.M{"$set": bsonObject},
+			bsonUpdateCriteriaObject,
+			bsonUpdateObject,
 		)
 		if cmdErr, ok := err.(mongo.CommandError); ok && cmdErr.HasErrorLabel("TransientTransactionError") {
 			return false, err
@@ -290,8 +318,8 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 	} else {
 		_, err = bscOperation.collectionRef.UpdateOne(
 			ctx,
-			bson.M{"_id": ID},
-			bson.M{"$set": bsonObject},
+			bsonUpdateCriteriaObject,
+			bsonUpdateObject,
 		)
 	}
 	if err != nil {
@@ -302,7 +330,7 @@ func (bscOperation *basicOperation) Update(ID primitive.ObjectID, updateData int
 		)
 	}
 
-	_, err = bscOperation.FindByID(ID, output, operationOptions)
+	_, err = bscOperation.FindOne(flattenedUpdateCriteriaMap, output, operationOptions)
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
