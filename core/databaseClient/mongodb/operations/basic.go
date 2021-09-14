@@ -293,6 +293,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	bsonUpdateData, err := bson.Marshal(updateData)
 	bson.Unmarshal(bsonUpdateData, &updateDataMap)
 	bscOperation.mapProcessorUtility.RemoveNil(updateDataMap)
+	delete(updateDataMap["$set"].(map[string]interface{}), "_id")
 
 	var bsonUpdateObject bson.M
 	data, err := bson.Marshal(updateDataMap)
@@ -304,7 +305,6 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 		)
 	}
 	bson.Unmarshal(data, &bsonUpdateObject)
-	delete(bsonUpdateObject, "_id")
 
 	if operationOptions.Session != nil {
 		_, err = bscOperation.collectionRef.UpdateOne(
