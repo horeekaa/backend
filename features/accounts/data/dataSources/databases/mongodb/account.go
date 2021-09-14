@@ -119,6 +119,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	defaultAccountType := model.AccountTypePerson
+	defaultLanguage := model.LanguageID
 	currentTime := time.Now()
 
 	existingObject, err := accDataSourceMongo.FindOne(inputCriteria, operationOptions)
@@ -135,6 +136,9 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 
 	if &(*existingObject).Type == nil {
 		input.Type = &defaultAccountType
+	}
+	if input.Language == nil {
+		input.Language = &defaultLanguage
 	}
 	input.UpdatedAt = &currentTime
 
