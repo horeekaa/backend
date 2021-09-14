@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodborganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.DatabaseCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
-	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := orgDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Organization
-	_, err = orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateOrganization, &outputModel, operationOptions)
+	_, err = orgDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.Datab
 	return &outputModel, err
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
-	updateData.ID = ID
-	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (orgDataSourceMongo *organizationDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateOrganization,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Organization, error) {
+	_, err := orgDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 	}
 
 	var output model.Organization
-	_, err = orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateOrganization, &output, operationOptions)
+	_, err = orgDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,44 +121,49 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(ID primitive.Objec
 	return &output, nil
 }
 
-type setorganizationDefaultValuesOutput struct {
-	CreateOrganization *model.DatabaseCreateOrganization
-	UpdateOrganization *model.DatabaseUpdateOrganization
+func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateOrganization,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := orgDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/organizationDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setorganizationDefaultValuesOutput, error) {
+func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateOrganization,
+) (bool, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	defaultPoint := 0
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateOrganization)
-		_, err := orgDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
+	if input.ProposalStatus == nil {
+		input.ProposalStatus = &defaultProposalStatus
+	}
+	if input.ProfilePhotos == nil {
+		input.ProfilePhotos = []*model.ObjectIDOnly{}
+	}
+	if input.Taggings == nil {
+		input.Taggings = []*model.ObjectIDOnly{}
+	}
+	input.Point = &defaultPoint
+	input.UnfinalizedPoint = &defaultPoint
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-		return &setorganizationDefaultValuesOutput{
-			UpdateOrganization: &updateInput,
-		}, nil
-	}
-	createInput := (input).(model.DatabaseCreateOrganization)
-	if createInput.ProposalStatus == nil {
-		createInput.ProposalStatus = &defaultProposalStatus
-	}
-	if createInput.ProfilePhotos == nil {
-		createInput.ProfilePhotos = []*model.ObjectIDOnly{}
-	}
-	if createInput.Taggings == nil {
-		createInput.Taggings = []*model.ObjectIDOnly{}
-	}
-	createInput.Point = &defaultPoint
-	createInput.UnfinalizedPoint = &defaultPoint
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-
-	return &setorganizationDefaultValuesOutput{
-		CreateOrganization: &createInput,
-	}, nil
+	return true, nil
 }

@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbmemberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,13 +25,13 @@ func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterf
 	}, nil
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) GenerateObjectID() primitive.ObjectID {
 	return primitive.NewObjectID()
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	var output model.MemberAccessRef
-	_, err := orgMemberDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
+	_, err := mmbAccRefDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -37,9 +39,9 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindByID(ID prim
 	return &output, nil
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	var output model.MemberAccessRef
-	_, err := orgMemberDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
+	_, err := mmbAccRefDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	}
@@ -50,7 +52,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) FindOne(query ma
 	return &output, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	query map[string]interface{},
 	paginationOpt *mongodbcoretypes.PaginationOptions,
 	operationOptions *mongodbcoretypes.OperationOptions,
@@ -64,7 +66,7 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 		memberAccessRefs = append(memberAccessRefs, &memberAccessRef)
 		return nil
 	}
-	_, err := orgMemberDataSourceMongo.basicOperation.Find(query, paginationOpt, appendingFn, operationOptions)
+	_, err := mmbAccRefDataSourceMongo.basicOperation.Find(query, paginationOpt, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -72,17 +74,16 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	return memberAccessRefs, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
-	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.MemberAccessRef
-	_, err = orgMemberDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMemberAccessRef, &outputModel, operationOptions)
+	_, err = mmbAccRefDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 	return &outputModel, err
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
-	updateData.ID = ID
-	defaultedInput, err := orgMemberDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.InternalUpdateMemberAccessRef,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.MemberAccessRef, error) {
+	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primit
 	}
 
 	var output model.MemberAccessRef
-	_, err = orgMemberDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccessRef, &output, operationOptions)
+	_, err = mmbAccRefDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,35 +121,40 @@ func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) Update(ID primit
 	return &output, nil
 }
 
-type setMemberAccessRefDefaultValuesOutput struct {
-	CreateMemberAccessRef *model.InternalCreateMemberAccessRef
-	UpdateMemberAccessRef *model.InternalUpdateMemberAccessRef
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.InternalUpdateMemberAccessRef,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	var currentTime = time.Now()
+	existingObject, err := mmbAccRefDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/memberAccessRefDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (orgMemberDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessRefDefaultValuesOutput, error) {
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.InternalCreateMemberAccessRef,
+) (bool, error) {
 	var currentTime = time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.InternalUpdateMemberAccessRef)
-		_, err := orgMemberDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setMemberAccessRefDefaultValuesOutput{
-			UpdateMemberAccessRef: &updateInput,
-		}, nil
+	if input.ProposalStatus == nil {
+		input.ProposalStatus = &defaultProposalStatus
 	}
-	createInput := (input).(model.InternalCreateMemberAccessRef)
-	if createInput.ProposalStatus == nil {
-		createInput.ProposalStatus = &defaultProposalStatus
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	return &setMemberAccessRefDefaultValuesOutput{
-		CreateMemberAccessRef: &createInput,
-	}, nil
+	return true, nil
 }

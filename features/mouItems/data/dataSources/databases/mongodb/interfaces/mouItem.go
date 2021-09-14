@@ -15,6 +15,6 @@ type MouItemDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.MouItem, error)
 	Create(input *model.DatabaseCreateMouItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.MouItem, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateMouItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.MouItem, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateMouItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.MouItem, error)
 	GenerateObjectID() primitive.ObjectID
 }

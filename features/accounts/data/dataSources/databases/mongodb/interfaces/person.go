@@ -15,5 +15,5 @@ type PersonDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Person, error)
 	Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
-	Update(ID primitive.ObjectID, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
 }

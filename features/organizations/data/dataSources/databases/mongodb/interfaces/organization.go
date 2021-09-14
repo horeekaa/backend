@@ -15,6 +15,6 @@ type OrganizationDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Organization, error)
 	Create(input *model.DatabaseCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error)
 	GenerateObjectID() primitive.ObjectID
 }

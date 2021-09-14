@@ -15,6 +15,6 @@ type TagDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Tag, error)
 	Create(input *model.DatabaseCreateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error)
 	GenerateObjectID() primitive.ObjectID
 }

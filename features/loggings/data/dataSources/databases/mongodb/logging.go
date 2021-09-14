@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,9 +25,9 @@ func NewLoggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 	}, nil
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+func (logDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	var output model.Logging
-	_, err := orgDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
+	_, err := logDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +35,9 @@ func (orgDataSourceMongo *loggingDataSourceMongo) FindByID(ID primitive.ObjectID
 	return &output, nil
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+func (logDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
 	var output model.Logging
-	_, err := orgDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
+	_, err := logDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	}
@@ -46,7 +48,7 @@ func (orgDataSourceMongo *loggingDataSourceMongo) FindOne(query map[string]inter
 	return &output, err
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) Find(
+func (logDataSourceMongo *loggingDataSourceMongo) Find(
 	query map[string]interface{},
 	paginationOpts *mongodbcoretypes.PaginationOptions,
 	operationOptions *mongodbcoretypes.OperationOptions,
@@ -60,7 +62,7 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 		loggings = append(loggings, &logging)
 		return nil
 	}
-	_, err := orgDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
+	_, err := logDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -68,17 +70,16 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Find(
 	return loggings, err
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
-	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+func (logDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
+	_, err := logDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Logging
-	_, err = orgDataSourceMongo.basicOperation.Create(*defaultedInput.CreateLogging, &outputModel, operationOptions)
+	_, err = logDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,10 +87,14 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Create(input *model.CreateLogg
 	return &outputModel, err
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateLogging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Logging, error) {
-	updateData.ID = ID
-	defaultedInput, err := orgDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (logDataSourceMongo *loggingDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.UpdateLogging,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Logging, error) {
+	_, err := logDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -97,7 +102,14 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	var output model.Logging
-	_, err = orgDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateLogging, &output, operationOptions)
+	_, err = logDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -105,30 +117,33 @@ func (orgDataSourceMongo *loggingDataSourceMongo) Update(ID primitive.ObjectID, 
 	return &output, nil
 }
 
-type setLoggingDefaultValuesOutput struct {
-	CreateLogging *model.CreateLogging
-	UpdateLogging *model.UpdateLogging
+func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.UpdateLogging,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := logDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/loggingDataSource/update",
+			nil,
+		)
+	}
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (orgDataSourceMongo *loggingDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setLoggingDefaultValuesOutput, error) {
+func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.CreateLogging,
+) (bool, error) {
 	currentTime := time.Now()
+	input.CreatedAt = &currentTime
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.UpdateLogging)
-		_, err := orgDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setLoggingDefaultValuesOutput{
-			UpdateLogging: &updateInput,
-		}, nil
-	}
-	createInput := (input).(model.CreateLogging)
-	createInput.CreatedAt = &currentTime
-
-	return &setLoggingDefaultValuesOutput{
-		CreateLogging: &createInput,
-	}, nil
+	return true, nil
 }

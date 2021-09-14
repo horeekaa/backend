@@ -15,6 +15,6 @@ type NotificationDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.DatabaseNotification, error)
 	Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error)
 	GenerateObjectID() primitive.ObjectID
 }

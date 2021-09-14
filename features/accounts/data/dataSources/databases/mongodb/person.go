@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,16 +71,15 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := prsnDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Person
-	_, err = prsnDataSourceMongo.basicOperation.Create(*defaultedInput.CreatePerson, &outputModel, operationOptions)
+	_, err = prsnDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,10 +87,10 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 	return &outputModel, err
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
-	updateData.ID = ID
-	defaultedInput, err := prsnDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (prsnDataSourceMongo *personDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+	_, err := prsnDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -97,7 +98,14 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	var output model.Person
-	_, err = prsnDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdatePerson, &output, operationOptions)
+	_, err = prsnDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -105,40 +113,46 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(ID primitive.ObjectID, 
 	return &output, nil
 }
 
-type setPersonDefaultValuesOutput struct {
-	CreatePerson *model.CreatePerson
-	UpdatePerson *model.UpdatePerson
+func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.UpdatePerson,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	var currentTime = time.Now()
+	defaultNoOfRecentTransactionToKeep := 15
+
+	existingObject, err := prsnDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/personDataSource/update",
+			nil,
+		)
+	}
+
+	if &(*existingObject).NoOfRecentTransactionToKeep == nil {
+		input.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
+	}
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setPersonDefaultValuesOutput, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.CreatePerson,
+) (bool, error) {
 	defaultNoOfRecentTransactionToKeep := 15
 
 	var currentTime = time.Now()
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.UpdatePerson)
-		existingObject, err := prsnDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
 
-		if &(*existingObject).NoOfRecentTransactionToKeep == nil {
-			updateInput.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setPersonDefaultValuesOutput{
-			UpdatePerson: &updateInput,
-		}, nil
+	if &input.NoOfRecentTransactionToKeep == nil {
+		input.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
 	}
-	createInput := (input).(model.CreatePerson)
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	if &createInput.NoOfRecentTransactionToKeep == nil {
-		createInput.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-
-	return &setPersonDefaultValuesOutput{
-		CreatePerson: &createInput,
-	}, nil
+	return true, nil
 }
