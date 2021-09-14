@@ -75,7 +75,9 @@ func (updateDescPhotoTrx *updateDescriptivePhotoTransactionComponent) Transactio
 	}
 
 	updatedDescPhoto, err := updateDescPhotoTrx.descriptivePhotoDataSource.GetMongoDataSource().Update(
-		descPhotoToUpdate.ID,
+		map[string]interface{}{
+			"_id": descPhotoToUpdate.ID,
+		},
 		descPhotoToUpdate,
 		session,
 	)

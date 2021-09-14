@@ -221,7 +221,9 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	}
 
 	updatedMemberAccess, err := proposeUpdateMemberAccTrx.memberAccessDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMemberAccess.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMemberAccess.ID,
+		},
 		fieldsToUpdateMemberAccess,
 		session,
 	)

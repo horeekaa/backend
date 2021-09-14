@@ -118,7 +118,9 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	}
 
 	updatedOrganization, err := approveProdTrx.organizationDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateOrganization.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateOrganization.ID,
+		},
 		fieldsToUpdateOrganization,
 		session,
 	)

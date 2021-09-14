@@ -152,7 +152,9 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 	}
 
 	updatedOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateOrganization.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateOrganization.ID,
+		},
 		fieldsToUpdateOrganization,
 		session,
 	)

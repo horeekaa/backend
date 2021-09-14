@@ -118,7 +118,9 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	}
 
 	updatedTag, err := approveTagTrx.tagDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateTag.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateTag.ID,
+		},
 		fieldsToUpdateTag,
 		session,
 	)

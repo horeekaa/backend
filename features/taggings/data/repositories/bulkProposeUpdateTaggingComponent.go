@@ -217,7 +217,9 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		}
 
 		updatedTagging, err := bulkProposeUpdateTaggingComp.taggingDataSource.GetMongoDataSource().Update(
-			fieldsToUpdateTagging.ID,
+			map[string]interface{}{
+				"_id": fieldsToUpdateTagging.ID,
+			},
 			fieldsToUpdateTagging,
 			session,
 		)

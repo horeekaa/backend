@@ -118,7 +118,9 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	}
 
 	updatedMemberAccess, err := approveProdTrx.memberAccessDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMemberAccess.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMemberAccess.ID,
+		},
 		fieldsToUpdateMemberAccess,
 		session,
 	)

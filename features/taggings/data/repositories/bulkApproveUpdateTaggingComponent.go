@@ -184,7 +184,9 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		}
 
 		updatedTagging, err := bulkApproveUpdateTaggingComp.taggingDataSource.GetMongoDataSource().Update(
-			fieldsToUpdateTagging.ID,
+			map[string]interface{}{
+				"_id": fieldsToUpdateTagging.ID,
+			},
 			fieldsToUpdateTagging,
 			session,
 		)

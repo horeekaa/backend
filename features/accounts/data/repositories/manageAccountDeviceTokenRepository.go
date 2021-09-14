@@ -57,7 +57,9 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	}
 
 	updatedAccount, err := mgsAccDevToken.accountDataSource.GetMongoDataSource().Update(
-		validatedInput.Account.ID,
+		map[string]interface{}{
+			"_id": validatedInput.Account.ID,
+		},
 		&model.UpdateAccount{
 			DeviceTokens: validatedInput.Account.DeviceTokens,
 		},

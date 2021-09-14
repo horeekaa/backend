@@ -152,7 +152,9 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	}
 
 	updatedMemberAccessRef, err := updateProdTrx.memberAccessRefDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMemberAccessRef.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMemberAccessRef.ID,
+		},
 		fieldsToUpdateMemberAccessRef,
 		session,
 	)
