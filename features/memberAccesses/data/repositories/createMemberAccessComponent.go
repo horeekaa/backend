@@ -2,14 +2,11 @@ package memberaccessdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
@@ -25,7 +22,6 @@ type createMemberAccessTransactionComponent struct {
 	memberAccessRefDataSource          databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	memberAccessDataSource             databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	loggingDataSource                  databaseloggingdatasourceinterfaces.LoggingDataSource
-	structFieldIteratorUtility         coreutilityinterfaces.StructFieldIteratorUtility
 	createMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessUsecaseComponent
 }
 
@@ -35,15 +31,13 @@ func NewCreateMemberAccessTransactionComponent(
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (memberaccessdomainrepositoryinterfaces.CreateMemberAccessTransactionComponent, error) {
 	return &createMemberAccessTransactionComponent{
-		accountDataSource:          accountDataSource,
-		organizationDataSource:     organizationDataSource,
-		memberAccessRefDataSource:  memberAccessRefDataSource,
-		memberAccessDataSource:     memberAccessDataSource,
-		loggingDataSource:          loggingDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		accountDataSource:         accountDataSource,
+		organizationDataSource:    organizationDataSource,
+		memberAccessRefDataSource: memberAccessRefDataSource,
+		memberAccessDataSource:    memberAccessDataSource,
+		loggingDataSource:         loggingDataSource,
 	}, nil
 }
 
@@ -119,38 +113,6 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		)
 	}
 
-	fieldChanges := []*model.FieldChangeDataInput{}
-	createMemberAccessTrx.structFieldIteratorUtility.SetIteratingFunc(
-		func(tag interface{}, field interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field).Kind().String(),
-				NewValue: fmt.Sprint(field),
-			})
-			*tagString = ""
-		},
-	)
-	createMemberAccessTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	createMemberAccessTrx.structFieldIteratorUtility.IterateStruct(
-		*input,
-		&tagString,
-	)
-
 	queryMap := map[string]interface{}{
 		"memberAccessRefType": input.MemberAccessRefType,
 		"proposalStatus":      model.EntityProposalStatusApproved,
@@ -204,6 +166,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		ID: &memberAccessRef.ID,
 	}
 
+	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -211,7 +174,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: input.SubmittingAccount.ID,
 			},

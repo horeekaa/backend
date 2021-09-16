@@ -23,7 +23,6 @@ func (_ *ProposeUpdateMemberAccessDependency) Bind() {
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent {
 			proposeUpdateMemberAccessComponent, _ := memberaccessdomainrepositories.NewProposeUpdateMemberAccessTransactionComponent(
 				memberAccessDataSource,
@@ -31,7 +30,6 @@ func (_ *ProposeUpdateMemberAccessDependency) Bind() {
 				organizationDataSource,
 				memberAccessRefDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return proposeUpdateMemberAccessComponent
 		},

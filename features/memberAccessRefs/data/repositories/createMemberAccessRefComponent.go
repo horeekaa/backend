@@ -2,12 +2,9 @@ package memberaccessrefdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
@@ -17,19 +14,16 @@ import (
 type createMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource             databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	loggingDataSource                     databaseloggingdatasourceinterfaces.LoggingDataSource
-	structFieldIteratorUtility            coreutilityinterfaces.StructFieldIteratorUtility
 	createMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefUsecaseComponent
 }
 
 func NewCreateMemberAccessRefTransactionComponent(
 	MemberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefTransactionComponent, error) {
 	return &createMemberAccessRefTransactionComponent{
-		memberAccessRefDataSource:  MemberAccessRefDataSource,
-		loggingDataSource:          loggingDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		memberAccessRefDataSource: MemberAccessRefDataSource,
+		loggingDataSource:         loggingDataSource,
 	}, nil
 }
 
@@ -53,38 +47,7 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
-	fieldChanges := []*model.FieldChangeDataInput{}
-	createMemberAccessRefTrx.structFieldIteratorUtility.SetIteratingFunc(
-		func(tag interface{}, field interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field).Kind().String(),
-				NewValue: fmt.Sprint(field),
-			})
-			*tagString = ""
-		},
-	)
-	createMemberAccessRefTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	createMemberAccessRefTrx.structFieldIteratorUtility.IterateStruct(
-		*input,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createMemberAccessRefTrx.memberAccessRefDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessRefTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -92,7 +55,7 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: input.SubmittingAccount.ID,
 			},

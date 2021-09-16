@@ -18,13 +18,11 @@ func (_ *ProposeUpdateMemberAccessRefDependency) Bind() {
 			memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefTransactionComponent {
 			proposeUpdateMemberAccessRefComponent, _ := memberaccessrefdomainrepositories.NewProposeUpdateMemberAccessRefTransactionComponent(
 				memberAccessRefDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return proposeUpdateMemberAccessRefComponent
 		},

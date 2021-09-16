@@ -2,12 +2,9 @@ package tagdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	tagdomainrepositoryinterfaces "github.com/horeekaa/backend/features/tags/domain/repositories"
@@ -16,22 +13,19 @@ import (
 )
 
 type createTagTransactionComponent struct {
-	tagDataSource              databasetagdatasourceinterfaces.TagDataSource
-	loggingDataSource          databaseloggingdatasourceinterfaces.LoggingDataSource
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility
-	createTagUsecaseComponent  tagdomainrepositoryinterfaces.CreateTagUsecaseComponent
-	generatedObjectID          *primitive.ObjectID
+	tagDataSource             databasetagdatasourceinterfaces.TagDataSource
+	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
+	createTagUsecaseComponent tagdomainrepositoryinterfaces.CreateTagUsecaseComponent
+	generatedObjectID         *primitive.ObjectID
 }
 
 func NewCreateTagTransactionComponent(
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (tagdomainrepositoryinterfaces.CreateTagTransactionComponent, error) {
 	return &createTagTransactionComponent{
-		tagDataSource:              tagDataSource,
-		loggingDataSource:          loggingDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		tagDataSource:     tagDataSource,
+		loggingDataSource: loggingDataSource,
 	}, nil
 }
 
@@ -69,38 +63,7 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateTag,
 ) (*model.Tag, error) {
-	fieldChanges := []*model.FieldChangeDataInput{}
-	createTagTrx.structFieldIteratorUtility.SetIteratingFunc(
-		func(tag interface{}, field interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field).Kind().String(),
-				NewValue: fmt.Sprint(field),
-			})
-			*tagString = ""
-		},
-	)
-	createTagTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	createTagTrx.structFieldIteratorUtility.IterateStruct(
-		*input,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createTagTrx.GetCurrentObjectID()
 	loggingOutput, err := createTagTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -108,7 +71,7 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: input.SubmittingAccount.ID,
 			},

@@ -3,7 +3,6 @@ package organizationdomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -19,12 +18,10 @@ func (_ *CreateOrganizationDependency) Bind() {
 		func(
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 		) organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent {
 			createOrganizationComponent, _ := organizationdomainrepositories.NewCreateOrganizationTransactionComponent(
 				organizationDataSource,
 				loggingDataSource,
-				structFieldIteratorUtility,
 			)
 			return createOrganizationComponent
 		},

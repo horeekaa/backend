@@ -2,8 +2,6 @@ package taggingdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -24,7 +22,6 @@ type bulkProposeUpdateTaggingTransactionComponent struct {
 	productDataSource             databaseproductdatasourceinterfaces.ProductDataSource
 	loggingDataSource             databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility           coreutilityinterfaces.MapProcessorUtility
-	structComparisonUtility       coreutilityinterfaces.StructComparisonUtility
 	updateTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingUsecaseComponent
 }
 
@@ -35,16 +32,14 @@ func NewBulkProposeUpdateTaggingTransactionComponent(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 ) (taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent, error) {
 	return &bulkProposeUpdateTaggingTransactionComponent{
-		taggingDataSource:       taggingDataSource,
-		tagDataSource:           tagDataSource,
-		organizationDataSource:  organizationDataSource,
-		productDataSource:       productDataSource,
-		loggingDataSource:       loggingDataSource,
-		mapProcessorUtility:     mapProcessorUtility,
-		structComparisonUtility: structComparisonUtility,
+		taggingDataSource:      taggingDataSource,
+		tagDataSource:          tagDataSource,
+		organizationDataSource: organizationDataSource,
+		productDataSource:      productDataSource,
+		loggingDataSource:      loggingDataSource,
+		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -132,50 +127,16 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 			)
 		}
 
-		fieldChanges := []*model.FieldChangeDataInput{}
-		bulkProposeUpdateTaggingComp.structComparisonUtility.SetComparisonFunc(
-			func(tag interface{}, field1 interface{}, field2 interface{}, tagString *interface{}) {
-				if field1 == field2 {
-					return
-				}
-				*tagString = fmt.Sprintf(
-					"%v%v",
-					*tagString,
-					tag,
-				)
-
-				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-					Name:     fmt.Sprint(*tagString),
-					Type:     reflect.TypeOf(field1).Kind().String(),
-					OldValue: fmt.Sprint(field2),
-					NewValue: fmt.Sprint(field1),
-				})
-				*tagString = ""
-			},
-		)
-		bulkProposeUpdateTaggingComp.structComparisonUtility.SetPreDeepComparisonFunc(
-			func(tag interface{}, tagString *interface{}) {
-				*tagString = fmt.Sprintf(
-					"%v%v.",
-					*tagString,
-					tag,
-				)
-			},
-		)
-		var tagString interface{} = ""
-		bulkProposeUpdateTaggingComp.structComparisonUtility.CompareStructs(
-			*taggingToUpdate,
-			*existingTagging,
-			&tagString,
-		)
-
+		newDocumentJson, _ := json.Marshal(*taggingToUpdate)
+		oldDocumentJson, _ := json.Marshal(*existingTagging)
 		loggingOutput, err := bulkProposeUpdateTaggingComp.loggingDataSource.GetMongoDataSource().Create(
 			&model.CreateLogging{
 				Collection: "Tagging",
 				Document: &model.ObjectIDOnly{
 					ID: &existingTagging.ID,
 				},
-				FieldChanges: fieldChanges,
+				NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+				OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
 				CreatedByAccount: &model.ObjectIDOnly{
 					ID: taggingToUpdate.SubmittingAccount.ID,
 				},

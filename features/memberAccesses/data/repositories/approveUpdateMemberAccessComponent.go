@@ -83,7 +83,8 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	}
 	jsonTemp, _ := json.Marshal(
 		map[string]interface{}{
-			"FieldChanges": previousLog.FieldChanges,
+			"NewDocumentJSON": previousLog.NewDocumentJSON,
+			"OldDocumentJSON": previousLog.OldDocumentJSON,
 		},
 	)
 	json.Unmarshal(jsonTemp, logToCreate)

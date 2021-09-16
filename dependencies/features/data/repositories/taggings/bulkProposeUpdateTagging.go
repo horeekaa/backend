@@ -24,7 +24,6 @@ func (_ *BulkProposeUpdateTaggingDependency) Bind() {
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent {
 			bulkProposeUpdateTaggingComponent, _ := taggingdomainrepositories.NewBulkProposeUpdateTaggingTransactionComponent(
 				taggingDataSource,
@@ -33,7 +32,6 @@ func (_ *BulkProposeUpdateTaggingDependency) Bind() {
 				productDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return bulkProposeUpdateTaggingComponent
 		},
