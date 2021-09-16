@@ -2,12 +2,9 @@ package taggingdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
@@ -24,7 +21,6 @@ type bulkCreateTaggingTransactionComponent struct {
 	tagDataSource                 databasetagdatasourceinterfaces.TagDataSource
 	organizationDataSource        databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	productDataSource             databaseproductdatasourceinterfaces.ProductDataSource
-	structFieldIteratorUtility    coreutilityinterfaces.StructFieldIteratorUtility
 	createTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingUsecaseComponent
 	generatedObjectID             *primitive.ObjectID
 }
@@ -35,15 +31,13 @@ func NewBulkCreateTaggingTransactionComponent(
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent, error) {
 	return &bulkCreateTaggingTransactionComponent{
-		taggingDataSource:          taggingDataSource,
-		loggingDataSource:          loggingDataSource,
-		tagDataSource:              tagDataSource,
-		organizationDataSource:     organizationDataSource,
-		productDataSource:          productDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		taggingDataSource:      taggingDataSource,
+		loggingDataSource:      loggingDataSource,
+		tagDataSource:          tagDataSource,
+		organizationDataSource: organizationDataSource,
+		productDataSource:      productDataSource,
 	}, nil
 }
 
@@ -161,38 +155,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 	}
 
 	for _, taggingToCreate := range taggingsToCreate {
-		fieldChanges := []*model.FieldChangeDataInput{}
-		bulkCreateTaggingTrx.structFieldIteratorUtility.SetIteratingFunc(
-			func(tag interface{}, field interface{}, tagString *interface{}) {
-				*tagString = fmt.Sprintf(
-					"%v%v",
-					*tagString,
-					tag,
-				)
-
-				fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-					Name:     fmt.Sprint(*tagString),
-					Type:     reflect.TypeOf(field).Kind().String(),
-					NewValue: fmt.Sprint(field),
-				})
-				*tagString = ""
-			},
-		)
-		bulkCreateTaggingTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-			func(tag interface{}, tagString *interface{}) {
-				*tagString = fmt.Sprintf(
-					"%v%v.",
-					*tagString,
-					tag,
-				)
-			},
-		)
-		var tagString interface{} = ""
-		bulkCreateTaggingTrx.structFieldIteratorUtility.IterateStruct(
-			*taggingToCreate,
-			&tagString,
-		)
-
+		newDocumentJson, _ := json.Marshal(*taggingToCreate)
 		generatedObjectID := bulkCreateTaggingTrx.GetCurrentObjectID()
 		loggingOutput, err := bulkCreateTaggingTrx.loggingDataSource.GetMongoDataSource().Create(
 			&model.CreateLogging{
@@ -200,7 +163,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 				Document: &model.ObjectIDOnly{
 					ID: &generatedObjectID,
 				},
-				FieldChanges: fieldChanges,
+				NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 				CreatedByAccount: &model.ObjectIDOnly{
 					ID: taggingToCreate.SubmittingAccount.ID,
 				},

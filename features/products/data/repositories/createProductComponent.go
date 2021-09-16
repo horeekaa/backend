@@ -2,12 +2,9 @@ package productdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
@@ -18,7 +15,6 @@ import (
 type createProductTransactionComponent struct {
 	productDataSource             databaseproductdatasourceinterfaces.ProductDataSource
 	loggingDataSource             databaseloggingdatasourceinterfaces.LoggingDataSource
-	structFieldIteratorUtility    coreutilityinterfaces.StructFieldIteratorUtility
 	createProductUsecaseComponent productdomainrepositoryinterfaces.CreateProductUsecaseComponent
 	generatedObjectID             *primitive.ObjectID
 }
@@ -26,12 +22,10 @@ type createProductTransactionComponent struct {
 func NewCreateProductTransactionComponent(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (productdomainrepositoryinterfaces.CreateProductTransactionComponent, error) {
 	return &createProductTransactionComponent{
-		productDataSource:          productDataSource,
-		loggingDataSource:          loggingDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		productDataSource: productDataSource,
+		loggingDataSource: loggingDataSource,
 	}, nil
 }
 
@@ -69,38 +63,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProduct,
 ) (*model.Product, error) {
-	fieldChanges := []*model.FieldChangeDataInput{}
-	createProductTrx.structFieldIteratorUtility.SetIteratingFunc(
-		func(tag interface{}, field interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field).Kind().String(),
-				NewValue: fmt.Sprint(field),
-			})
-			*tagString = ""
-		},
-	)
-	createProductTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	createProductTrx.structFieldIteratorUtility.IterateStruct(
-		*input,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createProductTrx.GetCurrentObjectID()
 	loggingOutput, err := createProductTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -108,7 +71,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: input.SubmittingAccount.ID,
 			},

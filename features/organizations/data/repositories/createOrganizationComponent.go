@@ -2,12 +2,9 @@ package organizationdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
@@ -18,7 +15,6 @@ import (
 type createOrganizationTransactionComponent struct {
 	organizationDataSource             databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	loggingDataSource                  databaseloggingdatasourceinterfaces.LoggingDataSource
-	structFieldIteratorUtility         coreutilityinterfaces.StructFieldIteratorUtility
 	createOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.CreateOrganizationUsecaseComponent
 	generatedObjectID                  *primitive.ObjectID
 }
@@ -26,12 +22,10 @@ type createOrganizationTransactionComponent struct {
 func NewCreateOrganizationTransactionComponent(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 ) (organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent, error) {
 	return &createOrganizationTransactionComponent{
-		organizationDataSource:     organizationDataSource,
-		loggingDataSource:          loggingDataSource,
-		structFieldIteratorUtility: structFieldIteratorUtility,
+		organizationDataSource: organizationDataSource,
+		loggingDataSource:      loggingDataSource,
 	}, nil
 }
 
@@ -69,38 +63,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateOrganization,
 ) (*model.Organization, error) {
-	fieldChanges := []*model.FieldChangeDataInput{}
-	createOrganizationTrx.structFieldIteratorUtility.SetIteratingFunc(
-		func(tag interface{}, field interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field).Kind().String(),
-				NewValue: fmt.Sprint(field),
-			})
-			*tagString = ""
-		},
-	)
-	createOrganizationTrx.structFieldIteratorUtility.SetPreDeepIterateFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	createOrganizationTrx.structFieldIteratorUtility.IterateStruct(
-		*input,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createOrganizationTrx.GetCurrentObjectID()
 	loggingOutput, err := createOrganizationTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -108,7 +71,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 			Document: &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: input.SubmittingAccount.ID,
 			},

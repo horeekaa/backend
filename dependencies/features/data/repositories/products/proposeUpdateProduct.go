@@ -21,13 +21,11 @@ func (_ *ProposeUpdateProductDependency) Bind() {
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent {
 			proposeUpdateProductComponent, _ := productdomainrepositories.NewProposeUpdateProductTransactionComponent(
 				productDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return proposeUpdateProductComponent
 		},

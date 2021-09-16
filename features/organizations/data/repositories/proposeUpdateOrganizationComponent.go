@@ -2,8 +2,6 @@ package organizationdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -18,7 +16,6 @@ type proposeUpdateOrganizationTransactionComponent struct {
 	organizationDataSource                    databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	loggingDataSource                         databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                       coreutilityinterfaces.MapProcessorUtility
-	structComparisonUtility                   coreutilityinterfaces.StructComparisonUtility
 	proposeUpdateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationUsecaseComponent
 }
 
@@ -26,13 +23,11 @@ func NewProposeUpdateOrganizationTransactionComponent(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 ) (organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent, error) {
 	return &proposeUpdateOrganizationTransactionComponent{
-		organizationDataSource:  organizationDataSource,
-		loggingDataSource:       loggingDataSource,
-		mapProcessorUtility:     mapProcessorUtility,
-		structComparisonUtility: structComparisonUtility,
+		organizationDataSource: organizationDataSource,
+		loggingDataSource:      loggingDataSource,
+		mapProcessorUtility:    mapProcessorUtility,
 	}, nil
 }
 
@@ -66,51 +61,17 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 			err,
 		)
 	}
-	fieldChanges := []*model.FieldChangeDataInput{}
 
-	updateOrgTrx.structComparisonUtility.SetComparisonFunc(
-		func(tag interface{}, field1 interface{}, field2 interface{}, tagString *interface{}) {
-			if field1 == field2 {
-				return
-			}
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field1).Kind().String(),
-				OldValue: fmt.Sprint(field2),
-				NewValue: fmt.Sprint(field1),
-			})
-			*tagString = ""
-		},
-	)
-	updateOrgTrx.structComparisonUtility.SetPreDeepComparisonFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	updateOrgTrx.structComparisonUtility.CompareStructs(
-		*updateOrganization,
-		*existingOrganization,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*updateOrganization)
+	oldDocumentJson, _ := json.Marshal(*existingOrganization)
 	loggingOutput, err := updateOrgTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Organization",
 			Document: &model.ObjectIDOnly{
 				ID: &existingOrganization.ID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: updateOrganization.SubmittingAccount.ID,
 			},
