@@ -1,0 +1,20 @@
+input StringFilterField {
+  operation: StringOperation!
+  value: String
+  values: [String!]
+}
+
+input IntFilterField {
+  operation: NumericOperation!
+  value: Int!
+}
+
+input BooleanFilterField {
+  operation: BooleanOperation!
+  value: Boolean!
+}
+
+input TimeFilterField {
+  operation: TimeOperation!
+  value: Time!
+}
