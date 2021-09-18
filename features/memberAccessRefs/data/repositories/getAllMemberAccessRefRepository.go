@@ -1,33 +1,39 @@
 package memberaccessrefdomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessrefdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/data/dataSources/databases/interfaces/sources"
 	memberaccessrefdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories"
 	memberaccessrefdomainrepositorytypes "github.com/horeekaa/backend/features/memberAccessRefs/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllMemberAccessRefRepository struct {
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	mongoQueryBuilder         mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllMemberAccessRefRepository(
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository, error) {
 	return &getAllMemberAccessRefRepository{
 		memberAccessRefDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllMmbAccRefRepo *getAllMemberAccessRefRepository) Execute(
 	input memberaccessrefdomainrepositorytypes.GetAllMemberAccessRefInput,
 ) ([]*model.MemberAccessRef, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 

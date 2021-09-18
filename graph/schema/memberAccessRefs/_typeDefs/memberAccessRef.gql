@@ -84,10 +84,10 @@ input InternalUpdateMemberAccessRef {
 input MemberAccessRefFilterFields {
   _id: ObjectID
   access: MemberAccessRefOptionsInput
-  memberAccessRefType: MemberAccessRefType
-  organizationMembershipRole: OrganizationMembershipRole
-  organizationType: OrganizationType
-  proposalStatus: EntityProposalStatus
+  memberAccessRefType: StringFilterField
+  organizationMembershipRole: StringFilterField
+  organizationType: StringFilterField
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: MemberAccessRefFilterFields
