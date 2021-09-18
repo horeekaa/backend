@@ -1,33 +1,39 @@
 package taggingdomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
 	taggingdomainrepositorytypes "github.com/horeekaa/backend/features/taggings/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllTaggingRepository struct {
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllTaggingRepository(
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (taggingdomainrepositoryinterfaces.GetAllTaggingRepository, error) {
 	return &getAllTaggingRepository{
 		taggingDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllTaggingRepo *getAllTaggingRepository) Execute(
 	input taggingdomainrepositorytypes.GetAllTaggingInput,
 ) ([]*model.Tagging, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllTaggingRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
