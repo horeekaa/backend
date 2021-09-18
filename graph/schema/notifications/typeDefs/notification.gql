@@ -60,9 +60,9 @@ input DatabaseUpdateNotification {
 
 input NotificationFilterFields {
   _id: ObjectID
-  notificationCategory: NotificationCategory
+  notificationCategory: StringFilterField
   recipientAccount: ObjectIDOnly
-  readFlag: Boolean
+  readFlag: BooleanFilterField
 }
 
 type DatabaseNotification {
