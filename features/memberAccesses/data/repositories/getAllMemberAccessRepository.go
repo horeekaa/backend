@@ -1,6 +1,7 @@
 package memberaccessdomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
@@ -12,25 +13,31 @@ import (
 
 type getAllMemberAccessRepository struct {
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource
+	mongoQueryBuilder      mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllMemberAccessRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository, error) {
 	return &getAllMemberAccessRepository{
 		memberAccessDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllmmbAccRepo *getAllMemberAccessRepository) Execute(
 	input memberaccessdomainrepositorytypes.GetAllMemberAccessInput,
 ) ([]*model.MemberAccess, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllmmbAccRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	var mongoPagination mongodbcoretypes.PaginationOptions
-	data, _ = bson.Marshal(input.PaginationOpt)
+	data, _ := bson.Marshal(input.PaginationOpt)
 	bson.Unmarshal(data, &mongoPagination)
 
 	memberAccesses, err := getAllmmbAccRepo.memberAccessDataSource.GetMongoDataSource().Find(
