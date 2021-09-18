@@ -108,12 +108,12 @@ input DatabaseUpdateProduct {
 
 input ProductFilterFields {
   _id: ObjectID
-  name: String
-  description: String
-  isActive: Boolean
+  name: StringFilterField
+  description: StringFilterField
+  isActive: BooleanFilterField
   taggings: ObjectIDOnly
-  syncedWithES: Boolean
-  proposalStatus: EntityProposalStatus
+  syncedWithES: BooleanFilterField
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: ProductFilterFields

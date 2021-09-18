@@ -1,33 +1,39 @@
 package productdomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	productdomainrepositoryinterfaces "github.com/horeekaa/backend/features/products/domain/repositories"
 	productdomainrepositorytypes "github.com/horeekaa/backend/features/products/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllProductRepository struct {
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllProductRepository(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (productdomainrepositoryinterfaces.GetAllProductRepository, error) {
 	return &getAllProductRepository{
 		productDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllMmbAccRefRepo *getAllProductRepository) Execute(
 	input productdomainrepositorytypes.GetAllProductInput,
 ) ([]*model.Product, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
