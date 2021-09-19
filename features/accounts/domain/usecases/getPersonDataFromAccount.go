@@ -86,7 +86,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		_, err = getPersonDataFromAccountUsecase.getAccountMemberAccessRepository.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
 					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
 					Access:              getPersonDataFromAccountUsecase.getPersonDataFromAccountAccessIdentity,

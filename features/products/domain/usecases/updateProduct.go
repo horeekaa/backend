@@ -88,7 +88,7 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateProductUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              updateProductUcase.updateproductAccessIdentity,

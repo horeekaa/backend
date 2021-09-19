@@ -87,7 +87,7 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMouUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              updateMouUcase.updateMouAccessIdentity,

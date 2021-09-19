@@ -86,7 +86,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 
 	accMemberAccess, err := updateMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account: &model.ObjectIDOnly{ID: &account.ID},
 				Access:  updateMmbAccessRefUcase.updateMemberAccessRefAccessIdentity,
 			},

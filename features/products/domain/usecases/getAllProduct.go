@@ -83,7 +83,7 @@ func (getAllProdUcase *getAllProductUsecase) Execute(
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllProdUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              getAllProdUcase.getAllProductAccessIdentity,

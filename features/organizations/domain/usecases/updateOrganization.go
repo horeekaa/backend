@@ -95,7 +95,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
@@ -154,7 +154,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 			accMemberAccess, err = updateOrganizationUcase.getAccountMemberAccessRepo.Execute(
 				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-					MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 						Account:             &model.ObjectIDOnly{ID: &account.ID},
 						Access:              updateOrganizationUcase.updateOwnedOrganizationAccessIdentity,
 						MemberAccessRefType: &memberAccessRefTypeAccountBasics,

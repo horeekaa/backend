@@ -84,7 +84,7 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createTagUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              createTagUcase.createTagAccessIdentity,
