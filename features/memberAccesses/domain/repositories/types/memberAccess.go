@@ -5,7 +5,7 @@ import (
 )
 
 type GetAccountMemberAccessInput struct {
-	MemberAccessFilterFields *model.MemberAccessFilterFields
+	MemberAccessFilterFields *model.InternalMemberAccessFilterFields
 	QueryMode                bool
 }
 

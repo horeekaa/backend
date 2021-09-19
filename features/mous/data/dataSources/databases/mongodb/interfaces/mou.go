@@ -15,6 +15,6 @@ type MouDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Mou, error)
 	Create(input *model.DatabaseCreateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error)
 	GenerateObjectID() primitive.ObjectID
 }

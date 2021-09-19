@@ -157,12 +157,12 @@ input TaggingFilterFields {
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
-  isActive: Boolean
-  taggingType: TaggingType
-  proposalStatus: EntityProposalStatus
+  isActive: BooleanFilterField
+  taggingType: StringFilterField
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTagging
+  proposedChanges: TaggingFilterFields
   recentLog: ObjectIDOnly
 }
 

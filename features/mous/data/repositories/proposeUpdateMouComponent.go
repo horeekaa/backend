@@ -2,8 +2,6 @@ package moudomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -16,26 +14,23 @@ import (
 )
 
 type proposeUpdateMouTransactionComponent struct {
-	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
-	loggingDataSource       databaseloggingdatasourceinterfaces.LoggingDataSource
-	mapProcessorUtility     coreutilityinterfaces.MapProcessorUtility
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility
-	partyLoader             moudomainrepositoryutilityinterfaces.PartyLoader
+	mouDataSource       databasemoudatasourceinterfaces.MouDataSource
+	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	partyLoader         moudomainrepositoryutilityinterfaces.PartyLoader
 }
 
 func NewProposeUpdateMouTransactionComponent(
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 	partyLoader moudomainrepositoryutilityinterfaces.PartyLoader,
 ) (moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent, error) {
 	return &proposeUpdateMouTransactionComponent{
-		mouDataSource:           mouDataSource,
-		loggingDataSource:       loggingDataSource,
-		mapProcessorUtility:     mapProcessorUtility,
-		structComparisonUtility: structComparisonUtility,
-		partyLoader:             partyLoader,
+		mouDataSource:       mouDataSource,
+		loggingDataSource:   loggingDataSource,
+		mapProcessorUtility: mapProcessorUtility,
+		partyLoader:         partyLoader,
 	}, nil
 }
 
@@ -59,51 +54,17 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 			err,
 		)
 	}
-	fieldChanges := []*model.FieldChangeDataInput{}
 
-	updateMouTrx.structComparisonUtility.SetComparisonFunc(
-		func(mou interface{}, field1 interface{}, field2 interface{}, mouString *interface{}) {
-			if field1 == field2 {
-				return
-			}
-			*mouString = fmt.Sprintf(
-				"%v%v",
-				*mouString,
-				mou,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*mouString),
-				Type:     reflect.TypeOf(field1).Kind().String(),
-				OldValue: fmt.Sprint(field2),
-				NewValue: fmt.Sprint(field1),
-			})
-			*mouString = ""
-		},
-	)
-	updateMouTrx.structComparisonUtility.SetPreDeepComparisonFunc(
-		func(mou interface{}, mouString *interface{}) {
-			*mouString = fmt.Sprintf(
-				"%v%v.",
-				*mouString,
-				mou,
-			)
-		},
-	)
-	var mouString interface{} = ""
-	updateMouTrx.structComparisonUtility.CompareStructs(
-		*updateMou,
-		*existingmou,
-		&mouString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*updateMou)
+	oldDocumentJson, _ := json.Marshal(*existingmou)
 	loggingOutput, err := updateMouTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Mou",
 			Document: &model.ObjectIDOnly{
 				ID: &existingmou.ID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: updateMou.SubmittingAccount.ID,
 			},
@@ -169,7 +130,9 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	}
 
 	updatedMou, err := updateMouTrx.mouDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMou.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMou.ID,
+		},
 		fieldsToUpdateMou,
 		session,
 	)

@@ -15,6 +15,6 @@ type ProductVariantDataSourceMongo interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.ProductVariant, error)
 	Create(input *model.DatabaseCreateProductVariant, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error)
-	Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateProductVariant, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateProductVariant, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error)
 	GenerateObjectID() primitive.ObjectID
 }

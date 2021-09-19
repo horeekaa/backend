@@ -57,7 +57,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionOK
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{
@@ -110,7 +110,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionFi
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{
@@ -159,7 +159,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionUp
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{
@@ -218,7 +218,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{},
@@ -266,7 +266,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{},
@@ -309,7 +309,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		mongodbbasicoperationfixtures.BasicOpsSingleResultOutput.ID,
+		map[string]interface{}{},
 		map[string]interface{}{},
 		&account,
 		&mongodbcoretypes.OperationOptions{},

@@ -1,33 +1,39 @@
 package organizationdomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	organizationdomainrepositorytypes "github.com/horeekaa/backend/features/organizations/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllOrganizationRepository struct {
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource
+	mongoQueryBuilder      mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllOrganizationRepository(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (organizationdomainrepositoryinterfaces.GetAllOrganizationRepository, error) {
 	return &getAllOrganizationRepository{
 		organizationDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllMmbAccRefRepo *getAllOrganizationRepository) Execute(
 	input organizationdomainrepositorytypes.GetAllOrganizationInput,
 ) ([]*model.Organization, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 

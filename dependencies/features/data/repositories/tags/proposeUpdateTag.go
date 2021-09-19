@@ -19,13 +19,11 @@ func (_ *ProposeUpdateTagDependency) Bind() {
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent {
 			proposeUpdateTagComponent, _ := tagdomainrepositories.NewProposeUpdateTagTransactionComponent(
 				tagDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return proposeUpdateTagComponent
 		},

@@ -43,7 +43,9 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		json.Unmarshal(jsonTemp, notificationToUpdate)
 
 		databaseNotification, err := bulkUpdateNotificationComp.notificationDataSource.GetMongoDataSource().Update(
-			id,
+			map[string]interface{}{
+				"_id": id,
+			},
 			notificationToUpdate,
 			session,
 		)

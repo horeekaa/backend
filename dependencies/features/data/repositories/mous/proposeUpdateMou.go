@@ -20,14 +20,12 @@ func (_ *ProposeUpdateMouDependency) Bind() {
 			mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 			partyLoader moudomainrepositoryutilityinterfaces.PartyLoader,
 		) moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent {
 			proposeUpdateMouComponent, _ := moudomainrepositories.NewProposeUpdateMouTransactionComponent(
 				mouDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 				partyLoader,
 			)
 			return proposeUpdateMouComponent

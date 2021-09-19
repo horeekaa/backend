@@ -87,7 +87,7 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := createOrganizationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				Access:              createOrganizationUcase.createOrganizationAccessIdentity,
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
@@ -115,7 +115,7 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		accMemberAccess, err = createOrganizationUcase.getAccountMemberAccessRepo.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
 					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
 					Access:              createOrganizationUcase.createOrganizationAccessIdentity,

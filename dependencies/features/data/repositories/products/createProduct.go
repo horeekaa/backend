@@ -3,7 +3,6 @@ package productdomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
@@ -20,12 +19,10 @@ func (_ *CreateProductDependency) Bind() {
 		func(
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			structFieldIteratorUtility coreutilityinterfaces.StructFieldIteratorUtility,
 		) productdomainrepositoryinterfaces.CreateProductTransactionComponent {
 			createProductComponent, _ := productdomainrepositories.NewCreateProductTransactionComponent(
 				productDataSource,
 				loggingDataSource,
-				structFieldIteratorUtility,
 			)
 			return createProductComponent
 		},

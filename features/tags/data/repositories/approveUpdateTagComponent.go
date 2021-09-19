@@ -83,7 +83,8 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	}
 	jsonTemp, _ := json.Marshal(
 		map[string]interface{}{
-			"FieldChanges": previousLog.FieldChanges,
+			"NewDocumentJSON": previousLog.NewDocumentJSON,
+			"OldDocumentJSON": previousLog.OldDocumentJSON,
 		},
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
@@ -118,7 +119,9 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	}
 
 	updatedTag, err := approveTagTrx.tagDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateTag.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateTag.ID,
+		},
 		fieldsToUpdateTag,
 		session,
 	)

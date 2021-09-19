@@ -7,8 +7,10 @@ import (
 	mongodbcoreclients "github.com/horeekaa/backend/core/databaseClient/mongodb"
 	mongodbcoreclientinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/init"
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoreoperations "github.com/horeekaa/backend/core/databaseClient/mongodb/operations"
+	mongodbcorequerybuilders "github.com/horeekaa/backend/core/databaseClient/mongodb/queryBuilders"
 	mongodbcoretransactions "github.com/horeekaa/backend/core/databaseClient/mongodb/transactions"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 )
@@ -16,6 +18,13 @@ import (
 type DatabaseDependency struct{}
 
 func (dbDependency *DatabaseDependency) Bind() {
+	container.Singleton(
+		func() mongodbcorequerybuilderinterfaces.MongoQueryBuilder {
+			queryBuilder, _ := mongodbcorequerybuilders.NewMongoQueryBuilder()
+			return queryBuilder
+		},
+	)
+
 	container.Singleton(
 		func() mongodbcoreclientinterfaces.MongoClient {
 			mongoclient, _ := mongodbcoreclients.NewMongoClient()

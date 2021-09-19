@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,16 +71,15 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	defaultedInput, err := accDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := accDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Account
-	_, err = accDataSourceMongo.basicOperation.Create(*defaultedInput.CreateAccount, &outputModel, operationOptions)
+	_, err = accDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,10 +87,10 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 	return &outputModel, err
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
-	updateData.ID = ID
-	defaultedInput, err := accDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (accDataSourceMongo *accountDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+	_, err := accDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -97,7 +98,14 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, 
 	}
 
 	var output model.Account
-	_, err = accDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateAccount, &output, operationOptions)
+	_, err = accDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -105,47 +113,56 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(ID primitive.ObjectID, 
 	return &output, nil
 }
 
-type setAccountDefaultValuesOutput struct {
-	CreateAccount *model.CreateAccount
-	UpdateAccount *model.UpdateAccount
+func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.UpdateAccount,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	defaultAccountType := model.AccountTypePerson
+	defaultLanguage := model.LanguageID
+	currentTime := time.Now()
+
+	existingObject, err := accDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/accountDataSource/update",
+			nil,
+		)
+	}
+
+	if &(*existingObject).Type == nil {
+		input.Type = &defaultAccountType
+	}
+	if input.Language == nil {
+		input.Language = &defaultLanguage
+	}
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setAccountDefaultValuesOutput, error) {
+func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.CreateAccount,
+) (bool, error) {
 	defaultAccountStatus := model.AccountStatusActive
 	defaultAccountType := model.AccountTypePerson
 	currentTime := time.Now()
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.UpdateAccount)
-		existingObject, err := accDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-
-		if &(*existingObject).Type == nil {
-			updateInput.Type = &defaultAccountType
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setAccountDefaultValuesOutput{
-			UpdateAccount: &updateInput,
-		}, nil
+	if input.Status == nil {
+		input.Status = &defaultAccountStatus
 	}
-	createInput := (input).(model.CreateAccount)
+	if &input.Type == nil {
+		input.Type = defaultAccountType
+	}
+	if input.DeviceTokens == nil {
+		input.DeviceTokens = []string{}
+	}
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	if createInput.Status == nil {
-		createInput.Status = &defaultAccountStatus
-	}
-	if &createInput.Type == nil {
-		createInput.Type = defaultAccountType
-	}
-	if createInput.DeviceTokens == nil {
-		createInput.DeviceTokens = []string{}
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-
-	return &setAccountDefaultValuesOutput{
-		CreateAccount: &createInput,
-	}, nil
+	return true, nil
 }

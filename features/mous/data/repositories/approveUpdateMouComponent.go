@@ -72,7 +72,8 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	}
 	jsonTemp, _ := json.Marshal(
 		map[string]interface{}{
-			"FieldChanges": previousLog.FieldChanges,
+			"NewDocumentJSON": previousLog.NewDocumentJSON,
+			"OldDocumentJSON": previousLog.OldDocumentJSON,
 		},
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
@@ -107,7 +108,9 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	}
 
 	updatedMou, err := approveMouTrx.mouDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMou.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMou.ID,
+		},
 		fieldsToUpdateMou,
 		session,
 	)

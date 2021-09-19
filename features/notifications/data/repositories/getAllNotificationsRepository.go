@@ -3,6 +3,7 @@ package notificationdomainrepositories
 import (
 	"encoding/json"
 
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
@@ -10,30 +11,35 @@ import (
 	notificationdomainrepositorytypes "github.com/horeekaa/backend/features/notifications/domain/repositories/types"
 	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllNotificationRepository struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
+	mongoQueryBuilder        mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllNotificationRepository(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (notificationdomainrepositoryinterfaces.GetAllNotificationRepository, error) {
 	return &getAllNotificationRepository{
 		notificationDataSource,
 		notifLocalizationBuilder,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllNotificationRepo *getAllNotificationRepository) Execute(
 	input notificationdomainrepositorytypes.GetAllNotificationInput,
 ) ([]*model.Notification, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllNotificationRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 

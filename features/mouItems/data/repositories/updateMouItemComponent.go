@@ -49,7 +49,9 @@ func (updateMouItemTrx *updateMouItemTransactionComponent) TransactionBody(
 	}
 
 	updatedMouItem, err := updateMouItemTrx.mouItemDataSource.GetMongoDataSource().Update(
-		mouItemToUpdate.ID,
+		map[string]interface{}{
+			"_id": mouItemToUpdate.ID,
+		},
 		mouItemToUpdate,
 		session,
 	)

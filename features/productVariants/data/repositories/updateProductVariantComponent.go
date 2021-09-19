@@ -111,7 +111,9 @@ func (updateProdVariantTrx *updateProductVariantTransactionComponent) Transactio
 	}
 
 	updatedDescPhoto, err := updateProdVariantTrx.productVariantDataSource.GetMongoDataSource().Update(
-		productVariantToUpdate.ID,
+		map[string]interface{}{
+			"_id": productVariantToUpdate.ID,
+		},
 		productVariantToUpdate,
 		session,
 	)

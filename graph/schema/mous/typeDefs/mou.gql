@@ -132,22 +132,22 @@ input DatabaseUpdateMou {
 
 input MouFilterFields {
   _id: ObjectID
-  publicId: String
-  title: String
-  startDate: Time
-  endDate: Time
-  isActive: Boolean
-  creditLimit: Int
-  minimumOrderValueBeforeDelivery: Int
-  paymentCompletionLimitInDays: Int
-  maximumDispatchTimeInDaysAfterConfirmation: Int
+  publicId: StringFilterField
+  title: StringFilterField
+  startDate: TimeFilterField
+  endDate: TimeFilterField
+  isActive: BooleanFilterField
+  creditLimit: IntFilterField
+  minimumOrderValueBeforeDelivery: IntFilterField
+  paymentCompletionLimitInDays: IntFilterField
+  maximumDispatchTimeInDaysAfterConfirmation: IntFilterField
   firstParty: PartyInput
   secondParty: PartyInput
-  proposalStatus: EntityProposalStatus
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMou
+  proposedChanges: MouFilterFields
 }
 
 type Mou {

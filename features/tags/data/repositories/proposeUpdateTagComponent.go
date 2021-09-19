@@ -2,8 +2,6 @@ package tagdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -18,7 +16,6 @@ type proposeUpdateTagTransactionComponent struct {
 	tagDataSource                    databasetagdatasourceinterfaces.TagDataSource
 	loggingDataSource                databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility              coreutilityinterfaces.MapProcessorUtility
-	structComparisonUtility          coreutilityinterfaces.StructComparisonUtility
 	proposeUpdateTagUsecaseComponent tagdomainrepositoryinterfaces.ProposeUpdateTagUsecaseComponent
 }
 
@@ -26,13 +23,11 @@ func NewProposeUpdateTagTransactionComponent(
 	TagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 ) (tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent, error) {
 	return &proposeUpdateTagTransactionComponent{
-		tagDataSource:           TagDataSource,
-		loggingDataSource:       loggingDataSource,
-		mapProcessorUtility:     mapProcessorUtility,
-		structComparisonUtility: structComparisonUtility,
+		tagDataSource:       TagDataSource,
+		loggingDataSource:   loggingDataSource,
+		mapProcessorUtility: mapProcessorUtility,
 	}, nil
 }
 
@@ -66,51 +61,16 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 			err,
 		)
 	}
-	fieldChanges := []*model.FieldChangeDataInput{}
-
-	updateTagTrx.structComparisonUtility.SetComparisonFunc(
-		func(tag interface{}, field1 interface{}, field2 interface{}, tagString *interface{}) {
-			if field1 == field2 {
-				return
-			}
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field1).Kind().String(),
-				OldValue: fmt.Sprint(field2),
-				NewValue: fmt.Sprint(field1),
-			})
-			*tagString = ""
-		},
-	)
-	updateTagTrx.structComparisonUtility.SetPreDeepComparisonFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	updateTagTrx.structComparisonUtility.CompareStructs(
-		*updateTag,
-		*existingTag,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*updateTag)
+	oldDocumentJson, _ := json.Marshal(*existingTag)
 	loggingOutput, err := updateTagTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Tag",
 			Document: &model.ObjectIDOnly{
 				ID: &existingTag.ID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: updateTag.SubmittingAccount.ID,
 			},
@@ -152,7 +112,9 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	}
 
 	updatedTag, err := updateTagTrx.tagDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateTag.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateTag.ID,
+		},
 		fieldsToUpdateTag,
 		session,
 	)

@@ -2,8 +2,6 @@ package memberaccessrefdomainrepositories
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -18,7 +16,6 @@ type proposeUpdateMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource                    databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	loggingDataSource                            databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                          coreutilityinterfaces.MapProcessorUtility
-	structComparisonUtility                      coreutilityinterfaces.StructComparisonUtility
 	proposeUpdateMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefUsecaseComponent
 }
 
@@ -26,13 +23,11 @@ func NewProposeUpdateMemberAccessRefTransactionComponent(
 	MemberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-	structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 ) (memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefTransactionComponent, error) {
 	return &proposeUpdateMemberAccessRefTransactionComponent{
 		memberAccessRefDataSource: MemberAccessRefDataSource,
 		loggingDataSource:         loggingDataSource,
 		mapProcessorUtility:       mapProcessorUtility,
-		structComparisonUtility:   structComparisonUtility,
 	}, nil
 }
 
@@ -66,51 +61,17 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 			err,
 		)
 	}
-	fieldChanges := []*model.FieldChangeDataInput{}
 
-	updateProdTrx.structComparisonUtility.SetComparisonFunc(
-		func(tag interface{}, field1 interface{}, field2 interface{}, tagString *interface{}) {
-			if field1 == field2 {
-				return
-			}
-			*tagString = fmt.Sprintf(
-				"%v%v",
-				*tagString,
-				tag,
-			)
-
-			fieldChanges = append(fieldChanges, &model.FieldChangeDataInput{
-				Name:     fmt.Sprint(*tagString),
-				Type:     reflect.TypeOf(field1).Kind().String(),
-				OldValue: fmt.Sprint(field2),
-				NewValue: fmt.Sprint(field1),
-			})
-			*tagString = ""
-		},
-	)
-	updateProdTrx.structComparisonUtility.SetPreDeepComparisonFunc(
-		func(tag interface{}, tagString *interface{}) {
-			*tagString = fmt.Sprintf(
-				"%v%v.",
-				*tagString,
-				tag,
-			)
-		},
-	)
-	var tagString interface{} = ""
-	updateProdTrx.structComparisonUtility.CompareStructs(
-		*updateMemberAccessRef,
-		*existingMemberAccessRef,
-		&tagString,
-	)
-
+	newDocumentJson, _ := json.Marshal(*updateMemberAccessRef)
+	oldDocumentJson, _ := json.Marshal(*existingMemberAccessRef)
 	loggingOutput, err := updateProdTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "MemberAccessRef",
 			Document: &model.ObjectIDOnly{
 				ID: &existingMemberAccessRef.ID,
 			},
-			FieldChanges: fieldChanges,
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
 				ID: updateMemberAccessRef.SubmittingAccount.ID,
 			},
@@ -152,7 +113,9 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	}
 
 	updatedMemberAccessRef, err := updateProdTrx.memberAccessRefDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMemberAccessRef.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMemberAccessRef.ID,
+		},
 		fieldsToUpdateMemberAccessRef,
 		session,
 	)

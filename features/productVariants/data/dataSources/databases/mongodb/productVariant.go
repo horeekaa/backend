@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) Find(
 }
 
 func (prodVarDataSourceMongo *productVariantDataSourceMongo) Create(input *model.DatabaseCreateProductVariant, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error) {
-	defaultedInput, err := prodVarDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := prodVarDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.ProductVariant
-	_, err = prodVarDataSourceMongo.basicOperation.Create(*defaultedInput.CreateProductvariant, &outputModel, operationOptions)
+	_, err = prodVarDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) Create(input *model
 	return &outputModel, err
 }
 
-func (prodVarDataSourceMongo *productVariantDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateProductVariant, operationOptions *mongodbcoretypes.OperationOptions) (*model.ProductVariant, error) {
-	updateData.ID = ID
-	defaultedInput, err := prodVarDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (prodVarDataSourceMongo *productVariantDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateProductVariant,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.ProductVariant, error) {
+	_, err := prodVarDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) Update(ID primitive
 	}
 
 	var output model.ProductVariant
-	_, err = prodVarDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateProductvariant, &output, operationOptions)
+	_, err = prodVarDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,35 +121,39 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) Update(ID primitive
 	return &output, nil
 }
 
-type setProductVariantDefaultValuesOutput struct {
-	CreateProductvariant *model.DatabaseCreateProductVariant
-	UpdateProductvariant *model.DatabaseUpdateProductVariant
+func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateProductVariant,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := prodVarDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/productVariantDataSource/update",
+			nil,
+		)
+	}
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setProductVariantDefaultValuesOutput, error) {
+func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateProductVariant,
+) (bool, error) {
 	currentTime := time.Now()
 	defaultIsActive := true
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateProductVariant)
-		_, err := prodVarDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setProductVariantDefaultValuesOutput{
-			UpdateProductvariant: &updateInput,
-		}, nil
+	if input.IsActive == nil {
+		input.IsActive = &defaultIsActive
 	}
-	createInput := (input).(model.DatabaseCreateProductVariant)
-	if createInput.IsActive == nil {
-		createInput.IsActive = &defaultIsActive
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	return &setProductVariantDefaultValuesOutput{
-		CreateProductvariant: &createInput,
-	}, nil
+	return true, nil
 }

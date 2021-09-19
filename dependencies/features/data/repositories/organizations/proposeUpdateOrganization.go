@@ -20,13 +20,11 @@ func (_ *ProposeUpdateOrganizationDependency) Bind() {
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
-			structComparisonUtility coreutilityinterfaces.StructComparisonUtility,
 		) organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent {
 			proposeUpdateOrganizationComponent, _ := organizationdomainrepositories.NewProposeUpdateOrganizationTransactionComponent(
 				organizationDataSource,
 				loggingDataSource,
 				mapProcessorUtility,
-				structComparisonUtility,
 			)
 			return proposeUpdateOrganizationComponent
 		},

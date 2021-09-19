@@ -83,7 +83,7 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 
 	accMemberAccess, err := createMmbAccessRefUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account: &model.ObjectIDOnly{ID: &account.ID},
 				Access:  createMmbAccessRefUcase.createMemberAccessRefAccessIdentity,
 			},

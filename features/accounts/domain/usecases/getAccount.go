@@ -77,7 +77,7 @@ func (getAccUcase *getAccountUsecase) Execute(
 		memberAccessRefTypeOrganizationsBased := model.MemberAccessRefTypeOrganizationsBased
 		_, err = getAccUcase.getAccountMemberAccessRepository.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
 					MemberAccessRefType: &memberAccessRefTypeOrganizationsBased,
 					Access:              getAccUcase.getAccountAccessIdentity,

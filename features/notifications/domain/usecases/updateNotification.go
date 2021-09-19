@@ -83,7 +83,7 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) Execute(input noti
 	memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 	_, err = updateNotificationUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
 				Access:              updateNotificationUcase.updateNotificationAccessIdentity,

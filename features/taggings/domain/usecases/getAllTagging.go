@@ -84,7 +84,7 @@ func (getAllTaggingUcase *getAllTaggingUsecase) Execute(
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	_, err = getAllTaggingUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Access:              getAllTaggingUcase.getAllTaggingAccessIdentity,

@@ -143,7 +143,8 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		}
 		jsonTemp, _ := json.Marshal(
 			map[string]interface{}{
-				"FieldChanges": previousLog.FieldChanges,
+				"NewDocumentJSON": previousLog.NewDocumentJSON,
+				"OldDocumentJSON": previousLog.OldDocumentJSON,
 			},
 		)
 		json.Unmarshal(jsonTemp, logToCreate)
@@ -184,7 +185,9 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		}
 
 		updatedTagging, err := bulkApproveUpdateTaggingComp.taggingDataSource.GetMongoDataSource().Update(
-			fieldsToUpdateTagging.ID,
+			map[string]interface{}{
+				"_id": fieldsToUpdateTagging.ID,
+			},
 			fieldsToUpdateTagging,
 			session,
 		)

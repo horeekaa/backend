@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbtagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (tagDataSourceMongo *tagDataSourceMongo) Find(
 }
 
 func (tagDataSourceMongo *tagDataSourceMongo) Create(input *model.DatabaseCreateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error) {
-	defaultedInput, err := tagDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := tagDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Tag
-	_, err = tagDataSourceMongo.basicOperation.Create(*defaultedInput.CreateTag, &outputModel, operationOptions)
+	_, err = tagDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (tagDataSourceMongo *tagDataSourceMongo) Create(input *model.DatabaseCreate
 	return &outputModel, err
 }
 
-func (tagDataSourceMongo *tagDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error) {
-	updateData.ID = ID
-	defaultedInput, err := tagDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (tagDataSourceMongo *tagDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateTag,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Tag, error) {
+	_, err := tagDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (tagDataSourceMongo *tagDataSourceMongo) Update(ID primitive.ObjectID, upda
 	}
 
 	var output model.Tag
-	_, err = tagDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateTag, &output, operationOptions)
+	_, err = tagDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,42 +121,47 @@ func (tagDataSourceMongo *tagDataSourceMongo) Update(ID primitive.ObjectID, upda
 	return &output, nil
 }
 
-type setTagDefaultValuesOutput struct {
-	CreateTag *model.DatabaseCreateTag
-	UpdateTag *model.DatabaseUpdateTag
+func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateTag,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := tagDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/tagDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setTagDefaultValuesOutput, error) {
+func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateTag,
+) (bool, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	defaultIsActive := true
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateTag)
-		_, err := tagDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
+	if input.ProposalStatus == nil {
+		input.ProposalStatus = &defaultProposalStatus
+	}
+	if input.IsActive == nil {
+		input.IsActive = &defaultIsActive
+	}
+	if input.Photos == nil {
+		input.Photos = []*model.ObjectIDOnly{}
+	}
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-		return &setTagDefaultValuesOutput{
-			UpdateTag: &updateInput,
-		}, nil
-	}
-	createInput := (input).(model.DatabaseCreateTag)
-	if createInput.ProposalStatus == nil {
-		createInput.ProposalStatus = &defaultProposalStatus
-	}
-	if createInput.IsActive == nil {
-		createInput.IsActive = &defaultIsActive
-	}
-	if createInput.Photos == nil {
-		createInput.Photos = []*model.ObjectIDOnly{}
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-
-	return &setTagDefaultValuesOutput{
-		CreateTag: &createInput,
-	}, nil
+	return true, nil
 }

@@ -83,7 +83,8 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	}
 	jsonTemp, _ := json.Marshal(
 		map[string]interface{}{
-			"FieldChanges": previousLog.FieldChanges,
+			"NewDocumentJSON": previousLog.NewDocumentJSON,
+			"OldDocumentJSON": previousLog.OldDocumentJSON,
 		},
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
@@ -118,7 +119,9 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	}
 
 	updatedMemberAccess, err := approveProdTrx.memberAccessDataSource.GetMongoDataSource().Update(
-		fieldsToUpdateMemberAccess.ID,
+		map[string]interface{}{
+			"_id": fieldsToUpdateMemberAccess.ID,
+		},
 		fieldsToUpdateMemberAccess,
 		session,
 	)

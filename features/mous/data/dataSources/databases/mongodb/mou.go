@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbmoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (mouDataSourceMongo *mouDataSourceMongo) Find(
 }
 
 func (mouDataSourceMongo *mouDataSourceMongo) Create(input *model.DatabaseCreateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error) {
-	defaultedInput, err := mouDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := mouDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Mou
-	_, err = mouDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMou, &outputModel, operationOptions)
+	_, err = mouDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (mouDataSourceMongo *mouDataSourceMongo) Create(input *model.DatabaseCreate
 	return &outputModel, err
 }
 
-func (mouDataSourceMongo *mouDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error) {
-	updateData.ID = ID
-	defaultedInput, err := mouDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (mouDataSourceMongo *mouDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateMou,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Mou, error) {
+	_, err := mouDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (mouDataSourceMongo *mouDataSourceMongo) Update(ID primitive.ObjectID, upda
 	}
 
 	var output model.Mou
-	_, err = mouDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMou, &output, operationOptions)
+	_, err = mouDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,39 +121,44 @@ func (mouDataSourceMongo *mouDataSourceMongo) Update(ID primitive.ObjectID, upda
 	return &output, nil
 }
 
-type setmouDefaultValuesOutput struct {
-	CreateMou *model.DatabaseCreateMou
-	UpdateMou *model.DatabaseUpdateMou
+func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateMou,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := mouDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/mouDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setmouDefaultValuesOutput, error) {
+func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateMou,
+) (bool, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	defaultIsActive := true
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateMou)
-		_, err := mouDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setmouDefaultValuesOutput{
-			UpdateMou: &updateInput,
-		}, nil
+	if input.ProposalStatus == nil {
+		input.ProposalStatus = &defaultProposalStatus
 	}
-	createInput := (input).(model.DatabaseCreateMou)
-	if createInput.ProposalStatus == nil {
-		createInput.ProposalStatus = &defaultProposalStatus
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-	if createInput.IsActive == nil {
-		createInput.IsActive = &defaultIsActive
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
+	if input.IsActive == nil {
+		input.IsActive = &defaultIsActive
 	}
 
-	return &setmouDefaultValuesOutput{
-		CreateMou: &createInput,
-	}, nil
+	return true, nil
 }

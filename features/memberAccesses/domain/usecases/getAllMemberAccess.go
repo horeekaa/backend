@@ -83,7 +83,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	memberAccess, err := getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
@@ -119,7 +119,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 			memberAccessRefTypeAccountBasics := model.MemberAccessRefTypeAccountsBasics
 			_, err := getAllMmbAccUcase.getAccountMemberAccessRepo.Execute(
 				memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-					MemberAccessFilterFields: &model.MemberAccessFilterFields{
+					MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 						Account:             &model.ObjectIDOnly{ID: &account.ID},
 						MemberAccessRefType: &memberAccessRefTypeAccountBasics,
 						Access:              getAllMmbAccUcase.getOwnedMemberAccessAccessIdentity,

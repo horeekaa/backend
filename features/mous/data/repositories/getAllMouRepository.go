@@ -1,33 +1,39 @@
 package moudomainrepositories
 
 import (
+	mongodbcorequerybuilderinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/queryBuilders"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
 	moudomainrepositorytypes "github.com/horeekaa/backend/features/mous/domain/repositories/types"
 	"github.com/horeekaa/backend/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAllMouRepository struct {
-	mouDataSource databasemoudatasourceinterfaces.MouDataSource
+	mouDataSource     databasemoudatasourceinterfaces.MouDataSource
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
 }
 
 func NewGetAllMouRepository(
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
+	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (moudomainrepositoryinterfaces.GetAllMouRepository, error) {
 	return &getAllMouRepository{
 		mouDataSource,
+		mongoQueryBuilder,
 	}, nil
 }
 
 func (getAllMmbAccRefRepo *getAllMouRepository) Execute(
 	input moudomainrepositorytypes.GetAllMouInput,
 ) ([]*model.Mou, error) {
-	var filterFieldsMap map[string]interface{}
-	data, _ := bson.Marshal(input.FilterFields)
-	bson.Unmarshal(data, &filterFieldsMap)
+	filterFieldsMap := map[string]interface{}{}
+	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+		"",
+		input.FilterFields,
+		&filterFieldsMap,
+	)
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 

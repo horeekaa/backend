@@ -1,0 +1,30 @@
+enum StringOperation {
+  IN
+  NOT_IN
+  CONTAINS
+  EQUAL
+  NOT_EQUAL
+}
+
+enum NumericOperation {
+  LESS_THAN
+  LESS_THAN_OR_EQUAL
+  MORE_THAN
+  MORE_THAN_OR_EQUAL
+  EQUAL
+  NOT_EQUAL
+}
+
+enum BooleanOperation {
+  EQUAL
+  NOT_EQUAL
+}
+
+enum TimeOperation {
+  LESS_THAN
+  LESS_THAN_OR_EQUAL
+  MORE_THAN
+  MORE_THAN_OR_EQUAL
+  EQUAL
+  NOT_EQUAL
+}

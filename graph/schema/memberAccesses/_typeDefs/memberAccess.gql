@@ -78,6 +78,25 @@ input InternalUpdateMemberAccess {
 
 input MemberAccessFilterFields {
   _id: ObjectID
+  invitationAccepted: BooleanFilterField
+  account: ObjectIDOnly
+  organization: AttachOrganizationInput
+  organizationLatestUpdate: AttachOrganizationInput
+  organizationMembershipRole: StringFilterField
+  memberAccessRefType: StringFilterField
+  access: MemberAccessRefOptionsInput
+  defaultAccess: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnly
+  status: StringFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: MemberAccessFilterFields
+  recentLog: ObjectIDOnly
+}
+
+input InternalMemberAccessFilterFields {
+  _id: ObjectID
   invitationAccepted: Boolean
   account: ObjectIDOnly
   organization: AttachOrganizationInput

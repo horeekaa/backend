@@ -21,13 +21,13 @@ func NewGetMemberAccessUsecase(
 }
 
 func (getMmbAccUcase *getMemberAccessUsecase) validation(
-	input *model.MemberAccessFilterFields,
-) (*model.MemberAccessFilterFields, error) {
+	input *model.InternalMemberAccessFilterFields,
+) (*model.InternalMemberAccessFilterFields, error) {
 	return input, nil
 }
 
 func (getMmbAccUcase *getMemberAccessUsecase) Execute(
-	filterFields *model.MemberAccessFilterFields,
+	filterFields *model.InternalMemberAccessFilterFields,
 ) (*model.MemberAccess, error) {
 	validatedFilterFields, err := getMmbAccUcase.validation(filterFields)
 	if err != nil {

@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbtaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -72,17 +74,19 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Find(
 	return taggings, err
 }
 
-func (taggingDataSourceMongo *taggingDataSourceMongo) Create(input *model.DatabaseCreateTagging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tagging, error) {
-	defaultedInput, err := taggingDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+func (taggingDataSourceMongo *taggingDataSourceMongo) Create(
+	input *model.DatabaseCreateTagging,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Tagging, error) {
+	_, err := taggingDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.Tagging
-	_, err = taggingDataSourceMongo.basicOperation.Create(*defaultedInput.CreateTagging, &outputModel, operationOptions)
+	_, err = taggingDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +94,14 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Create(input *model.Databa
 	return &outputModel, err
 }
 
-func (taggingDataSourceMongo *taggingDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateTagging, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tagging, error) {
-	updateData.ID = ID
-	defaultedInput, err := taggingDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (taggingDataSourceMongo *taggingDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateTagging,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.Tagging, error) {
+	_, err := taggingDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +109,14 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Update(ID primitive.Object
 	}
 
 	var output model.Tagging
-	_, err = taggingDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateTagging, &output, operationOptions)
+	_, err = taggingDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,35 +124,40 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Update(ID primitive.Object
 	return &output, nil
 }
 
-type setTaggingDefaultValuesOutput struct {
-	CreateTagging *model.DatabaseCreateTagging
-	UpdateTagging *model.DatabaseUpdateTagging
+func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateTagging,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := taggingDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/taggingDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setTaggingDefaultValuesOutput, error) {
+func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateTagging,
+) (bool, error) {
 	currentTime := time.Now()
 	defaultIsActive := true
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateTagging)
-		_, err := taggingDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setTaggingDefaultValuesOutput{
-			UpdateTagging: &updateInput,
-		}, nil
+	if input.IsActive == nil {
+		input.IsActive = &defaultIsActive
 	}
-	createInput := (input).(model.DatabaseCreateTagging)
-	if createInput.IsActive == nil {
-		createInput.IsActive = &defaultIsActive
-	}
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	return &setTaggingDefaultValuesOutput{
-		CreateTagging: &createInput,
-	}, nil
+	return true, nil
 }

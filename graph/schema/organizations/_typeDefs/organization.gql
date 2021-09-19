@@ -124,14 +124,14 @@ input AttachOrganizationInput {
 
 input OrganizationFilterFields {
   _id: ObjectID
-  name: String
-  phoneNumber: String
-  type: OrganizationType
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
   taggings: ObjectIDOnly
-  creditAllowance: Int
+  creditAllowance: IntFilterField
   rating: Float
-  ratingDescription: String
-  proposalStatus: EntityProposalStatus
+  ratingDescription: StringFilterField
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: OrganizationFilterFields

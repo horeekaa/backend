@@ -110,10 +110,10 @@ input TagFilterFields {
   any tags with name containing phrases from
   the queried string will come as the results.
   """
-  name: String
-  description: String
-  isActive: Boolean
-  proposalStatus: EntityProposalStatus
+  name: StringFilterField
+  description: StringFilterField
+  isActive: BooleanFilterField
+  proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   proposedChanges: TagFilterFields

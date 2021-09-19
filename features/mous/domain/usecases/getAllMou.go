@@ -87,7 +87,7 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
 	memberAccess, err := getAllMouUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
 				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {

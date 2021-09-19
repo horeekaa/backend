@@ -18,5 +18,10 @@ type BasicOperation interface {
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) (bool, error)
 	Create(input interface{}, output interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error)
-	Update(ID primitive.ObjectID, updateData interface{}, output interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error)
+	Update(
+		updateCriteria interface{},
+		updateData interface{},
+		output interface{},
+		operationOptions *mongodbcoretypes.OperationOptions,
+	) (bool, error)
 }

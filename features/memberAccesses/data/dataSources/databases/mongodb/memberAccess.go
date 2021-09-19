@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbmemberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/mongodb/interfaces"
 	model "github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.InternalCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := memberAccDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.MemberAccess
-	_, err = memberAccDataSourceMongo.basicOperation.Create(*defaultedInput.CreateMemberAccess, &outputModel, operationOptions)
+	_, err = memberAccDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 	return &outputModel, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.InternalUpdateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	updateData.ID = ID
-	defaultedInput, err := memberAccDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.InternalUpdateMemberAccess,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.MemberAccess, error) {
+	_, err := memberAccDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive
 	}
 
 	var output model.MemberAccess
-	_, err = memberAccDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateMemberAccess, &output, operationOptions)
+	_, err = memberAccDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,35 +121,39 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(ID primitive
 	return &output, nil
 }
 
-type setMemberAccessDefaultValuesOutput struct {
-	CreateMemberAccess *model.InternalCreateMemberAccess
-	UpdateMemberAccess *model.InternalUpdateMemberAccess
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.InternalUpdateMemberAccess,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	var currentTime = time.Now()
+	existingObject, err := memberAccDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/memberAccessDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setMemberAccessDefaultValuesOutput, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.InternalCreateMemberAccess,
+) (bool, error) {
 	var currentTime = time.Now()
-
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.InternalUpdateMemberAccess)
-		_, err := memberAccDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
-
-		return &setMemberAccessDefaultValuesOutput{
-			UpdateMemberAccess: &updateInput,
-		}, nil
-	}
-	createInput := (input).(model.InternalCreateMemberAccess)
-	if createInput.InvitationAccepted == nil {
-		createInput.InvitationAccepted = func(b bool) *bool { return &b }(false)
+	if input.InvitationAccepted == nil {
+		input.InvitationAccepted = func(b bool) *bool { return &b }(false)
 	}
 
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-	return &setMemberAccessDefaultValuesOutput{
-		CreateMemberAccess: &createInput,
-	}, nil
+	return true, nil
 }

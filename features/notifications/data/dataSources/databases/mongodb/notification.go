@@ -6,6 +6,8 @@ import (
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
+	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	mongodbnotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/mongodb/interfaces"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,16 +75,15 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Find(
 }
 
 func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
-	defaultedInput, err := notificationDataSourceMongo.setDefaultValues(*input,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesCreateType},
-		operationOptions,
+	_, err := notificationDataSourceMongo.setDefaultValuesWhenCreate(
+		input,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	var outputModel model.DatabaseNotification
-	_, err = notificationDataSourceMongo.basicOperation.Create(*defaultedInput.CreateNotification, &outputModel, operationOptions)
+	_, err = notificationDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +91,14 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *mo
 	return &outputModel, err
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primitive.ObjectID, updateData *model.DatabaseUpdateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
-	updateData.ID = ID
-	defaultedInput, err := notificationDataSourceMongo.setDefaultValues(*updateData,
-		&mongodbcoretypes.DefaultValuesOptions{DefaultValuesType: mongodbcoretypes.DefaultValuesUpdateType},
+func (notificationDataSourceMongo *notificationDataSourceMongo) Update(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdateNotification,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (*model.DatabaseNotification, error) {
+	_, err := notificationDataSourceMongo.setDefaultValuesWhenUpdate(
+		updateCriteria,
+		updateData,
 		operationOptions,
 	)
 	if err != nil {
@@ -101,7 +106,14 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primit
 	}
 
 	var output model.DatabaseNotification
-	_, err = notificationDataSourceMongo.basicOperation.Update(ID, *defaultedInput.UpdateNotification, &output, operationOptions)
+	_, err = notificationDataSourceMongo.basicOperation.Update(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		&output,
+		operationOptions,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -109,31 +121,36 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Update(ID primit
 	return &output, nil
 }
 
-type setnotificationDefaultValuesOutput struct {
-	CreateNotification *model.DatabaseCreateNotification
-	UpdateNotification *model.DatabaseUpdateNotification
+func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValuesWhenUpdate(
+	inputCriteria map[string]interface{},
+	input *model.DatabaseUpdateNotification,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	existingObject, err := notificationDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	if err != nil {
+		return false, err
+	}
+	if existingObject == nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.QueryObjectFailed,
+			"/notificationDataSource/update",
+			nil,
+		)
+	}
+
+	input.UpdatedAt = &currentTime
+
+	return true, nil
 }
 
-func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValues(input interface{}, options *mongodbcoretypes.DefaultValuesOptions, operationOptions *mongodbcoretypes.OperationOptions) (*setnotificationDefaultValuesOutput, error) {
+func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValuesWhenCreate(
+	input *model.DatabaseCreateNotification,
+) (bool, error) {
 	currentTime := time.Now()
 
-	if (*options).DefaultValuesType == mongodbcoretypes.DefaultValuesUpdateType {
-		updateInput := input.(model.DatabaseUpdateNotification)
-		_, err := notificationDataSourceMongo.FindByID(updateInput.ID, operationOptions)
-		if err != nil {
-			return nil, err
-		}
-		updateInput.UpdatedAt = &currentTime
+	input.CreatedAt = &currentTime
+	input.UpdatedAt = &currentTime
 
-		return &setnotificationDefaultValuesOutput{
-			UpdateNotification: &updateInput,
-		}, nil
-	}
-	createInput := (input).(model.DatabaseCreateNotification)
-	createInput.CreatedAt = &currentTime
-	createInput.UpdatedAt = &currentTime
-
-	return &setnotificationDefaultValuesOutput{
-		CreateNotification: &createInput,
-	}, nil
+	return true, nil
 }

@@ -91,7 +91,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 
 	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				ID: &validatedInput.UpdateMemberAccess.ID,
 			},
 			QueryMode: true,
@@ -123,7 +123,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		_, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-				MemberAccessFilterFields: &model.MemberAccessFilterFields{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 					Account:             &model.ObjectIDOnly{ID: &account.ID},
 					MemberAccessRefType: &memberAccessRefTypeAccountsBasics,
 					Access:              updateMmbAccessUcase.acceptInvitationMemberAccessIdentity,
@@ -156,7 +156,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	memberAccessRefTypeOrganization := model.MemberAccessRefTypeOrganizationsBased
 	accMemberAccess, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.MemberAccessFilterFields{
+			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrganization,
 				Access:              updateMmbAccessUcase.updateMemberAccessIdentity,
