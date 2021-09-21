@@ -1,0 +1,23 @@
+package databasepurchaseorderitemdatasources
+
+import (
+	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
+	mongodbpurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/mongodb/interfaces"
+)
+
+type purchaseOrderItemDataSource struct {
+	purchaseOrderItemDataSourceRepoMongo mongodbpurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSourceMongo
+}
+
+func (purchaseOrderItemDataSource *purchaseOrderItemDataSource) SetMongoDataSource(mongoDataSource mongodbpurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSourceMongo) bool {
+	purchaseOrderItemDataSource.purchaseOrderItemDataSourceRepoMongo = mongoDataSource
+	return true
+}
+
+func (purchaseOrderItemDataSource *purchaseOrderItemDataSource) GetMongoDataSource() mongodbpurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSourceMongo {
+	return purchaseOrderItemDataSource.purchaseOrderItemDataSourceRepoMongo
+}
+
+func NewPurchaseOrderItemDataSource() (databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource, error) {
+	return &purchaseOrderItemDataSource{}, nil
+}
