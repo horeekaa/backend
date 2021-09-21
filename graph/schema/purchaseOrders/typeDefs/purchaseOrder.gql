@@ -1,0 +1,155 @@
+enum PurchaseOrderStatus {
+  OPEN
+  CONFIRMED
+  CLOSED
+  IN_DELIVERY
+  CANCELLED
+}
+
+enum PurchaseOrderType {
+  MOU_BASED
+  RETAIL
+}
+
+input CreatePurchaseOrder {
+  purchaseOrderItems: [CreatePurchaseOrderItem]
+}
+
+input InternalCreatePurchaseOrder {
+  purchaseOrderItems: [InternalCreatePurchaseOrderItem]
+  mou: DatabaseCreateMou!
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreatePurchaseOrder {
+  _id: ObjectID!
+  publicId: String!
+  purchaseOrderItems: [ObjectIDOnly]
+  mou: DatabaseCreateMou!
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  paidAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePurchaseOrder {
+  _id: ObjectID!
+  purchaseOrderItems: [UpdatePurchaseOrderItem]
+  mou: DatabaseCreateMou
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  status: PurchaseOrderStatus
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdatePurchaseOrder {
+  _id: ObjectID!
+  purchaseOrderItems: [InternalUpdatePurchaseOrderItem]
+  mou: DatabaseCreateMou
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  type: PurchaseOrderType
+  status: PurchaseOrderStatus
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+}
+
+input DatabaseUpdatePurchaseOrder {
+  _id: ObjectID!
+  purchaseOrderItems: [ObjectIDOnly]
+  mou: DatabaseCreateMou
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  type: PurchaseOrderType
+  status: PurchaseOrderStatus
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+  updatedAt: Time
+}
+
+input PurchaseOrderFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  purchaseOrderItems: [ObjectIDOnly]
+  mou: MouFilterFields
+  total: IntFilterField
+  discountInPercent: IntFilterField
+  totalDiscounted: IntFilterField
+  finalSalesAmount: IntFilterField
+  paidAmount: IntFilterField
+  type: StringFilterField
+  status: StringFilterField
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: PurchaseOrderFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrder {
+  _id: ObjectID!
+  publicId: String!
+  purchaseOrderItems: [PurchaseOrderItem]
+  mou: Mou!
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  paidAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: PurchaseOrder
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
