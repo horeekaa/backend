@@ -1,0 +1,15 @@
+input ProductForPurchaseOrderItemInput {
+  name: String
+  description: String
+  photos: [DescriptivePhotoForPurchaseOrderItemInput]
+  createdAt: Time
+  updatedAt: Time
+}
+
+type ProductForPurchaseOrderItem {
+  name: String
+  description: String
+  photos: [DescriptivePhotoForPurchaseOrderItem]
+  createdAt: Time
+  updatedAt: Time
+}

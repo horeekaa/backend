@@ -1,0 +1,17 @@
+input DescriptivePhotoForPurchaseOrderItemInput {
+  _id: ObjectID
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  createdAt: Time
+  updatedAt: Time
+}
+
+type DescriptivePhotoForPurchaseOrderItem {
+  _id: ObjectID
+  photoUrl: String
+  description: String
+  type: DescriptivePhotoType
+  createdAt: Time
+  updatedAt: Time
+}
