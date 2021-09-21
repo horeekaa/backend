@@ -30,8 +30,8 @@ input DatabaseCreatePurchaseOrderItem {
   unitPrice: Int!
   subTotal: Int!
   notes: String
-  mouItem: DatabaseCreateMouItem
-  productVariant: ObjectIDOnly!
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput!
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly!
   createdAt: Time
@@ -72,8 +72,8 @@ input DatabaseUpdatePurchaseOrderItem {
   unitPrice: Int
   subTotal: Int
   notes: String
-  mouItem: DatabaseUpdateMouItem
-  productVariant: ObjectIDOnly
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   updatedAt: Time
@@ -99,8 +99,8 @@ type PurchaseOrderItem {
   unitPrice: Int!
   subTotal: Int!
   notes: String
-  mouItem: MouItem
-  productVariant: ProductVariant!
+  mouItem: MouItemForPurchaseOrderItem
+  productVariant: ProductVariantForPurchaseOrderItem!
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
   createdAt: Time!
