@@ -1,0 +1,108 @@
+enum PurchaseOrderItemStatus {
+  PENDING_CONFIRMATION
+  AWAITING_FULFILLMENT
+  PARTIALLY_FULFILLED
+  FULLFILLED
+  CANCELLED
+}
+
+input CreatePurchaseOrderItem {
+  quantity: Int!
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly!
+}
+
+input InternalCreatePurchaseOrderItem {
+  _id: ObjectID
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly!
+  purchaseOrder: ObjectIDOnly
+}
+
+input DatabaseCreatePurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  notes: String
+  mouItem: DatabaseCreateMouItem
+  productVariant: ObjectIDOnly!
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly!
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePurchaseOrderItem {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+}
+
+input InternalUpdatePurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+}
+
+input DatabaseUpdatePurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: DatabaseUpdateMouItem
+  productVariant: ObjectIDOnly
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+  updatedAt: Time
+}
+
+input PurchaseOrderItemFilterFields {
+  _id: ObjectID
+  quantity: IntFilterField
+  unitPrice: IntFilterField
+  subTotal: IntFilterField
+  notes: StringFilterField
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly
+  status: StringFilterField
+  purchaseOrder: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  notes: String
+  mouItem: MouItem
+  productVariant: ProductVariant!
+  status: PurchaseOrderItemStatus!
+  purchaseOrder: PurchaseOrder
+  createdAt: Time!
+  updatedAt: Time!
+}
