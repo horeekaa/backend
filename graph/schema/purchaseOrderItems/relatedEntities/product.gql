@@ -1,15 +1,17 @@
 input ProductForPurchaseOrderItemInput {
-  name: String
+  _id: ObjectID!
+  name: String!
   description: String
   photos: [DescriptivePhotoForPurchaseOrderItemInput]
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type ProductForPurchaseOrderItem {
-  name: String
+  _id: ObjectID!
+  name: String!
   description: String
   photos: [DescriptivePhotoForPurchaseOrderItem]
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }

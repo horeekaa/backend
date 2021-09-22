@@ -1,12 +1,13 @@
 input ProductVariantForPurchaseOrderItemInput {
-  name: String
-  description: String
-  retailPrice: Int
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
   soldInUnit: SellingUnitType
   photo: DescriptivePhotoForPurchaseOrderItemInput
   product: ProductForPurchaseOrderItemInput
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type ProductVariantForPurchaseOrderItem {
@@ -17,6 +18,6 @@ type ProductVariantForPurchaseOrderItem {
   soldInUnit: SellingUnitType
   photo: DescriptivePhotoForPurchaseOrderItem
   product: ProductForPurchaseOrderItem
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }
