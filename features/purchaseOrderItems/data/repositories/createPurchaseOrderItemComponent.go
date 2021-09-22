@@ -9,6 +9,7 @@ import (
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type createPurchaseOrderItemTransactionComponent struct {
@@ -51,6 +52,19 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 			err,
 		)
 	}
+	purchaseOrderItemToCreate.UnitPrice = purchaseOrderItemToCreate.ProductVariant.RetailPrice
+	if purchaseOrderItemToCreate.MouItem != nil {
+		index := funk.IndexOf(
+			purchaseOrderItemToCreate.MouItem.AgreedProduct.Variants,
+			func(pv *model.InternalAgreedProductVariantInput) bool {
+				return pv.ID == purchaseOrderItemToCreate.ProductVariant.ID
+			},
+		)
+		if index > -1 {
+			purchaseOrderItemToCreate.UnitPrice = *purchaseOrderItemToCreate.MouItem.AgreedProduct.Variants[index].RetailPrice
+		}
+	}
+	purchaseOrderItemToCreate.SubTotal = purchaseOrderItemToCreate.Quantity * purchaseOrderItemToCreate.UnitPrice
 
 	createdPurchaseOrderItem, err := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().Create(
 		purchaseOrderItemToCreate,
