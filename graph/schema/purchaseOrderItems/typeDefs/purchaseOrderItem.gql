@@ -19,8 +19,8 @@ input InternalCreatePurchaseOrderItem {
   unitPrice: Int!
   subTotal: Int
   notes: String
-  mouItem: ObjectIDOnly
-  productVariant: ObjectIDOnly!
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput!
   purchaseOrder: ObjectIDOnly
 }
 
@@ -55,13 +55,13 @@ input UpdatePurchaseOrderItem {
 }
 
 input InternalUpdatePurchaseOrderItem {
-  _id: ObjectID!
+  _id: ObjectID
   quantity: Int
   unitPrice: Int
   subTotal: Int
   notes: String
-  mouItem: ObjectIDOnly
-  productVariant: ObjectIDOnly
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
 }
