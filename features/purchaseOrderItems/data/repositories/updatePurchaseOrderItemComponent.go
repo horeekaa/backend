@@ -35,14 +35,10 @@ func (updatePurchaseOrderItemTrx *updatePurchaseOrderItemTransactionComponent) P
 
 func (updatePurchaseOrderItemTrx *updatePurchaseOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updatepurchaseOrderItemInput *model.InternalUpdatePurchaseOrderItem,
+	updatePurchaseOrderItemInput *model.InternalUpdatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
-	purchaseOrderItemToUpdate := &model.DatabaseUpdatePurchaseOrderItem{}
-	jsonTemp, _ := json.Marshal(updatepurchaseOrderItemInput)
-	json.Unmarshal(jsonTemp, purchaseOrderItemToUpdate)
-
 	existingPurchaseOrderItem, err := updatePurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().FindByID(
-		purchaseOrderItemToUpdate.ID,
+		*updatePurchaseOrderItemInput.ID,
 		session,
 	)
 	if err != nil {
@@ -52,11 +48,11 @@ func (updatePurchaseOrderItemTrx *updatePurchaseOrderItemTransactionComponent) T
 		)
 	}
 
-	if purchaseOrderItemToUpdate.ProductVariant != nil {
+	if updatePurchaseOrderItemInput.ProductVariant != nil {
 		_, err := updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 			session,
-			purchaseOrderItemToUpdate.MouItem,
-			purchaseOrderItemToUpdate.ProductVariant,
+			updatePurchaseOrderItemInput.MouItem,
+			updatePurchaseOrderItemInput.ProductVariant,
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -64,19 +60,23 @@ func (updatePurchaseOrderItemTrx *updatePurchaseOrderItemTransactionComponent) T
 				err,
 			)
 		}
-		purchaseOrderItemToUpdate.UnitPrice = &purchaseOrderItemToUpdate.ProductVariant.RetailPrice
+		updatePurchaseOrderItemInput.UnitPrice = &updatePurchaseOrderItemInput.ProductVariant.RetailPrice
 		if existingPurchaseOrderItem.MouItem != nil {
 			index := funk.IndexOf(
 				existingPurchaseOrderItem.MouItem.AgreedProduct.Variants,
 				func(pv *model.InternalAgreedProductVariantInput) bool {
-					return pv.ID == purchaseOrderItemToUpdate.ProductVariant.ID
+					return pv.ID == updatePurchaseOrderItemInput.ProductVariant.ID
 				},
 			)
 			if index > -1 {
-				purchaseOrderItemToUpdate.UnitPrice = &existingPurchaseOrderItem.MouItem.AgreedProduct.Variants[index].RetailPrice
+				updatePurchaseOrderItemInput.UnitPrice = &existingPurchaseOrderItem.MouItem.AgreedProduct.Variants[index].RetailPrice
 			}
 		}
 	}
+	purchaseOrderItemToUpdate := &model.DatabaseUpdatePurchaseOrderItem{}
+	jsonTemp, _ := json.Marshal(updatePurchaseOrderItemInput)
+	json.Unmarshal(jsonTemp, purchaseOrderItemToUpdate)
+
 	unitPrice := existingPurchaseOrderItem.UnitPrice
 	if purchaseOrderItemToUpdate.UnitPrice != nil {
 		unitPrice = *purchaseOrderItemToUpdate.UnitPrice

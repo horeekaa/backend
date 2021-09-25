@@ -37,14 +37,10 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	session *mongodbcoretypes.OperationOptions,
 	createPurchaseOrderItemInput *model.InternalCreatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
-	purchaseOrderItemToCreate := &model.DatabaseCreatePurchaseOrderItem{}
-	jsonTemp, _ := json.Marshal(createPurchaseOrderItemInput)
-	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
-
 	_, err := createPurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 		session,
-		purchaseOrderItemToCreate.MouItem,
-		purchaseOrderItemToCreate.ProductVariant,
+		createPurchaseOrderItemInput.MouItem,
+		createPurchaseOrderItemInput.ProductVariant,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -52,6 +48,10 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 			err,
 		)
 	}
+
+	purchaseOrderItemToCreate := &model.DatabaseCreatePurchaseOrderItem{}
+	jsonTemp, _ := json.Marshal(createPurchaseOrderItemInput)
+	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
 	purchaseOrderItemToCreate.UnitPrice = purchaseOrderItemToCreate.ProductVariant.RetailPrice
 	if purchaseOrderItemToCreate.MouItem != nil {
 		index := funk.IndexOf(
