@@ -1,6 +1,7 @@
 input MouItemForPurchaseOrderItemInput {
   _id: ObjectID!
   agreedProduct: InternalAgreedProductInput!
+  mou: ObjectIDOnly!
 }
 
 type MouItemForPurchaseOrderItem {
