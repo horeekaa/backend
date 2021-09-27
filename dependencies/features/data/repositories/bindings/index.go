@@ -17,6 +17,8 @@ import (
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
 	purchaseorderitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrderItems"
 	purchaseorderitemdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrderItems/utils"
+	purchaseorderdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrders"
+	purchaseorderdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrders/utils"
 	taggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/taggings"
 	tagdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
@@ -77,6 +79,13 @@ func (_ *RepositoriesDependency) Bind() {
 		&purchaseorderitemdomainrepositorydependencies.CreatePurchaseOrderItemDependency{},
 		&purchaseorderitemdomainrepositorydependencies.UpdatePurchaseOrderItemDependency{},
 		&purchaseorderitemdomainrepositorydependencies.GetPurchaseOrderItemDependency{},
+
+		&purchaseorderdomainrepositoryutilitydependencies.PurchaseOrderLoaderDependency{},
+		&purchaseorderdomainrepositorydependencies.CreatePurchaseOrderDependency{},
+		&purchaseorderdomainrepositorydependencies.GetAllPurchaseOrderDependency{},
+		&purchaseorderdomainrepositorydependencies.GetPurchaseOrderDependency{},
+		&purchaseorderdomainrepositorydependencies.ApproveUpdatePurchaseOrderDependency{},
+		&purchaseorderdomainrepositorydependencies.ProposeUpdatePurchaseOrderDependency{},
 
 		&tagdomainrepositorydependencies.CreateTagDependency{},
 		&tagdomainrepositorydependencies.ProposeUpdateTagDependency{},
