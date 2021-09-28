@@ -6,27 +6,23 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createPurchaseOrderRepository struct {
-	mouItemDataSource                       databasemouitemdatasourceinterfaces.MouItemDataSource
 	createPurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderTransactionComponent
 	createPurchaseOrderItemComponent        purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
 	mongoDBTransaction                      mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreatePurchaseOrderRepository(
-	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	createPurchaseOrderRepositoryTransactionComponent purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderTransactionComponent,
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderRepository, error) {
 	createPurchaseOrderRepo := &createPurchaseOrderRepository{
-		mouItemDataSource,
 		createPurchaseOrderRepositoryTransactionComponent,
 		createPurchaseOrderItemComponent,
 		mongoDBTransaction,
