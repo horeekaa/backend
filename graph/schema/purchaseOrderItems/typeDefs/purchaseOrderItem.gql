@@ -11,6 +11,7 @@ input CreatePurchaseOrderItem {
   notes: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly!
+  expectedArrivalTime: Time!
 }
 
 input InternalCreatePurchaseOrderItem {
@@ -21,6 +22,7 @@ input InternalCreatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedArrivalTime: Time!
   purchaseOrder: ObjectIDOnly
 }
 
@@ -32,6 +34,7 @@ input DatabaseCreatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedArrivalTime: Time!
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly!
   createdAt: Time
@@ -50,6 +53,7 @@ input UpdatePurchaseOrderItem {
   notes: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
+  expectedArrivalTime: Time
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
 }
@@ -62,6 +66,7 @@ input InternalUpdatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedArrivalTime: Time
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
 }
@@ -74,6 +79,7 @@ input DatabaseUpdatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedArrivalTime: Time
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   updatedAt: Time
@@ -87,6 +93,7 @@ input PurchaseOrderItemFilterFields {
   notes: StringFilterField
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
+  expectedArrivalTime: TimeFilterField
   status: StringFilterField
   purchaseOrder: ObjectIDOnly
   createdAt: TimeFilterField
@@ -101,6 +108,7 @@ type PurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItem
   productVariant: ProductVariantForPurchaseOrderItem!
+  expectedArrivalTime: Time!
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
   createdAt: Time!
