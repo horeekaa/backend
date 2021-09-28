@@ -5,6 +5,8 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	databasePurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
@@ -92,6 +94,13 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 					)
 				}
 				continue
+			}
+			if existingPurchaseOrder.Mou != nil && purchaseOrderItemToUpdate.MouItem == nil {
+				return nil, horeekaacorefailure.NewFailureObject(
+					horeekaacorefailureenums.POItemMismatchWithPOType,
+					"/proposeUpdatePurchaseOrderRepository",
+					nil,
+				)
 			}
 
 			purchaseOrderItemToCreate := &model.InternalCreatePurchaseOrderItem{}

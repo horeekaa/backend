@@ -35,6 +35,8 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
 
 	horeekaacorefailureenums.NothingToBeApproved: true,
+
+	horeekaacorefailureenums.POItemMismatchWithPOType: true,
 }
 
 var generalError = map[string]bool{

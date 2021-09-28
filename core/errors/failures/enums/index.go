@@ -16,6 +16,8 @@ const (
 	ObjectNotFound       string = "OBJECT_NOT_FOUND"
 	NothingToBeApproved  string = "NOTHING_TO_BE_APPROVED"
 
+	POItemMismatchWithPOType string = "PO_ITEM_MISMATCH_WITH_PO_TYPE"
+
 	UpstreamFailures string = "UPSTREAM_FAILURES"
 	UnknownFailures  string = "UNKNOWN_FAILURES"
 )
