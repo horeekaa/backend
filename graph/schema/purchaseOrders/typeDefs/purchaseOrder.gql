@@ -27,6 +27,7 @@ input InternalCreatePurchaseOrder {
   finalSalesAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus
+  paymentDueDate: Time
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -46,6 +47,7 @@ input DatabaseCreatePurchaseOrder {
   paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus
+  paymentDueDate: Time!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -64,6 +66,7 @@ input UpdatePurchaseOrder {
   totalDiscounted: Int
   finalSalesAmount: Int
   status: PurchaseOrderStatus
+  paymentDueDate: Time
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -86,6 +89,7 @@ input InternalUpdatePurchaseOrder {
   finalSalesAmount: Int
   type: PurchaseOrderType
   status: PurchaseOrderStatus
+  paymentDueDate: Time
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -104,6 +108,7 @@ input DatabaseUpdatePurchaseOrder {
   finalSalesAmount: Int
   type: PurchaseOrderType
   status: PurchaseOrderStatus
+  paymentDueDate: Time
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -125,6 +130,7 @@ input PurchaseOrderFilterFields {
   paidAmount: IntFilterField
   type: StringFilterField
   status: StringFilterField
+  paymentDueDate: TimeFilterField
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -147,6 +153,7 @@ type PurchaseOrder {
   paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus!
+  paymentDueDate: Time!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!
