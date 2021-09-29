@@ -92,6 +92,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	_, err := createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
 		session,
 		purchaseOrderToCreate.Mou,
+		purchaseOrderToCreate.Organization,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
