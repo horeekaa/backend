@@ -22,7 +22,7 @@ input InternalCreateMou {
   endDate: Time!
   isActive: Boolean
   creditLimit: Int!
-  unfinalizedCreditLimit: Int
+  remainingCreditLimit: Int
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
@@ -45,7 +45,7 @@ input DatabaseCreateMou {
   endDate: Time!
   isActive: Boolean
   creditLimit: Int!
-  unfinalizedCreditLimit: Int!
+  remainingCreditLimit: Int!
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
@@ -95,7 +95,7 @@ input InternalUpdateMou {
   endDate: Time
   isActive: Boolean
   creditLimit: Int
-  unfinalizedCreditLimit: Int
+  remainingCreditLimit: Int
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
@@ -118,7 +118,7 @@ input DatabaseUpdateMou {
   endDate: Time
   isActive: Boolean
   creditLimit: Int
-  unfinalizedCreditLimit: Int
+  remainingCreditLimit: Int
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
@@ -142,7 +142,7 @@ input MouFilterFields {
   endDate: TimeFilterField
   isActive: BooleanFilterField
   creditLimit: IntFilterField
-  unfinalizedCreditLimit: IntFilterField
+  remainingCreditLimit: IntFilterField
   minimumOrderValueBeforeDelivery: IntFilterField
   paymentCompletionLimitInDays: IntFilterField
   maximumDispatchTimeInDaysAfterConfirmation: IntFilterField
@@ -164,7 +164,7 @@ type Mou {
   endDate: Time!
   isActive: Boolean!
   creditLimit: Int!
-  unfinalizedCreditLimit: Int!
+  remainingCreditLimit: Int!
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
