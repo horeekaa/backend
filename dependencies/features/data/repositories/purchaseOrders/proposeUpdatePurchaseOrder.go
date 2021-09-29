@@ -5,6 +5,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	databasepurchaseOrderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
@@ -21,6 +22,7 @@ func (_ *ProposeUpdatePurchaseOrderDependency) Bind() {
 			purchaseOrderDataSource databasepurchaseOrderdatasourceinterfaces.PurchaseOrderDataSource,
 			purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 			purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader,
 		) purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent {
@@ -28,6 +30,7 @@ func (_ *ProposeUpdatePurchaseOrderDependency) Bind() {
 				purchaseOrderDataSource,
 				purchaseOrderItemDataSource,
 				loggingDataSource,
+				mouDataSource,
 				mapProcessorUtility,
 				purchaseOrderDataLoader,
 			)

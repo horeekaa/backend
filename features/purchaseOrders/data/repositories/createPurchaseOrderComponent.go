@@ -6,8 +6,11 @@ import (
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	purchaseorderdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories/utils"
@@ -18,6 +21,7 @@ import (
 type createPurchaseOrderTransactionComponent struct {
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	loggingDataSource       databaseloggingdatasourceinterfaces.LoggingDataSource
+	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
 	generatedObjectID       *primitive.ObjectID
 }
@@ -25,11 +29,13 @@ type createPurchaseOrderTransactionComponent struct {
 func NewCreatePurchaseOrderTransactionComponent(
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader,
 ) (purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderTransactionComponent, error) {
 	return &createPurchaseOrderTransactionComponent{
 		purchaseOrderDataSource: purchaseOrderDataSource,
 		loggingDataSource:       loggingDataSource,
+		mouDataSource:           mouDataSource,
 		purchaseOrderDataLoader: purchaseOrderDataLoader,
 	}, nil
 }
@@ -93,6 +99,30 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		session,
 		purchaseOrderToCreate.Mou,
 		purchaseOrderToCreate.Organization,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createPurchaseOrder",
+			err,
+		)
+	}
+	*purchaseOrderToCreate.Mou.RemainingCreditLimit -= input.FinalSalesAmount
+	if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
+		return nil, horeekaacorefailure.NewFailureObject(
+			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
+			"/createPurchaseOrder",
+			nil,
+		)
+	}
+
+	_, err = createPurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
+		map[string]interface{}{
+			"_id": purchaseOrderToCreate.Mou.ID,
+		},
+		&model.DatabaseUpdateMou{
+			RemainingCreditLimit: purchaseOrderToCreate.Mou.RemainingCreditLimit,
+		},
+		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
