@@ -4,21 +4,24 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	purchaseorderdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
-	"github.com/thoas/go-funk"
 )
 
 type proposeUpdatePurchaseOrderTransactionComponent struct {
 	purchaseOrderDataSource     databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
 	loggingDataSource           databaseloggingdatasourceinterfaces.LoggingDataSource
+	mouDataSource               databasemoudatasourceinterfaces.MouDataSource
 	mapProcessorUtility         coreutilityinterfaces.MapProcessorUtility
 	purchaseOrderDataLoader     purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
 }
@@ -27,6 +30,7 @@ func NewProposeUpdatePurchaseOrderTransactionComponent(
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader,
 ) (purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent, error) {
@@ -34,6 +38,7 @@ func NewProposeUpdatePurchaseOrderTransactionComponent(
 		purchaseOrderDataSource:     purchaseOrderDataSource,
 		purchaseOrderItemDataSource: purchaseOrderItemDataSource,
 		loggingDataSource:           loggingDataSource,
+		mouDataSource:               mouDataSource,
 		mapProcessorUtility:         mapProcessorUtility,
 		purchaseOrderDataLoader:     purchaseOrderDataLoader,
 	}, nil
@@ -72,49 +77,80 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		)
 	}
 
-	if updatePurchaseOrder.Items != nil {
-		purchaseOrderItems, err := updatePurchaseOrderTrx.purchaseOrderItemDataSource.GetMongoDataSource().Find(
-			map[string]interface{}{
-				"_id": map[string]interface{}{
-					"$in": funk.Map(
-						updatePurchaseOrder.Items,
-						func(it *model.InternalUpdatePurchaseOrderItem) interface{} {
-							return it.ID
-						},
-					),
-				},
-			},
-			&mongodbcoretypes.PaginationOptions{},
-			session,
+	purchaseOrderItems, err := updatePurchaseOrderTrx.purchaseOrderItemDataSource.GetMongoDataSource().Find(
+		map[string]interface{}{
+			"purchaseOrder._id": existingPurchaseOrder.ID,
+		},
+		&mongodbcoretypes.PaginationOptions{},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updatePurchaseOrder",
+			err,
 		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updatePurchaseOrder",
-				err,
-			)
-		}
+	}
 
-		totalPrice := 0
-		for _, item := range purchaseOrderItems {
-			totalPrice += item.SubTotal
-		}
-		updatePurchaseOrder.Total = &totalPrice
+	totalPrice := 0
+	for _, item := range purchaseOrderItems {
+		totalPrice += item.SubTotal
+	}
+	updatePurchaseOrder.Total = &totalPrice
 
-		totalDiscounted := existingPurchaseOrder.TotalDiscounted
-		if updatePurchaseOrder.TotalDiscounted != nil {
-			totalDiscounted = *updatePurchaseOrder.TotalDiscounted
-		}
+	totalDiscounted := existingPurchaseOrder.TotalDiscounted
+	if updatePurchaseOrder.TotalDiscounted != nil {
+		totalDiscounted = *updatePurchaseOrder.TotalDiscounted
+	}
 
-		discountInPercent := existingPurchaseOrder.DiscountInPercent
-		if updatePurchaseOrder.DiscountInPercent != nil {
-			discountInPercent = *updatePurchaseOrder.DiscountInPercent
-		}
+	discountInPercent := existingPurchaseOrder.DiscountInPercent
+	if updatePurchaseOrder.DiscountInPercent != nil {
+		discountInPercent = *updatePurchaseOrder.DiscountInPercent
+	}
 
-		if discountInPercent > 0 {
-			totalDiscounted = totalPrice * discountInPercent
-		}
+	if discountInPercent > 0 {
+		totalDiscounted = totalPrice * discountInPercent
+	}
 
-		updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalPrice - totalDiscounted)
+	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalPrice - totalDiscounted)
+
+	mouId := existingPurchaseOrder.Mou.ID
+	if updatePurchaseOrder.Mou != nil {
+		mouId = updatePurchaseOrder.Mou.ID
+	}
+	existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
+		mouId,
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updatePurchaseOrder",
+			err,
+		)
+	}
+
+	existingMou.RemainingCreditLimit -= *updatePurchaseOrder.FinalSalesAmount - existingPurchaseOrder.FinalSalesAmount
+	if existingMou.RemainingCreditLimit < 0 {
+		return nil, horeekaacorefailure.NewFailureObject(
+			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
+			"/updatePurchaseOrder",
+			nil,
+		)
+	}
+
+	_, err = updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
+		map[string]interface{}{
+			"_id": mouId,
+		},
+		&model.DatabaseUpdateMou{
+			RemainingCreditLimit: &existingMou.RemainingCreditLimit,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updatePurchaseOrder",
+			err,
+		)
 	}
 
 	newDocumentJson, _ := json.Marshal(*updatePurchaseOrder)
