@@ -1,0 +1,25 @@
+input OrganizationForPurchaseOrderInput {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [DescriptivePhotoForPurchaseOrderInput]
+  submittingAccount: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+type OrganizationForPurchaseOrder {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [DescriptivePhotoForPurchaseOrder]
+  submittingAccount: ObjectIDOnlyOutput
+  createdAt: Time
+  updatedAt: Time
+}
