@@ -9,5 +9,6 @@ type PurchaseOrderLoader interface {
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
 		mou *model.MouForPurchaseOrderInput,
+		organization *model.OrganizationForPurchaseOrderInput,
 	) (bool, error)
 }
