@@ -24,6 +24,7 @@ type MouForPurchaseOrder {
   endDate: Time!
   isActive: Boolean
   creditLimit: Int!
+  remainingCreditLimit: Int
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
