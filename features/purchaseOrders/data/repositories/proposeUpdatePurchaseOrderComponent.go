@@ -113,44 +113,46 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 
 	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 
-	mouId := existingPurchaseOrder.Mou.ID
-	if updatePurchaseOrder.Mou != nil {
-		mouId = updatePurchaseOrder.Mou.ID
-	}
-	existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
-		mouId,
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
-			err,
+	if existingPurchaseOrder.Mou != nil {
+		mouId := existingPurchaseOrder.Mou.ID
+		if updatePurchaseOrder.Mou != nil {
+			mouId = updatePurchaseOrder.Mou.ID
+		}
+		existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
+			mouId,
+			session,
 		)
-	}
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updatePurchaseOrder",
+				err,
+			)
+		}
 
-	existingMou.RemainingCreditLimit -= *updatePurchaseOrder.FinalSalesAmount - existingPurchaseOrder.FinalSalesAmount
-	if existingMou.RemainingCreditLimit < 0 {
-		return nil, horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
-			"/updatePurchaseOrder",
-			nil,
-		)
-	}
+		existingMou.RemainingCreditLimit -= *updatePurchaseOrder.FinalSalesAmount - existingPurchaseOrder.FinalSalesAmount
+		if existingMou.RemainingCreditLimit < 0 {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
+				"/updatePurchaseOrder",
+				nil,
+			)
+		}
 
-	_, err = updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
-		map[string]interface{}{
-			"_id": mouId,
-		},
-		&model.DatabaseUpdateMou{
-			RemainingCreditLimit: &existingMou.RemainingCreditLimit,
-		},
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
-			err,
+		_, err = updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
+			map[string]interface{}{
+				"_id": mouId,
+			},
+			&model.DatabaseUpdateMou{
+				RemainingCreditLimit: &existingMou.RemainingCreditLimit,
+			},
+			session,
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updatePurchaseOrder",
+				err,
+			)
+		}
 	}
 
 	newDocumentJson, _ := json.Marshal(*updatePurchaseOrder)

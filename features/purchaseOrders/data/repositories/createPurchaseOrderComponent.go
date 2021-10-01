@@ -106,29 +106,31 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 			err,
 		)
 	}
-	*purchaseOrderToCreate.Mou.RemainingCreditLimit -= input.FinalSalesAmount
-	if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
-		return nil, horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
-			"/createPurchaseOrder",
-			nil,
-		)
-	}
+	if purchaseOrderToCreate.Mou != nil {
+		*purchaseOrderToCreate.Mou.RemainingCreditLimit -= input.FinalSalesAmount
+		if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
+				"/createPurchaseOrder",
+				nil,
+			)
+		}
 
-	_, err = createPurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
-		map[string]interface{}{
-			"_id": purchaseOrderToCreate.Mou.ID,
-		},
-		&model.DatabaseUpdateMou{
-			RemainingCreditLimit: purchaseOrderToCreate.Mou.RemainingCreditLimit,
-		},
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrder",
-			err,
+		_, err = createPurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
+			map[string]interface{}{
+				"_id": purchaseOrderToCreate.Mou.ID,
+			},
+			&model.DatabaseUpdateMou{
+				RemainingCreditLimit: purchaseOrderToCreate.Mou.RemainingCreditLimit,
+			},
+			session,
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createPurchaseOrder",
+				err,
+			)
+		}
 	}
 
 	newDocumentJson, _ := json.Marshal(*purchaseOrderToCreate)
