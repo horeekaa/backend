@@ -21,6 +21,7 @@ input CreateProductVariant {
   retailPrice: Int!
   targetUnitCost: Int!
   estimatedUnitWeightInGrams: Int!
+  isDefault: Boolean!
   dimension: CreateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -34,6 +35,7 @@ input InternalCreateProductVariant {
   retailPrice: Int!
   targetUnitCost: Int!
   estimatedUnitWeightInGrams: Int!
+  isDefault: Boolean!
   dimension: CreateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -48,6 +50,7 @@ input DatabaseCreateProductVariant {
   retailPrice: Int!
   targetUnitCost: Int!
   estimatedUnitWeightInGrams: Int!
+  isDefault: Boolean!
   dimension: CreateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -68,6 +71,7 @@ input UpdateProductVariant {
   retailPrice: Int
   targetUnitCost: Int
   estimatedUnitWeightInGrams: Int
+  isDefault: Boolean
   dimension: UpdateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -81,6 +85,7 @@ input InternalUpdateProductVariant {
   retailPrice: Int
   targetUnitCost: Int
   estimatedUnitWeightInGrams: Int
+  isDefault: Boolean
   dimension: UpdateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -94,6 +99,7 @@ input DatabaseUpdateProductVariant {
   retailPrice: Int
   targetUnitCost: Int
   estimatedUnitWeightInGrams: Int
+  isDefault: Boolean
   dimension: UpdateProductDimension
   soldInUnit: SellingUnitType
   isActive: Boolean
@@ -104,13 +110,14 @@ input DatabaseUpdateProductVariant {
 input ProductVariantFilterFields {
   _id: ObjectID
   name: String
-  description: String
-  retailPrice: Int
-  targetUnitCost: Int
-  estimatedUnitWeightInGrams: Int
+  description: StringFilterField
+  retailPrice: IntFilterField
+  targetUnitCost: IntFilterField
+  estimatedUnitWeightInGrams: IntFilterField
+  isDefault: BooleanFilterField
   dimension: ProductDimensionFilterFields
-  soldInUnit: SellingUnitType
-  isActive: Boolean
+  soldInUnit: StringFilterField
+  isActive: BooleanFilterField
   product: ObjectIDOnly
 }
 
@@ -121,6 +128,7 @@ type ProductVariant {
   retailPrice: Int!
   targetUnitCost: Int!
   estimatedUnitWeightInGrams: Int!
+  isDefault: Boolean!
   dimension: ProductDimension
   soldInUnit: SellingUnitType!
   isActive: Boolean!
