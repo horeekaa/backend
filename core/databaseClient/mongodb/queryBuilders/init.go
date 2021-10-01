@@ -127,8 +127,13 @@ func (queryBuild *mongoQueryBuilder) clientRequestToMongoQueryTranslation(
 	mongoQueryMap := map[string]interface{}{}
 	switch operation {
 	case model.StringOperationEqual.String():
-		*output = value
-		return true, nil
+		if value == nil {
+			mongoQueryMap["$exists"] = false
+		} else {
+			mongoQueryMap["$eq"] = value
+		}
+		break
+
 	case model.StringOperationContains.String():
 		mongoQueryMap["$regex"] = value
 		mongoQueryMap["$options"] = "i"
@@ -143,7 +148,11 @@ func (queryBuild *mongoQueryBuilder) clientRequestToMongoQueryTranslation(
 		break
 
 	case model.StringOperationNotEqual.String():
-		mongoQueryMap["$ne"] = value
+		if value == nil {
+			mongoQueryMap["$exists"] = true
+		} else {
+			mongoQueryMap["$ne"] = value
+		}
 		break
 
 	case model.NumericOperationLessThan.String():
