@@ -139,7 +139,9 @@ func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenUpdate(
 		)
 	}
 
-	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
@@ -158,6 +160,9 @@ func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenCreate(
 	input.UpdatedAt = &currentTime
 	if input.IsActive == nil {
 		input.IsActive = &defaultIsActive
+	}
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
 	}
 
 	return true, nil

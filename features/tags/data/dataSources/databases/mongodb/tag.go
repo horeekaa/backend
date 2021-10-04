@@ -139,7 +139,9 @@ func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenUpdate(
 		)
 	}
 
-	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
@@ -162,6 +164,9 @@ func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenCreate(
 	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
