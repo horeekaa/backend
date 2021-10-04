@@ -32,7 +32,7 @@ input InternalCreatePurchaseOrder {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePurchaseOrder
+  proposedChanges: InternalUpdatePurchaseOrder
   recentLog: ObjectIDOnly
 }
 
@@ -98,7 +98,7 @@ input InternalUpdatePurchaseOrder {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePurchaseOrder
+  proposedChanges: InternalUpdatePurchaseOrder
 }
 
 input DatabaseUpdatePurchaseOrder {
