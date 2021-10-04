@@ -139,7 +139,9 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 		)
 	}
 
-	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
@@ -155,6 +157,9 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }

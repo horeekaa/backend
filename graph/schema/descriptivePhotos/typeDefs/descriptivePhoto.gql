@@ -15,6 +15,10 @@ enum DescriptivePhotoType {
   PRODUCTS_OVERVIEW
   LOCATION_MARK_DETAIL
   LOCATION_MARK_OVERVIEW
+
+  THUMBNAIL
+  ICON
+  BANNER
 }
 
 input CreateDescriptivePhoto {

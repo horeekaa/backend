@@ -29,7 +29,7 @@ input InternalCreateOrganization {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateOrganization
+  proposedChanges: InternalUpdateOrganization
   recentLog: ObjectIDOnly
 }
 
@@ -46,7 +46,7 @@ input DatabaseCreateOrganization {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateOrganization
+  proposedChanges: DatabaseUpdateOrganization
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -93,7 +93,7 @@ input InternalUpdateOrganization {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateOrganization
+  proposedChanges: InternalUpdateOrganization
 }
 
 input DatabaseUpdateOrganization {
@@ -113,7 +113,7 @@ input DatabaseUpdateOrganization {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateOrganization
+  proposedChanges: DatabaseUpdateOrganization
   updatedAt: Time
 }
 

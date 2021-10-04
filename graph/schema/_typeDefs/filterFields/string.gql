@@ -1,20 +1,32 @@
 input StringFilterField {
   operation: StringOperation!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
   value: String
   values: [String!]
 }
 
 input IntFilterField {
   operation: NumericOperation!
-  value: Int!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
+  value: Int
 }
 
 input BooleanFilterField {
   operation: BooleanOperation!
-  value: Boolean!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
+  value: Boolean
 }
 
 input TimeFilterField {
   operation: TimeOperation!
-  value: Time!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
+  value: Time
 }

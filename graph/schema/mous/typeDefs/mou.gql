@@ -31,7 +31,7 @@ input InternalCreateMou {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateMou
+  proposedChanges: InternalUpdateMou
   recentLog: ObjectIDOnly
 }
 
@@ -104,7 +104,7 @@ input InternalUpdateMou {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMou
+  proposedChanges: InternalUpdateMou
 }
 
 input DatabaseUpdateMou {

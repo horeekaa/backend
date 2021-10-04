@@ -139,7 +139,9 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenUpdat
 		)
 	}
 
-	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
@@ -164,6 +166,9 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenCreat
 	input.UnfinalizedPoint = &defaultPoint
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }

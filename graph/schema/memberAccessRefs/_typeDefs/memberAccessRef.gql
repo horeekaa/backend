@@ -42,7 +42,7 @@ input InternalCreateMemberAccessRef {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateMemberAccessRef
+  proposedChanges: InternalUpdateMemberAccessRef
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -76,7 +76,7 @@ input InternalUpdateMemberAccessRef {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateMemberAccessRef
+  proposedChanges: InternalUpdateMemberAccessRef
   recentLog: ObjectIDOnly
   updatedAt: Time
 }

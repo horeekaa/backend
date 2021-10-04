@@ -30,7 +30,7 @@ input InternalCreateMemberAccess {
   defaultAccess: InternalUpdateMemberAccessRef
   defaultAccessLatestUpdate: ObjectIDOnly
   status: MemberAccessStatus!
-  proposedChanges: UpdateMemberAccess
+  proposedChanges: InternalUpdateMemberAccess
   recentLog: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -72,7 +72,7 @@ input InternalUpdateMemberAccess {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: UpdateMemberAccess
+  proposedChanges: InternalUpdateMemberAccess
   updatedAt: Time
 }
 
