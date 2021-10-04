@@ -20,7 +20,7 @@ input InternalCreateProduct {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateProduct
+  proposedChanges: InternalUpdateProduct
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -38,7 +38,7 @@ input DatabaseCreateProduct {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateProduct
+  proposedChanges: DatabaseUpdateProduct
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -83,9 +83,8 @@ input InternalUpdateProduct {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateProduct
+  proposedChanges: InternalUpdateProduct
   recentLog: ObjectIDOnly
-  updatedAt: Time
 }
 
 input DatabaseUpdateProduct {
@@ -101,7 +100,7 @@ input DatabaseUpdateProduct {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateProduct
+  proposedChanges: DatabaseUpdateProduct
   recentLog: ObjectIDOnly
   updatedAt: Time
 }

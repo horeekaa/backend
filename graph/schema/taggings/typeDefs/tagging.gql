@@ -46,7 +46,7 @@ input InternalCreateTagging {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTagging
+  proposedChanges: InternalUpdateTagging
   recentLog: ObjectIDOnly
 }
 
@@ -61,7 +61,7 @@ input DatabaseCreateTagging {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTagging
+  proposedChanges: DatabaseUpdateTagging
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -130,7 +130,7 @@ input InternalBulkUpdateTagging {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTagging
+  proposedChanges: InternalUpdateTagging
   recentLog: ObjectIDOnly
 }
 
@@ -146,7 +146,7 @@ input DatabaseUpdateTagging {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTagging
+  proposedChanges: DatabaseUpdateTagging
   recentLog: ObjectIDOnly
   updatedAt: Time
 }

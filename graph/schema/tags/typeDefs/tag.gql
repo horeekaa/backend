@@ -19,7 +19,7 @@ input InternalCreateTag {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: InternalUpdateTag
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -36,7 +36,7 @@ input DatabaseCreateTag {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: DatabaseUpdateTag
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -80,7 +80,7 @@ input InternalUpdateTag {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: InternalUpdateTag
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -97,7 +97,7 @@ input DatabaseUpdateTag {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: UpdateTag
+  proposedChanges: DatabaseUpdateTag
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
