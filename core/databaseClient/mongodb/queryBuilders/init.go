@@ -104,6 +104,20 @@ func (queryBuild *mongoQueryBuilder) Execute(
 				continue
 			}
 
+			objectIDValue, ok := refValueField.Interface().(model.ObjectIDFilterField)
+			if ok {
+				var result interface{}
+				queryBuild.clientRequestToMongoQueryTranslation(
+					objectIDValue.Operation.String(),
+					objectIDValue.Value,
+					objectIDValue.Values,
+					&result,
+				)
+				(*output)[fmt.Sprintf("%s%s", prefix, fieldName)] = result
+
+				continue
+			}
+
 			queryBuild.Execute(
 				fmt.Sprintf("%s%s", prefix, fieldName),
 				refValueField.Interface(),
@@ -121,7 +135,7 @@ func (queryBuild *mongoQueryBuilder) Execute(
 func (queryBuild *mongoQueryBuilder) clientRequestToMongoQueryTranslation(
 	operation string,
 	value interface{},
-	values []string,
+	values interface{},
 	output *interface{},
 ) (bool, error) {
 	mongoQueryMap := map[string]interface{}{}
@@ -169,6 +183,10 @@ func (queryBuild *mongoQueryBuilder) clientRequestToMongoQueryTranslation(
 
 	case model.NumericOperationMoreThanOrEqual.String():
 		mongoQueryMap["$gte"] = value
+		break
+
+	case model.ObjectIDOperationHasValues.String():
+		mongoQueryMap["$all"] = values
 		break
 	}
 

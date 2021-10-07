@@ -30,3 +30,12 @@ input TimeFilterField {
   """
   value: Time
 }
+
+input ObjectIDFilterField {
+  operation: ObjectIDOperation!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
+  value: ObjectID
+  values: [ObjectID]
+}
