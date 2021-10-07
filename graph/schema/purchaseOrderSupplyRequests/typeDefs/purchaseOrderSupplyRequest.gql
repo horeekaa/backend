@@ -1,0 +1,73 @@
+input CreatePurchaseOrderSupplyRequest {
+  totalQuantity: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedArrivalTime: Time!
+  tag: [ObjectID]
+}
+
+input InternalCreatePurchaseOrderSupplyRequest {
+  totalQuantity: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedArrivalTime: Time!
+  tag: [ObjectID]
+}
+
+input DatabaseCreatePurchaseOrderSupplyRequest {
+  totalQuantity: Int!
+  quantityToSupply: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedArrivalTime: Time!
+  tag: [ObjectID]
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input UpdatePurchaseOrderSupplyRequest {
+  _id: ObjectID!
+  totalQuantity: Int
+  quantityToSupply: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedArrivalTime: Time
+  tag: [ObjectID]
+}
+
+input InternalUpdatePurchaseOrderSupplyRequest {
+  _id: ObjectID!
+  totalQuantity: Int
+  quantityToSupply: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedArrivalTime: Time
+  tag: [ObjectID]
+}
+
+input DatabaseUpdatePurchaseOrderSupplyRequest {
+  _id: ObjectID!
+  totalQuantity: Int
+  quantityToSupply: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedArrivalTime: Time
+  tag: [ObjectID]
+  updatedAt: Time
+}
+
+input PurchaseOrderSupplyRequestFilterFields {
+  _id: ObjectID
+  totalQuantity: IntFilterField
+  quantityToSupply: IntFilterField
+  productVariant: ProductVariantFilterFields
+  expectedArrivalTime: TimeFilterField
+  tag: ObjectIDFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrderSupplyRequest {
+  _id: ObjectID!
+  totalQuantity: Int!
+  quantityToSupply: Int!
+  productVariant: ProductVariantForPurchaseOrderItem!
+  expectedArrivalTime: Time!
+  tag: [Tag]!
+  createdAt: Time!
+  updatedAt: Time!
+}
