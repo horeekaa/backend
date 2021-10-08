@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	addressdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -35,6 +36,8 @@ func (_ *ProposeUpdateOrganizationDependency) Bind() {
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			createAddressComponent addressdomainrepositoryinterfaces.CreateAddressTransactionComponent,
+			updateAddressComponent addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent,
 			bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 			bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 			trxComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent,
@@ -44,6 +47,8 @@ func (_ *ProposeUpdateOrganizationDependency) Bind() {
 				organizationDataSource,
 				createDescriptivePhotoComponent,
 				updateDescriptivePhotoComponent,
+				createAddressComponent,
+				updateAddressComponent,
 				bulkCreateTaggingComponent,
 				bulkUpdateTaggingComponent,
 				trxComponent,
