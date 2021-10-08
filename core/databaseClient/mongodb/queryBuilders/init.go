@@ -76,6 +76,20 @@ func (queryBuild *mongoQueryBuilder) Execute(
 				continue
 			}
 
+			floatValue, ok := refValueField.Interface().(model.FloatFilterField)
+			if ok {
+				var result interface{}
+				queryBuild.clientRequestToMongoQueryTranslation(
+					floatValue.Operation.String(),
+					floatValue.Value,
+					nil,
+					&result,
+				)
+				(*output)[fmt.Sprintf("%s%s", prefix, fieldName)] = result
+
+				continue
+			}
+
 			boolValue, ok := refValueField.Interface().(model.BooleanFilterField)
 			if ok {
 				var result interface{}

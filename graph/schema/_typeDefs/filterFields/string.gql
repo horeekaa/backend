@@ -15,6 +15,14 @@ input IntFilterField {
   value: Int
 }
 
+input FloatFilterField {
+  operation: NumericOperation!
+  """
+  if value is null, operation should be **EQUAL** or **NOT EQUAL**
+  """
+  value: Float
+}
+
 input BooleanFilterField {
   operation: BooleanOperation!
   """
