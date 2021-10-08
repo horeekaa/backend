@@ -3,6 +3,7 @@ package datasourcesdependencies
 import (
 	firebaseauthdependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/accounts/authentication"
 	mongodbaccountdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/accounts/databases/mongodb"
+	mongodbaddressdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/addresses/databases/mongodb"
 	mongodbdescriptivephotodatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/descriptivePhotos/databases/mongodb"
 	mongodbloggingdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/loggings/databases/mongodb"
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
@@ -24,6 +25,7 @@ func (_ *DatasourcesDependency) Bind() {
 	registrationList := [...]dependencybindinginterfaces.BindingInterface{
 		&firebaseauthdependencies.FirebaseAuthDependency{},
 		&mongodbaccountdatasourcedependencies.AccountDataSourceDependency{},
+		&mongodbaddressdatasourcedependencies.AddressDataSourceDependency{},
 		&mongodbaccountdatasourcedependencies.PersonDataSourceDependency{},
 		&mongodbloggingdatasourcedependencies.LoggingDataSourceDependency{},
 		&mongodbmemberaccessdatasourcedependencies.MemberAccessDataSourceDependency{},
