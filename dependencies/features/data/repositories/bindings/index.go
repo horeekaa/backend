@@ -2,6 +2,7 @@ package repositoriesdependencies
 
 import (
 	accountdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/accounts"
+	addressdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses"
 	descriptivephotodomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/descriptivePhotos"
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
@@ -30,6 +31,10 @@ func (_ *RepositoriesDependency) Bind() {
 		&accountdomainrepositorydependencies.GetAccountFromAuthDataDependency{},
 		&accountdomainrepositorydependencies.GetUserFromAuthHeaderDependency{},
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
+
+		&addressdomainrepositorydependencies.CreateAddressDependency{},
+		&addressdomainrepositorydependencies.GetAddressDependency{},
+		&addressdomainrepositorydependencies.UpdateAddressDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
 
