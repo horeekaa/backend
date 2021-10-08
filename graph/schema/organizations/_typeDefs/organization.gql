@@ -12,6 +12,7 @@ input CreateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [CreateDescriptivePhoto]
   taggings: [CreateTagging]
+  addresses: [CreateAddress]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
 }
@@ -25,6 +26,7 @@ input InternalCreateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [InternalCreateDescriptivePhoto]
   taggings: [InternalCreateTagging]
+  addresses: [InternalCreateAddress]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -42,6 +44,7 @@ input DatabaseCreateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [ObjectIDOnly]
   taggings: [ObjectIDOnly]
+  addresses: [ObjectIDOnly]
   taxIdentification: NewIDCard
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -63,6 +66,7 @@ input UpdateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [UpdateDescriptivePhoto]
   taggings: [UpdateTagging]
+  addresses: [UpdateAddress]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -87,6 +91,7 @@ input InternalUpdateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [InternalUpdateDescriptivePhoto]
   taggings: [InternalUpdateTagging]
+  addresses: [InternalUpdateAddress]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -107,6 +112,7 @@ input DatabaseUpdateOrganization {
   unfinalizedPoint: Int
   profilePhotos: [ObjectIDOnly]
   taggings: [ObjectIDOnly]
+  addresses: [ObjectIDOnly]
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -128,6 +134,7 @@ input OrganizationFilterFields {
   phoneNumber: StringFilterField
   type: StringFilterField
   taggings: ObjectIDOnly
+  addresses: ObjectIDOnly
   creditAllowance: IntFilterField
   rating: Float
   ratingDescription: StringFilterField
@@ -150,6 +157,7 @@ type Organization {
   unfinalizedPoint: Int!
   profilePhotos: [DescriptivePhoto]
   taggings: [Tagging]
+  addresses: [Address]
   taxIdentification: IDCard
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String

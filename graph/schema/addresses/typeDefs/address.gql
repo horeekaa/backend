@@ -1,3 +1,8 @@
+enum AddressType {
+  ORGANIZATION
+  PERSONAL
+}
+
 input CreateAddress {
   title: String!
   latitude: Float!
@@ -16,6 +21,8 @@ input InternalCreateAddress {
   isDefault: Boolean!
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType!
+  object: ObjectIDOnly!
 }
 
 input DatabaseCreateAddress {
@@ -27,6 +34,8 @@ input DatabaseCreateAddress {
   isDefault: Boolean!
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType!
+  object: ObjectIDOnly!
   createdAt: Time!
   updatedAt: Time!
 }
@@ -57,6 +66,8 @@ input InternalUpdateAddress {
   isDefault: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType
+  object: ObjectIDOnly
 }
 
 input DatabaseUpdateAddress {
@@ -69,6 +80,8 @@ input DatabaseUpdateAddress {
   isDefault: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType
+  object: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -81,6 +94,8 @@ input AddressFilterFields {
   isDefault: BooleanFilterField
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressFilterField
+  type: StringFilterField
+  object: ObjectIDOnly
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -95,6 +110,8 @@ type Address {
   isDefault: Boolean!
   resolvedGeocoding: ResolvedGeocoding
   addressRegionGroup: AddressRegionGroupForAddress
+  type: AddressType!
+  object: ObjectIDOnlyOutput!
   createdAt: Time!
   updatedAt: Time!
 }
