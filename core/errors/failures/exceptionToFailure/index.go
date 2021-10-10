@@ -25,6 +25,8 @@ var upstreamFailure = map[string]bool{
 	horeekaacoreexceptionenums.ClosingImageStoringWriterFailed: true,
 	horeekaacoreexceptionenums.DeleteImageFailed:               true,
 
+	horeekaacoreexceptionenums.ReverseGeocodeFailed: true,
+
 	horeekaacoreexceptionenums.SendNotifMessageFailed: true,
 }
 
