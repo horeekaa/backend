@@ -1,7 +1,7 @@
 input ResolvedGeocodingInput {
   province: String
   district: String
-  municipality: City
+  municipality: String
   zipCode: String
   streetName: String
 }
@@ -9,7 +9,7 @@ input ResolvedGeocodingInput {
 type ResolvedGeocoding {
   province: String
   district: String
-  municipality: City
+  municipality: String
   zipCode: String
   streetName: String
 }
