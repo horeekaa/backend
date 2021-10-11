@@ -7,18 +7,23 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	addressdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories"
+	addressdomainrepositorytypes "github.com/horeekaa/backend/features/addresses/domain/repositories/types"
+	addressdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
 type createAddressTransactionComponent struct {
 	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource
+	addressLoader     addressdomainrepositoryutilityinterfaces.AddressLoader
 }
 
 func NewCreateAddressTransactionComponent(
 	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
+	addressLoader addressdomainrepositoryutilityinterfaces.AddressLoader,
 ) (addressdomainrepositoryinterfaces.CreateAddressTransactionComponent, error) {
 	return &createAddressTransactionComponent{
 		addressDataSource: addressDataSource,
+		addressLoader:     addressLoader,
 	}, nil
 }
 
@@ -35,6 +40,20 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	addressToCreate := &model.DatabaseCreateAddress{}
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, addressToCreate)
+
+	_, err := createAddrTrx.addressLoader.Execute(
+		&addressdomainrepositorytypes.LatLngGeocode{
+			Latitude:  addressToCreate.Latitude,
+			Longitude: addressToCreate.Longitude,
+		},
+		addressToCreate.ResolvedGeocoding,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createAddressRepository",
+			err,
+		)
+	}
 
 	createdAddress, err := createAddrTrx.addressDataSource.GetMongoDataSource().Create(
 		addressToCreate,
