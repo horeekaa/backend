@@ -3,11 +3,11 @@ package googlemapcoreoperationinterfaces
 import (
 	"context"
 
-	googlemapcoretypes "github.com/horeekaa/backend/core/maps/google/types"
+	"googlemaps.github.io/maps"
 )
 
 type GoogleMapBasicOperation interface {
 	ReverseGeocode(
-		ctx context.Context, geocodingReq *googlemapcoretypes.GeocodingRequest,
-	) (googlemapcoretypes.GeocodingResult, error)
+		ctx context.Context, geocodingReq *maps.GeocodingRequest,
+	) ([]maps.GeocodingResult, error)
 }

@@ -8,7 +8,6 @@ import (
 	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	googlemapcoreclientinterfaces "github.com/horeekaa/backend/core/maps/google/interfaces/init"
-	googlemapcoretypes "github.com/horeekaa/backend/core/maps/google/types"
 
 	googlemapcoreoperationinterfaces "github.com/horeekaa/backend/core/maps/google/interfaces/operations"
 )
@@ -18,8 +17,8 @@ type googleMapBasicOperation struct {
 }
 
 func (gMapBasicOperation *googleMapBasicOperation) ReverseGeocode(
-	ctx context.Context, geocodingReq *googlemapcoretypes.GeocodingRequest,
-) (googlemapcoretypes.GeocodingResult, error) {
+	ctx context.Context, geocodingReq *maps.GeocodingRequest,
+) ([]maps.GeocodingResult, error) {
 	gMapClient, err := gMapBasicOperation.client.GetGoogleMapClient()
 	if err != nil {
 		return nil, err
