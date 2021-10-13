@@ -86,6 +86,7 @@ input DatabaseUpdateAddress {
 }
 
 input AddressFilterFields {
+  _id: ObjectID
   title: StringFilterField
   latitude: FloatFilterField
   longitude: FloatFilterField
