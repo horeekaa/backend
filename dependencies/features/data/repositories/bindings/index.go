@@ -2,6 +2,7 @@ package repositoriesdependencies
 
 import (
 	accountdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/accounts"
+	addressregiongroupdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addressRegionGroups"
 	addressdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses"
 	addressdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses/utils"
 	descriptivephotodomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/descriptivePhotos"
@@ -37,6 +38,12 @@ func (_ *RepositoriesDependency) Bind() {
 		&addressdomainrepositorydependencies.CreateAddressDependency{},
 		&addressdomainrepositorydependencies.GetAddressDependency{},
 		&addressdomainrepositorydependencies.UpdateAddressDependency{},
+
+		&addressregiongroupdomainrepositorydependencies.CreateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.ProposeUpdateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.ApproveUpdateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.GetAllAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.GetAddressRegionGroupDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
 
