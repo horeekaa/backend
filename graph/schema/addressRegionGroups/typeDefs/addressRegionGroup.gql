@@ -4,6 +4,7 @@ input CreateAddressRegionGroup {
 }
 
 input InternalCreateAddressRegionGroup {
+  _id: ObjectID!
   publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
@@ -14,6 +15,7 @@ input InternalCreateAddressRegionGroup {
 }
 
 input DatabaseCreateAddressRegionGroup {
+  _id: ObjectID!
   publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
