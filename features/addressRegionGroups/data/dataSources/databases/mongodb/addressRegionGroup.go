@@ -1,4 +1,4 @@
-package mongodbaddressRegionGroupdatasources
+package mongodbaddressregiongroupdatasources
 
 import (
 	"time"
