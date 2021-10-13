@@ -2,6 +2,7 @@ package usecasesdependencies
 
 import (
 	accountpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/accounts"
+	addresspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/addresses"
 	descriptivephotopresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/descriptivePhotos"
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
@@ -26,6 +27,8 @@ func (_ *UsecasesDependency) Bind() {
 		&accountpresentationusecasedependencies.LoginUsecaseDependency{},
 		&accountpresentationusecasedependencies.LogoutUsecaseDependency{},
 		&accountpresentationusecasedependencies.GetAuthUserAndAttachToCtxUsecaseDependency{},
+
+		&addresspresentationusecasedependencies.GetAddressUsecaseDependency{},
 
 		&loggingpresentationusecasedependencies.GetLoggingUsecaseDependency{},
 
