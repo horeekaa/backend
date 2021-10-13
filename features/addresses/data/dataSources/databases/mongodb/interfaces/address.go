@@ -1,4 +1,4 @@
-package mongodbAddressdatasourceinterfaces
+package mongodbaddressdatasourceinterfaces
 
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
