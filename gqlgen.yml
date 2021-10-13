@@ -95,6 +95,12 @@ models:
         resolver: true
   Organization:
     fields:
+      profilePhotos:
+        resolver: true
+      taggings:
+        resolver: true
+      addresses:
+        resolver: true
       submittingAccount:
         resolver: true
       recentApprovingAccount:
@@ -112,6 +118,8 @@ models:
       photos:
         resolver: true
       variants:
+        resolver: true
+      taggings:
         resolver: true
   ProductVariant:
     fields:

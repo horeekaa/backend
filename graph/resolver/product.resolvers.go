@@ -14,6 +14,7 @@ import (
 	productvariantpresentationusecaseinterfaces "github.com/horeekaa/backend/features/productVariants/presentation/usecases"
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	productpresentationusecasetypes "github.com/horeekaa/backend/features/products/presentation/usecases/types"
+	taggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/taggings/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -82,6 +83,28 @@ func (r *productResolver) Variants(ctx context.Context, obj *model.Product) ([]*
 		}
 	}
 	return productVariants, nil
+}
+
+func (r *productResolver) Taggings(ctx context.Context, obj *model.Product) ([]*model.Tagging, error) {
+	var getTaggingUsecase taggingpresentationusecaseinterfaces.GetTaggingUsecase
+	container.Make(&getTaggingUsecase)
+
+	taggings := []*model.Tagging{}
+	if obj.Taggings != nil {
+		for _, tagg := range obj.Taggings {
+			tagging, err := getTaggingUsecase.Execute(
+				&model.TaggingFilterFields{
+					ID: &tagg.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			taggings = append(taggings, tagging)
+		}
+	}
+	return taggings, nil
 }
 
 func (r *productResolver) SubmittingAccount(ctx context.Context, obj *model.Product) (*model.Account, error) {
