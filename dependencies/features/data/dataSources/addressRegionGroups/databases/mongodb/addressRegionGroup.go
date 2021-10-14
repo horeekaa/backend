@@ -1,4 +1,4 @@
-package mongodbaddressRegionGroupdatasourcedependencies
+package mongodbaddressregiongroupdatasourcedependencies
 
 import (
 	container "github.com/golobby/container/v2"
