@@ -54,7 +54,7 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 	oldDocumentJson, _ := json.Marshal(*existingAddressRegionGroup)
 	loggingOutput, err := updateAddressRegionGroupTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
-			Collection: "addressRegionGroup",
+			Collection: "AddressRegionGroup",
 			Document: &model.ObjectIDOnly{
 				ID: &existingAddressRegionGroup.ID,
 			},
