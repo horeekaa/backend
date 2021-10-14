@@ -3,18 +3,18 @@ package addressregiongroupdomainrepositories
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	databaseAddressRegionGroupdatasourceinterfaces "github.com/horeekaa/backend/features/addressRegionGroups/data/dataSources/databases/interfaces/sources"
+	databaseaddressregiongroupdatasourceinterfaces "github.com/horeekaa/backend/features/addressRegionGroups/data/dataSources/databases/interfaces/sources"
 	addressregiongroupdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addressRegionGroups/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type getAddressRegionGroupRepository struct {
-	addressRegionGroupDataSource databaseAddressRegionGroupdatasourceinterfaces.AddressRegionGroupDataSource
+	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
 }
 
 func NewGetAddressRegionGroupRepository(
-	AddressRegionGroupDataSource databaseAddressRegionGroupdatasourceinterfaces.AddressRegionGroupDataSource,
+	AddressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource,
 ) (addressregiongroupdomainrepositoryinterfaces.GetAddressRegionGroupRepository, error) {
 	return &getAddressRegionGroupRepository{
 		AddressRegionGroupDataSource,
