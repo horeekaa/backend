@@ -54,11 +54,13 @@ func (updateAddrTrx *updateAddressTransactionComponent) TransactionBody(
 
 	if addressToUpdate.Latitude != nil && addressToUpdate.Longitude != nil {
 		_, err := updateAddrTrx.addressLoader.Execute(
+			session,
 			&addressdomainrepositorytypes.LatLngGeocode{
 				Latitude:  *addressToUpdate.Latitude,
 				Longitude: *addressToUpdate.Longitude,
 			},
 			addressToUpdate.ResolvedGeocoding,
+			addressToUpdate.AddressRegionGroup,
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(

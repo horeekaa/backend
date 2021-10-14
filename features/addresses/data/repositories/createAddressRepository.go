@@ -42,11 +42,13 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	json.Unmarshal(jsonTemp, addressToCreate)
 
 	_, err := createAddrTrx.addressLoader.Execute(
+		session,
 		&addressdomainrepositorytypes.LatLngGeocode{
 			Latitude:  addressToCreate.Latitude,
 			Longitude: addressToCreate.Longitude,
 		},
 		addressToCreate.ResolvedGeocoding,
+		addressToCreate.AddressRegionGroup,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
