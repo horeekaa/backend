@@ -1,0 +1,13 @@
+input AddressRegionGroupAccessesInput {
+  addressRegionGroupCreate: Boolean
+  addressRegionGroupUpdate: Boolean
+  addressRegionGroupReadAll: Boolean
+  addressRegionGroupApproval: Boolean
+}
+
+type AddressRegionGroupAccesses {
+  addressRegionGroupCreate: Boolean
+  addressRegionGroupUpdate: Boolean
+  addressRegionGroupReadAll: Boolean
+  addressRegionGroupApproval: Boolean
+}
