@@ -2,6 +2,8 @@ package usecasesdependencies
 
 import (
 	accountpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/accounts"
+	addressregiongrouppresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/addressRegionGroups"
+	addresspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/addresses"
 	descriptivephotopresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/descriptivePhotos"
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
@@ -26,6 +28,13 @@ func (_ *UsecasesDependency) Bind() {
 		&accountpresentationusecasedependencies.LoginUsecaseDependency{},
 		&accountpresentationusecasedependencies.LogoutUsecaseDependency{},
 		&accountpresentationusecasedependencies.GetAuthUserAndAttachToCtxUsecaseDependency{},
+
+		&addresspresentationusecasedependencies.GetAddressUsecaseDependency{},
+
+		&addressregiongrouppresentationusecasedependencies.CreateAddressRegionGroupUsecaseDependency{},
+		&addressregiongrouppresentationusecasedependencies.GetAllAddressRegionGroupUsecaseDependency{},
+		&addressregiongrouppresentationusecasedependencies.GetAddressRegionGroupUsecaseDependency{},
+		&addressregiongrouppresentationusecasedependencies.UpdateAddressRegionGroupUsecaseDependency{},
 
 		&loggingpresentationusecasedependencies.GetLoggingUsecaseDependency{},
 

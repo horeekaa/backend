@@ -6,6 +6,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	addressdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
@@ -18,6 +19,8 @@ type proposeUpdateOrganizationRepository struct {
 	organizationDataSource                        databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	createDescriptivePhotoComponent               descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	updateDescriptivePhotoComponent               descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
+	createAddressComponent                        addressdomainrepositoryinterfaces.CreateAddressTransactionComponent
+	updateAddressComponent                        addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent
 	bulkCreateTaggingComponent                    taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	bulkUpdateTaggingComponent                    taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateOrganizationTransactionComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent
@@ -28,6 +31,8 @@ func NewProposeUpdateOrganizationRepository(
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+	createAddressComponent addressdomainrepositoryinterfaces.CreateAddressTransactionComponent,
+	updateAddressComponent addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent,
 	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 	proposeUpdateOrganizationRepositoryTransactionComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent,
@@ -37,6 +42,8 @@ func NewProposeUpdateOrganizationRepository(
 		organizationDataSource,
 		createDescriptivePhotoComponent,
 		updateDescriptivePhotoComponent,
+		createAddressComponent,
+		updateAddressComponent,
 		bulkCreateTaggingComponent,
 		bulkUpdateTaggingComponent,
 		proposeUpdateOrganizationRepositoryTransactionComponent,
@@ -135,6 +142,62 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			jsonTemp, _ := json.Marshal(
 				map[string]interface{}{
 					"ProfilePhotos": savedPhotos,
+				},
+			)
+			json.Unmarshal(jsonTemp, organizationToUpdate)
+		}
+	}
+
+	if organizationToUpdate.Addresses != nil {
+		savedAddresses := existingOrganization.Addresses
+		for _, address := range organizationToUpdate.Addresses {
+			if address.ID != nil {
+				if !funk.Contains(
+					existingOrganization.Addresses,
+					func(ad *model.Address) bool {
+						return ad.ID == *address.ID
+					},
+				) {
+					continue
+				}
+
+				_, err := updateOrgRepo.updateAddressComponent.TransactionBody(
+					operationOption,
+					address,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdateOrganizationRepository",
+						err,
+					)
+				}
+				continue
+			}
+
+			addressToCreate := &model.InternalCreateAddress{}
+			jsonTemp, _ := json.Marshal(address)
+			json.Unmarshal(jsonTemp, addressToCreate)
+			addressToCreate.Type = model.AddressTypeOrganization
+			addressToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingOrganization.ID,
+			}
+
+			savedAddress, err := updateOrgRepo.createAddressComponent.TransactionBody(
+				operationOption,
+				addressToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdateOrganizationRepository",
+					err,
+				)
+			}
+			savedAddresses = append(savedAddresses, savedAddress)
+		}
+		if len(savedAddresses) > len(existingOrganization.Addresses) {
+			jsonTemp, _ := json.Marshal(
+				map[string]interface{}{
+					"Addresses": savedAddresses,
 				},
 			)
 			json.Unmarshal(jsonTemp, organizationToUpdate)

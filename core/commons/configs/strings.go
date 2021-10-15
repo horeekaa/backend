@@ -12,6 +12,7 @@ const (
 
 	FirebaseConfig                            string = "FIREBASE_CONFIG"
 	GoogleApplicationCredentials              string = "GOOGLE_APPLICATION_CREDENTIALS"
+	GoogleAPIKey                              string = "GOOGLE_API_KEY"
 	FirebaseEmailActionCodeURL                string = "FIREBASECONFIG_EMAIL_ACTION_CODE_URL"
 	FirebaseEmailActionCodeAndroidPackageName string = "FIREBASECONFIG_EMAIL_ACTION_CODE_ANDROID_PACKAGENAME"
 	FirebaseEmailActionCodeAndroidInstallApp  string = "FIREBASECONFIG_EMAIL_ACTION_CODE_ANDROID_INSTALLAPP"

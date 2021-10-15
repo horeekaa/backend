@@ -1,0 +1,23 @@
+package databaseaddressregiongroupdatasources
+
+import (
+	databaseaddressregiongroupdatasourceinterfaces "github.com/horeekaa/backend/features/addressRegionGroups/data/dataSources/databases/interfaces/sources"
+	mongodbaddressregiongroupdatasourceinterfaces "github.com/horeekaa/backend/features/addressRegionGroups/data/dataSources/databases/mongodb/interfaces"
+)
+
+type addressRegionGroupDataSource struct {
+	addressRegionGroupDataSourceMongo mongodbaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSourceMongo
+}
+
+func (addrGroupDataSource *addressRegionGroupDataSource) SetMongoDataSource(mongoDataSource mongodbaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSourceMongo) bool {
+	addrGroupDataSource.addressRegionGroupDataSourceMongo = mongoDataSource
+	return true
+}
+
+func (addrGroupDataSource *addressRegionGroupDataSource) GetMongoDataSource() mongodbaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSourceMongo {
+	return addrGroupDataSource.addressRegionGroupDataSourceMongo
+}
+
+func NewAddressRegionGroupDataSource() (databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource, error) {
+	return &addressRegionGroupDataSource{}, nil
+}

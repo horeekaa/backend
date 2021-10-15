@@ -5,6 +5,7 @@ enum MemberAccessRefType {
 
 input MemberAccessRefOptionsInput {
   accountAccesses: AccountAccessesInput
+  addressRegionGroupAccesses: AddressRegionGroupAccessesInput
   manageMemberAccesses: ManageMemberAccessesInput
   organizationAccesses: OrganizationAccessesInput
   memberAccessRefAccesses: MemberAccessRefAccessesInput
@@ -16,6 +17,7 @@ input MemberAccessRefOptionsInput {
 
 type MemberAccessRefOptions {
   accountAccesses: AccountAccesses
+  addressRegionGroupAccesses: AddressRegionGroupAccesses
   manageMemberAccesses: ManageMemberAccesses
   organizationAccesses: OrganizationAccesses
   memberAccessRefAccesses: MemberAccessRefAccesses

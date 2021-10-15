@@ -1,0 +1,118 @@
+enum AddressType {
+  ORGANIZATION
+  PERSONAL
+}
+
+input CreateAddress {
+  title: String!
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+}
+
+input InternalCreateAddress {
+  title: String!
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType!
+  object: ObjectIDOnly!
+}
+
+input DatabaseCreateAddress {
+  title: String!
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType!
+  object: ObjectIDOnly!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input UpdateAddress {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
+  title: String
+  latitude: Float
+  longitude: Float
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+}
+
+input InternalUpdateAddress {
+  _id: ObjectID
+  title: String
+  latitude: Float
+  longitude: Float
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType
+  object: ObjectIDOnly
+}
+
+input DatabaseUpdateAddress {
+  _id: ObjectID!
+  title: String
+  latitude: Float
+  longitude: Float
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType
+  object: ObjectIDOnly
+  updatedAt: Time
+}
+
+input AddressFilterFields {
+  _id: ObjectID
+  title: StringFilterField
+  latitude: FloatFilterField
+  longitude: FloatFilterField
+  addressNote: StringFilterField
+  phoneNumber: StringFilterField
+  isDefault: BooleanFilterField
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressFilterField
+  type: StringFilterField
+  object: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type Address {
+  _id: ObjectID!
+  title: String!
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocoding
+  addressRegionGroup: AddressRegionGroupForAddress
+  type: AddressType!
+  object: ObjectIDOnlyOutput!
+  createdAt: Time!
+  updatedAt: Time!
+}

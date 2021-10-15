@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	addressdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
@@ -14,6 +15,7 @@ import (
 type createOrganizationRepository struct {
 	createOrganizationTransactionComponent organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent
 	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	createAddressComponent                 addressdomainrepositoryinterfaces.CreateAddressTransactionComponent
 	bulkCreateTaggingComponent             taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	mongoDBTransaction                     mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
@@ -21,12 +23,14 @@ type createOrganizationRepository struct {
 func NewCreateOrganizationRepository(
 	createOrganizationRepositoryTransactionComponent organizationdomainrepositoryinterfaces.CreateOrganizationTransactionComponent,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	createAddressComponent addressdomainrepositoryinterfaces.CreateAddressTransactionComponent,
 	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (organizationdomainrepositoryinterfaces.CreateOrganizationRepository, error) {
 	createOrganizationRepo := &createOrganizationRepository{
 		createOrganizationRepositoryTransactionComponent,
 		createDescriptivePhotoComponent,
+		createAddressComponent,
 		bulkCreateTaggingComponent,
 		mongoDBTransaction,
 	}
@@ -80,6 +84,28 @@ func (createOrgRepo *createOrganizationRepository) TransactionBody(
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
 		organizationToCreate.ProfilePhotos = savedPhotos
+	}
+
+	if organizationToCreate.Addresses != nil {
+		savedAddresses := []*model.InternalCreateAddress{}
+		for _, address := range organizationToCreate.Addresses {
+			address.Type = model.AddressTypeOrganization
+			address.Object = &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			}
+			createdAddressOutput, err := createOrgRepo.createAddressComponent.TransactionBody(
+				operationOption,
+				address,
+			)
+			if err != nil {
+				return nil, err
+			}
+			savedAddress := &model.InternalCreateAddress{}
+			jsonTemp, _ := json.Marshal(createdAddressOutput)
+			json.Unmarshal(jsonTemp, savedAddress)
+			savedAddresses = append(savedAddresses, savedAddress)
+		}
+		organizationToCreate.Addresses = savedAddresses
 	}
 
 	if organizationToCreate.Taggings != nil {

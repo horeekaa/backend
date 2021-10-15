@@ -1,0 +1,14 @@
+input AddressRegionGroupForAddressInput {
+  _id: ObjectID!
+  publicId: String!
+}
+
+input AddressRegionGroupForAddressFilterField {
+  _id: ObjectID
+  publicId: StringFilterField
+}
+
+type AddressRegionGroupForAddress {
+  _id: ObjectID!
+  publicId: String!
+}

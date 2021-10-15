@@ -1,0 +1,15 @@
+input ResolvedGeocodingInput {
+  province: String
+  district: String
+  municipality: String
+  zipCode: String
+  streetName: String
+}
+
+type ResolvedGeocoding {
+  province: String
+  district: String
+  municipality: String
+  zipCode: String
+  streetName: String
+}

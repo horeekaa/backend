@@ -2,6 +2,9 @@ package repositoriesdependencies
 
 import (
 	accountdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/accounts"
+	addressregiongroupdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addressRegionGroups"
+	addressdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses"
+	addressdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses/utils"
 	descriptivephotodomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/descriptivePhotos"
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
@@ -30,6 +33,17 @@ func (_ *RepositoriesDependency) Bind() {
 		&accountdomainrepositorydependencies.GetAccountFromAuthDataDependency{},
 		&accountdomainrepositorydependencies.GetUserFromAuthHeaderDependency{},
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
+
+		&addressdomainrepositoryutilitydependencies.AddressLoaderDependency{},
+		&addressdomainrepositorydependencies.CreateAddressDependency{},
+		&addressdomainrepositorydependencies.GetAddressDependency{},
+		&addressdomainrepositorydependencies.UpdateAddressDependency{},
+
+		&addressregiongroupdomainrepositorydependencies.CreateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.ProposeUpdateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.ApproveUpdateAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.GetAllAddressRegionGroupDependency{},
+		&addressregiongroupdomainrepositorydependencies.GetAddressRegionGroupDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
 

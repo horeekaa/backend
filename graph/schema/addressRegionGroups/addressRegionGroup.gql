@@ -1,0 +1,8 @@
+extend type Mutation {
+    createAddressRegionGroup(createAddressRegionGroup: CreateAddressRegionGroup!): AddressRegionGroup!
+    updateAddressRegionGroup(updateAddressRegionGroup: UpdateAddressRegionGroup!): AddressRegionGroup!
+}
+
+extend type Query {
+    addressRegionGroups(filterFields: AddressRegionGroupFilterFields!, paginationOpt: PaginationOptionInput): [AddressRegionGroup]!
+}
