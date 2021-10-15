@@ -3,6 +3,7 @@ package addressdomainrepositoryutilities
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	googlemapcoreoperationinterfaces "github.com/horeekaa/backend/core/maps/google/interfaces/operations"
@@ -32,7 +33,7 @@ func NewAddressLoader(
 func (addrLoader *addressLoader) Execute(
 	operationOptions *mongodbcoretypes.OperationOptions,
 	input *addressdomainrepositorytypes.LatLngGeocode,
-	resolvedGeocoding *model.ResolvedGeocodingInput,
+	resolvedGeocodingToLoad *model.ResolvedGeocodingInput,
 	addressRegionToLoad *model.AddressRegionGroupForAddressInput,
 ) (bool, error) {
 	geocodeResults, err := addrLoader.gMapOperation.ReverseGeocode(
@@ -48,61 +49,61 @@ func (addrLoader *addressLoader) Execute(
 		return false, err
 	}
 
+	*resolvedGeocodingToLoad = model.ResolvedGeocodingInput{
+		District:     func(s string) *string { return &s }(""),
+		Province:     func(s string) *string { return &s }(""),
+		Municipality: func(s string) *string { return &s }(""),
+		ZipCode:      func(s string) *string { return &s }(""),
+		StreetName:   func(s string) *string { return &s }(""),
+	}
 	for _, addrComponent := range geocodeResults[0].AddressComponents {
 		if funk.Contains(
 			addrComponent.Types,
-			func(s string) bool {
-				return s == "administrative_area_level_3"
-			},
+			"administrative_area_level_3",
 		) {
-			*resolvedGeocoding.District = addrComponent.LongName
+			*resolvedGeocodingToLoad.District = addrComponent.LongName
 		}
 
 		if funk.Contains(
 			addrComponent.Types,
-			func(s string) bool {
-				return s == "administrative_area_level_2"
-			},
+			"administrative_area_level_2",
 		) {
-			*resolvedGeocoding.Municipality = addrComponent.LongName
+			*resolvedGeocodingToLoad.Municipality = addrComponent.LongName
 		}
 
 		if funk.Contains(
 			addrComponent.Types,
-			func(s string) bool {
-				return s == "administrative_area_level_1"
-			},
+			"administrative_area_level_1",
 		) {
-			*resolvedGeocoding.Province = addrComponent.LongName
+			*resolvedGeocodingToLoad.Province = addrComponent.LongName
 		}
 
 		if funk.Contains(
 			addrComponent.Types,
-			func(s string) bool {
-				return s == "postal_code"
-			},
+			"postal_code",
 		) {
-			*resolvedGeocoding.ZipCode = addrComponent.LongName
+			*resolvedGeocodingToLoad.ZipCode = addrComponent.LongName
 		}
 
 		if funk.Contains(
 			addrComponent.Types,
-			func(s string) bool {
-				return s == "street_address"
-			},
+			"street_address",
 		) {
-			*resolvedGeocoding.StreetName = addrComponent.LongName
+			*resolvedGeocodingToLoad.StreetName = addrComponent.LongName
 		}
 	}
 
+	regionGroupKeyword := *resolvedGeocodingToLoad.Municipality
+	splitMunicipality := strings.Split(*resolvedGeocodingToLoad.Municipality, " ")
+	if splitMunicipality[0] == "Kota" || splitMunicipality[0] == "Kabupaten" {
+		regionGroupKeyword = strings.Join(
+			splitMunicipality[1:],
+			" ",
+		)
+	}
 	addressRegion, err := addrLoader.addressRegionDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
-			"cities": map[string]interface{}{
-				"$elemMatch": map[string]interface{}{
-					"$regex":   *resolvedGeocoding.Municipality,
-					"$options": "i",
-				},
-			},
+			"cities": strings.ToUpper(regionGroupKeyword),
 		},
 		operationOptions,
 	)

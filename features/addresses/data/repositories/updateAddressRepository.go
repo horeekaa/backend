@@ -53,6 +53,8 @@ func (updateAddrTrx *updateAddressTransactionComponent) TransactionBody(
 	json.Unmarshal(jsonTemp, addressToUpdate)
 
 	if addressToUpdate.Latitude != nil && addressToUpdate.Longitude != nil {
+		addressToUpdate.ResolvedGeocoding = &model.ResolvedGeocodingInput{}
+		addressToUpdate.AddressRegionGroup = &model.AddressRegionGroupForAddressInput{}
 		_, err := updateAddrTrx.addressLoader.Execute(
 			session,
 			&addressdomainrepositorytypes.LatLngGeocode{

@@ -41,6 +41,8 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, addressToCreate)
 
+	addressToCreate.ResolvedGeocoding = &model.ResolvedGeocodingInput{}
+	addressToCreate.AddressRegionGroup = &model.AddressRegionGroupForAddressInput{}
 	_, err := createAddrTrx.addressLoader.Execute(
 		session,
 		&addressdomainrepositorytypes.LatLngGeocode{
