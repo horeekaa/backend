@@ -2,6 +2,8 @@ package addressregiongroupdomainrepositories
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -54,6 +56,19 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 ) (*model.AddressRegionGroup, error) {
 	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createAddressRegionGroupTrx.GetCurrentObjectID()
+
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	splittedId := strings.Split(generatedObjectID.Hex(), "")
+	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+		"ARG",
+		time.Now().In(loc).Format("20060102"),
+		strings.ToUpper(
+			strings.Join(
+				splittedId[len(splittedId)-4:],
+				"",
+			),
+		),
+	)
 	loggingOutput, err := createAddressRegionGroupTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "AddressRegionGroup",
