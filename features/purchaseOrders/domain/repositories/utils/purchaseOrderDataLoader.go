@@ -10,5 +10,6 @@ type PurchaseOrderLoader interface {
 		session *mongodbcoretypes.OperationOptions,
 		mou *model.MouForPurchaseOrderInput,
 		organization *model.OrganizationForPurchaseOrderInput,
+		address *model.AddressForPurchaseOrderInput,
 	) (bool, error)
 }
