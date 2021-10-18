@@ -1,73 +1,81 @@
-input CreatePurchaseOrderSupplyRequest {
+input CreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedArrivalTime: Time!
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
 }
 
-input InternalCreatePurchaseOrderSupplyRequest {
+input InternalCreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedArrivalTime: Time!
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
 }
 
-input DatabaseCreatePurchaseOrderSupplyRequest {
+input DatabaseCreatePurchaseOrderToSupply {
   totalQuantity: Int!
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedArrivalTime: Time!
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   createdAt: Time!
   updatedAt: Time!
 }
 
-input UpdatePurchaseOrderSupplyRequest {
+input UpdatePurchaseOrderToSupply {
   _id: ObjectID!
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedArrivalTime: Time
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
 }
 
-input InternalUpdatePurchaseOrderSupplyRequest {
+input InternalUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedArrivalTime: Time
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
 }
 
-input DatabaseUpdatePurchaseOrderSupplyRequest {
+input DatabaseUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedArrivalTime: Time
   tag: [ObjectID]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   updatedAt: Time
 }
 
-input PurchaseOrderSupplyRequestFilterFields {
+input PurchaseOrderToSupplyFilterFields {
   _id: ObjectID
   totalQuantity: IntFilterField
   quantityToSupply: IntFilterField
   productVariant: ProductVariantFilterFields
   expectedArrivalTime: TimeFilterField
   tag: ObjectIDFilterField
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
 
-type PurchaseOrderSupplyRequest {
+type PurchaseOrderToSupply {
   _id: ObjectID!
   totalQuantity: Int!
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItem!
   expectedArrivalTime: Time!
   tag: [Tag]!
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
   createdAt: Time!
   updatedAt: Time!
 }
