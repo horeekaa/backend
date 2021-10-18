@@ -15,12 +15,14 @@ input CreatePurchaseOrder {
   mouItems: [CreatePurchaseOrderItem]
   retailItems: [CreatePurchaseOrderItem]
   proposalStatus: EntityProposalStatus
+  address: ObjectIDOnly!
 }
 
 input InternalCreatePurchaseOrder {
   mouItems: [InternalCreatePurchaseOrderItem]
   retailItems: [InternalCreatePurchaseOrderItem]
   items: [InternalCreatePurchaseOrderItem]
+  address: AddressForPurchaseOrderInput!
   mou: MouForPurchaseOrderInput!
   total: Int!
   discountInPercent: Int!
@@ -41,6 +43,7 @@ input DatabaseCreatePurchaseOrder {
   _id: ObjectID!
   publicId: String!
   items: [ObjectIDOnly]
+  address: AddressForPurchaseOrderInput!
   mou: MouForPurchaseOrderInput!
   total: Int!
   discountInPercent: Int!
@@ -64,6 +67,7 @@ input UpdatePurchaseOrder {
   _id: ObjectID!
   items: [UpdatePurchaseOrderItem]
   mou: ObjectIDOnly
+  address: ObjectIDOnly
   total: Int
   discountInPercent: Int
   totalDiscounted: Int
@@ -86,6 +90,7 @@ input InternalUpdatePurchaseOrder {
   _id: ObjectID!
   items: [InternalUpdatePurchaseOrderItem]
   mou: MouForPurchaseOrderInput
+  address: AddressForPurchaseOrderInput
   total: Int
   discountInPercent: Int
   totalDiscounted: Int
@@ -106,6 +111,7 @@ input DatabaseUpdatePurchaseOrder {
   _id: ObjectID!
   items: [ObjectIDOnly]
   mou: MouForPurchaseOrderInput
+  address: AddressForPurchaseOrderInput
   total: Int
   discountInPercent: Int
   totalDiscounted: Int
@@ -128,6 +134,7 @@ input PurchaseOrderFilterFields {
   publicId: StringFilterField
   items: [ObjectIDOnly]
   mou: MouFilterFields
+  address: AddressFilterFields
   total: IntFilterField
   discountInPercent: IntFilterField
   totalDiscounted: IntFilterField
@@ -152,6 +159,7 @@ type PurchaseOrder {
   publicId: String!
   items: [PurchaseOrderItem]
   mou: MouForPurchaseOrder!
+  address: AddressForPurchaseOrder
   total: Int!
   discountInPercent: Int!
   totalDiscounted: Int!

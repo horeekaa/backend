@@ -1,0 +1,23 @@
+input AddressForPurchaseOrderInput {
+  _id: ObjectID!
+  title: String
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocodingInput!
+  addressRegionGroup: AddressRegionGroupForAddressInput
+}
+
+type AddressForPurchaseOrder {
+  _id: ObjectID!
+  title: String
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocoding!
+  addressRegionGroup: AddressRegionGroupForAddress
+}
