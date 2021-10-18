@@ -17,6 +17,7 @@ import (
 	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
 	mongodbpurchaseorderitemdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/purchaseOrderItems/databases/mongodb"
 	mongodbpurchaseorderdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/purchaseOrders/databases/mongodb"
+	mongodbpurchaseordertosupplydatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/purchaseOrdersToSupply/databases/mongodb"
 	mongodbtaggingdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/taggings/databases/mongodb"
 	mongodbtagdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/tags/databases/mongodb"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
@@ -45,6 +46,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbmouitemdatasourcedependencies.MouItemDataSourceDependency{},
 		&mongodbpurchaseorderdatasourcedependencies.PurchaseOrderDataSourceDependency{},
 		&mongodbpurchaseorderitemdatasourcedependencies.PurchaseOrderItemDataSourceDependency{},
+		&mongodbpurchaseordertosupplydatasourcedependencies.PurchaseOrderToSupplyDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {
