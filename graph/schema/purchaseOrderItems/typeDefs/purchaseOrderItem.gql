@@ -6,12 +6,32 @@ enum PurchaseOrderItemStatus {
   CANCELLED
 }
 
+enum ExpectedDeliverySchedule {
+  """
+  4AM to 6AM
+  """
+  DAWN
+  """
+  6.01AM to 8AM
+  """
+  MORNING
+  """
+  10.01AM to 12PM
+  """
+  NOON
+  """
+  12.01PM to 2PM
+  """
+  AFTERNOON
+}
+
 input CreatePurchaseOrderItem {
   quantity: Int!
   notes: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
 }
 
 input InternalCreatePurchaseOrderItem {
@@ -22,7 +42,8 @@ input InternalCreatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   purchaseOrder: ObjectIDOnly
 }
 
@@ -34,7 +55,8 @@ input DatabaseCreatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly!
   createdAt: Time
@@ -53,7 +75,8 @@ input UpdatePurchaseOrderItem {
   notes: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
 }
@@ -66,7 +89,8 @@ input InternalUpdatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
 }
@@ -79,7 +103,8 @@ input DatabaseUpdatePurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   updatedAt: Time
@@ -93,7 +118,8 @@ input PurchaseOrderItemFilterFields {
   notes: StringFilterField
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
-  expectedArrivalTime: TimeFilterField
+  expectedDeliverySchedule: StringFilterField
+  deliveryNote: StringFilterField
   status: StringFilterField
   purchaseOrder: ObjectIDOnly
   createdAt: TimeFilterField
@@ -108,7 +134,8 @@ type PurchaseOrderItem {
   notes: String
   mouItem: MouItemForPurchaseOrderItem
   productVariant: ProductVariantForPurchaseOrderItem!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
   createdAt: Time!

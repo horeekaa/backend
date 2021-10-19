@@ -1,7 +1,7 @@
 input CreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
 }
@@ -9,7 +9,7 @@ input CreatePurchaseOrderToSupply {
 input InternalCreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
 }
@@ -18,7 +18,7 @@ input DatabaseCreatePurchaseOrderToSupply {
   totalQuantity: Int!
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   createdAt: Time!
@@ -30,7 +30,7 @@ input UpdatePurchaseOrderToSupply {
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
 }
@@ -40,7 +40,7 @@ input InternalUpdatePurchaseOrderToSupply {
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
 }
@@ -50,7 +50,7 @@ input DatabaseUpdatePurchaseOrderToSupply {
   totalQuantity: Int
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedArrivalTime: Time
+  expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   updatedAt: Time
@@ -61,7 +61,7 @@ input PurchaseOrderToSupplyFilterFields {
   totalQuantity: IntFilterField
   quantityToSupply: IntFilterField
   productVariant: ProductVariantFilterFields
-  expectedArrivalTime: TimeFilterField
+  expectedDeliverySchedule: StringFilterField
   tag: ObjectIDFilterField
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
   createdAt: TimeFilterField
@@ -73,7 +73,7 @@ type PurchaseOrderToSupply {
   totalQuantity: Int!
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItem!
-  expectedArrivalTime: Time!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [Tag]!
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
   createdAt: Time!
