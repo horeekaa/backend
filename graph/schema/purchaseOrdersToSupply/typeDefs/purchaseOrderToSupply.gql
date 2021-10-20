@@ -1,9 +1,15 @@
+enum PurchaseOrderToSupplyStatus {
+  CUMMULATING
+  PROCESSED
+}
+
 input CreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
 }
 
 input InternalCreatePurchaseOrderToSupply {
@@ -12,6 +18,7 @@ input InternalCreatePurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
 }
 
 input DatabaseCreatePurchaseOrderToSupply {
@@ -21,6 +28,7 @@ input DatabaseCreatePurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
   createdAt: Time!
   updatedAt: Time!
 }
@@ -33,6 +41,7 @@ input UpdatePurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
 }
 
 input InternalUpdatePurchaseOrderToSupply {
@@ -43,6 +52,7 @@ input InternalUpdatePurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
 }
 
 input DatabaseUpdatePurchaseOrderToSupply {
@@ -53,6 +63,7 @@ input DatabaseUpdatePurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule
   tag: [ObjectID]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
   updatedAt: Time
 }
 
@@ -64,6 +75,7 @@ input PurchaseOrderToSupplyFilterFields {
   expectedDeliverySchedule: StringFilterField
   tag: ObjectIDFilterField
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
+  status: StringFilterField
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -76,6 +88,7 @@ type PurchaseOrderToSupply {
   expectedDeliverySchedule: ExpectedDeliverySchedule!
   tag: [Tag]!
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
+  status: PurchaseOrderToSupplyStatus
   createdAt: Time!
   updatedAt: Time!
 }

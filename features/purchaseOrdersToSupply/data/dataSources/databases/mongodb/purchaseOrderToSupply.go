@@ -141,9 +141,13 @@ func (purcOrderSupplyDataSourceMongo *purchaseOrderToSupplyDataSourceMongo) setD
 	input *model.DatabaseCreatePurchaseOrderToSupply,
 ) (bool, error) {
 	currentTime := time.Now()
+	defaultStatus := model.PurchaseOrderToSupplyStatusCummulating
 
 	input.CreatedAt = currentTime
 	input.UpdatedAt = currentTime
+	if input.Status == nil {
+		input.Status = &defaultStatus
+	}
 
 	return true, nil
 }
