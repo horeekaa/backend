@@ -9,6 +9,7 @@ import (
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
+	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -17,6 +18,7 @@ type purchaseOrderItemLoader struct {
 	mouItemDataSource          databasemouitemdatasourceinterfaces.MouItemDataSource
 	productVariantDataSource   databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
+	taggingDataSource          databasetaggingdatasourceinterfaces.TaggingDataSource
 }
 
 func NewPurchaseOrderItemLoader(
@@ -24,12 +26,14 @@ func NewPurchaseOrderItemLoader(
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 ) (purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader, error) {
 	return &purchaseOrderItemLoader{
 		descriptivePhotoDataSource,
 		mouItemDataSource,
 		productVariantDataSource,
 		productDataSource,
+		taggingDataSource,
 	}, nil
 }
 
@@ -110,18 +114,50 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			jsonTemp, _ := json.Marshal(loadedProduct)
 			json.Unmarshal(jsonTemp, &productVariant.Product)
 
-			for i := 0; i < len(loadedProduct.Photos); i++ {
-				loadedDescriptivePhoto, err := purcOrderItemLoader.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
-					productVariant.Product.Photos[i].ID,
-					session,
-				)
-				if err != nil {
-					errChan <- err
-					return
-				}
+			prodDescriptivePhotoLoadedChan := make(chan bool)
+			prodTaggingsLoadedChan := make(chan bool)
 
-				jsonTemp, _ := json.Marshal(loadedDescriptivePhoto)
-				json.Unmarshal(jsonTemp, &productVariant.Product.Photos[i])
+			go func() {
+				for i := 0; i < len(loadedProduct.Photos); i++ {
+					loadedDescriptivePhoto, err := purcOrderItemLoader.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
+						productVariant.Product.Photos[i].ID,
+						session,
+					)
+					if err != nil {
+						errChan <- err
+						return
+					}
+
+					jsonTemp, _ := json.Marshal(loadedDescriptivePhoto)
+					json.Unmarshal(jsonTemp, &productVariant.Product.Photos[i])
+				}
+				prodDescriptivePhotoLoadedChan <- true
+			}()
+
+			go func() {
+				for i := 0; i < len(loadedProduct.Taggings); i++ {
+					loadedTagging, err := purcOrderItemLoader.taggingDataSource.GetMongoDataSource().FindByID(
+						productVariant.Product.Taggings[i].ID,
+						session,
+					)
+					if err != nil {
+						errChan <- err
+						return
+					}
+
+					jsonTemp, _ := json.Marshal(loadedTagging)
+					json.Unmarshal(jsonTemp, &productVariant.Product.Taggings[i])
+				}
+				prodTaggingsLoadedChan <- true
+			}()
+
+			for i := 0; i < 2; {
+				select {
+				case _ = <-prodDescriptivePhotoLoadedChan:
+					i++
+				case _ = <-prodTaggingsLoadedChan:
+					i++
+				}
 			}
 			productLoadedChan <- true
 		}()
