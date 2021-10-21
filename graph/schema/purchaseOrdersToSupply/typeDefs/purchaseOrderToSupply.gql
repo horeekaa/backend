@@ -7,7 +7,7 @@ input CreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedDeliverySchedule: ExpectedDeliverySchedule!
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
 }
@@ -16,7 +16,7 @@ input InternalCreatePurchaseOrderToSupply {
   totalQuantity: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedDeliverySchedule: ExpectedDeliverySchedule!
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
 }
@@ -26,7 +26,7 @@ input DatabaseCreatePurchaseOrderToSupply {
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   expectedDeliverySchedule: ExpectedDeliverySchedule!
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
   createdAt: Time!
@@ -39,7 +39,7 @@ input UpdatePurchaseOrderToSupply {
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedDeliverySchedule: ExpectedDeliverySchedule
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
 }
@@ -50,7 +50,7 @@ input InternalUpdatePurchaseOrderToSupply {
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedDeliverySchedule: ExpectedDeliverySchedule
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
 }
@@ -61,7 +61,7 @@ input DatabaseUpdatePurchaseOrderToSupply {
   quantityToSupply: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   expectedDeliverySchedule: ExpectedDeliverySchedule
-  tag: [ObjectID]
+  tags: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
   updatedAt: Time
@@ -73,7 +73,7 @@ input PurchaseOrderToSupplyFilterFields {
   quantityToSupply: IntFilterField
   productVariant: ProductVariantFilterFields
   expectedDeliverySchedule: StringFilterField
-  tag: ObjectIDFilterField
+  tags: ObjectIDOnlyFilterField
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
   status: StringFilterField
   createdAt: TimeFilterField
@@ -86,7 +86,7 @@ type PurchaseOrderToSupply {
   quantityToSupply: Int!
   productVariant: ProductVariantForPurchaseOrderItem!
   expectedDeliverySchedule: ExpectedDeliverySchedule!
-  tag: [Tag]!
+  tags: [Tag]!
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
   status: PurchaseOrderToSupplyStatus
   createdAt: Time!

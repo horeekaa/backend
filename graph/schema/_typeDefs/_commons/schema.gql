@@ -7,6 +7,10 @@ input ObjectIDOnly {
   _id: ObjectID
 }
 
+input ObjectIDOnlyFilterField {
+  _id: ObjectIDFilterField
+}
+
 type ObjectIDOnlyOutput {
   _id: ObjectID
 }
