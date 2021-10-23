@@ -61,7 +61,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 		json.Unmarshal(agreedProductUpdateJson, &agreedProductMap)
 
 		agreedProdLoader.mapProcessorUtility.RemoveNil(agreedProductMap)
-		delete(agreedProductMap, "Variants")
+		delete(agreedProductMap, "variants")
 
 		agreedProductUpdateJson, _ = json.Marshal(agreedProductMap)
 		json.Unmarshal(agreedProductUpdateJson, &agreedProductOutput)
