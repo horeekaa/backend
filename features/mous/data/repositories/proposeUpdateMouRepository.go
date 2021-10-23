@@ -113,14 +113,12 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 			}
 			savedMouItems = append(savedMouItems, savedMouItem)
 		}
-		if len(savedMouItems) > len(existingMou.Items) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Items": savedMouItems,
-				},
-			)
-			json.Unmarshal(jsonTemp, mouToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Items": savedMouItems,
+			},
+		)
+		json.Unmarshal(jsonTemp, mouToUpdate)
 	}
 
 	return updateMouRepo.proposeUpdateMouTransactionComponent.TransactionBody(

@@ -138,14 +138,12 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
-		if len(savedPhotos) > len(existingOrganization.ProfilePhotos) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"ProfilePhotos": savedPhotos,
-				},
-			)
-			json.Unmarshal(jsonTemp, organizationToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"ProfilePhotos": savedPhotos,
+			},
+		)
+		json.Unmarshal(jsonTemp, organizationToUpdate)
 	}
 
 	if organizationToUpdate.Addresses != nil {
@@ -194,14 +192,12 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			}
 			savedAddresses = append(savedAddresses, savedAddress)
 		}
-		if len(savedAddresses) > len(existingOrganization.Addresses) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Addresses": savedAddresses,
-				},
-			)
-			json.Unmarshal(jsonTemp, organizationToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Addresses": savedAddresses,
+			},
+		)
+		json.Unmarshal(jsonTemp, organizationToUpdate)
 	}
 
 	if organizationToUpdate.Taggings != nil {
@@ -262,14 +258,12 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			}
 			savedTaggings = append(savedTaggings, savedTagging...)
 		}
-		if len(savedTaggings) > len(existingOrganization.Taggings) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Taggings": savedTaggings,
-				},
-			)
-			json.Unmarshal(jsonTemp, organizationToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Taggings": savedTaggings,
+			},
+		)
+		json.Unmarshal(jsonTemp, organizationToUpdate)
 	}
 
 	return updateOrgRepo.proposeUpdateOrganizationTransactionComponent.TransactionBody(

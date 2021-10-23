@@ -138,14 +138,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
-		if len(savedPhotos) > len(existingProduct.Photos) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Photos": savedPhotos,
-				},
-			)
-			json.Unmarshal(jsonTemp, productToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Photos": savedPhotos,
+			},
+		)
+		json.Unmarshal(jsonTemp, productToUpdate)
 	}
 
 	if productToUpdate.Variants != nil {
@@ -196,14 +194,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			}
 			savedVariants = append(savedVariants, savedVariant)
 		}
-		if len(savedVariants) > len(existingProduct.Variants) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Variants": savedVariants,
-				},
-			)
-			json.Unmarshal(jsonTemp, productToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Variants": savedVariants,
+			},
+		)
+		json.Unmarshal(jsonTemp, productToUpdate)
 	}
 
 	if productToUpdate.Taggings != nil {
@@ -264,14 +260,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			}
 			savedTaggings = append(savedTaggings, savedTagging...)
 		}
-		if len(savedTaggings) > len(existingProduct.Taggings) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Taggings": savedTaggings,
-				},
-			)
-			json.Unmarshal(jsonTemp, productToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Taggings": savedTaggings,
+			},
+		)
+		json.Unmarshal(jsonTemp, productToUpdate)
 	}
 
 	return updateProdRepo.proposeUpdateProductTransactionComponent.TransactionBody(
