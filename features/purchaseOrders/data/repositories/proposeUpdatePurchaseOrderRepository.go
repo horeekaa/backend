@@ -122,14 +122,12 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 			}
 			savedPurchaseOrderItems = append(savedPurchaseOrderItems, savedPurchaseOrderItem)
 		}
-		if len(savedPurchaseOrderItems) > len(existingPurchaseOrder.Items) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Items": savedPurchaseOrderItems,
-				},
-			)
-			json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Items": savedPurchaseOrderItems,
+			},
+		)
+		json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
 	}
 
 	return updatePurchaseOrderRepo.proposeUpdatePurchaseOrderTransactionComponent.TransactionBody(
