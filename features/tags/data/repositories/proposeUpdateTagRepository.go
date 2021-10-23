@@ -124,14 +124,12 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
-		if len(savedPhotos) > len(existingTag.Photos) {
-			jsonTemp, _ := json.Marshal(
-				map[string]interface{}{
-					"Photos": savedPhotos,
-				},
-			)
-			json.Unmarshal(jsonTemp, tagToUpdate)
-		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Photos": savedPhotos,
+			},
+		)
+		json.Unmarshal(jsonTemp, tagToUpdate)
 	}
 
 	return updateTagRepo.proposeUpdateTagTransactionComponent.TransactionBody(
