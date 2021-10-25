@@ -1,9 +1,10 @@
 enum PurchaseOrderStatus {
   OPEN
   CONFIRMED
-  CLOSED
+  PROCESSED
   IN_DELIVERY
   CANCELLED
+  DONE
 }
 
 enum PurchaseOrderType {
