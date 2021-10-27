@@ -21,7 +21,7 @@ type createNotificationTransactionComponent struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	firebaseMessaging        firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
-	invitationPayloadLoader  notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader
+	masterPayloadLoader      notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader
 }
 
 func NewCreateNotificationTransactionComponent(
@@ -29,14 +29,14 @@ func NewCreateNotificationTransactionComponent(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 	firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
-	invitationPayloadLoader notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
+	masterPayloadLoader notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader,
 ) (notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent, error) {
 	return &createNotificationTransactionComponent{
 		accountDataSource:        accountDataSource,
 		notificationDataSource:   notificationDataSource,
 		firebaseMessaging:        firebaseMessaging,
 		notifLocalizationBuilder: notifLocalizationBuilder,
-		invitationPayloadLoader:  invitationPayloadLoader,
+		masterPayloadLoader:      masterPayloadLoader,
 	}, nil
 }
 
@@ -50,7 +50,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateNotification,
 ) (*model.Notification, error) {
-	_, err := createNotifTrx.invitationPayloadLoader.TransactionBody(
+	_, err := createNotifTrx.masterPayloadLoader.TransactionBody(
 		session,
 		input,
 	)
