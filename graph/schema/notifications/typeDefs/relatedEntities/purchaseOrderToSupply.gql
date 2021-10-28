@@ -1,0 +1,11 @@
+input PurchaseOrderToSupplyForNotifPayloadInput {
+  _id: ObjectID!
+  tags: [TagForNotifPayloadInput]!
+  productVariant: ProductVariantForNotifPayloadInput!
+}
+
+type PurchaseOrderToSupplyForNotifPayload {
+  _id: ObjectID!
+  tags: [TagForNotifPayload]!
+  productVariant: ProductVariantForNotifPayload!
+}

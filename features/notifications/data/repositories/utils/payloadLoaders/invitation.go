@@ -1,11 +1,11 @@
-package notificationdomainrepositoryutilities
+package notificationdomainrepositoryloaderutilities
 
 import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
-	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
+	notificationdomainrepositoryloaderutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils/payloadLoaders"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -17,7 +17,7 @@ type invitationPayloadLoader struct {
 func NewInvitationPayloadLoader(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-) (notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader, error) {
+) (notificationdomainrepositoryloaderutilityinterfaces.InvitationPayloadLoader, error) {
 	return &invitationPayloadLoader{
 		accountDataSource: accountDataSource,
 		personDataSource:  personDataSource,

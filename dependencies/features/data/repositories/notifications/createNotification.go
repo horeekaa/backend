@@ -19,14 +19,14 @@ func (_ *CreateNotificationDependency) Bind() {
 			notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 			firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
 			notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
-			invitationPayloadLoader notificationdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
+			masterPayloadLoader notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader,
 		) notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent {
 			createNotificationComponent, _ := notificationdomainrepositories.NewCreateNotificationTransactionComponent(
 				accountDataSource,
 				notificationDataSource,
 				firebaseMessaging,
 				notifLocalizationBuilder,
-				invitationPayloadLoader,
+				masterPayloadLoader,
 			)
 			return createNotificationComponent
 		},

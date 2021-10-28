@@ -1,0 +1,9 @@
+input PurchaseOrderToSupplyBroadcastPayloadInput {
+  broadCastedByTag: TagForNotifPayloadInput!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForNotifPayloadInput!
+}
+
+type PurchaseOrderToSupplyBroadcastPayload {
+  broadcastedByTag: TagForNotifPayload!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForNotifPayload!
+}

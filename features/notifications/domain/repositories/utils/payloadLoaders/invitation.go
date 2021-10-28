@@ -1,4 +1,4 @@
-package notificationdomainrepositoryutilityinterfaces
+package notificationdomainrepositoryloaderutilityinterfaces
 
 import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
