@@ -1,0 +1,9 @@
+input TagForNotifPayloadInput {
+  _id: ObjectID!
+  name: String!
+}
+
+type TagForNotifPayload {
+  _id: ObjectID!
+  name: String!
+}

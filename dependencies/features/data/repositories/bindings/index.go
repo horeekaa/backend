@@ -15,6 +15,7 @@ import (
 	moudomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mous/utils"
 	notificationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications"
 	notificationdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils"
+	notificationdomainrepositoryloaderutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils/payloadLoaders"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
 	productvariantdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/productVariants"
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
@@ -107,7 +108,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
 
-		&notificationdomainrepositoryutilitydependencies.InvitationPayloadLoaderDependency{},
+		&notificationdomainrepositoryloaderutilitydependencies.InvitationPayloadLoaderDependency{},
+		&notificationdomainrepositoryutilitydependencies.MasterPayloadLoaderDependency{},
 		&notificationdomainrepositoryutilitydependencies.NotificationLocalizationBuilderDependency{},
 		&notificationdomainrepositorydependencies.CreateNotificationDependency{},
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},

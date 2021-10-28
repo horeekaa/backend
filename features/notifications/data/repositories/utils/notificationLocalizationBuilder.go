@@ -56,6 +56,19 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			"organizations.invitationRequest.messages.invitation_request_notification_body",
 		)
 		break
+
+	case model.NotificationCategoryPurchaseOrderSupplyBroadcast:
+		titleText = localizer.Get(
+			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"tagName": input.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadcastedByTag,
+			},
+		)
+		bodyText = localizer.Get(
+			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_body",
+		)
+		break
+
 	}
 
 	(*output).Message = &model.NotificationMessage{

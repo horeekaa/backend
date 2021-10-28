@@ -1,0 +1,17 @@
+input ProductVariantForNotifPayloadInput {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  product: ProductForNotifPayloadInput
+}
+
+type ProductVariantForNotifPayload {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  product: ProductForNotifPayload
+}
