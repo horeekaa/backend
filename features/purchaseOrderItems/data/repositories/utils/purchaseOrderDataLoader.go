@@ -10,6 +10,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
+	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -18,6 +19,7 @@ type purchaseOrderItemLoader struct {
 	mouItemDataSource          databasemouitemdatasourceinterfaces.MouItemDataSource
 	productVariantDataSource   databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
+	tagDataSource              databasetagdatasourceinterfaces.TagDataSource
 	taggingDataSource          databasetaggingdatasourceinterfaces.TaggingDataSource
 }
 
@@ -26,6 +28,7 @@ func NewPurchaseOrderItemLoader(
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 ) (purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader, error) {
 	return &purchaseOrderItemLoader{
@@ -33,6 +36,7 @@ func NewPurchaseOrderItemLoader(
 		mouItemDataSource,
 		productVariantDataSource,
 		productDataSource,
+		tagDataSource,
 		taggingDataSource,
 	}, nil
 }
@@ -147,6 +151,13 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 
 					jsonTemp, _ := json.Marshal(loadedTagging)
 					json.Unmarshal(jsonTemp, &productVariant.Product.Taggings[i])
+
+					loadedTag, err := purcOrderItemLoader.tagDataSource.GetMongoDataSource().FindByID(
+						productVariant.Product.Taggings[i].Tag.ID,
+						session,
+					)
+					jsonTemp, _ = json.Marshal(loadedTag)
+					json.Unmarshal(jsonTemp, &productVariant.Product.Taggings[i].Tag)
 				}
 				prodTaggingsLoadedChan <- true
 			}()

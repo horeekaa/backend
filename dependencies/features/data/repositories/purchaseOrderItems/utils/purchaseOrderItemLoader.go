@@ -9,6 +9,7 @@ import (
 	purchaseorderitemdomainrepositoryutilities "github.com/horeekaa/backend/features/purchaseOrderItems/data/repositories/utils"
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
+	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 )
 
 type PurchaseOrderItemLoaderDependency struct{}
@@ -20,6 +21,7 @@ func (_ *PurchaseOrderItemLoaderDependency) Bind() {
 			mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 			productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 		) purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader {
 			purchaseOrderItemLoader, _ := purchaseorderitemdomainrepositoryutilities.NewPurchaseOrderItemLoader(
@@ -27,6 +29,7 @@ func (_ *PurchaseOrderItemLoaderDependency) Bind() {
 				mouItemDataSource,
 				productVariantDataSource,
 				productDataSource,
+				tagDataSource,
 				taggingDataSource,
 			)
 			return purchaseOrderItemLoader
