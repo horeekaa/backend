@@ -3,7 +3,7 @@ enum NotificationCategory {
   ORG_INVITATION_ACCEPTED
   ORG_APPROVAL
 
-  NEW_PURCHASE_ORDER
+  PURCHASE_ORDER_SUPPLY_BROADCAST
 }
 
 type NotificationMessage {
@@ -14,11 +14,13 @@ type NotificationMessage {
 input PayloadOptionsInput {
   invitationRequestPayload: InvitationRequestPayloadInput
   invitationAcceptedPayload: InvitationAcceptedPayloadInput
+  purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayloadInput
 }
 
 type PayloadOptions {
   invitationRequestPayload: InvitationRequestPayload
   invitationAcceptedPayload: InvitationAcceptedPayload
+  purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayload
 }
 
 input InternalCreateNotification {

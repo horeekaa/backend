@@ -1,0 +1,11 @@
+input ProductForNotifPayloadInput {
+  _id: ObjectID!
+  name: String!
+  description: String
+}
+
+type ProductForNotifPayload {
+  _id: ObjectID!
+  name: String!
+  description: String
+}
