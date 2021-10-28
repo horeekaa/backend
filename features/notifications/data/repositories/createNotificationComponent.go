@@ -89,12 +89,16 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 		)
 	}
 
+	payloadJson, _ := json.Marshal(notificationToCreate.PayloadOptions)
 	_, err = createNotifTrx.firebaseMessaging.SendMulticastMessage(
 		context.Background(),
 		&firebasemessagingcoretypes.SentMulticastMessage{
 			Notification: &messaging.Notification{
 				Title: notificationToOutput.Message.Title,
 				Body:  notificationToOutput.Message.Body,
+			},
+			Data: map[string]string{
+				"payloadOptions": string(payloadJson),
 			},
 			Tokens: recipientAccount.DeviceTokens,
 		},
