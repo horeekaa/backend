@@ -3,6 +3,7 @@ input PurchaseOrderAccessesInput {
   purchaseOrderUpdate: Boolean
   purchaseOrderReadAll: Boolean
   purchaseOrderApproval: Boolean
+  purchaseOrderReadOwned: Boolean
 }
 
 type PurchaseOrderAccesses {
@@ -10,4 +11,5 @@ type PurchaseOrderAccesses {
   purchaseOrderUpdate: Boolean
   purchaseOrderReadAll: Boolean
   purchaseOrderApproval: Boolean
+  purchaseOrderReadOwned: Boolean
 }
