@@ -56,7 +56,8 @@ func (createPOTSRepo *createPurchaseOrderToSupplyRepository) TransactionBody(
 func (createPOTSRepo *createPurchaseOrderToSupplyRepository) RunTransaction() ([]*model.PurchaseOrderToSupply, error) {
 	purchaseOrders, err := createPOTSRepo.purchaseOrderDataSource.GetMongoDataSource().Find(
 		map[string]interface{}{
-			"status": model.PurchaseOrderStatusConfirmed,
+			"status":         model.PurchaseOrderStatusOpen,
+			"proposalStatus": model.EntityProposalStatusApproved,
 		},
 		&mongodbcoretypes.PaginationOptions{},
 		nil,
