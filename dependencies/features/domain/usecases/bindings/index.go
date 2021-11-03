@@ -94,6 +94,7 @@ func (_ *UsecasesDependency) Bind() {
 
 		&purchaseordertosupplypresentationusecasedependencies.CreatePurchaseOrderToSupplyUsecaseDependency{},
 		&purchaseordertosupplypresentationusecasedependencies.GetAllPurchaseOrderToSupplyUsecaseDependency{},
+		&purchaseordertosupplypresentationusecasedependencies.GetPurchaseOrderToSupplyUsecaseDependency{},
 		&purchaseordertosupplypresentationusecasedependencies.ProcessPurchaseOrderToSupplyUsecaseDependency{},
 	}
 
