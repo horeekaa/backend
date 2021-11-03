@@ -3,6 +3,7 @@ package purchaseordertosupplydomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
+	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
@@ -17,12 +18,14 @@ type ProcessPurchaseOrderToSupplyDependency struct{}
 func (_ *ProcessPurchaseOrderToSupplyDependency) Bind() {
 	container.Singleton(
 		func(
+			addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 		) purchaseordertosupplydomainrepositoryinterfaces.ProcessPurchaseOrderToSupplyTransactionComponent {
 			proposeUpdatepurchaseOrderToSupplyComponent, _ := purchaseordertosupplydomainrepositories.NewProcessPurchaseOrderToSupplyTransactionComponent(
+				addressDataSource,
 				tagDataSource,
 				taggingDataSource,
 				memberAccessDataSource,

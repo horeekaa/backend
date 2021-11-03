@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	purchaseordertosupplydomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/domain/repositories"
@@ -15,6 +16,7 @@ import (
 )
 
 type processPurchaseOrderToSupplyTransactionComponent struct {
+	addressDataSource               databaseaddressdatasourceinterfaces.AddressDataSource
 	tagDataSource                   databasetagdatasourceinterfaces.TagDataSource
 	taggingDataSource               databasetaggingdatasourceinterfaces.TaggingDataSource
 	memberAccessDataSource          databasememberaccessdatasourceinterfaces.MemberAccessDataSource
@@ -22,12 +24,14 @@ type processPurchaseOrderToSupplyTransactionComponent struct {
 }
 
 func NewProcessPurchaseOrderToSupplyTransactionComponent(
+	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 ) (purchaseordertosupplydomainrepositoryinterfaces.ProcessPurchaseOrderToSupplyTransactionComponent, error) {
 	return &processPurchaseOrderToSupplyTransactionComponent{
+		addressDataSource:               addressDataSource,
 		tagDataSource:                   tagDataSource,
 		taggingDataSource:               taggingDataSource,
 		memberAccessDataSource:          memberAccessDataSource,
@@ -71,6 +75,23 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 	notifsToCreate := []*model.InternalCreateNotification{}
 
 	for _, tagging := range taggings {
+		address, err := processPOToSupplyTrx.addressDataSource.GetMongoDataSource().FindOne(
+			map[string]interface{}{
+				"object._id":             tagging.Organization.ID,
+				"addressRegionGroup._id": input.AddressRegionGroup.ID,
+			},
+			operationOption,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/processPurchaseOrderToSupplyTransactionComponent",
+				err,
+			)
+		}
+		if address == nil {
+			continue
+		}
+
 		loadedMemberAccessesChan := make(chan bool)
 		loadedTagChan := make(chan bool)
 		errChan := make(chan error)
@@ -114,7 +135,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 			loadedTagChan <- true
 		}()
 
-		for i := 0; i < 3; {
+		for i := 0; i < 2; {
 			select {
 			case err := <-errChan:
 				return nil, err
