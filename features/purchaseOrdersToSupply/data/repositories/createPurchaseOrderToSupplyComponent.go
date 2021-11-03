@@ -114,7 +114,20 @@ func (createPOToSupplyTrx *createPurchaseOrderToSupplyTransactionComponent) Tran
 				"_id": existingPurchaseOrderToSupply.ID,
 			},
 			&model.DatabaseUpdatePurchaseOrderToSupply{
-				TotalQuantity: func(i int) *int { return &i }(existingPurchaseOrderToSupply.TotalQuantity + existingPOItem.Quantity),
+				QuantityRequested: func(i int) *int { return &i }(existingPurchaseOrderToSupply.QuantityRequested + existingPOItem.Quantity),
+				PurchaseOrderItems: funk.Map(
+					append(
+						existingPurchaseOrderToSupply.PurchaseOrderItems,
+						&model.PurchaseOrderItem{
+							ID: input.ID,
+						},
+					),
+					func(m *model.PurchaseOrderItem) *model.ObjectIDOnly {
+						return &model.ObjectIDOnly{
+							ID: &m.ID,
+						}
+					},
+				).([]*model.ObjectIDOnly),
 			},
 			session,
 		)
@@ -133,6 +146,9 @@ func (createPOToSupplyTrx *createPurchaseOrderToSupplyTransactionComponent) Tran
 				Status: func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
 					return &m
 				}(model.PurchaseOrderItemStatusAwaitingFulfillment),
+				PurchaseOrderToSupply: &model.ObjectIDOnly{
+					ID: &updatedPOToSupply.ID,
+				},
 			},
 			session,
 		)

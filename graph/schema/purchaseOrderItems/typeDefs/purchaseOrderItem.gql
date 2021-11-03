@@ -93,6 +93,7 @@ input InternalUpdatePurchaseOrderItem {
   deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnly
 }
 
 input DatabaseUpdatePurchaseOrderItem {
@@ -107,6 +108,7 @@ input DatabaseUpdatePurchaseOrderItem {
   deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -122,6 +124,7 @@ input PurchaseOrderItemFilterFields {
   deliveryNote: StringFilterField
   status: StringFilterField
   purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnlyFilterField
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -138,6 +141,7 @@ type PurchaseOrderItem {
   deliveryNote: String
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
+  purchaseOrderToSupply: PurchaseOrderToSupply
   createdAt: Time!
   updatedAt: Time!
 }
