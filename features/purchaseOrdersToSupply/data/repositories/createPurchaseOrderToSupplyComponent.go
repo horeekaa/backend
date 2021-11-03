@@ -119,7 +119,7 @@ func (createPOToSupplyTrx *createPurchaseOrderToSupplyTransactionComponent) Tran
 					append(
 						existingPurchaseOrderToSupply.PurchaseOrderItems,
 						&model.PurchaseOrderItem{
-							ID: input.ID,
+							ID: poItem.ID,
 						},
 					),
 					func(m *model.PurchaseOrderItem) *model.ObjectIDOnly {
