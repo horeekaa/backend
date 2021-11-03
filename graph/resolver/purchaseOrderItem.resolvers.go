@@ -26,10 +26,14 @@ func (r *purchaseOrderItemResolver) PurchaseOrder(ctx context.Context, obj *mode
 func (r *purchaseOrderItemResolver) PurchaseOrderToSupply(ctx context.Context, obj *model.PurchaseOrderItem) (*model.PurchaseOrderToSupply, error) {
 	var getPurchaseOrderToSupplyUsecase purchaseordertosupplypresentationusecaseinterfaces.GetPurchaseOrderToSupplyUsecase
 	container.Make(&getPurchaseOrderToSupplyUsecase)
+
+	var filterFields *model.PurchaseOrderToSupplyFilterFields
+	if obj.PurchaseOrderToSupply != nil {
+		filterFields = &model.PurchaseOrderToSupplyFilterFields{}
+		filterFields.ID = &obj.PurchaseOrderToSupply.ID
+	}
 	return getPurchaseOrderToSupplyUsecase.Execute(
-		&model.PurchaseOrderToSupplyFilterFields{
-			ID: &obj.PurchaseOrderToSupply.ID,
-		},
+		filterFields,
 	)
 }
 
