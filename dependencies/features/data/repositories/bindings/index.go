@@ -105,6 +105,7 @@ func (_ *RepositoriesDependency) Bind() {
 
 		&purchaseordertosupplydomainrepositorydependencies.CreatePurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.GetAllPurchaseOrderToSupplyDependency{},
+		&purchaseordertosupplydomainrepositorydependencies.GetPurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.ProcessPurchaseOrderToSupplyDependency{},
 
 		&tagdomainrepositorydependencies.CreateTagDependency{},
