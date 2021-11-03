@@ -149,6 +149,12 @@ models:
     fields:
       purchaseOrder:
         resolver: true
+      purchaseOrderToSupply:
+        resolver: true
+  PurchaseOrderToSupply:
+    fields:
+      purchaseOrderItems:
+        resolver: true
   Tag:
     fields:
       submittingAccount:

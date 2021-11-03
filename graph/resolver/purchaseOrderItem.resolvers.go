@@ -8,6 +8,7 @@ import (
 
 	container "github.com/golobby/container/v2"
 	purchaseorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrders/presentation/usecases"
+	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -18,6 +19,16 @@ func (r *purchaseOrderItemResolver) PurchaseOrder(ctx context.Context, obj *mode
 	return getPurchaseOrderUsecase.Execute(
 		&model.PurchaseOrderFilterFields{
 			ID: &obj.PurchaseOrder.ID,
+		},
+	)
+}
+
+func (r *purchaseOrderItemResolver) PurchaseOrderToSupply(ctx context.Context, obj *model.PurchaseOrderItem) (*model.PurchaseOrderToSupply, error) {
+	var getPurchaseOrderToSupplyUsecase purchaseordertosupplypresentationusecaseinterfaces.GetPurchaseOrderToSupplyUsecase
+	container.Make(&getPurchaseOrderToSupplyUsecase)
+	return getPurchaseOrderToSupplyUsecase.Execute(
+		&model.PurchaseOrderToSupplyFilterFields{
+			ID: &obj.PurchaseOrderToSupply.ID,
 		},
 	)
 }
