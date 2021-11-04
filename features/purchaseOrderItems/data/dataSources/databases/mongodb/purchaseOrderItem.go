@@ -25,6 +25,10 @@ func NewPurchaseOrderItemDataSourceMongo(basicOperation mongodbcoreoperationinte
 	}, nil
 }
 
+func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.PurchaseOrderItem, error) {
 	var output model.PurchaseOrderItem
 	_, err := purcOrderItemDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)

@@ -10,11 +10,13 @@ import (
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type createPurchaseOrderItemTransactionComponent struct {
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
 	purchaseOrderItemLoader     purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
+	generatedObjectID           *primitive.ObjectID
 }
 
 func NewCreatePurchaseOrderItemTransactionComponent(
@@ -22,9 +24,23 @@ func NewCreatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemLoader purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader,
 ) (purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent, error) {
 	return &createPurchaseOrderItemTransactionComponent{
-		purchaseOrderItemDataSource,
-		purchaseOrderItemLoader,
+		purchaseOrderItemDataSource: purchaseOrderItemDataSource,
+		purchaseOrderItemLoader:     purchaseOrderItemLoader,
 	}, nil
+}
+
+func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
+	generatedObjectID := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+	createPurchaseOrderItemTrx.generatedObjectID = &generatedObjectID
+	return *createPurchaseOrderItemTrx.generatedObjectID
+}
+
+func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) GetCurrentObjectID() primitive.ObjectID {
+	if createPurchaseOrderItemTrx.generatedObjectID == nil {
+		generatedObjectID := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+		createPurchaseOrderItemTrx.generatedObjectID = &generatedObjectID
+	}
+	return *createPurchaseOrderItemTrx.generatedObjectID
 }
 
 func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) PreTransaction(
@@ -52,6 +68,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	purchaseOrderItemToCreate := &model.DatabaseCreatePurchaseOrderItem{}
 	jsonTemp, _ := json.Marshal(createPurchaseOrderItemInput)
 	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
+	purchaseOrderItemToCreate.ID = createPurchaseOrderItemTrx.GetCurrentObjectID()
 	purchaseOrderItemToCreate.UnitPrice = purchaseOrderItemToCreate.ProductVariant.RetailPrice
 	if purchaseOrderItemToCreate.MouItem != nil {
 		index := funk.IndexOf(
@@ -76,6 +93,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 			err,
 		)
 	}
+	createPurchaseOrderItemTrx.generatedObjectID = nil
 
 	return createdPurchaseOrderItem, nil
 }
