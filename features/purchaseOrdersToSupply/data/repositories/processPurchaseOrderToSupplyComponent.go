@@ -154,13 +154,13 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 				},
 				PayloadOptions: &model.PayloadOptionsInput{
 					PurchaseOrderToSupplyBroadcastPayload: &model.PurchaseOrderToSupplyBroadcastPayloadInput{
-						BroadCastedByTag:      &model.TagForNotifPayloadInput{},
+						BroadcastedByTag:      &model.TagForNotifPayloadInput{},
 						PurchaseOrderToSupply: &model.PurchaseOrderToSupplyForNotifPayloadInput{},
 					},
 				},
 			}
 			jsonTag, _ := json.Marshal(tag)
-			json.Unmarshal(jsonTag, &notifToCreate.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadCastedByTag)
+			json.Unmarshal(jsonTag, &notifToCreate.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadcastedByTag)
 
 			jsonPOToSupply, _ := json.Marshal(input)
 			json.Unmarshal(jsonPOToSupply, &notifToCreate.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.PurchaseOrderToSupply)
