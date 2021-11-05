@@ -7,6 +7,7 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	purchaseorderdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories/utils"
@@ -17,6 +18,7 @@ type approveUpdatePurchaseOrderTransactionComponent struct {
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	loggingDataSource       databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility     coreutilityinterfaces.MapProcessorUtility
+	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
 }
 
@@ -24,12 +26,14 @@ func NewApproveUpdatePurchaseOrderTransactionComponent(
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader,
 ) (purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent, error) {
 	return &approveUpdatePurchaseOrderTransactionComponent{
 		purchaseOrderDataSource: purchaseOrderDataSource,
 		loggingDataSource:       loggingDataSource,
 		mapProcessorUtility:     mapProcessorUtility,
+		mouDataSource:           mouDataSource,
 		purchaseOrderDataLoader: purchaseOrderDataLoader,
 	}, nil
 }
@@ -121,6 +125,40 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 		if *updatePurchaseOrder.ProposalStatus == model.EntityProposalStatusApproved {
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrder.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrder)
+		}
+		if *updatePurchaseOrder.ProposalStatus == model.EntityProposalStatusRejected {
+			if existingPurchaseOrder.Mou != nil {
+				mouId := existingPurchaseOrder.Mou.ID
+				if updatePurchaseOrder.Mou != nil {
+					mouId = updatePurchaseOrder.Mou.ID
+				}
+				existingMou, err := approvePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
+					mouId,
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrder",
+						err,
+					)
+				}
+				existingMou.RemainingCreditLimit += existingPurchaseOrder.FinalSalesAmount
+				_, err = approvePurchaseOrderTrx.mouDataSource.GetMongoDataSource().Update(
+					map[string]interface{}{
+						"_id": mouId,
+					},
+					&model.DatabaseUpdateMou{
+						RemainingCreditLimit: &existingMou.RemainingCreditLimit,
+					},
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrder",
+						err,
+					)
+				}
+			}
 		}
 	}
 
