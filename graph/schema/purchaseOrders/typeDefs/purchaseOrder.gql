@@ -52,7 +52,7 @@ input DatabaseCreatePurchaseOrder {
   paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus
-  paymentDueDate: Time!
+  paymentDueDate: Time
   organization: OrganizationForPurchaseOrderInput
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -167,7 +167,7 @@ type PurchaseOrder {
   paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus!
-  paymentDueDate: Time!
+  paymentDueDate: Time
   organization: OrganizationForPurchaseOrder!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
