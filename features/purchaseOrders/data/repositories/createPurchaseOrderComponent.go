@@ -95,6 +95,9 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
 
+	purchaseOrderToCreate.Organization = &model.OrganizationForPurchaseOrderInput{
+		ID: input.MemberAccess.Organization.ID,
+	}
 	_, err := createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
 		session,
 		purchaseOrderToCreate.Mou,
