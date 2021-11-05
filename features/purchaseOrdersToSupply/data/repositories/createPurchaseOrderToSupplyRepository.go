@@ -60,7 +60,7 @@ func (createPOTSRepo *createPurchaseOrderToSupplyRepository) RunTransaction() ([
 			"proposalStatus": model.EntityProposalStatusApproved,
 		},
 		&mongodbcoretypes.PaginationOptions{},
-		nil,
+		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

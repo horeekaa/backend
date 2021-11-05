@@ -77,7 +77,7 @@ func (processPOTSRepo *processPurchaseOrderToSupplyRepository) RunTransaction() 
 			"status": model.PurchaseOrderToSupplyStatusCummulating,
 		},
 		&mongodbcoretypes.PaginationOptions{},
-		nil,
+		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return false, horeekaacoreexceptiontofailure.ConvertException(
