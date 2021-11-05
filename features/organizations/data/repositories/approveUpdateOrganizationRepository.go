@@ -78,7 +78,7 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 			jsonTemp, _ := json.Marshal(map[string]interface{}{
 				"IDs": funk.Map(
 					existingOrganization.ProposedChanges.Taggings,
-					func(_, tagging *model.Tagging) interface{} {
+					func(tagging *model.Tagging) interface{} {
 						return tagging.ID
 					},
 				),
