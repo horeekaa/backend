@@ -108,6 +108,9 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 	jsonTemp, _ := json.Marshal(validatedInput.CreatePurchaseOrder)
 	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
 
+	jsonTemp, _ = json.Marshal(accMemberAccess)
+	json.Unmarshal(jsonTemp, &purchaseOrderToCreate.MemberAccess)
+
 	purchaseOrderToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdPurchaseOrder, err := createPurchaseOrderUcase.createPurchaseOrderRepo.RunTransaction(
 		purchaseOrderToCreate,
