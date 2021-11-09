@@ -61,7 +61,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		titleText = localizer.Get(
 			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"tagName": input.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadcastedByTag,
+				"tagName": input.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadcastedByTag.Name,
 			},
 		)
 		bodyText = localizer.Get(

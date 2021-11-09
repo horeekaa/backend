@@ -6,6 +6,18 @@ enum StringOperation {
   NOT_EQUAL
 }
 
+enum ObjectIDOperation {
+  EQUAL
+  NOT_EQUAL
+  IN
+  NOT_IN
+  """
+  HAS_VALUES is strictly used for query of field of type **Array**
+  and expect `values` field to be filled
+  """
+  HAS_VALUES
+}
+
 enum NumericOperation {
   LESS_THAN
   LESS_THAN_OR_EQUAL

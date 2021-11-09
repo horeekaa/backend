@@ -1,0 +1,147 @@
+enum PurchaseOrderItemStatus {
+  PENDING_CONFIRMATION
+  AWAITING_FULFILLMENT
+  PARTIALLY_FULFILLED
+  FULLFILLED
+  CANCELLED
+}
+
+enum ExpectedDeliverySchedule {
+  """
+  4AM to 6AM
+  """
+  DAWN
+  """
+  6.01AM to 8AM
+  """
+  MORNING
+  """
+  10.01AM to 12PM
+  """
+  NOON
+  """
+  12.01PM to 2PM
+  """
+  AFTERNOON
+}
+
+input CreatePurchaseOrderItem {
+  quantity: Int!
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+}
+
+input InternalCreatePurchaseOrderItem {
+  _id: ObjectID
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int
+  notes: String
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  purchaseOrder: ObjectIDOnly
+}
+
+input DatabaseCreatePurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  notes: String
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly!
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePurchaseOrderItem {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
+  _id: ObjectID
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+}
+
+input InternalUpdatePurchaseOrderItem {
+  _id: ObjectID
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnly
+}
+
+input DatabaseUpdatePurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int
+  unitPrice: Int
+  subTotal: Int
+  notes: String
+  mouItem: MouItemForPurchaseOrderItemInput
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  status: PurchaseOrderItemStatus
+  purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnly
+  updatedAt: Time
+}
+
+input PurchaseOrderItemFilterFields {
+  _id: ObjectID
+  quantity: IntFilterField
+  unitPrice: IntFilterField
+  subTotal: IntFilterField
+  notes: StringFilterField
+  mouItem: ObjectIDOnly
+  productVariant: ObjectIDOnly
+  expectedDeliverySchedule: StringFilterField
+  deliveryNote: StringFilterField
+  status: StringFilterField
+  purchaseOrder: ObjectIDOnly
+  purchaseOrderToSupply: ObjectIDOnlyFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrderItem {
+  _id: ObjectID!
+  quantity: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  notes: String
+  mouItem: MouItemForPurchaseOrderItem
+  productVariant: ProductVariantForPurchaseOrderItem!
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  deliveryNote: String
+  status: PurchaseOrderItemStatus!
+  purchaseOrder: PurchaseOrder
+  purchaseOrderToSupply: PurchaseOrderToSupply
+  createdAt: Time!
+  updatedAt: Time!
+}

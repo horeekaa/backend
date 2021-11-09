@@ -1,0 +1,8 @@
+extend type Mutation {
+    createPurchaseOrder(createPurchaseOrder: CreatePurchaseOrder!): [PurchaseOrder]!
+    updatePurchaseOrder(updatePurchaseOrder: UpdatePurchaseOrder!): PurchaseOrder
+}
+
+extend type Query {
+    purchaseOrders(filterFields: PurchaseOrderFilterFields!, paginationOpt: PaginationOptionInput): [PurchaseOrder]!
+}

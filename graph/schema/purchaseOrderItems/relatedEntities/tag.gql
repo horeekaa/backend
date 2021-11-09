@@ -1,0 +1,9 @@
+input TagForPurchaseOrderItemInput {
+  _id: ObjectID!
+  name: String!
+}
+
+type TagForPurchaseOrderItem {
+  _id: ObjectID!
+  name: String!
+}

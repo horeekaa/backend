@@ -1,0 +1,180 @@
+enum PurchaseOrderStatus {
+  OPEN
+  PROCESSED
+  IN_DELIVERY
+  CANCELLED
+  DONE
+}
+
+enum PurchaseOrderType {
+  MOU_BASED
+  RETAIL
+}
+
+input CreatePurchaseOrder {
+  mouItems: [CreatePurchaseOrderItem]
+  retailItems: [CreatePurchaseOrderItem]
+  proposalStatus: EntityProposalStatus
+  address: ObjectIDOnly!
+}
+
+input InternalCreatePurchaseOrder {
+  mouItems: [InternalCreatePurchaseOrderItem]
+  retailItems: [InternalCreatePurchaseOrderItem]
+  items: [InternalCreatePurchaseOrderItem]
+  address: AddressForPurchaseOrderInput!
+  mou: MouForPurchaseOrderInput!
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus
+  paymentDueDate: Time
+  memberAccess: InternalCreateMemberAccess
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdatePurchaseOrder
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreatePurchaseOrder {
+  _id: ObjectID!
+  publicId: String!
+  items: [ObjectIDOnly]
+  address: AddressForPurchaseOrderInput!
+  mou: MouForPurchaseOrderInput!
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  paidAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus
+  paymentDueDate: Time
+  organization: OrganizationForPurchaseOrderInput
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePurchaseOrder {
+  _id: ObjectID!
+  items: [UpdatePurchaseOrderItem]
+  mou: ObjectIDOnly
+  address: ObjectIDOnly
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  status: PurchaseOrderStatus
+  paymentDueDate: Time
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdatePurchaseOrder {
+  _id: ObjectID!
+  items: [InternalUpdatePurchaseOrderItem]
+  mou: MouForPurchaseOrderInput
+  address: AddressForPurchaseOrderInput
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  type: PurchaseOrderType
+  status: PurchaseOrderStatus
+  paymentDueDate: Time
+  memberAccess: InternalUpdateMemberAccess
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: InternalUpdatePurchaseOrder
+}
+
+input DatabaseUpdatePurchaseOrder {
+  _id: ObjectID!
+  items: [ObjectIDOnly]
+  mou: MouForPurchaseOrderInput
+  address: AddressForPurchaseOrderInput
+  total: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  finalSalesAmount: Int
+  type: PurchaseOrderType
+  status: PurchaseOrderStatus
+  paymentDueDate: Time
+  organization: OrganizationForPurchaseOrderInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrder
+  updatedAt: Time
+}
+
+input PurchaseOrderFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  items: [ObjectIDOnly]
+  mou: MouFilterFields
+  address: AddressFilterFields
+  total: IntFilterField
+  discountInPercent: IntFilterField
+  totalDiscounted: IntFilterField
+  finalSalesAmount: IntFilterField
+  paidAmount: IntFilterField
+  type: StringFilterField
+  status: StringFilterField
+  paymentDueDate: TimeFilterField
+  organization: OrganizationFilterFields
+  proposalStatus: StringFilterField
+  proposalStatusReason: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: PurchaseOrderFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrder {
+  _id: ObjectID!
+  publicId: String!
+  items: [PurchaseOrderItem]
+  mou: MouForPurchaseOrder!
+  address: AddressForPurchaseOrder
+  total: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  finalSalesAmount: Int!
+  paidAmount: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus!
+  paymentDueDate: Time
+  organization: OrganizationForPurchaseOrder!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: PurchaseOrder
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

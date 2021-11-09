@@ -1,0 +1,15 @@
+input PurchaseOrderAccessesInput {
+  purchaseOrderCreate: Boolean
+  purchaseOrderUpdate: Boolean
+  purchaseOrderReadAll: Boolean
+  purchaseOrderApproval: Boolean
+  purchaseOrderReadOwned: Boolean
+}
+
+type PurchaseOrderAccesses {
+  purchaseOrderCreate: Boolean
+  purchaseOrderUpdate: Boolean
+  purchaseOrderReadAll: Boolean
+  purchaseOrderApproval: Boolean
+  purchaseOrderReadOwned: Boolean
+}

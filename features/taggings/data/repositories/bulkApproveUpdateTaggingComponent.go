@@ -105,7 +105,9 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 
 	jsonTemp, _ := json.Marshal(input)
 	for _, id := range input.IDs {
-		taggingToUpdate := &model.DatabaseUpdateTagging{}
+		taggingToUpdate := &model.DatabaseUpdateTagging{
+			ID: *id,
+		}
 		json.Unmarshal(jsonTemp, taggingToUpdate)
 		existingTagging, err := bulkApproveUpdateTaggingComp.taggingDataSource.GetMongoDataSource().FindByID(
 			*id,
@@ -162,9 +164,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 
 		taggingToUpdate.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-		fieldsToUpdateTagging := &model.DatabaseUpdateTagging{
-			ID: *id,
-		}
+		fieldsToUpdateTagging := &model.DatabaseUpdateTagging{}
 		jsonExisting, _ := json.Marshal(existingTagging.ProposedChanges)
 		json.Unmarshal(jsonExisting, &fieldsToUpdateTagging.ProposedChanges)
 

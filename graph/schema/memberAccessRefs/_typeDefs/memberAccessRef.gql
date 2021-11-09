@@ -13,6 +13,7 @@ input MemberAccessRefOptionsInput {
   tagAccesses: TagAccessesInput
   bulkTaggingAccesses: BulkTaggingAccessesInput
   mouAccesses: MouAccessesInput
+  purchaseOrderAccesses: PurchaseOrderAccessesInput
 }
 
 type MemberAccessRefOptions {
@@ -25,6 +26,7 @@ type MemberAccessRefOptions {
   tagAccesses: TagAccesses
   bulkTaggingAccesses: BulkTaggingAccesses
   mouAccesses: MouAccesses
+  purchaseOrderAccesses: PurchaseOrderAccesses
 }
 
 input CreateMemberAccessRef {

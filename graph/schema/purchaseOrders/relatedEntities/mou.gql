@@ -1,0 +1,35 @@
+input MouForPurchaseOrderInput {
+  _id: ObjectID!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  remainingCreditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput!
+  secondParty: PartyInput!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type MouForPurchaseOrder {
+  _id: ObjectID!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean
+  creditLimit: Int!
+  remainingCreditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: Party!
+  secondParty: Party!
+  createdAt: Time!
+  updatedAt: Time!
+}

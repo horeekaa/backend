@@ -1,0 +1,9 @@
+input TaggingForPurchaseOrderItemInput {
+  _id: ObjectID!
+  tag: TagForPurchaseOrderItemInput!
+}
+
+type TaggingForPurchaseOrderItem {
+  _id: ObjectID!
+  tag: TagForPurchaseOrderItem!
+}

@@ -1,0 +1,23 @@
+input ProductVariantForPurchaseOrderItemInput {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  photo: DescriptivePhotoForPurchaseOrderItemInput
+  product: ProductForPurchaseOrderItemInput
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type ProductVariantForPurchaseOrderItem {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  photo: DescriptivePhotoForPurchaseOrderItem
+  product: ProductForPurchaseOrderItem
+  createdAt: Time!
+  updatedAt: Time!
+}

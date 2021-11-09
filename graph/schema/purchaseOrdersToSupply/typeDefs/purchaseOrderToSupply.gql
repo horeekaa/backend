@@ -1,0 +1,102 @@
+enum PurchaseOrderToSupplyStatus {
+  CUMMULATING
+  PROCESSED
+}
+
+input CreatePurchaseOrderToSupply {
+  quantityRequested: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  tags: [TagForPurchaseOrderToSupplyInput]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
+}
+
+input InternalCreatePurchaseOrderToSupply {
+  quantityRequested: Int!
+  quantityFulfilled: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  tags: [TagForPurchaseOrderToSupplyInput]
+  purchaseOrderItems: [InternalCreatePurchaseOrderItem]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
+}
+
+input DatabaseCreatePurchaseOrderToSupply {
+  quantityRequested: Int!
+  quantityFulfilled: Int!
+  productVariant: ProductVariantForPurchaseOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  tags: [TagForPurchaseOrderToSupplyInput]
+  purchaseOrderItems: [ObjectIDOnly]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
+  status: PurchaseOrderToSupplyStatus
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input UpdatePurchaseOrderToSupply {
+  _id: ObjectID!
+  quantityRequested: Int
+  quantityFulfilled: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  tags: [TagForPurchaseOrderToSupplyInput]
+  purchaseOrderItems: [UpdatePurchaseOrderItem]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
+}
+
+input InternalUpdatePurchaseOrderToSupply {
+  _id: ObjectID!
+  quantityRequested: Int
+  quantityFulfilled: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  tags: [TagForPurchaseOrderToSupplyInput]
+  purchaseOrderItems: [InternalUpdatePurchaseOrderItem]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
+}
+
+input DatabaseUpdatePurchaseOrderToSupply {
+  _id: ObjectID!
+  quantityRequested: Int
+  quantityFulfilled: Int
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  tags: [TagForPurchaseOrderToSupplyInput]
+  purchaseOrderItems: [ObjectIDOnly]
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
+  status: PurchaseOrderToSupplyStatus
+  updatedAt: Time
+}
+
+input PurchaseOrderToSupplyFilterFields {
+  _id: ObjectID
+  quantityRequested: IntFilterField
+  quantityFulfilled: IntFilterField
+  productVariant: ProductVariantFilterFields
+  expectedDeliverySchedule: StringFilterField
+  tags: ObjectIDOnlyFilterField
+  purchaseOrderItems: ObjectIDOnlyFilterField
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
+  status: StringFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrderToSupply {
+  _id: ObjectID!
+  quantityRequested: Int!
+  quantityFulfilled: Int!
+  productVariant: ProductVariantForPurchaseOrderItem!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  tags: [TagForPurchaseOrderToSupply]!
+  purchaseOrderItems: [PurchaseOrderItem]!
+  addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
+  status: PurchaseOrderToSupplyStatus
+  createdAt: Time!
+  updatedAt: Time!
+}

@@ -1,0 +1,9 @@
+input TagForPurchaseOrderToSupplyInput {
+  _id: ObjectID!
+  name: String!
+}
+
+type TagForPurchaseOrderToSupply {
+  _id: ObjectID!
+  name: String!
+}

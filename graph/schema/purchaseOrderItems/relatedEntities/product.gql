@@ -1,0 +1,19 @@
+input ProductForPurchaseOrderItemInput {
+  _id: ObjectID!
+  name: String!
+  description: String
+  photos: [DescriptivePhotoForPurchaseOrderItemInput]
+  taggings: [TaggingForPurchaseOrderItemInput]
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type ProductForPurchaseOrderItem {
+  _id: ObjectID!
+  name: String!
+  description: String
+  photos: [DescriptivePhotoForPurchaseOrderItem]
+  taggings: [TaggingForPurchaseOrderItem]
+  createdAt: Time!
+  updatedAt: Time!
+}

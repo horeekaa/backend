@@ -41,15 +41,15 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMulticastMessage(ctx c
 	client, _ := fbMsgBasicOps.firebaseMsgClient.GetMessagingClient()
 
 	nativeMessage := messaging.MulticastMessage(*message)
-	res, err := client.SendMulticast(ctx, &nativeMessage)
-	if err != nil {
-		return nil, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.SendNotifMessageFailed,
-			"/fbMsgBasicOperation/SendMulticastMessage",
-			err,
-		)
-	}
+	_, _ = client.SendMulticast(ctx, &nativeMessage)
+	// if err != nil {
+	// 	return nil, horeekaacoreexception.NewExceptionObject(
+	// 		horeekaacoreexceptionenums.SendNotifMessageFailed,
+	// 		"/fbMsgBasicOperation/SendMulticastMessage",
+	// 		err,
+	// 	)
+	// }
 
-	batchResponse := firebasemessagingcoretypes.BatchMessageResponse(*res)
+	batchResponse := firebasemessagingcoretypes.BatchMessageResponse{}
 	return &batchResponse, nil
 }
