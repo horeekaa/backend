@@ -88,6 +88,8 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			err,
 		)
 	}
+	organizationToUpdateProposalStatus := *organizationToUpdate.ProposalStatus
+	organizationToUpdateSubmittingAccount := *organizationToUpdate.SubmittingAccount
 
 	if organizationToUpdate.ProfilePhotos != nil {
 		savedPhotos := existingOrganization.ProfilePhotos
@@ -221,8 +223,8 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 				})
 				json.Unmarshal(jsonTemp, bulkUpdateTagging)
 
-				bulkUpdateTagging.ProposalStatus = organizationToUpdate.ProposalStatus
-				bulkUpdateTagging.SubmittingAccount = organizationToUpdate.SubmittingAccount
+				bulkUpdateTagging.ProposalStatus = &organizationToUpdateProposalStatus
+				bulkUpdateTagging.SubmittingAccount = &organizationToUpdateSubmittingAccount
 
 				_, err := updateOrgRepo.bulkUpdateTaggingComponent.TransactionBody(
 					operationOption,
@@ -243,8 +245,8 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			taggingToCreate.Organizations = []*model.ObjectIDOnly{
 				{ID: &existingOrganization.ID},
 			}
-			taggingToCreate.ProposalStatus = organizationToUpdate.ProposalStatus
-			taggingToCreate.SubmittingAccount = organizationToUpdate.SubmittingAccount
+			taggingToCreate.ProposalStatus = &organizationToUpdateProposalStatus
+			taggingToCreate.SubmittingAccount = &organizationToUpdateSubmittingAccount
 
 			savedTagging, err := updateOrgRepo.bulkCreateTaggingComponent.TransactionBody(
 				operationOption,
