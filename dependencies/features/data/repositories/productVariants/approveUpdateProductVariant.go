@@ -2,6 +2,7 @@ package productvariantdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
@@ -9,21 +10,23 @@ import (
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 )
 
-type CreateProductVariantDependency struct{}
+type ApproveUpdateProductVariantDependency struct{}
 
-func (_ *CreateProductVariantDependency) Bind() {
+func (_ *ApproveUpdateProductVariantDependency) Bind() {
 	container.Singleton(
 		func(
 			productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-		) productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent {
-			createProductVariantComponent, _ := productvariantdomainrepositories.NewCreateProductVariantTransactionComponent(
+			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+		) productvariantdomainrepositoryinterfaces.ApproveUpdateProductVariantTransactionComponent {
+			approveUpdateProductVariantComponent, _ := productvariantdomainrepositories.NewApproveUpdateProductVariantTransactionComponent(
 				productVariantDataSource,
 				loggingDataSource,
-				createDescriptivePhotoComponent,
+				updateDescriptivePhotoComponent,
+				mapProcessorUtility,
 			)
-			return createProductVariantComponent
+			return approveUpdateProductVariantComponent
 		},
 	)
 }

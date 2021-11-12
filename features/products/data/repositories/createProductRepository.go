@@ -64,6 +64,9 @@ func (createProdRepo *createProductRepository) TransactionBody(
 ) (interface{}, error) {
 	productToCreate := input.(*model.InternalCreateProduct)
 	generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
+
+	productToCreateProposalStatus := *productToCreate.ProposalStatus
+	productToCreateSubmittingAccount := *productToCreate.SubmittingAccount
 	if productToCreate.Photos != nil {
 		savedPhotos := []*model.InternalCreateDescriptivePhoto{}
 		for _, photo := range productToCreate.Photos {
@@ -92,6 +95,8 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			variant.Product = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			variant.ProposalStatus = &productToCreateProposalStatus
+			variant.SubmittingAccount = &productToCreateSubmittingAccount
 			createdVariantOutput, err := createProdRepo.createProductVariantComponent.TransactionBody(
 				operationOption,
 				variant,
@@ -113,8 +118,8 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			tagging.Products = []*model.ObjectIDOnly{
 				{ID: &generatedObjectID},
 			}
-			tagging.ProposalStatus = productToCreate.ProposalStatus
-			tagging.SubmittingAccount = productToCreate.SubmittingAccount
+			tagging.ProposalStatus = &productToCreateProposalStatus
+			tagging.SubmittingAccount = &productToCreateSubmittingAccount
 			tagging.IgnoreTaggedDocumentCheck = true
 
 			createdTaggingOutput, err := createProdRepo.bulkCreateTaggingComponent.TransactionBody(

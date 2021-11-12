@@ -5,7 +5,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateProductVariantTransactionComponent interface {
+type ProposeUpdateProductVariantTransactionComponent interface {
 	PreTransaction(
 		updateProductVariantInput *model.InternalUpdateProductVariant,
 	) (*model.InternalUpdateProductVariant, error)

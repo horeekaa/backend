@@ -138,6 +138,10 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValuesWhe
 			nil,
 		)
 	}
+
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 	input.UpdatedAt = &currentTime
 
 	return true, nil
@@ -151,6 +155,9 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValuesWhe
 
 	if input.IsActive == nil {
 		input.IsActive = &defaultIsActive
+	}
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
 	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime

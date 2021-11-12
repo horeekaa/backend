@@ -82,7 +82,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
 
 		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
-		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.ApproveUpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.ProposeUpdateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
 
 		&productdomainrepositorydependencies.CreateProductDependency{},

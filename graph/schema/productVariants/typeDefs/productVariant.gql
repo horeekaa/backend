@@ -26,6 +26,7 @@ input CreateProductVariant {
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: CreateDescriptivePhoto
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateProductVariant {
@@ -41,6 +42,11 @@ input InternalCreateProductVariant {
   isActive: Boolean
   photo: InternalCreateDescriptivePhoto
   product: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateProductVariant
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateProductVariant {
@@ -56,6 +62,11 @@ input DatabaseCreateProductVariant {
   isActive: Boolean
   photo: ObjectIDOnly
   product: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateProductVariant
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -76,6 +87,16 @@ input UpdateProductVariant {
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: UpdateDescriptivePhoto
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateProductVariant {
@@ -90,6 +111,12 @@ input InternalUpdateProductVariant {
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: InternalUpdateDescriptivePhoto
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateProductVariant
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseUpdateProductVariant {
@@ -104,6 +131,12 @@ input DatabaseUpdateProductVariant {
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateProductVariant
+  recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -119,6 +152,11 @@ input ProductVariantFilterFields {
   soldInUnit: StringFilterField
   isActive: BooleanFilterField
   product: ObjectIDOnly
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: ProductVariantFilterFields
+  recentLog: ObjectIDOnly
 }
 
 type ProductVariant {
@@ -134,6 +172,12 @@ type ProductVariant {
   isActive: Boolean!
   photo: DescriptivePhoto
   product: Product
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: ProductVariant
+  recentLog: Logging!
   createdAt: Time
   updatedAt: Time
 }

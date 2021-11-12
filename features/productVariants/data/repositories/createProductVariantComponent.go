@@ -6,6 +6,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
+	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
 	productvariantdomainrepositoryinterfaces "github.com/horeekaa/backend/features/productVariants/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -14,6 +15,7 @@ import (
 
 type createProductVariantTransactionComponent struct {
 	productVariantDataSource        databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
+	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	generatedObjectID               *primitive.ObjectID
 }
@@ -34,10 +36,12 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) GetCurrent
 
 func NewCreateProductVariantTransactionComponent(
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
+	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 ) (productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent, error) {
 	return &createProductVariantTransactionComponent{
 		productVariantDataSource:        productVariantDataSource,
+		loggingDataSource:               loggingDataSource,
 		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
 	}, nil
 }
@@ -52,15 +56,45 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProductVariant,
 ) (*model.ProductVariant, error) {
+	newDocumentJson, _ := json.Marshal(*input)
+	generatedObjectID := createProdVariantTrx.GetCurrentObjectID()
+	loggingOutput, err := createProdVariantTrx.loggingDataSource.GetMongoDataSource().Create(
+		&model.CreateLogging{
+			Collection: "ProductVariant",
+			Document: &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			},
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			CreatedByAccount: &model.ObjectIDOnly{
+				ID: input.SubmittingAccount.ID,
+			},
+			Activity:       model.LoggedActivityCreate,
+			ProposalStatus: *input.ProposalStatus,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createProductVariant",
+			err,
+		)
+	}
+
+	input.ID = &generatedObjectID
+	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *input.ProposalStatus == model.EntityProposalStatusApproved {
+		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	}
+
 	variantToCreate := &model.DatabaseCreateProductVariant{}
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, variantToCreate)
-	variantToCreate.ID = createProdVariantTrx.GetCurrentObjectID()
+	json.Unmarshal(jsonTemp, &variantToCreate.ProposedChanges)
 
 	if input.Photo != nil {
 		input.Photo.Category = model.DescriptivePhotoCategoryProductVariant
 		input.Photo.Object = &model.ObjectIDOnly{
-			ID: &variantToCreate.ID,
+			ID: input.ID,
 		}
 		descriptivePhoto, err := createProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
 			&mongodbcoretypes.OperationOptions{},
