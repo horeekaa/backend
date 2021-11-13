@@ -15,26 +15,26 @@ import (
 )
 
 type proposeUpdateProductVariantTransactionComponent struct {
-	productVariantDataSource        databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
-	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
-	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
-	mapProcessorUtility             coreutilityinterfaces.MapProcessorUtility
+	productVariantDataSource               databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewProposeUpdateProductVariantTransactionComponent(
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (productvariantdomainrepositoryinterfaces.ProposeUpdateProductVariantTransactionComponent, error) {
 	return &proposeUpdateProductVariantTransactionComponent{
-		productVariantDataSource:        productVariantDataSource,
-		loggingDataSource:               loggingDataSource,
-		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
-		updateDescriptivePhotoComponent: updateDescriptivePhotoComponent,
-		mapProcessorUtility:             mapProcessorUtility,
+		productVariantDataSource:               productVariantDataSource,
+		loggingDataSource:                      loggingDataSource,
+		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -61,7 +61,13 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 
 	if updateProductVariant.Photo != nil {
 		if updateProductVariant.Photo.ID != nil {
-			_, err := updateProdVariantTrx.updateDescriptivePhotoComponent.TransactionBody(
+			updateProductVariant.Photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateProductVariant.ProposalStatus)
+			updateProductVariant.Photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateProductVariant.SubmittingAccount)
+			_, err := updateProdVariantTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
 				session,
 				updateProductVariant.Photo,
 			)
@@ -79,6 +85,12 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingProductVariant.ID,
 			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateProductVariant.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateProductVariant.SubmittingAccount)
 			if funk.Get(updateProductVariant, "Photo.Photo") != nil {
 				photoToCreate.Photo.File = updateProductVariant.Photo.Photo.File
 			}
@@ -94,7 +106,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 			}
 
 			if existingProductVariant.Photo != nil {
-				_, err = updateProdVariantTrx.updateDescriptivePhotoComponent.TransactionBody(
+				_, err = updateProdVariantTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
 					session,
 					&model.InternalUpdateDescriptivePhoto{
 						ID:       &existingProductVariant.Photo.ID,

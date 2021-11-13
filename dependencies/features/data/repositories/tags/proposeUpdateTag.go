@@ -33,7 +33,7 @@ func (_ *ProposeUpdateTagDependency) Bind() {
 		func(
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			proposeUpdateTagComponent tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) tagdomainrepositoryinterfaces.ProposeUpdateTagRepository {

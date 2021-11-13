@@ -25,6 +25,10 @@ func NewDescriptivePhotoDataSourceMongo(basicOperation mongodbcoreoperationinter
 	}, nil
 }
 
+func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
 	var output model.DescriptivePhoto
 	_, err := descPhotoDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
@@ -130,6 +134,9 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValue
 			nil,
 		)
 	}
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 	input.UpdatedAt = &currentTime
 
 	return true, nil
@@ -141,6 +148,9 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValue
 	currentTime := time.Now()
 
 	input.IsActive = true
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
 

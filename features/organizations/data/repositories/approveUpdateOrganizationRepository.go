@@ -6,6 +6,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	organizationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/organizations/domain/repositories"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
@@ -16,6 +17,7 @@ import (
 type approveUpdateOrganizationRepository struct {
 	approveUpdateOrganizationTransactionComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent
 	organizationDataSource                        databaseorganizationdatasourceinterfaces.OrganizationDataSource
+	approveDescriptivePhotoComponent              descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	bulkApproveUpdateTaggingComponent             taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
@@ -23,12 +25,14 @@ type approveUpdateOrganizationRepository struct {
 func NewApproveUpdateOrganizationRepository(
 	approveUpdateOrganizationRepositoryTransactionComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent,
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
+	approveDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 	bulkApproveUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository, error) {
 	approveUpdateOrganizationRepo := &approveUpdateOrganizationRepository{
 		approveUpdateOrganizationRepositoryTransactionComponent,
 		organizationDataSource,
+		approveDescriptivePhotoComponent,
 		bulkApproveUpdateTaggingComponent,
 		mongoDBTransaction,
 	}
@@ -73,6 +77,31 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 	}
 
 	if existingOrganization.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
+		if existingOrganization.ProposedChanges.ProfilePhotos != nil {
+			for _, photo := range existingOrganization.ProposedChanges.ProfilePhotos {
+				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+					ID: &photo.ID,
+				}
+				updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*organizationToApprove.RecentApprovingAccount)
+				updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*organizationToApprove.ProposalStatus)
+
+				_, err := approveUpdateOrgRepo.approveDescriptivePhotoComponent.TransactionBody(
+					operationOption,
+					updateDescriptivePhoto,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/approveUpdateOrganizationRepository",
+						err,
+					)
+				}
+			}
+		}
+
 		if existingOrganization.ProposedChanges.Taggings != nil {
 			bulkUpdateTagging := &model.InternalBulkUpdateTagging{}
 			jsonTemp, _ := json.Marshal(map[string]interface{}{
@@ -85,10 +114,12 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 			})
 			json.Unmarshal(jsonTemp, bulkUpdateTagging)
 
-			bulkUpdateTagging.RecentApprovingAccount = &model.ObjectIDOnly{
-				ID: organizationToApprove.RecentApprovingAccount.ID,
-			}
-			bulkUpdateTagging.ProposalStatus = organizationToApprove.ProposalStatus
+			bulkUpdateTagging.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToApprove.RecentApprovingAccount)
+			bulkUpdateTagging.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToApprove.ProposalStatus)
 
 			_, err := approveUpdateOrgRepo.bulkApproveUpdateTaggingComponent.TransactionBody(
 				operationOption,

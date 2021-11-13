@@ -18,7 +18,7 @@ func (_ *ProposeUpdateProductVariantDependency) Bind() {
 			productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) productvariantdomainrepositoryinterfaces.ProposeUpdateProductVariantTransactionComponent {
 			updateProductVariantComponent, _ := productvariantdomainrepositories.NewProposeUpdateProductVariantTransactionComponent(

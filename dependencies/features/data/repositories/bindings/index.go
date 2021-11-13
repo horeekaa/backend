@@ -72,7 +72,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&taggingdomainrepositorydependencies.BulkApproveUpdateTaggingDependency{},
 
 		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
-		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.ProposeUpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.ApproveUpdateDescriptivePhotoDependency{},
 		&descriptivephotodomainrepositorydependencies.GetDescriptivePhotoDependency{},
 
 		&organizationdomainrepositorydependencies.CreateOrganizationDependency{},

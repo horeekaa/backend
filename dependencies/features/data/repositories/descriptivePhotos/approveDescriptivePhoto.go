@@ -3,27 +3,32 @@ package descriptivephotodomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	googlecloudstoragecoreoperationinterfaces "github.com/horeekaa/backend/core/storages/googleCloud/interfaces/operations"
+	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	descriptivephotodomainrepositories "github.com/horeekaa/backend/features/descriptivePhotos/data/repositories"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 )
 
-type CreateDescriptivePhotoDependency struct{}
+type ApproveUpdateDescriptivePhotoDependency struct{}
 
-func (_ *CreateDescriptivePhotoDependency) Bind() {
+func (_ *ApproveUpdateDescriptivePhotoDependency) Bind() {
 	container.Singleton(
 		func(
 			descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			gcsBasicImageStoring googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation,
-		) descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent {
-			createDescriptivePhotoComponent, _ := descriptivephotodomainrepositories.NewCreateDescriptivePhotoTransactionComponent(
+			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+		) descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent {
+			approveUpdateDescriptivePhotoComponent, _ := descriptivephotodomainrepositories.NewApproveUpdateDescriptivePhotoTransactionComponent(
 				descriptivePhotoDataSource,
 				loggingDataSource,
+				updateDescriptivePhotoComponent,
 				gcsBasicImageStoring,
+				mapProcessorUtility,
 			)
-			return createDescriptivePhotoComponent
+			return approveUpdateDescriptivePhotoComponent
 		},
 	)
 }

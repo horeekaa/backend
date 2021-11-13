@@ -56,6 +56,33 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProductVariant,
 ) (*model.ProductVariant, error) {
+	if input.Photo != nil {
+		input.Photo.Category = model.DescriptivePhotoCategoryProductVariant
+		input.Photo.Object = &model.ObjectIDOnly{
+			ID: input.ID,
+		}
+		input.Photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &s
+		}(*input.ProposalStatus)
+		input.Photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			return &m
+		}(*input.SubmittingAccount)
+		descriptivePhoto, err := createProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			input.Photo,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createProductVariant",
+				err,
+			)
+		}
+
+		input.Photo = &model.InternalCreateDescriptivePhoto{
+			ID: &descriptivePhoto.ID,
+		}
+	}
+
 	newDocumentJson, _ := json.Marshal(*input)
 	generatedObjectID := createProdVariantTrx.GetCurrentObjectID()
 	loggingOutput, err := createProdVariantTrx.loggingDataSource.GetMongoDataSource().Create(
@@ -90,27 +117,6 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, variantToCreate)
 	json.Unmarshal(jsonTemp, &variantToCreate.ProposedChanges)
-
-	if input.Photo != nil {
-		input.Photo.Category = model.DescriptivePhotoCategoryProductVariant
-		input.Photo.Object = &model.ObjectIDOnly{
-			ID: input.ID,
-		}
-		descriptivePhoto, err := createProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
-			input.Photo,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createProductVariant",
-				err,
-			)
-		}
-
-		variantToCreate.Photo = &model.ObjectIDOnly{
-			ID: &descriptivePhoto.ID,
-		}
-	}
 
 	createdVariant, err := createProdVariantTrx.productVariantDataSource.GetMongoDataSource().Create(
 		variantToCreate,

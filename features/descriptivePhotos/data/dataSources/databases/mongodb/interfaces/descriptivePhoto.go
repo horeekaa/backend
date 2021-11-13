@@ -16,4 +16,5 @@ type DescriptivePhotoDataSourceMongo interface {
 	) ([]*model.DescriptivePhoto, error)
 	Create(input *model.DatabaseCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
 	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error)
+	GenerateObjectID() primitive.ObjectID
 }

@@ -14,23 +14,23 @@ import (
 )
 
 type approveUpdateProductVariantTransactionComponent struct {
-	productVariantDataSource        databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
-	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
-	mapProcessorUtility             coreutilityinterfaces.MapProcessorUtility
+	productVariantDataSource               databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewApproveUpdateProductVariantTransactionComponent(
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (productvariantdomainrepositoryinterfaces.ApproveUpdateProductVariantTransactionComponent, error) {
 	return &approveUpdateProductVariantTransactionComponent{
-		productVariantDataSource:        productVariantDataSource,
-		loggingDataSource:               loggingDataSource,
-		updateDescriptivePhotoComponent: updateDescriptivePhotoComponent,
-		mapProcessorUtility:             mapProcessorUtility,
+		productVariantDataSource:               productVariantDataSource,
+		loggingDataSource:                      loggingDataSource,
+		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -113,22 +113,26 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 			json.Unmarshal(jsonUpdate, fieldsToUpdateProductVariant)
 		}
 
-		if *updateProductVariant.ProposalStatus == model.EntityProposalStatusRejected &&
-			existingProductVariant.ProposalStatus == model.EntityProposalStatusProposed {
-			if existingProductVariant.Photo != nil {
-				_, err = approveProdVarTrx.updateDescriptivePhotoComponent.TransactionBody(
-					session,
-					&model.InternalUpdateDescriptivePhoto{
-						ID:       &existingProductVariant.Photo.ID,
-						IsActive: func(b bool) *bool { return &b }(false),
-					},
+		if existingProductVariant.Photo != nil {
+			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+				ID: &existingProductVariant.Photo.ID,
+			}
+			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateProductVariant.RecentApprovingAccount)
+			updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateProductVariant.ProposalStatus)
+
+			_, err := approveProdVarTrx.approveUpdateDescriptivePhotoComponent.TransactionBody(
+				session,
+				updateDescriptivePhoto,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateProductVariant",
+					err,
 				)
-				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateProductVariant",
-						err,
-					)
-				}
 			}
 		}
 	}

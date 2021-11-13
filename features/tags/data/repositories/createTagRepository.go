@@ -63,6 +63,12 @@ func (createTagRepo *createTagRepository) TransactionBody(
 			photo.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*tagToCreate.ProposalStatus)
+			photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*tagToCreate.SubmittingAccount)
 			createdPhotoOutput, err := createTagRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
