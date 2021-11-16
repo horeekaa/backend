@@ -56,6 +56,12 @@ func (createMouRepo *createMouRepository) TransactionBody(
 			mouItem.Mou = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			mouItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*mouToCreate.ProposalStatus)
+			mouItem.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*mouToCreate.SubmittingAccount)
 			createdMouItemOutput, err := createMouRepo.createMouItemComponent.TransactionBody(
 				operationOption,
 				mouItem,

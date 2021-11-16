@@ -123,17 +123,18 @@ func (_ *RepositoriesDependency) Bind() {
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
 		&notificationdomainrepositorydependencies.GetAllNotificationDependency{},
 
+		&mouitemdomainrepositoryutilitydependencies.AgreedProductLoaderDependency{},
+		&mouitemdomainrepositorydependencies.CreateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.ApproveUpdateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.ProposeUpdateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
+
 		&moudomainrepositoryutilitydependencies.PartyLoaderDependency{},
 		&moudomainrepositorydependencies.CreateMouDependency{},
 		&moudomainrepositorydependencies.ProposeUpdateMouDependency{},
 		&moudomainrepositorydependencies.ApproveUpdateMouDependency{},
 		&moudomainrepositorydependencies.GetAllMouDependency{},
 		&moudomainrepositorydependencies.GetMouDependency{},
-
-		&mouitemdomainrepositoryutilitydependencies.AgreedProductLoaderDependency{},
-		&mouitemdomainrepositorydependencies.CreateMouItemDependency{},
-		&mouitemdomainrepositorydependencies.UpdateMouItemDependency{},
-		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
 	}
 
 	for _, reg := range registrationList {

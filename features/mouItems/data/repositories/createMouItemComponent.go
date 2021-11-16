@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
 	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	mouitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories/utils"
@@ -14,6 +15,7 @@ import (
 
 type createMouItemTransactionComponent struct {
 	mouItemDataSource   databasemouitemdatasourceinterfaces.MouItemDataSource
+	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader
 	generatedObjectID   *primitive.ObjectID
 }
@@ -34,10 +36,12 @@ func (createMouItemTrx *createMouItemTransactionComponent) GetCurrentObjectID() 
 
 func NewCreateMouItemTransactionComponent(
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
+	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader,
 ) (mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent, error) {
 	return &createMouItemTransactionComponent{
 		mouItemDataSource:   mouItemDataSource,
+		loggingDataSource:   loggingDataSource,
 		agreedProductLoader: agreedProductLoader,
 	}, nil
 }
@@ -52,16 +56,46 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMouItem,
 ) (*model.MouItem, error) {
+	createMouItemTrx.agreedProductLoader.TransactionBody(
+		session,
+		input.Product,
+		input.AgreedProduct,
+	)
+
+	newDocumentJson, _ := json.Marshal(*input)
+	generatedObjectID := createMouItemTrx.GetCurrentObjectID()
+	loggingOutput, err := createMouItemTrx.loggingDataSource.GetMongoDataSource().Create(
+		&model.CreateLogging{
+			Collection: "MouItem",
+			Document: &model.ObjectIDOnly{
+				ID: &generatedObjectID,
+			},
+			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
+			CreatedByAccount: &model.ObjectIDOnly{
+				ID: input.SubmittingAccount.ID,
+			},
+			Activity:       model.LoggedActivityCreate,
+			ProposalStatus: *input.ProposalStatus,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createMouItem",
+			err,
+		)
+	}
+
+	input.ID = &generatedObjectID
+	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *input.ProposalStatus == model.EntityProposalStatusApproved {
+		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	}
+
 	mouItemToCreate := &model.DatabaseCreateMouItem{}
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, mouItemToCreate)
-	mouItemToCreate.ID = createMouItemTrx.GetCurrentObjectID()
-
-	createMouItemTrx.agreedProductLoader.TransactionBody(
-		session,
-		mouItemToCreate.Product,
-		mouItemToCreate.AgreedProduct,
-	)
+	json.Unmarshal(jsonTemp, &mouItemToCreate.ProposedChanges)
 
 	createdVariant, err := createMouItemTrx.mouItemDataSource.GetMongoDataSource().Create(
 		mouItemToCreate,

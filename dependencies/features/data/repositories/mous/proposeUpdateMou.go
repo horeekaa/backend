@@ -37,7 +37,7 @@ func (_ *ProposeUpdateMouDependency) Bind() {
 			mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 			trxComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent,
 			createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
-			updateMouItemComponent mouitemdomainrepositoryinterfaces.UpdateMouItemTransactionComponent,
+			updateMouItemComponent mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) moudomainrepositoryinterfaces.ProposeUpdateMouRepository {
 			proposeUpdateMouRepo, _ := moudomainrepositories.NewProposeUpdateMouRepository(
