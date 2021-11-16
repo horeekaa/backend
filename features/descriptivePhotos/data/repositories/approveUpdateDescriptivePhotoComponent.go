@@ -93,6 +93,12 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateDescriptivePhoto",
+			err,
+		)
+	}
 
 	updateDescriptivePhoto.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

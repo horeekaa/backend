@@ -89,6 +89,12 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateProductVariant",
+			err,
+		)
+	}
 
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
