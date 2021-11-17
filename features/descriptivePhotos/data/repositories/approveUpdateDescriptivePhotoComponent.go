@@ -15,26 +15,23 @@ import (
 )
 
 type approveUpdateDescriptivePhotoTransactionComponent struct {
-	descriptivePhotoDataSource      databasedescriptivePhotodatasourceinterfaces.DescriptivePhotoDataSource
-	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
-	gcsBasicImageStoring            googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation
-	mapProcessorUtility             coreutilityinterfaces.MapProcessorUtility
+	descriptivePhotoDataSource databasedescriptivePhotodatasourceinterfaces.DescriptivePhotoDataSource
+	loggingDataSource          databaseloggingdatasourceinterfaces.LoggingDataSource
+	gcsBasicImageStoring       googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation
+	mapProcessorUtility        coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewApproveUpdateDescriptivePhotoTransactionComponent(
 	descriptivePhotoDataSource databasedescriptivePhotodatasourceinterfaces.DescriptivePhotoDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	gcsBasicImageStoring googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent, error) {
 	return &approveUpdateDescriptivePhotoTransactionComponent{
-		descriptivePhotoDataSource:      descriptivePhotoDataSource,
-		loggingDataSource:               loggingDataSource,
-		updateDescriptivePhotoComponent: updateDescriptivePhotoComponent,
-		gcsBasicImageStoring:            gcsBasicImageStoring,
-		mapProcessorUtility:             mapProcessorUtility,
+		descriptivePhotoDataSource: descriptivePhotoDataSource,
+		loggingDataSource:          loggingDataSource,
+		gcsBasicImageStoring:       gcsBasicImageStoring,
+		mapProcessorUtility:        mapProcessorUtility,
 	}, nil
 }
 

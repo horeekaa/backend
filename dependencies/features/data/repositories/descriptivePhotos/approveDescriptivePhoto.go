@@ -17,14 +17,12 @@ func (_ *ApproveUpdateDescriptivePhotoDependency) Bind() {
 		func(
 			descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			gcsBasicImageStoring googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent {
 			approveUpdateDescriptivePhotoComponent, _ := descriptivephotodomainrepositories.NewApproveUpdateDescriptivePhotoTransactionComponent(
 				descriptivePhotoDataSource,
 				loggingDataSource,
-				updateDescriptivePhotoComponent,
 				gcsBasicImageStoring,
 				mapProcessorUtility,
 			)
