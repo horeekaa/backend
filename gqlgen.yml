@@ -47,6 +47,14 @@ models:
     fields:
       person:
         resolver: true
+  Address:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   AddressRegionGroup:
     fields:
       submittingAccount:

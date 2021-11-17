@@ -25,6 +25,10 @@ func NewAddressDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.Bas
 	}, nil
 }
 
+func (addrDataSourceMongo *addressDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+	return primitive.NewObjectID()
+}
+
 func (addrDataSourceMongo *addressDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.Address, error) {
 	var output model.Address
 	_, err := addrDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)

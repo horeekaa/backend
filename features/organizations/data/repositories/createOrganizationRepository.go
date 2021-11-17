@@ -99,6 +99,12 @@ func (createOrgRepo *createOrganizationRepository) TransactionBody(
 			address.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			address.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToCreate.ProposalStatus)
+			address.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToCreate.SubmittingAccount)
 			createdAddressOutput, err := createOrgRepo.createAddressComponent.TransactionBody(
 				operationOption,
 				address,

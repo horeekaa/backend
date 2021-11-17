@@ -5,7 +5,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateAddressTransactionComponent interface {
+type ApproveUpdateAddressTransactionComponent interface {
 	PreTransaction(
 		updateAddressInput *model.InternalUpdateAddress,
 	) (*model.InternalUpdateAddress, error)

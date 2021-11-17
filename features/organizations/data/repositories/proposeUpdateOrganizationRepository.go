@@ -20,7 +20,7 @@ type proposeUpdateOrganizationRepository struct {
 	createDescriptivePhotoComponent               descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	proposeUpdateDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	createAddressComponent                        addressdomainrepositoryinterfaces.CreateAddressTransactionComponent
-	updateAddressComponent                        addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent
+	updateAddressComponent                        addressdomainrepositoryinterfaces.ProposeUpdateAddressTransactionComponent
 	bulkCreateTaggingComponent                    taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	bulkUpdateTaggingComponent                    taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateOrganizationTransactionComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent
@@ -32,7 +32,7 @@ func NewProposeUpdateOrganizationRepository(
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	createAddressComponent addressdomainrepositoryinterfaces.CreateAddressTransactionComponent,
-	updateAddressComponent addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent,
+	proposeUpdateAddressComponent addressdomainrepositoryinterfaces.ProposeUpdateAddressTransactionComponent,
 	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 	proposeUpdateOrganizationRepositoryTransactionComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent,
@@ -43,7 +43,7 @@ func NewProposeUpdateOrganizationRepository(
 		createDescriptivePhotoComponent,
 		proposeUpdateDescriptivePhotoComponent,
 		createAddressComponent,
-		updateAddressComponent,
+		proposeUpdateAddressComponent,
 		bulkCreateTaggingComponent,
 		bulkUpdateTaggingComponent,
 		proposeUpdateOrganizationRepositoryTransactionComponent,
@@ -161,20 +161,27 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 
 	if organizationToUpdate.Addresses != nil {
 		savedAddresses := existingOrganization.Addresses
-		for _, address := range organizationToUpdate.Addresses {
-			if address.ID != nil {
+		for _, addressToUpdate := range organizationToUpdate.Addresses {
+			if addressToUpdate.ID != nil {
 				if !funk.Contains(
 					existingOrganization.Addresses,
 					func(ad *model.Address) bool {
-						return ad.ID == *address.ID
+						return ad.ID == *addressToUpdate.ID
 					},
 				) {
 					continue
 				}
 
+				addressToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*organizationToUpdate.ProposalStatus)
+				addressToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*organizationToUpdate.SubmittingAccount)
+
 				_, err := updateOrgRepo.updateAddressComponent.TransactionBody(
 					operationOption,
-					address,
+					addressToUpdate,
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -186,12 +193,18 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 			}
 
 			addressToCreate := &model.InternalCreateAddress{}
-			jsonTemp, _ := json.Marshal(address)
+			jsonTemp, _ := json.Marshal(addressToUpdate)
 			json.Unmarshal(jsonTemp, addressToCreate)
 			addressToCreate.Type = model.AddressTypeOrganization
 			addressToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingOrganization.ID,
 			}
+			addressToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToUpdate.ProposalStatus)
+			addressToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToUpdate.SubmittingAccount)
 
 			savedAddress, err := updateOrgRepo.createAddressComponent.TransactionBody(
 				operationOption,

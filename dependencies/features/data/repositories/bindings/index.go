@@ -43,7 +43,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&addressdomainrepositoryutilitydependencies.AddressLoaderDependency{},
 		&addressdomainrepositorydependencies.CreateAddressDependency{},
 		&addressdomainrepositorydependencies.GetAddressDependency{},
-		&addressdomainrepositorydependencies.UpdateAddressDependency{},
+		&addressdomainrepositorydependencies.ProposeUpdateAddressDependency{},
+		&addressdomainrepositorydependencies.ApproveUpdateAddressDependency{},
 
 		&addressregiongroupdomainrepositorydependencies.CreateAddressRegionGroupDependency{},
 		&addressregiongroupdomainrepositorydependencies.ProposeUpdateAddressRegionGroupDependency{},

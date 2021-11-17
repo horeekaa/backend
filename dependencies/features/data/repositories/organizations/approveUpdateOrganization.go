@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	addressdomainrepositoryinterfaces "github.com/horeekaa/backend/features/addresses/domain/repositories"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
@@ -35,6 +36,7 @@ func (_ *ApproveUpdateOrganizationDependency) Bind() {
 			trxComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationTransactionComponent,
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			approveDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
+			approveAddressComponent addressdomainrepositoryinterfaces.ApproveUpdateAddressTransactionComponent,
 			bulkApproveUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationRepository {
@@ -42,6 +44,7 @@ func (_ *ApproveUpdateOrganizationDependency) Bind() {
 				trxComponent,
 				organizationDataSource,
 				approveDescriptivePhotoComponent,
+				approveAddressComponent,
 				bulkApproveUpdateTaggingComponent,
 				mongoDBTransaction,
 			)

@@ -10,9 +10,11 @@ input CreateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean!
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateAddress {
+  _id: ObjectID
   title: String!
   latitude: Float!
   longitude: Float!
@@ -23,9 +25,15 @@ input InternalCreateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType!
   object: ObjectIDOnly!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateAddress
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateAddress {
+  _id: ObjectID!
   title: String!
   latitude: Float!
   longitude: Float!
@@ -36,6 +44,11 @@ input DatabaseCreateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType!
   object: ObjectIDOnly!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateAddress
+  recentLog: ObjectIDOnly
   createdAt: Time!
   updatedAt: Time!
 }
@@ -54,6 +67,16 @@ input UpdateAddress {
   isDefault: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateAddress {
@@ -68,6 +91,12 @@ input InternalUpdateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType
   object: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: InternalUpdateAddress
 }
 
 input DatabaseUpdateAddress {
@@ -82,6 +111,12 @@ input DatabaseUpdateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType
   object: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdateAddress
   updatedAt: Time
 }
 
@@ -97,6 +132,11 @@ input AddressFilterFields {
   addressRegionGroup: AddressRegionGroupForAddressFilterField
   type: StringFilterField
   object: ObjectIDOnly
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: AddressFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -113,6 +153,12 @@ type Address {
   addressRegionGroup: AddressRegionGroupForAddress
   type: AddressType!
   object: ObjectIDOnlyOutput!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: Address
+  recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }
