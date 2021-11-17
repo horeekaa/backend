@@ -3,20 +3,29 @@ package purchaseorderdomainrepositories
 import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
+	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type approveUpdatePurchaseOrderRepository struct {
-	approveUpdatepurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent
+	purchaseOrderDataSource                        databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
+	approveUpdatePurchaseOrderItemComponent        purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent
+	approveUpdatePurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewApproveUpdatePurchaseOrderRepository(
+	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
+	approveUpdatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
 	approveUpdatepurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository, error) {
 	approveUpdatePurchaseOrderRepo := &approveUpdatePurchaseOrderRepository{
+		purchaseOrderDataSource,
+		approveUpdatePurchaseOrderItemComponent,
 		approveUpdatepurchaseOrderTransactionComponent,
 		mongoDBTransaction,
 	}
@@ -40,8 +49,44 @@ func (approveUpdatePurchaseOrderRepo *approveUpdatePurchaseOrderRepository) Tran
 	input interface{},
 ) (interface{}, error) {
 	purchaseOrderToApprove := input.(*model.InternalUpdatePurchaseOrder)
+	existingPurchaseOrder, err := approveUpdatePurchaseOrderRepo.purchaseOrderDataSource.GetMongoDataSource().FindByID(
+		purchaseOrderToApprove.ID,
+		operationOption,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/approveUpdatePurchaseOrderRepository",
+			err,
+		)
+	}
+	if existingPurchaseOrder.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
+		if existingPurchaseOrder.ProposedChanges.Items != nil {
+			for _, poItem := range existingPurchaseOrder.ProposedChanges.Items {
+				updatePurchaseOrderItem := &model.InternalUpdatePurchaseOrderItem{
+					ID: &poItem.ID,
+				}
+				updatePurchaseOrderItem.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*purchaseOrderToApprove.RecentApprovingAccount)
+				updatePurchaseOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*purchaseOrderToApprove.ProposalStatus)
 
-	return approveUpdatePurchaseOrderRepo.approveUpdatepurchaseOrderTransactionComponent.TransactionBody(
+				_, err := approveUpdatePurchaseOrderRepo.approveUpdatePurchaseOrderItemComponent.TransactionBody(
+					operationOption,
+					updatePurchaseOrderItem,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/approveUpdatePurchaseOrderRepository",
+						err,
+					)
+				}
+			}
+		}
+	}
+
+	return approveUpdatePurchaseOrderRepo.approveUpdatePurchaseOrderTransactionComponent.TransactionBody(
 		operationOption,
 		purchaseOrderToApprove,
 	)
