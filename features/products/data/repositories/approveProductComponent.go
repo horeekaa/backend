@@ -93,6 +93,12 @@ func (approveProdTrx *approveUpdateProductTransactionComponent) TransactionBody(
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateProduct",
+			err,
+		)
+	}
 
 	updateProduct.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
