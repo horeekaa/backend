@@ -1,0 +1,35 @@
+input AddressForSupplyOrderInput {
+  _id: ObjectID!
+  title: String
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocodingInput!
+  addressRegionGroup: AddressRegionGroupForAddressInput
+}
+
+input AddressForSupplyOrderFilterFields {
+  _id: ObjectID
+  title: StringFilterField
+  latitude: FloatFilterField
+  longitude: FloatFilterField
+  addressNote: StringFilterField
+  phoneNumber: StringFilterField
+  isDefault: BooleanFilterField
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressFilterField
+}
+
+type AddressForSupplyOrder {
+  _id: ObjectID!
+  title: String
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  resolvedGeocoding: ResolvedGeocoding!
+  addressRegionGroup: AddressRegionGroupForAddress
+}

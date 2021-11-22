@@ -1,0 +1,23 @@
+input SupplyOrderPickUpInput {
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+  address: AddressForSupplyOrderInput
+  photos: [DescriptivePhotoForSupplyOrderInput]
+}
+
+input SupplyOrderPickUpFilterFields {
+  scheduledPickUpTime: TimeFilterField
+  actualPickUpTime: TimeFilterField
+  note: StringFilterField
+  address: AddressForSupplyOrderFilterFields
+  photos: DescriptivePhotoForSupplyOrderFilterFields
+}
+
+type SupplyOrderPickUp {
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+  address: AddressForSupplyOrder
+  photos: [DescriptivePhotoForSupplyOrder]
+}

@@ -1,0 +1,27 @@
+input PurchaseOrderToSupplyForSupplyOrderItemInput {
+  _id: ObjectID!
+  quantityRequested: Int!
+  productVariant: ProductVariantForSupplyOrderItemInput!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  addressRegionGroup: AddressRegionGroupForSupplyOrderItemInput!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input PurchaseOrderToSupplyForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  quantityRequested: IntFilterField
+  productVariant: ProductVariantForSupplyOrderItemFilterFields
+  expectedDeliverySchedule: StringFilterField
+  addressRegionGroup: AddressRegionGroupForSupplyOrderItemFilterFields
+}
+
+type PurchaseOrderToSupplyForSupplyOrderItem {
+  _id: ObjectID!
+  quantityRequested: Int!
+  productVariant: ProductVariantForSupplyOrderItem!
+  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  addressRegionGroup: AddressRegionGroupForSupplyOrderItem!
+  createdAt: Time!
+  updatedAt: Time!
+}

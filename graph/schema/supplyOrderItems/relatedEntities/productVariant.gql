@@ -1,0 +1,36 @@
+input ProductVariantForSupplyOrderItemInput {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  targetUnitCost: Int!
+  photo: DescriptivePhotoForSupplyOrderItemInput
+  product: ProductForSupplyOrderItemInput
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input ProductVariantForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  description: StringFilterField
+  retailPrice: IntFilterField
+  soldInUnit: StringFilterField
+  targetUnitCost: IntFilterField
+  photo: DescriptivePhotoForSupplyOrderItemFilterFields
+  product: ProductForSupplyOrderItemFilterFields
+}
+
+type ProductVariantForSupplyOrderItem {
+  _id: ObjectID!
+  name: String!
+  description: String!
+  retailPrice: Int!
+  soldInUnit: SellingUnitType
+  targetUnitCost: Int!
+  photo: DescriptivePhotoForSupplyOrderItem
+  product: ProductForSupplyOrderItem
+  createdAt: Time!
+  updatedAt: Time!
+}
