@@ -4,6 +4,7 @@ input ProductVariantForPurchaseOrderItemInput {
   description: String!
   retailPrice: Int!
   soldInUnit: SellingUnitType
+  targetUnitCost: Int!
   photo: DescriptivePhotoForPurchaseOrderItemInput
   product: ProductForPurchaseOrderItemInput
   createdAt: Time!
@@ -16,6 +17,7 @@ type ProductVariantForPurchaseOrderItem {
   description: String!
   retailPrice: Int!
   soldInUnit: SellingUnitType
+  targetUnitCost: Int!
   photo: DescriptivePhotoForPurchaseOrderItem
   product: ProductForPurchaseOrderItem
   createdAt: Time!
