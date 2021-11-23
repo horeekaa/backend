@@ -27,7 +27,7 @@ input InternalCreateSupplyOrderItem {
 input DatabaseCreateSupplyOrderItem {
   _id: ObjectID!
   quantityOffered: Int!
-  quantityAccepted: Int
+  quantityAccepted: Int!
   notes: String
   unitPrice: Int!
   subTotal: Int!
@@ -44,7 +44,7 @@ input DatabaseCreateSupplyOrderItem {
 }
 
 input UpdateSupplyOrderItem {
-  _id: ObjectID!
+  _id: ObjectID
   quantityOffered: Int
   quantityAccepted: Int
   notes: String
@@ -65,7 +65,7 @@ input UpdateSupplyOrderItem {
 }
 
 input InternalUpdateSupplyOrderItem {
-  _id: ObjectID!
+  _id: ObjectID
   quantityOffered: Int
   quantityAccepted: Int
   notes: String
