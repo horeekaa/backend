@@ -26,6 +26,8 @@ import (
 	purchaseordertosupplydomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrdersToSupply"
 	supplyorderitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrderItems"
 	supplyorderitemdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrderItems/utils"
+	supplyorderdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders"
+	supplyorderdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders/utils"
 	taggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/taggings"
 	tagdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
@@ -145,6 +147,12 @@ func (_ *RepositoriesDependency) Bind() {
 		&supplyorderitemdomainrepositorydependencies.ApproveUpdateSupplyOrderItemDependency{},
 		&supplyorderitemdomainrepositorydependencies.ProposeUpdateSupplyOrderItemDependency{},
 		&supplyorderitemdomainrepositorydependencies.GetSupplyOrderItemDependency{},
+
+		&supplyorderdomainrepositoryutilitydependencies.SupplyOrderLoaderDependency{},
+		&supplyorderdomainrepositorydependencies.CreateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.ApproveUpdateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.ProposeUpdateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.GetSupplyOrderDependency{},
 	}
 
 	for _, reg := range registrationList {
