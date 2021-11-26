@@ -2,6 +2,7 @@ package supplyorderitemdomainrepositorydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositories "github.com/horeekaa/backend/features/supplyOrderItems/data/repositories"
@@ -16,11 +17,13 @@ func (_ *CreateSupplyOrderItemDependency) Bind() {
 		func(
 			supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			supplyOrderItemLoader supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader,
 		) supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent {
 			createSupplyOrderItemComponent, _ := supplyorderitemdomainrepositories.NewCreateSupplyOrderItemTransactionComponent(
 				supplyOrderItemDataSource,
 				loggingDataSource,
+				createDescriptivePhotoComponent,
 				supplyOrderItemLoader,
 			)
 			return createSupplyOrderItemComponent

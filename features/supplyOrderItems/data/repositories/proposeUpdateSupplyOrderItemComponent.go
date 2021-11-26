@@ -6,31 +6,39 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	supplyorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type proposeUpdateSupplyOrderItemTransactionComponent struct {
-	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
-	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
-	supplyOrderItemLoader     supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
-	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
+	supplyOrderItemDataSource              databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
+	supplyOrderItemLoader                  supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewProposeUpdateSupplyOrderItemTransactionComponent(
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	supplyOrderItemLoader supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent, error) {
 	return &proposeUpdateSupplyOrderItemTransactionComponent{
-		supplyOrderItemDataSource: supplyOrderItemDataSource,
-		loggingDataSource:         loggingDataSource,
-		supplyOrderItemLoader:     supplyOrderItemLoader,
-		mapProcessorUtility:       mapProcessorUtility,
+		supplyOrderItemDataSource:              supplyOrderItemDataSource,
+		loggingDataSource:                      loggingDataSource,
+		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
+		supplyOrderItemLoader:                  supplyOrderItemLoader,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -53,6 +61,80 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			"/proposeUpdateSupplyOrderItemComponent",
 			err,
 		)
+	}
+
+	if updateSupplyOrderItem.PickUpDetail != nil {
+		savedPhotos := existingSupplyOrderItem.PickUpDetail.Photos
+		for _, photoToUpdate := range updateSupplyOrderItem.PickUpDetail.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingSupplyOrderItem.PickUpDetail.Photos,
+					func(dp *model.DescriptivePhotoForSupplyOrderItem) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updateSupplyOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updateSupplyOrderItem.SubmittingAccount)
+				_, err := updateSupplyOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateSupplyOrderItem",
+						err,
+					)
+				}
+
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingSupplyOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateSupplyOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateSupplyOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdDescriptivePhoto, err := updateSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateSupplyOrderItem",
+					err,
+				)
+			}
+
+			jsonTemp, _ = json.Marshal(createdDescriptivePhoto)
+			descPhotoForSO := &model.DescriptivePhotoForSupplyOrderItem{}
+			json.Unmarshal(jsonTemp, descPhotoForSO)
+			savedPhotos = append(savedPhotos, descPhotoForSO)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"PickUpDetail": map[string]interface{}{
+					"Photos": savedPhotos,
+				},
+			},
+		)
+		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(

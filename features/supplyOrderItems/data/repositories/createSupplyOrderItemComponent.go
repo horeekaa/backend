@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
@@ -14,21 +15,24 @@ import (
 )
 
 type createSupplyOrderItemTransactionComponent struct {
-	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
-	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
-	supplyOrderItemLoader     supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
-	generatedObjectID         *primitive.ObjectID
+	supplyOrderItemDataSource       databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
+	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	supplyOrderItemLoader           supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
+	generatedObjectID               *primitive.ObjectID
 }
 
 func NewCreateSupplyOrderItemTransactionComponent(
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	supplyOrderItemLoader supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader,
 ) (supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent, error) {
 	return &createSupplyOrderItemTransactionComponent{
-		supplyOrderItemDataSource: supplyOrderItemDataSource,
-		loggingDataSource:         loggingDataSource,
-		supplyOrderItemLoader:     supplyOrderItemLoader,
+		supplyOrderItemDataSource:       supplyOrderItemDataSource,
+		loggingDataSource:               loggingDataSource,
+		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
+		supplyOrderItemLoader:           supplyOrderItemLoader,
 	}, nil
 }
 
@@ -56,6 +60,32 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	session *mongodbcoretypes.OperationOptions,
 	createSupplyOrderItem *model.InternalCreateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
+	generatedObjectID := createSupplyOrderItemTrx.GetCurrentObjectID()
+	for i, photoToCreate := range createSupplyOrderItem.PickUpDetail.Photos {
+		photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
+		photoToCreate.Object = &model.ObjectIDOnly{
+			ID: &generatedObjectID,
+		}
+		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &s
+		}(*photoToCreate.ProposalStatus)
+		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			return &m
+		}(*photoToCreate.SubmittingAccount)
+		descriptivePhoto, err := createSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			photoToCreate,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createProductVariant",
+				err,
+			)
+		}
+
+		jsonTemp, _ := json.Marshal(descriptivePhoto)
+		json.Unmarshal(jsonTemp, &createSupplyOrderItem.PickUpDetail.Photos[i])
+	}
 	_, err := createSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
 		createSupplyOrderItem.PurchaseOrderToSupply,
@@ -75,7 +105,6 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	createSupplyOrderItem.SubTotal = quantity * createSupplyOrderItem.UnitPrice
 
 	newDocumentJson, _ := json.Marshal(*createSupplyOrderItem)
-	generatedObjectID := createSupplyOrderItemTrx.GetCurrentObjectID()
 	loggingOutput, err := createSupplyOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "SupplyOrderItem",

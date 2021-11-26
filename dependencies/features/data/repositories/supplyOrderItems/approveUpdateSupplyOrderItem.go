@@ -3,6 +3,7 @@ package supplyorderitemdomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
@@ -17,12 +18,14 @@ func (_ *ApproveUpdateSupplyOrderItemDependency) Bind() {
 		func(
 			supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 			purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
+			approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent {
 			approveUpdateSupplyOrderItemComponent, _ := supplyorderitemdomainrepositories.NewApproveUpdateSupplyOrderItemTransactionComponent(
 				supplyOrderItemDataSource,
 				purchaseOrderToSupplyDataSource,
+				approveUpdateDescriptivePhotoComponent,
 				loggingDataSource,
 				mapProcessorUtility,
 			)

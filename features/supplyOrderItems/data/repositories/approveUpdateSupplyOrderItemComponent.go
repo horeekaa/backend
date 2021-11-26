@@ -6,6 +6,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
@@ -14,23 +15,26 @@ import (
 )
 
 type approveUpdateSupplyOrderItemTransactionComponent struct {
-	supplyOrderItemDataSource       databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
-	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
-	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
-	mapProcessorUtility             coreutilityinterfaces.MapProcessorUtility
+	supplyOrderItemDataSource              databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
+	purchaseOrderToSupplyDataSource        databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewApproveUpdateSupplyOrderItemTransactionComponent(
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent, error) {
 	return &approveUpdateSupplyOrderItemTransactionComponent{
-		supplyOrderItemDataSource:       supplyOrderItemDataSource,
-		purchaseOrderToSupplyDataSource: purchaseOrderToSupplyDataSource,
-		loggingDataSource:               loggingDataSource,
-		mapProcessorUtility:             mapProcessorUtility,
+		supplyOrderItemDataSource:              supplyOrderItemDataSource,
+		purchaseOrderToSupplyDataSource:        purchaseOrderToSupplyDataSource,
+		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
+		loggingDataSource:                      loggingDataSource,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -149,9 +153,34 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 				}
 			}
 		}
+
+		if existingSupplyOrderItem.PickUpDetail != nil {
+			for _, updateDescriptivePhoto := range existingSupplyOrderItem.PickUpDetail.Photos {
+				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+					ID: &updateDescriptivePhoto.ID,
+				}
+				updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updateSupplyOrderItem.RecentApprovingAccount)
+				updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updateSupplyOrderItem.ProposalStatus)
+
+				_, err := approveSupplyOrderItemTrx.approveUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					updateDescriptivePhoto,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateSupplyOrderItem",
+						err,
+					)
+				}
+			}
+		}
 	}
 
-	updatedsupplyOrderItem, err := approveSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().Update(
+	updatedSupplyOrderItem, err := approveSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": fieldsToUpdateSupplyOrderItem.ID,
 		},
@@ -165,5 +194,5 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 		)
 	}
 
-	return updatedsupplyOrderItem, nil
+	return updatedSupplyOrderItem, nil
 }
