@@ -1,4 +1,4 @@
-input AddressForSupplyOrderInput {
+input AddressForSupplyOrderItemInput {
   _id: ObjectID!
   title: String
   latitude: Float!
@@ -10,7 +10,7 @@ input AddressForSupplyOrderInput {
   addressRegionGroup: AddressRegionGroupForAddressInput
 }
 
-input AddressForSupplyOrderFilterFields {
+input AddressForSupplyOrderItemFilterFields {
   _id: ObjectID
   title: StringFilterField
   latitude: FloatFilterField
@@ -22,7 +22,7 @@ input AddressForSupplyOrderFilterFields {
   addressRegionGroup: AddressRegionGroupForAddressFilterField
 }
 
-type AddressForSupplyOrder {
+type AddressForSupplyOrderItem {
   _id: ObjectID!
   title: String
   latitude: Float!

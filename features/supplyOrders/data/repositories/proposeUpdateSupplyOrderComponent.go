@@ -62,7 +62,6 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	_, err = updateSupplyOrderTrx.supplyOrderDataLoader.TransactionBody(
 		session,
 		updateSupplyOrder.Organization,
-		updateSupplyOrder.PickUpDetail.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

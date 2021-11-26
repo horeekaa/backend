@@ -9,5 +9,6 @@ type SupplyOrderItemLoader interface {
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
 		purchaseOrderToSupply *model.PurchaseOrderToSupplyForSupplyOrderItemInput,
+		pickUpAddress *model.AddressForSupplyOrderItemInput,
 	) (bool, error)
 }

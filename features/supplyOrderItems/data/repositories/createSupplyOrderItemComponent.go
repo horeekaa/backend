@@ -59,6 +59,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	_, err := createSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
 		createSupplyOrderItem.PurchaseOrderToSupply,
+		createSupplyOrderItem.PickUpDetail.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

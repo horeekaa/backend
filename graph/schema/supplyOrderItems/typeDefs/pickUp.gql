@@ -1,0 +1,39 @@
+input CreateSupplyOrderItemPickUp {
+  address: ObjectIDOnly!
+  photos: [CreateDescriptivePhoto]!
+}
+
+input InternalCreateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput!
+  photos: [InternalCreateDescriptivePhoto]!
+}
+
+input DatabaseCreateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput!
+  photos: [DescriptivePhotoForSupplyOrderItemInput]!
+}
+
+input UpdateSupplyOrderItemPickUp {
+  address: ObjectIDOnly
+  photos: [UpdateDescriptivePhoto]
+}
+
+input InternalUpdateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput
+  photos: [InternalUpdateDescriptivePhoto]
+}
+
+input DatabaseUpdateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput
+  photos: [DescriptivePhotoForSupplyOrderItemInput]
+}
+
+input SupplyOrderItemPickUpFilterFields {
+  note: StringFilterField
+  address: AddressForSupplyOrderItemFilterFields
+}
+
+type SupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItem
+  photos: [DescriptivePhotoForSupplyOrderItem]
+}

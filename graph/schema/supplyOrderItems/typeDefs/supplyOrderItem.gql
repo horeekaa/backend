@@ -5,6 +5,7 @@ input CreateSupplyOrderItem {
   unitPrice: Int!
   purchaseOrderToSupply: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
+  pickUpDetail: CreateSupplyOrderItemPickUp!
 }
 
 input InternalCreateSupplyOrderItem {
@@ -17,6 +18,7 @@ input InternalCreateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
+  pickUpDetail: InternalCreateSupplyOrderItemPickUp!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -34,6 +36,7 @@ input DatabaseCreateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean!
   supplyOrder: ObjectIDOnly!
+  pickUpDetail: DatabaseCreateSupplyOrderItemPickUp!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -52,6 +55,7 @@ input UpdateSupplyOrderItem {
   subTotal: Int
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
+  pickUpDetail: UpdateSupplyOrderItemPickUp
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -74,6 +78,7 @@ input InternalUpdateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
+  pickUpDetail: InternalUpdateSupplyOrderItemPickUp
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -92,6 +97,7 @@ input DatabaseUpdateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
+  pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -111,6 +117,7 @@ input SupplyOrderItemFilterFields {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemFilterFields
   partnerAgreed: BooleanFilterField
   supplyOrder: ObjectIDOnlyFilterField
+  pickUpDetail: SupplyOrderItemPickUpFilterFields
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -131,6 +138,7 @@ type SupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItem!
   partnerAgreed: Boolean!
   supplyOrder: SupplyOrder!
+  pickUpDetail: SupplyOrderItemPickUp!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!
