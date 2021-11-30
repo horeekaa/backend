@@ -56,18 +56,23 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		)
 	}
 
-	if updatePurchaseOrderItem.ProductVariant != nil {
-		_, err := updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
-			session,
-			updatePurchaseOrderItem.MouItem,
-			updatePurchaseOrderItem.ProductVariant,
+	if updatePurchaseOrderItem.DeliveryDetail == nil {
+		updatePurchaseOrderItem.DeliveryDetail = &model.InternalUpdatePurchaseOrderItemDelivery{}
+	}
+	_, err = updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
+		session,
+		updatePurchaseOrderItem.MouItem,
+		updatePurchaseOrderItem.ProductVariant,
+		updatePurchaseOrderItem.DeliveryDetail.Address,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/proposeUpdatePurchaseOrderItemComponent",
+			err,
 		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/proposeUpdatePurchaseOrderItemComponent",
-				err,
-			)
-		}
+	}
+
+	if updatePurchaseOrderItem.ProductVariant != nil {
 		updatePurchaseOrderItem.UnitPrice = &updatePurchaseOrderItem.ProductVariant.RetailPrice
 		if existingPurchaseOrderItem.MouItem != nil {
 			index := funk.IndexOf(

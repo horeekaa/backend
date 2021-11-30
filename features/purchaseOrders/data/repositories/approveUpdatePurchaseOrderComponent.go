@@ -63,7 +63,6 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 		session,
 		updatePurchaseOrder.Mou,
 		nil,
-		updatePurchaseOrder.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

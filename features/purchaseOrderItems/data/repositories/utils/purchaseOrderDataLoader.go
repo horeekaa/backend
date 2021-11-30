@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
@@ -21,6 +22,7 @@ type purchaseOrderItemLoader struct {
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
 	tagDataSource              databasetagdatasourceinterfaces.TagDataSource
 	taggingDataSource          databasetaggingdatasourceinterfaces.TaggingDataSource
+	addressDataSource          databaseaddressdatasourceinterfaces.AddressDataSource
 }
 
 func NewPurchaseOrderItemLoader(
@@ -30,6 +32,7 @@ func NewPurchaseOrderItemLoader(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
+	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 ) (purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader, error) {
 	return &purchaseOrderItemLoader{
 		descriptivePhotoDataSource,
@@ -38,6 +41,7 @@ func NewPurchaseOrderItemLoader(
 		productDataSource,
 		tagDataSource,
 		taggingDataSource,
+		addressDataSource,
 	}, nil
 }
 
@@ -45,10 +49,32 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	mouItem *model.MouItemForPurchaseOrderItemInput,
 	productVariant *model.ProductVariantForPurchaseOrderItemInput,
+	deliveryAddress *model.AddressForPurchaseOrderItemInput,
 ) (bool, error) {
 	mouItemLoadedChan := make(chan bool)
 	productVariantLoadedChan := make(chan bool)
+	addressLoadedChan := make(chan bool)
 	errChan := make(chan error)
+
+	go func() {
+		if deliveryAddress == nil {
+			addressLoadedChan <- true
+			return
+		}
+
+		loadedAddress, err := purcOrderItemLoader.addressDataSource.GetMongoDataSource().FindByID(
+			deliveryAddress.ID,
+			session,
+		)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		jsonTemp, _ := json.Marshal(loadedAddress)
+		json.Unmarshal(jsonTemp, deliveryAddress)
+
+		addressLoadedChan <- true
+	}()
 
 	go func() {
 		if mouItem == nil {
@@ -71,6 +97,11 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	}()
 
 	go func() {
+		if productVariant == nil {
+			productVariantLoadedChan <- true
+			return
+		}
+
 		loadedProductVariant, err := purcOrderItemLoader.productVariantDataSource.GetMongoDataSource().FindByID(
 			productVariant.ID,
 			session,
@@ -185,13 +216,15 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 		productVariantLoadedChan <- true
 	}()
 
-	for i := 0; i < 2; {
+	for i := 0; i < 3; {
 		select {
 		case err := <-errChan:
 			return false, err
 		case _ = <-mouItemLoadedChan:
 			i++
 		case _ = <-productVariantLoadedChan:
+			i++
+		case _ = <-addressLoadedChan:
 			i++
 		}
 	}

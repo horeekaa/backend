@@ -58,8 +58,8 @@ func (createPOToSupplyTrx *createPurchaseOrderToSupplyTransactionComponent) Tran
 		existingPurchaseOrderToSupply, err := createPOToSupplyTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
 			map[string]interface{}{
 				"productVariant._id":       existingPOItem.ProductVariant.ID,
-				"expectedDeliverySchedule": existingPOItem.ExpectedDeliverySchedule,
-				"addressRegionGroup._id":   input.Address.AddressRegionGroup.ID,
+				"expectedDeliverySchedule": existingPOItem.DeliveryDetail.ExpectedDeliverySchedule,
+				"addressRegionGroup._id":   existingPOItem.DeliveryDetail.Address.AddressRegionGroup.ID,
 				"status":                   model.PurchaseOrderToSupplyStatusCummulating,
 			},
 			session,
@@ -75,14 +75,14 @@ func (createPOToSupplyTrx *createPurchaseOrderToSupplyTransactionComponent) Tran
 			poToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
 				ProductVariant:           &model.ProductVariantForPurchaseOrderItemInput{},
 				AddressRegionGroup:       &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
-				ExpectedDeliverySchedule: *existingPOItem.ExpectedDeliverySchedule,
+				ExpectedDeliverySchedule: *existingPOItem.DeliveryDetail.ExpectedDeliverySchedule,
 				Status:                   func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
 			}
 
 			jsonTemp, _ := json.Marshal(existingPOItem.ProductVariant)
 			json.Unmarshal(jsonTemp, &poToCreate.ProductVariant)
 
-			jsonTemp, _ = json.Marshal(input.Address.AddressRegionGroup)
+			jsonTemp, _ = json.Marshal(existingPOItem.DeliveryDetail.Address.AddressRegionGroup)
 			json.Unmarshal(jsonTemp, &poToCreate.AddressRegionGroup)
 
 			jsonTemp, _ = json.Marshal(

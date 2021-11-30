@@ -61,6 +61,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 		session,
 		createPurchaseOrderItem.MouItem,
 		createPurchaseOrderItem.ProductVariant,
+		createPurchaseOrderItem.DeliveryDetail.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

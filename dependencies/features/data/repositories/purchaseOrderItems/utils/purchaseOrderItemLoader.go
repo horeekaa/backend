@@ -2,6 +2,7 @@ package purchaseorderitemdomainrepositoryutilitydependencies
 
 import (
 	"github.com/golobby/container/v2"
+	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
@@ -23,6 +24,7 @@ func (_ *PurchaseOrderItemLoaderDependency) Bind() {
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
+			addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 		) purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader {
 			purchaseOrderItemLoader, _ := purchaseorderitemdomainrepositoryutilities.NewPurchaseOrderItemLoader(
 				descriptivePhotoDataSource,
@@ -31,6 +33,7 @@ func (_ *PurchaseOrderItemLoaderDependency) Bind() {
 				productDataSource,
 				tagDataSource,
 				taggingDataSource,
+				addressDataSource,
 			)
 			return purchaseOrderItemLoader
 		},
