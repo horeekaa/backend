@@ -122,10 +122,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				)
 			}
 
-			jsonTemp, _ = json.Marshal(createdDescriptivePhoto)
-			descPhotoForSO := &model.DescriptivePhotoForSupplyOrderItem{}
-			json.Unmarshal(jsonTemp, descPhotoForSO)
-			savedPhotos = append(savedPhotos, descPhotoForSO)
+			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
 		}
 		jsonTemp, _ := json.Marshal(
 			map[string]interface{}{
