@@ -1,0 +1,89 @@
+enum ExpectedDeliverySchedule {
+  """
+  4AM to 6AM
+  """
+  DAWN
+  """
+  6.01AM to 8AM
+  """
+  MORNING
+  """
+  10.01AM to 12PM
+  """
+  NOON
+  """
+  12.01PM to 2PM
+  """
+  AFTERNOON
+}
+
+input CreatePurchaseOrderItemDelivery {
+  address: ObjectIDOnly!
+  photos: [CreateDescriptivePhoto]!
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input InternalCreatePurchaseOrderItemDelivery {
+  address: AddressForPurchaseOrderItemInput!
+  photos: [InternalCreateDescriptivePhoto]!
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input DatabaseCreatePurchaseOrderItemDelivery {
+  address: AddressForPurchaseOrderItemInput!
+  photos: [ObjectIDOnly]!
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input UpdatePurchaseOrderItemDelivery {
+  address: ObjectIDOnly
+  photos: [UpdateDescriptivePhoto]
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input InternalUpdatePurchaseOrderItemDelivery {
+  address: AddressForPurchaseOrderItemInput
+  photos: [InternalUpdateDescriptivePhoto]
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input DatabaseUpdatePurchaseOrderItemDelivery {
+  address: AddressForPurchaseOrderItemInput
+  photos: [ObjectIDOnly]
+  courier: ObjectIDOnly
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}
+
+input PurchaseOrderItemDeliveryFilterFields {
+  note: StringFilterField
+  address: AddressForPurchaseOrderItemFilterFields
+  courier: ObjectIDOnlyFilterField
+  expectedDeliverySchedule: StringFilterField
+  actualDeliveryTime: TimeFilterField
+}
+
+type PurchaseOrderItemDelivery {
+  address: AddressForPurchaseOrderItem
+  photos: [DescriptivePhoto]
+  courier: Account
+  expectedDeliverySchedule: ExpectedDeliverySchedule
+  actualDeliveryTime: Time
+  note: String
+}

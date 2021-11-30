@@ -1,4 +1,4 @@
-input AddressForPurchaseOrderInput {
+input AddressForPurchaseOrderItemInput {
   _id: ObjectID!
   title: String
   latitude: Float!
@@ -10,7 +10,19 @@ input AddressForPurchaseOrderInput {
   addressRegionGroup: AddressRegionGroupForAddressInput
 }
 
-type AddressForPurchaseOrder {
+input AddressForPurchaseOrderItemFilterFields {
+  _id: ObjectID
+  title: StringFilterField
+  latitude: FloatFilterField
+  longitude: FloatFilterField
+  addressNote: StringFilterField
+  phoneNumber: StringFilterField
+  isDefault: BooleanFilterField
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressFilterField
+}
+
+type AddressForPurchaseOrderItem {
   _id: ObjectID!
   title: String
   latitude: Float!
