@@ -17,6 +17,7 @@ import (
 	purchaseorderitempresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrderItems"
 	purchaseorderpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrders"
 	purchaseordertosupplypresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrdersToSupply"
+	supplyorderpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/supplyOrders"
 	taggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/taggings"
 	tagpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
@@ -80,7 +81,7 @@ func (_ *UsecasesDependency) Bind() {
 
 		&moupresentationusecasedependencies.CreateMouUsecaseDependency{},
 		&moupresentationusecasedependencies.GetAllMouUsecaseDependency{},
-		moupresentationusecasedependencies.GetMouUsecaseDependency{},
+		&moupresentationusecasedependencies.GetMouUsecaseDependency{},
 		&moupresentationusecasedependencies.UpdateMouUsecaseDependency{},
 
 		&mouitempresentationusecasedependencies.GetMouItemUsecaseDependency{},
@@ -96,6 +97,11 @@ func (_ *UsecasesDependency) Bind() {
 		&purchaseordertosupplypresentationusecasedependencies.GetAllPurchaseOrderToSupplyUsecaseDependency{},
 		&purchaseordertosupplypresentationusecasedependencies.GetPurchaseOrderToSupplyUsecaseDependency{},
 		&purchaseordertosupplypresentationusecasedependencies.ProcessPurchaseOrderToSupplyUsecaseDependency{},
+
+		&supplyorderpresentationusecasedependencies.CreateSupplyOrderUsecaseDependency{},
+		&supplyorderpresentationusecasedependencies.GetSupplyOrderUsecaseDependency{},
+		&supplyorderpresentationusecasedependencies.GetAllSupplyOrderUsecaseDependency{},
+		&supplyorderpresentationusecasedependencies.UpdateSupplyOrderUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {
