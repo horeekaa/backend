@@ -1,7 +1,7 @@
 input CreateSupplyOrder {
   items: [CreateSupplyOrderItem]!
   pickUpDetail: CreateSupplyOrderPickUp!
-  proposalStatus: EntityProposalStatus!
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateSupplyOrder {

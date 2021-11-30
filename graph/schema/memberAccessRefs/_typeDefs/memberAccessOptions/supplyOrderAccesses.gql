@@ -1,0 +1,15 @@
+input SupplyOrderAccessesInput {
+  supplyOrderCreate: Boolean
+  supplyOrderUpdate: Boolean
+  supplyOrderReadAll: Boolean
+  supplyOrderApproval: Boolean
+  supplyOrderReadOwned: Boolean
+}
+
+type SupplyOrderAccesses {
+  supplyOrderCreate: Boolean
+  supplyOrderUpdate: Boolean
+  supplyOrderReadAll: Boolean
+  supplyOrderApproval: Boolean
+  supplyOrderReadOwned: Boolean
+}
