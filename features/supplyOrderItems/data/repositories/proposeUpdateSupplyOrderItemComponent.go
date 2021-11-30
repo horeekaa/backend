@@ -134,6 +134,9 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
+	if updateSupplyOrderItem.PickUpDetail == nil {
+		updateSupplyOrderItem.PickUpDetail = &model.InternalUpdateSupplyOrderItemPickUp{}
+	}
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
 		updateSupplyOrderItem.PurchaseOrderToSupply,
