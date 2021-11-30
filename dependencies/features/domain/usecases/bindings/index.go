@@ -17,6 +17,7 @@ import (
 	purchaseorderitempresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrderItems"
 	purchaseorderpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrders"
 	purchaseordertosupplypresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrdersToSupply"
+	supplyorderitempresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/supplyOrderItems"
 	supplyorderpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/supplyOrders"
 	taggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/taggings"
 	tagpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/tags"
@@ -102,6 +103,8 @@ func (_ *UsecasesDependency) Bind() {
 		&supplyorderpresentationusecasedependencies.GetSupplyOrderUsecaseDependency{},
 		&supplyorderpresentationusecasedependencies.GetAllSupplyOrderUsecaseDependency{},
 		&supplyorderpresentationusecasedependencies.UpdateSupplyOrderUsecaseDependency{},
+
+		&supplyorderitempresentationusecasedependencies.GetSupplyOrderItemUsecaseDependency{},
 	}
 
 	for _, reg := range registrationList {
