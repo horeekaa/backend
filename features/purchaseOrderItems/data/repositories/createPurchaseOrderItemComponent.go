@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
@@ -15,21 +16,24 @@ import (
 )
 
 type createPurchaseOrderItemTransactionComponent struct {
-	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
-	loggingDataSource           databaseloggingdatasourceinterfaces.LoggingDataSource
-	purchaseOrderItemLoader     purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
-	generatedObjectID           *primitive.ObjectID
+	purchaseOrderItemDataSource     databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
+	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	purchaseOrderItemLoader         purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
+	generatedObjectID               *primitive.ObjectID
 }
 
 func NewCreatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	purchaseOrderItemLoader purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader,
 ) (purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent, error) {
 	return &createPurchaseOrderItemTransactionComponent{
-		purchaseOrderItemDataSource: purchaseOrderItemDataSource,
-		loggingDataSource:           loggingDataSource,
-		purchaseOrderItemLoader:     purchaseOrderItemLoader,
+		purchaseOrderItemDataSource:     purchaseOrderItemDataSource,
+		loggingDataSource:               loggingDataSource,
+		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
+		purchaseOrderItemLoader:         purchaseOrderItemLoader,
 	}, nil
 }
 
@@ -57,6 +61,32 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	session *mongodbcoretypes.OperationOptions,
 	createPurchaseOrderItem *model.InternalCreatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
+	generatedObjectID := createPurchaseOrderItemTrx.GetCurrentObjectID()
+	for i, photoToCreate := range createPurchaseOrderItem.DeliveryDetail.Photos {
+		photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItem
+		photoToCreate.Object = &model.ObjectIDOnly{
+			ID: &generatedObjectID,
+		}
+		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &s
+		}(*photoToCreate.ProposalStatus)
+		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			return &m
+		}(*photoToCreate.SubmittingAccount)
+		descriptivePhoto, err := createPurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			photoToCreate,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createPurchaseOrderItemComponent",
+				err,
+			)
+		}
+
+		jsonTemp, _ := json.Marshal(descriptivePhoto)
+		json.Unmarshal(jsonTemp, &createPurchaseOrderItem.DeliveryDetail.Photos[i])
+	}
 	_, err := createPurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 		session,
 		createPurchaseOrderItem.MouItem,
@@ -65,7 +95,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrderItem",
+			"/createPurchaseOrderItemComponent",
 			err,
 		)
 	}
@@ -85,7 +115,6 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	createPurchaseOrderItem.SubTotal = func(i int) *int { return &i }(createPurchaseOrderItem.Quantity * createPurchaseOrderItem.UnitPrice)
 
 	newDocumentJson, _ := json.Marshal(*createPurchaseOrderItem)
-	generatedObjectID := createPurchaseOrderItemTrx.GetCurrentObjectID()
 	loggingOutput, err := createPurchaseOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "PurchaseOrderItem",
