@@ -7,6 +7,9 @@ import (
 	"context"
 
 	container "github.com/golobby/container/v2"
+	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
+	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	moupresentationusecaseinterfaces "github.com/horeekaa/backend/features/mous/presentation/usecases"
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
@@ -30,6 +33,48 @@ func (r *mouItemResolver) Mou(ctx context.Context, obj *model.MouItem) (*model.M
 		&model.MouFilterFields{
 			ID: &obj.Mou.ID,
 		},
+	)
+}
+
+func (r *mouItemResolver) SubmittingAccount(ctx context.Context, obj *model.MouItem) (*model.Account, error) {
+	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
+	container.Make(&getAccountUsecase)
+	return getAccountUsecase.Execute(
+		accountpresentationusecasetypes.GetAccountInput{
+			FilterFields: &model.AccountFilterFields{
+				ID: &obj.SubmittingAccount.ID,
+			},
+		},
+	)
+}
+
+func (r *mouItemResolver) RecentApprovingAccount(ctx context.Context, obj *model.MouItem) (*model.Account, error) {
+	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
+	container.Make(&getAccountUsecase)
+
+	var filterFields *model.AccountFilterFields
+	if obj.RecentApprovingAccount != nil {
+		filterFields = &model.AccountFilterFields{}
+		filterFields.ID = &obj.RecentApprovingAccount.ID
+	}
+	return getAccountUsecase.Execute(
+		accountpresentationusecasetypes.GetAccountInput{
+			FilterFields: filterFields,
+		},
+	)
+}
+
+func (r *mouItemResolver) RecentLog(ctx context.Context, obj *model.MouItem) (*model.Logging, error) {
+	var getLoggingUsecase loggingpresentationusecaseinterfaces.GetLoggingUsecase
+	container.Make(&getLoggingUsecase)
+
+	var filterFields *model.LoggingFilterFields
+	if obj.RecentLog != nil {
+		filterFields = &model.LoggingFilterFields{}
+		filterFields.ID = &obj.RecentLog.ID
+	}
+	return getLoggingUsecase.Execute(
+		filterFields,
 	)
 }
 

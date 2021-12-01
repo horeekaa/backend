@@ -42,15 +42,15 @@ func (_ *ProposeUpdatePurchaseOrderDependency) Bind() {
 		func(
 			purchaseOrderDataSource databasepurchaseOrderdatasourceinterfaces.PurchaseOrderDataSource,
 			trxComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent,
-			createpurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
-			updatepurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.UpdatePurchaseOrderItemTransactionComponent,
+			createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
+			proposeUpdatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository {
 			proposeUpdatepurchaseOrderRepo, _ := purchaseorderdomainrepositories.NewProposeUpdatePurchaseOrderRepository(
 				purchaseOrderDataSource,
 				trxComponent,
-				createpurchaseOrderItemComponent,
-				updatepurchaseOrderItemComponent,
+				createPurchaseOrderItemComponent,
+				proposeUpdatePurchaseOrderItemComponent,
 				mongoDBTransaction,
 			)
 			return proposeUpdatepurchaseOrderRepo

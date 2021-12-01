@@ -6,6 +6,7 @@ import (
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
+	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	databasepurchaseOrderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositories "github.com/horeekaa/backend/features/purchaseOrders/data/repositories"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
@@ -36,10 +37,14 @@ func (_ *ApproveUpdatePurchaseOrderDependency) Bind() {
 
 	container.Transient(
 		func(
+			purchaseOrderDataSource databasepurchaseOrderdatasourceinterfaces.PurchaseOrderDataSource,
+			approveUpdatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
 			trxComponent purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository {
 			approveUpdatePurchaseOrderRepo, _ := purchaseorderdomainrepositories.NewApproveUpdatePurchaseOrderRepository(
+				purchaseOrderDataSource,
+				approveUpdatePurchaseOrderItemComponent,
 				trxComponent,
 				mongoDBTransaction,
 			)

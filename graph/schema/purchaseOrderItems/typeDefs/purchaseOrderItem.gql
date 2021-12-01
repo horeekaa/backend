@@ -32,6 +32,7 @@ input CreatePurchaseOrderItem {
   productVariant: ObjectIDOnly!
   expectedDeliverySchedule: ExpectedDeliverySchedule
   deliveryNote: String
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreatePurchaseOrderItem {
@@ -45,6 +46,11 @@ input InternalCreatePurchaseOrderItem {
   expectedDeliverySchedule: ExpectedDeliverySchedule
   deliveryNote: String
   purchaseOrder: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdatePurchaseOrderItem
+  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreatePurchaseOrderItem {
@@ -59,6 +65,11 @@ input DatabaseCreatePurchaseOrderItem {
   deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrderItem
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -79,6 +90,16 @@ input UpdatePurchaseOrderItem {
   deliveryNote: String
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdatePurchaseOrderItem {
@@ -94,6 +115,12 @@ input InternalUpdatePurchaseOrderItem {
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: InternalUpdatePurchaseOrderItem
 }
 
 input DatabaseUpdatePurchaseOrderItem {
@@ -109,6 +136,12 @@ input DatabaseUpdatePurchaseOrderItem {
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePurchaseOrderItem
   updatedAt: Time
 }
 
@@ -125,6 +158,12 @@ input PurchaseOrderItemFilterFields {
   status: StringFilterField
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnlyFilterField
+  proposalStatus: StringFilterField
+  proposalStatusReason: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: PurchaseOrderItemFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -142,6 +181,12 @@ type PurchaseOrderItem {
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
   purchaseOrderToSupply: PurchaseOrderToSupply
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: PurchaseOrderItem
+  recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }

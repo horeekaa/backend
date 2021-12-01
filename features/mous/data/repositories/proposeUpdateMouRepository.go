@@ -17,7 +17,7 @@ type proposeUpdateMouRepository struct {
 	mouDataSource                        databasemoudatasourceinterfaces.MouDataSource
 	proposeUpdateMouTransactionComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent
 	createMouItemComponent               mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent
-	updateMouItemComponent               mouitemdomainrepositoryinterfaces.UpdateMouItemTransactionComponent
+	proposeUpdateMouItemComponent        mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -25,14 +25,14 @@ func NewProposeUpdateMouRepository(
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	proposeUpdateMouRepositoryTransactionComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent,
 	createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
-	updateMouItemComponent mouitemdomainrepositoryinterfaces.UpdateMouItemTransactionComponent,
+	proposeUpdateMouItemComponent mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (moudomainrepositoryinterfaces.ProposeUpdateMouRepository, error) {
 	proposeUpdateMouRepo := &proposeUpdateMouRepository{
 		mouDataSource,
 		proposeUpdateMouRepositoryTransactionComponent,
 		createMouItemComponent,
-		updateMouItemComponent,
+		proposeUpdateMouItemComponent,
 		mongoDBTransaction,
 	}
 
@@ -80,8 +80,14 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 				) {
 					continue
 				}
+				mouItemToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*mouToUpdate.ProposalStatus)
+				mouItemToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*mouToUpdate.SubmittingAccount)
 
-				_, err := updateMouRepo.updateMouItemComponent.TransactionBody(
+				_, err := updateMouRepo.proposeUpdateMouItemComponent.TransactionBody(
 					operationOption,
 					mouItemToUpdate,
 				)
@@ -100,6 +106,12 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 			mouItemToCreate.Mou = &model.ObjectIDOnly{
 				ID: &existingMou.ID,
 			}
+			mouItemToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*mouToUpdate.ProposalStatus)
+			mouItemToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*mouToUpdate.SubmittingAccount)
 
 			savedMouItem, err := updateMouRepo.createMouItemComponent.TransactionBody(
 				operationOption,

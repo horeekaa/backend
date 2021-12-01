@@ -64,6 +64,7 @@ func (createProdRepo *createProductRepository) TransactionBody(
 ) (interface{}, error) {
 	productToCreate := input.(*model.InternalCreateProduct)
 	generatedObjectID := createProdRepo.createProductTransactionComponent.GenerateNewObjectID()
+
 	if productToCreate.Photos != nil {
 		savedPhotos := []*model.InternalCreateDescriptivePhoto{}
 		for _, photo := range productToCreate.Photos {
@@ -71,6 +72,12 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			photo.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToCreate.ProposalStatus)
+			photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToCreate.SubmittingAccount)
 			createdPhotoOutput, err := createProdRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
@@ -92,6 +99,12 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			variant.Product = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			variant.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToCreate.ProposalStatus)
+			variant.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToCreate.SubmittingAccount)
 			createdVariantOutput, err := createProdRepo.createProductVariantComponent.TransactionBody(
 				operationOption,
 				variant,
@@ -113,8 +126,12 @@ func (createProdRepo *createProductRepository) TransactionBody(
 			tagging.Products = []*model.ObjectIDOnly{
 				{ID: &generatedObjectID},
 			}
-			tagging.ProposalStatus = productToCreate.ProposalStatus
-			tagging.SubmittingAccount = productToCreate.SubmittingAccount
+			tagging.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToCreate.ProposalStatus)
+			tagging.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToCreate.SubmittingAccount)
 			tagging.IgnoreTaggedDocumentCheck = true
 
 			createdTaggingOutput, err := createProdRepo.bulkCreateTaggingComponent.TransactionBody(

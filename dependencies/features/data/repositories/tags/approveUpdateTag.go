@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	tagdomainrepositories "github.com/horeekaa/backend/features/tags/data/repositories"
@@ -31,10 +32,14 @@ func (_ *ApproveUpdateTagDependency) Bind() {
 	container.Transient(
 		func(
 			trxComponent tagdomainrepositoryinterfaces.ApproveUpdateTagTransactionComponent,
+			approveDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
+			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) tagdomainrepositoryinterfaces.ApproveUpdateTagRepository {
 			approveUpdateTagRepo, _ := tagdomainrepositories.NewApproveUpdateTagRepository(
 				trxComponent,
+				approveDescriptivePhotoComponent,
+				tagDataSource,
 				mongoDBTransaction,
 			)
 			return approveUpdateTagRepo

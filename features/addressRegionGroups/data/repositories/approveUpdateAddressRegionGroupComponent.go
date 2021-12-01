@@ -82,6 +82,12 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateAddressRegionGroup",
+			err,
+		)
+	}
 
 	updateAddressRegionGroup.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

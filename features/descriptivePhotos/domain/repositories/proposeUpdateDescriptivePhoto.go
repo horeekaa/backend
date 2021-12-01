@@ -5,7 +5,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateDescriptivePhotoTransactionComponent interface {
+type ProposeUpdateDescriptivePhotoTransactionComponent interface {
 	PreTransaction(
 		updateDescriptivePhotoInput *model.InternalUpdateDescriptivePhoto,
 	) (*model.InternalUpdateDescriptivePhoto, error)

@@ -62,6 +62,12 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			purchaseOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*purchaseOrderToCreate.ProposalStatus)
+			purchaseOrderItem.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*purchaseOrderToCreate.SubmittingAccount)
 			createdPurchaseOrderOutput, err := createPurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
 				operationOption,
 				purchaseOrderItem,
@@ -111,6 +117,12 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			purchaseOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*purchaseOrderToCreate.ProposalStatus)
+			purchaseOrderItem.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*purchaseOrderToCreate.SubmittingAccount)
 			createdPurchaseOrderOutput, err := createPurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
 				operationOption,
 				purchaseOrderItem,

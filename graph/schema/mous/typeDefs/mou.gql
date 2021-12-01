@@ -172,6 +172,7 @@ type Mou {
   firstParty: Party!
   secondParty: Party!
   proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
   proposedChanges: Mou

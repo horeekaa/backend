@@ -43,7 +43,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&addressdomainrepositoryutilitydependencies.AddressLoaderDependency{},
 		&addressdomainrepositorydependencies.CreateAddressDependency{},
 		&addressdomainrepositorydependencies.GetAddressDependency{},
-		&addressdomainrepositorydependencies.UpdateAddressDependency{},
+		&addressdomainrepositorydependencies.ProposeUpdateAddressDependency{},
+		&addressdomainrepositorydependencies.ApproveUpdateAddressDependency{},
 
 		&addressregiongroupdomainrepositorydependencies.CreateAddressRegionGroupDependency{},
 		&addressregiongroupdomainrepositorydependencies.ProposeUpdateAddressRegionGroupDependency{},
@@ -72,7 +73,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&taggingdomainrepositorydependencies.BulkApproveUpdateTaggingDependency{},
 
 		&descriptivephotodomainrepositorydependencies.CreateDescriptivePhotoDependency{},
-		&descriptivephotodomainrepositorydependencies.UpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.ProposeUpdateDescriptivePhotoDependency{},
+		&descriptivephotodomainrepositorydependencies.ApproveUpdateDescriptivePhotoDependency{},
 		&descriptivephotodomainrepositorydependencies.GetDescriptivePhotoDependency{},
 
 		&organizationdomainrepositorydependencies.CreateOrganizationDependency{},
@@ -82,7 +84,8 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
 
 		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
-		&productvariantdomainrepositorydependencies.UpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.ApproveUpdateProductVariantDependency{},
+		&productvariantdomainrepositorydependencies.ProposeUpdateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.GetProductVariantDependency{},
 
 		&productdomainrepositorydependencies.CreateProductDependency{},
@@ -93,7 +96,8 @@ func (_ *RepositoriesDependency) Bind() {
 
 		&purchaseorderitemdomainrepositoryutilitydependencies.PurchaseOrderItemLoaderDependency{},
 		&purchaseorderitemdomainrepositorydependencies.CreatePurchaseOrderItemDependency{},
-		&purchaseorderitemdomainrepositorydependencies.UpdatePurchaseOrderItemDependency{},
+		&purchaseorderitemdomainrepositorydependencies.ApproveUpdatePurchaseOrderItemDependency{},
+		&purchaseorderitemdomainrepositorydependencies.ProposeUpdatePurchaseOrderItemDependency{},
 		&purchaseorderitemdomainrepositorydependencies.GetPurchaseOrderItemDependency{},
 
 		&purchaseorderdomainrepositoryutilitydependencies.PurchaseOrderLoaderDependency{},
@@ -121,17 +125,18 @@ func (_ *RepositoriesDependency) Bind() {
 		&notificationdomainrepositorydependencies.BulkUpdateNotificationDependency{},
 		&notificationdomainrepositorydependencies.GetAllNotificationDependency{},
 
+		&mouitemdomainrepositoryutilitydependencies.AgreedProductLoaderDependency{},
+		&mouitemdomainrepositorydependencies.CreateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.ApproveUpdateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.ProposeUpdateMouItemDependency{},
+		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
+
 		&moudomainrepositoryutilitydependencies.PartyLoaderDependency{},
 		&moudomainrepositorydependencies.CreateMouDependency{},
 		&moudomainrepositorydependencies.ProposeUpdateMouDependency{},
 		&moudomainrepositorydependencies.ApproveUpdateMouDependency{},
 		&moudomainrepositorydependencies.GetAllMouDependency{},
 		&moudomainrepositorydependencies.GetMouDependency{},
-
-		&mouitemdomainrepositoryutilitydependencies.AgreedProductLoaderDependency{},
-		&mouitemdomainrepositorydependencies.CreateMouItemDependency{},
-		&mouitemdomainrepositorydependencies.UpdateMouItemDependency{},
-		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
 	}
 
 	for _, reg := range registrationList {

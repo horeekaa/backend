@@ -30,6 +30,7 @@ input CreateDescriptivePhoto {
   photoUrl: String
   description: String
   type: DescriptivePhotoType!
+  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateDescriptivePhoto {
@@ -40,17 +41,28 @@ input InternalCreateDescriptivePhoto {
   category: DescriptivePhotoCategory!
   type: DescriptivePhotoType!
   object: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateDescriptivePhoto
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
 
 input DatabaseCreateDescriptivePhoto {
+  _id: ObjectID
   photoUrl: String
   description: String
   category: DescriptivePhotoCategory!
   type: DescriptivePhotoType!
   object: ObjectIDOnly
   isActive: Boolean!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateDescriptivePhoto
+  recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
 }
@@ -70,6 +82,16 @@ input UpdateDescriptivePhoto {
   description: String
   type: DescriptivePhotoType
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateDescriptivePhoto {
@@ -83,6 +105,12 @@ input InternalUpdateDescriptivePhoto {
   description: String
   type: DescriptivePhotoType
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateDescriptivePhoto
+  recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -92,6 +120,12 @@ input DatabaseUpdateDescriptivePhoto {
   description: String
   type: DescriptivePhotoType
   isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateDescriptivePhoto
+  recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
@@ -102,6 +136,11 @@ input DescriptivePhotoFilterFields {
   type: DescriptivePhotoType
   object: ObjectIDOnly
   isActive: Boolean
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DescriptivePhotoFilterFields
+  recentLog: ObjectIDOnly
 }
 
 type DescriptivePhoto {
@@ -112,6 +151,12 @@ type DescriptivePhoto {
   type: DescriptivePhotoType!
   object: ObjectIDOnlyOutput!
   isActive: Boolean
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: DescriptivePhoto
+  recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
 }

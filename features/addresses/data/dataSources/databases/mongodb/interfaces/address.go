@@ -16,4 +16,5 @@ type AddressDataSourceMongo interface {
 	) ([]*model.Address, error)
 	Create(input *model.DatabaseCreateAddress, operationOptions *mongodbcoretypes.OperationOptions) (*model.Address, error)
 	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateAddress, operationOptions *mongodbcoretypes.OperationOptions) (*model.Address, error)
+	GenerateObjectID() primitive.ObjectID
 }

@@ -82,6 +82,12 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateMou",
+			err,
+		)
+	}
 
 	updateMou.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

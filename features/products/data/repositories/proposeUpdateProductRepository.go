@@ -18,9 +18,9 @@ import (
 type proposeUpdateProductRepository struct {
 	productDataSource                        databaseproductdatasourceinterfaces.ProductDataSource
 	createDescriptivePhotoComponent          descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
-	updateDescriptivePhotoComponent          descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	createProductVariantComponent            productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent
-	updateProductVariantComponent            productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent
+	proposeUpdateProductVariantComponent     productvariantdomainrepositoryinterfaces.ProposeUpdateProductVariantTransactionComponent
 	bulkCreateTaggingComponent               taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent
 	bulkUpdateTaggingComponent               taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateProductTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent
@@ -30,9 +30,9 @@ type proposeUpdateProductRepository struct {
 func NewProposeUpdateProductRepository(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	createProductVariantComponent productvariantdomainrepositoryinterfaces.CreateProductVariantTransactionComponent,
-	updateProductVariantComponent productvariantdomainrepositoryinterfaces.UpdateProductVariantTransactionComponent,
+	proposeUpdateProductVariantComponent productvariantdomainrepositoryinterfaces.ProposeUpdateProductVariantTransactionComponent,
 	bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 	bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 	proposeUpdateProductRepositoryTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent,
@@ -41,9 +41,9 @@ func NewProposeUpdateProductRepository(
 	proposeUpdateProductRepo := &proposeUpdateProductRepository{
 		productDataSource,
 		createDescriptivePhotoComponent,
-		updateDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent,
 		createProductVariantComponent,
-		updateProductVariantComponent,
+		proposeUpdateProductVariantComponent,
 		bulkCreateTaggingComponent,
 		bulkUpdateTaggingComponent,
 		proposeUpdateProductRepositoryTransactionComponent,
@@ -101,8 +101,14 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				) {
 					continue
 				}
+				descPhotoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*productToUpdate.ProposalStatus)
+				descPhotoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*productToUpdate.SubmittingAccount)
 
-				_, err := updateProdRepo.updateDescriptivePhotoComponent.TransactionBody(
+				_, err := updateProdRepo.proposeUpdateDescriptivePhotoComponent.TransactionBody(
 					operationOption,
 					descPhotoToUpdate,
 				)
@@ -125,6 +131,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingProduct.ID,
 			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToUpdate.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToUpdate.SubmittingAccount)
 
 			savedPhoto, err := updateProdRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
@@ -159,7 +171,14 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 					continue
 				}
 
-				_, err := updateProdRepo.updateProductVariantComponent.TransactionBody(
+				variantToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*productToUpdate.ProposalStatus)
+				variantToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*productToUpdate.SubmittingAccount)
+
+				_, err := updateProdRepo.proposeUpdateProductVariantComponent.TransactionBody(
 					operationOption,
 					variantToUpdate,
 				)
@@ -181,6 +200,13 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			variantToCreate.Product = &model.ObjectIDOnly{
 				ID: &existingProduct.ID,
 			}
+
+			variantToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToUpdate.ProposalStatus)
+			variantToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToUpdate.SubmittingAccount)
 
 			savedVariant, err := updateProdRepo.createProductVariantComponent.TransactionBody(
 				operationOption,
@@ -223,8 +249,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				})
 				json.Unmarshal(jsonTemp, bulkUpdateTagging)
 
-				bulkUpdateTagging.ProposalStatus = productToUpdate.ProposalStatus
-				bulkUpdateTagging.SubmittingAccount = productToUpdate.SubmittingAccount
+				bulkUpdateTagging.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*productToUpdate.ProposalStatus)
+				bulkUpdateTagging.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*productToUpdate.SubmittingAccount)
 
 				_, err := updateProdRepo.bulkUpdateTaggingComponent.TransactionBody(
 					operationOption,
@@ -245,8 +275,12 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 			taggingToCreate.Products = []*model.ObjectIDOnly{
 				{ID: &existingProduct.ID},
 			}
-			taggingToCreate.ProposalStatus = productToUpdate.ProposalStatus
-			taggingToCreate.SubmittingAccount = productToUpdate.SubmittingAccount
+			taggingToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*productToUpdate.ProposalStatus)
+			taggingToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*productToUpdate.SubmittingAccount)
 
 			savedTagging, err := updateProdRepo.bulkCreateTaggingComponent.TransactionBody(
 				operationOption,

@@ -5,7 +5,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdatePurchaseOrderItemTransactionComponent interface {
+type ApproveUpdatePurchaseOrderItemTransactionComponent interface {
 	PreTransaction(
 		updatePurchaseOrderItemInput *model.InternalUpdatePurchaseOrderItem,
 	) (*model.InternalUpdatePurchaseOrderItem, error)

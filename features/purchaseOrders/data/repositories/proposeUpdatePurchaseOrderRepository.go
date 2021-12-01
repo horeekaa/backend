@@ -9,27 +9,27 @@ import (
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
-	databasePurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
-	purchaseOrderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
+	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
+	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
 )
 
 type proposeUpdatePurchaseOrderRepository struct {
-	purchaseOrderDataSource                        databasePurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
-	proposeUpdatePurchaseOrderTransactionComponent purchaseOrderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent
+	purchaseOrderDataSource                        databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
+	proposeUpdatePurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent
 	createPurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
-	updatePurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.UpdatePurchaseOrderItemTransactionComponent
+	updatePurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewProposeUpdatePurchaseOrderRepository(
-	purchaseOrderDataSource databasePurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
-	proposeUpdatePurchaseOrderRepositoryTransactionComponent purchaseOrderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent,
+	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
+	proposeUpdatePurchaseOrderRepositoryTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent,
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
-	updatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.UpdatePurchaseOrderItemTransactionComponent,
+	updatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
-) (purchaseOrderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository, error) {
+) (purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository, error) {
 	proposeUpdatePurchaseOrderRepo := &proposeUpdatePurchaseOrderRepository{
 		purchaseOrderDataSource,
 		proposeUpdatePurchaseOrderRepositoryTransactionComponent,
@@ -82,6 +82,12 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 				) {
 					continue
 				}
+				purchaseOrderItemToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*purchaseOrderToUpdate.ProposalStatus)
+				purchaseOrderItemToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*purchaseOrderToUpdate.SubmittingAccount)
 
 				_, err := updatePurchaseOrderRepo.updatePurchaseOrderItemComponent.TransactionBody(
 					operationOption,
@@ -109,6 +115,12 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 			purchaseOrderItemToCreate.PurchaseOrder = &model.ObjectIDOnly{
 				ID: &existingPurchaseOrder.ID,
 			}
+			purchaseOrderItemToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*purchaseOrderToUpdate.ProposalStatus)
+			purchaseOrderItemToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*purchaseOrderToUpdate.SubmittingAccount)
 
 			savedPurchaseOrderItem, err := updatePurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
 				operationOption,

@@ -93,6 +93,12 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateTag",
+			err,
+		)
+	}
 
 	updateTag.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

@@ -71,6 +71,12 @@ func (createOrgRepo *createOrganizationRepository) TransactionBody(
 			photo.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToCreate.ProposalStatus)
+			photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToCreate.SubmittingAccount)
 			createdPhotoOutput, err := createOrgRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photo,
@@ -93,6 +99,12 @@ func (createOrgRepo *createOrganizationRepository) TransactionBody(
 			address.Object = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			address.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToCreate.ProposalStatus)
+			address.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToCreate.SubmittingAccount)
 			createdAddressOutput, err := createOrgRepo.createAddressComponent.TransactionBody(
 				operationOption,
 				address,
@@ -114,8 +126,12 @@ func (createOrgRepo *createOrganizationRepository) TransactionBody(
 			tagging.Organizations = []*model.ObjectIDOnly{
 				{ID: &generatedObjectID},
 			}
-			tagging.ProposalStatus = organizationToCreate.ProposalStatus
-			tagging.SubmittingAccount = organizationToCreate.SubmittingAccount
+			tagging.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*organizationToCreate.ProposalStatus)
+			tagging.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*organizationToCreate.SubmittingAccount)
 			tagging.IgnoreTaggedDocumentCheck = true
 
 			createdTaggingOutput, err := createOrgRepo.bulkCreateTaggingComponent.TransactionBody(

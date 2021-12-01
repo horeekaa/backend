@@ -35,9 +35,9 @@ func (_ *ProposeUpdateOrganizationDependency) Bind() {
 		func(
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+			proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			createAddressComponent addressdomainrepositoryinterfaces.CreateAddressTransactionComponent,
-			updateAddressComponent addressdomainrepositoryinterfaces.UpdateAddressTransactionComponent,
+			updateAddressComponent addressdomainrepositoryinterfaces.ProposeUpdateAddressTransactionComponent,
 			bulkCreateTaggingComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent,
 			bulkUpdateTaggingComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent,
 			trxComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent,
@@ -46,7 +46,7 @@ func (_ *ProposeUpdateOrganizationDependency) Bind() {
 			proposeUpdateOrganizationRepo, _ := organizationdomainrepositories.NewProposeUpdateOrganizationRepository(
 				organizationDataSource,
 				createDescriptivePhotoComponent,
-				updateDescriptivePhotoComponent,
+				proposeUpdateDescriptivePhotoComponent,
 				createAddressComponent,
 				updateAddressComponent,
 				bulkCreateTaggingComponent,

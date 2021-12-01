@@ -93,6 +93,12 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateMemberAccessRef",
+			err,
+		)
+	}
 
 	updateMemberAccessRef.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

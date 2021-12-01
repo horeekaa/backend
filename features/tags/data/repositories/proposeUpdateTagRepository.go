@@ -14,24 +14,24 @@ import (
 )
 
 type proposeUpdateTagRepository struct {
-	tagDataSource                        databasetagdatasourceinterfaces.TagDataSource
-	createDescriptivePhotoComponent      descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
-	updateDescriptivePhotoComponent      descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent
-	proposeUpdateTagTransactionComponent tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent
-	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
+	tagDataSource                          databasetagdatasourceinterfaces.TagDataSource
+	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
+	proposeUpdateTagTransactionComponent   tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent
+	mongoDBTransaction                     mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewProposeUpdateTagRepository(
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-	updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.UpdateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	proposeUpdateTagRepositoryTransactionComponent tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (tagdomainrepositoryinterfaces.ProposeUpdateTagRepository, error) {
 	proposeUpdateTagRepo := &proposeUpdateTagRepository{
 		tagDataSource,
 		createDescriptivePhotoComponent,
-		updateDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent,
 		proposeUpdateTagRepositoryTransactionComponent,
 		mongoDBTransaction,
 	}
@@ -87,8 +87,14 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 				) {
 					continue
 				}
+				descPhotoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*tagToUpdate.ProposalStatus)
+				descPhotoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*tagToUpdate.SubmittingAccount)
 
-				_, err := updateTagRepo.updateDescriptivePhotoComponent.TransactionBody(
+				_, err := updateTagRepo.proposeUpdateDescriptivePhotoComponent.TransactionBody(
 					operationOption,
 					descPhotoToUpdate,
 				)
@@ -111,6 +117,12 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingTag.ID,
 			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*tagToUpdate.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*tagToUpdate.SubmittingAccount)
 
 			savedPhoto, err := updateTagRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,

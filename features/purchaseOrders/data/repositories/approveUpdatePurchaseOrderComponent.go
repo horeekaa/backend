@@ -103,6 +103,12 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 		logToCreate,
 		session,
 	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updatePurchaseOrder",
+			err,
+		)
+	}
 
 	updatePurchaseOrder.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 

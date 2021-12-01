@@ -5,7 +5,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-type UpdateMouItemTransactionComponent interface {
+type ApproveUpdateMouItemTransactionComponent interface {
 	PreTransaction(
 		updateMouItemInput *model.InternalUpdateMouItem,
 	) (*model.InternalUpdateMouItem, error)

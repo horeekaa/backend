@@ -47,7 +47,23 @@ models:
     fields:
       person:
         resolver: true
+  Address:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   AddressRegionGroup:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  DescriptivePhoto:
     fields:
       submittingAccount:
         resolver: true
@@ -97,6 +113,12 @@ models:
         resolver: true
       mou:
         resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Notification:
     fields:
       recipientAccount:
@@ -135,6 +157,12 @@ models:
         resolver: true
       product:
         resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   PurchaseOrder:
     fields:
       items:
@@ -150,6 +178,12 @@ models:
       purchaseOrder:
         resolver: true
       purchaseOrderToSupply:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
         resolver: true
   PurchaseOrderToSupply:
     fields:
