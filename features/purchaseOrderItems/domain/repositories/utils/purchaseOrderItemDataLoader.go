@@ -10,6 +10,6 @@ type PurchaseOrderItemLoader interface {
 		session *mongodbcoretypes.OperationOptions,
 		mouItem *model.MouItemForPurchaseOrderItemInput,
 		productVariant *model.ProductVariantForPurchaseOrderItemInput,
-		deliveryAddress *model.AddressForPurchaseOrderItemInput,
+		delivery *model.InternalPurchaseOrderItemDelivery,
 	) (bool, error)
 }

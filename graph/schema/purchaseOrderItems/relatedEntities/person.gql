@@ -1,0 +1,13 @@
+input PersonForPurchaseOrderItemInput {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}
+
+type PersonForPurchaseOrderItem {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}

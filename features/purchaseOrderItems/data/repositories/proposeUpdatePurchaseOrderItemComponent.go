@@ -134,14 +134,11 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
 	}
 
-	if updatePurchaseOrderItem.DeliveryDetail == nil {
-		updatePurchaseOrderItem.DeliveryDetail = &model.InternalUpdatePurchaseOrderItemDelivery{}
-	}
 	_, err = updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 		session,
 		updatePurchaseOrderItem.MouItem,
 		updatePurchaseOrderItem.ProductVariant,
-		updatePurchaseOrderItem.DeliveryDetail.Address,
+		updatePurchaseOrderItem.DeliveryDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

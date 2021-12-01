@@ -23,7 +23,7 @@ input InternalCreatePurchaseOrderItem {
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  deliveryDetail: InternalCreatePurchaseOrderItemDelivery
+  deliveryDetail: InternalPurchaseOrderItemDelivery
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -87,7 +87,7 @@ input InternalUpdatePurchaseOrderItem {
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  deliveryDetail: InternalUpdatePurchaseOrderItemDelivery
+  deliveryDetail: InternalPurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
@@ -16,6 +17,8 @@ import (
 )
 
 type purchaseOrderItemLoader struct {
+	accountDataSource          databaseaccountdatasourceinterfaces.AccountDataSource
+	personDataSource           databaseaccountdatasourceinterfaces.PersonDataSource
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource
 	mouItemDataSource          databasemouitemdatasourceinterfaces.MouItemDataSource
 	productVariantDataSource   databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
@@ -26,6 +29,8 @@ type purchaseOrderItemLoader struct {
 }
 
 func NewPurchaseOrderItemLoader(
+	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
+	personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
@@ -35,6 +40,8 @@ func NewPurchaseOrderItemLoader(
 	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 ) (purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader, error) {
 	return &purchaseOrderItemLoader{
+		accountDataSource,
+		personDataSource,
 		descriptivePhotoDataSource,
 		mouItemDataSource,
 		productVariantDataSource,
@@ -49,31 +56,83 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	mouItem *model.MouItemForPurchaseOrderItemInput,
 	productVariant *model.ProductVariantForPurchaseOrderItemInput,
-	deliveryAddress *model.AddressForPurchaseOrderItemInput,
+	delivery *model.InternalPurchaseOrderItemDelivery,
 ) (bool, error) {
 	mouItemLoadedChan := make(chan bool)
 	productVariantLoadedChan := make(chan bool)
-	addressLoadedChan := make(chan bool)
+	deliveryLoadedChan := make(chan bool)
 	errChan := make(chan error)
 
 	go func() {
-		if deliveryAddress == nil {
+		if delivery == nil {
+			deliveryLoadedChan <- true
+			return
+		}
+
+		addressLoadedChan := make(chan bool)
+		accountLoadedChan := make(chan bool)
+
+		go func() {
+			if delivery.Address == nil {
+				addressLoadedChan <- true
+				return
+			}
+			loadedAddress, err := purcOrderItemLoader.addressDataSource.GetMongoDataSource().FindByID(
+				delivery.Address.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			jsonTemp, _ := json.Marshal(loadedAddress)
+			json.Unmarshal(jsonTemp, &delivery.Address)
+
 			addressLoadedChan <- true
-			return
+		}()
+
+		go func() {
+			if delivery.Courier == nil {
+				accountLoadedChan <- true
+				return
+			}
+			account, err := purcOrderItemLoader.accountDataSource.GetMongoDataSource().FindByID(
+				delivery.Courier.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			jsonTemp, _ := json.Marshal(account)
+			json.Unmarshal(jsonTemp, &delivery.Courier)
+
+			person, err := purcOrderItemLoader.personDataSource.GetMongoDataSource().FindByID(
+				delivery.Courier.Person.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			jsonTemp, _ = json.Marshal(person)
+			json.Unmarshal(jsonTemp, &delivery.Courier.Person)
+
+			accountLoadedChan <- true
+		}()
+
+		for i := 0; i < 2; {
+			select {
+			case _ = <-addressLoadedChan:
+				i++
+			case _ = <-accountLoadedChan:
+				i++
+			}
 		}
 
-		loadedAddress, err := purcOrderItemLoader.addressDataSource.GetMongoDataSource().FindByID(
-			deliveryAddress.ID,
-			session,
-		)
-		if err != nil {
-			errChan <- err
-			return
-		}
-		jsonTemp, _ := json.Marshal(loadedAddress)
-		json.Unmarshal(jsonTemp, deliveryAddress)
-
-		addressLoadedChan <- true
+		deliveryLoadedChan <- true
 	}()
 
 	go func() {
@@ -224,7 +283,7 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			i++
 		case _ = <-productVariantLoadedChan:
 			i++
-		case _ = <-addressLoadedChan:
+		case _ = <-deliveryLoadedChan:
 			i++
 		}
 	}

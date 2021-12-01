@@ -62,7 +62,12 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	createPurchaseOrderItem *model.InternalCreatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
 	generatedObjectID := createPurchaseOrderItemTrx.GetCurrentObjectID()
-	for i, photoToCreate := range createPurchaseOrderItem.DeliveryDetail.Photos {
+	for i, photo := range createPurchaseOrderItem.DeliveryDetail.Photos {
+		photoToCreate := &model.InternalCreateDescriptivePhoto{}
+
+		jsonTemp, _ := json.Marshal(photo)
+		json.Unmarshal(jsonTemp, &photoToCreate)
+		photoToCreate.Photo.File = photo.Photo.File
 		photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItem
 		photoToCreate.Object = &model.ObjectIDOnly{
 			ID: &generatedObjectID,
@@ -84,14 +89,14 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 			)
 		}
 
-		jsonTemp, _ := json.Marshal(descriptivePhoto)
+		jsonTemp, _ = json.Marshal(descriptivePhoto)
 		json.Unmarshal(jsonTemp, &createPurchaseOrderItem.DeliveryDetail.Photos[i])
 	}
 	_, err := createPurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 		session,
 		createPurchaseOrderItem.MouItem,
 		createPurchaseOrderItem.ProductVariant,
-		createPurchaseOrderItem.DeliveryDetail.Address,
+		createPurchaseOrderItem.DeliveryDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
