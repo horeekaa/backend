@@ -7,19 +7,10 @@ input CreateSupplyOrderItemPickUp {
   note: String
 }
 
-input InternalCreateSupplyOrderItemPickUp {
-  address: AddressForSupplyOrderItemInput!
-  photos: [InternalCreateDescriptivePhoto]!
-  courier: ObjectIDOnly
-  scheduledPickUpTime: Time
-  actualPickUpTime: Time
-  note: String
-}
-
 input DatabaseCreateSupplyOrderItemPickUp {
   address: AddressForSupplyOrderItemInput!
   photos: [ObjectIDOnly]!
-  courier: ObjectIDOnly
+  courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
   note: String
@@ -34,10 +25,10 @@ input UpdateSupplyOrderItemPickUp {
   note: String
 }
 
-input InternalUpdateSupplyOrderItemPickUp {
+input InternalSupplyOrderItemPickUp {
   address: AddressForSupplyOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
-  courier: ObjectIDOnly
+  courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
   note: String
@@ -46,7 +37,7 @@ input InternalUpdateSupplyOrderItemPickUp {
 input DatabaseUpdateSupplyOrderItemPickUp {
   address: AddressForSupplyOrderItemInput
   photos: [ObjectIDOnly]
-  courier: ObjectIDOnly
+  courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
   note: String
@@ -55,7 +46,7 @@ input DatabaseUpdateSupplyOrderItemPickUp {
 input SupplyOrderItemPickUpFilterFields {
   note: StringFilterField
   address: AddressForSupplyOrderItemFilterFields
-  courier: ObjectIDOnlyFilterField
+  courier: AccountForSupplyOrderItemFilterFields
   scheduledPickUpTime: TimeFilterField
   actualPickUpTime: TimeFilterField
 }
@@ -63,7 +54,7 @@ input SupplyOrderItemPickUpFilterFields {
 type SupplyOrderItemPickUp {
   address: AddressForSupplyOrderItem
   photos: [DescriptivePhoto]
-  courier: Account
+  courier: AccountForSupplyOrderItem
   scheduledPickUpTime: Time
   actualPickUpTime: Time
   note: String

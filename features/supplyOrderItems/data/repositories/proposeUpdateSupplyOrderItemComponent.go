@@ -69,7 +69,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingSupplyOrderItem.PickUpDetail.Photos,
-					func(dp *model.DescriptivePhotoForSupplyOrderItem) bool {
+					func(dp *model.DescriptivePhoto) bool {
 						return dp.ID == *photoToUpdate.ID
 					},
 				) {
@@ -134,13 +134,10 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
-	if updateSupplyOrderItem.PickUpDetail == nil {
-		updateSupplyOrderItem.PickUpDetail = &model.InternalUpdateSupplyOrderItemPickUp{}
-	}
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
 		updateSupplyOrderItem.PurchaseOrderToSupply,
-		updateSupplyOrderItem.PickUpDetail.Address,
+		updateSupplyOrderItem.PickUpDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

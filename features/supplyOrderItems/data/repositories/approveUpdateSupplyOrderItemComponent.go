@@ -172,7 +172,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateSupplyOrderItem",
+						"/approveUpdateSupplyOrderItem",
 						err,
 					)
 				}

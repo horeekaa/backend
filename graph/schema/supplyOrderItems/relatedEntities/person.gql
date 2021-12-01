@@ -1,0 +1,13 @@
+input PersonForSupplyOrderItemInput {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}
+
+type PersonForSupplyOrderItem {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String
+}

@@ -18,7 +18,7 @@ input InternalCreateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
-  pickUpDetail: InternalCreateSupplyOrderItemPickUp!
+  pickUpDetail: InternalSupplyOrderItemPickUp!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -78,7 +78,7 @@ input InternalUpdateSupplyOrderItem {
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
-  pickUpDetail: InternalUpdateSupplyOrderItemPickUp
+  pickUpDetail: InternalSupplyOrderItemPickUp
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly

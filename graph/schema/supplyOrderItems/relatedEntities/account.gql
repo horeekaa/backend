@@ -1,0 +1,20 @@
+input AccountForSupplyOrderItemInput {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: PersonForSupplyOrderItemInput
+}
+
+input AccountForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  email: StringFilterField
+}
+
+type AccountForSupplyOrderItem {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: PersonForSupplyOrderItem
+}

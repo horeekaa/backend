@@ -61,7 +61,12 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	createSupplyOrderItem *model.InternalCreateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
 	generatedObjectID := createSupplyOrderItemTrx.GetCurrentObjectID()
-	for i, photoToCreate := range createSupplyOrderItem.PickUpDetail.Photos {
+	for i, photo := range createSupplyOrderItem.PickUpDetail.Photos {
+		photoToCreate := &model.InternalCreateDescriptivePhoto{}
+
+		jsonTemp, _ := json.Marshal(photo)
+		json.Unmarshal(jsonTemp, &photoToCreate)
+		photoToCreate.Photo.File = photo.Photo.File
 		photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
 		photoToCreate.Object = &model.ObjectIDOnly{
 			ID: &generatedObjectID,
@@ -78,18 +83,18 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createProductVariant",
+				"/createSupplyOrderItemComponent",
 				err,
 			)
 		}
 
-		jsonTemp, _ := json.Marshal(descriptivePhoto)
+		jsonTemp, _ = json.Marshal(descriptivePhoto)
 		json.Unmarshal(jsonTemp, &createSupplyOrderItem.PickUpDetail.Photos[i])
 	}
 	_, err := createSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
 		createSupplyOrderItem.PurchaseOrderToSupply,
-		createSupplyOrderItem.PickUpDetail.Address,
+		createSupplyOrderItem.PickUpDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -144,7 +149,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrderItem",
+			"/createSupplyOrderItemComponent",
 			err,
 		)
 	}
