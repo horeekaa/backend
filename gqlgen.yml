@@ -185,6 +185,10 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  PurchaseOrderItemDelivery:
+    fields:
+      photos:
+        resolver: true
   PurchaseOrderToSupply:
     fields:
       purchaseOrderItems:
