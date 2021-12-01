@@ -102,7 +102,6 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		session,
 		purchaseOrderToCreate.Mou,
 		purchaseOrderToCreate.Organization,
-		purchaseOrderToCreate.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

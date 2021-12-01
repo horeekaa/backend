@@ -6,6 +6,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseOrderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
@@ -15,23 +16,29 @@ import (
 )
 
 type proposeUpdatePurchaseOrderItemTransactionComponent struct {
-	purchaseOrderItemDataSource databasepurchaseOrderitemdatasourceinterfaces.PurchaseOrderItemDataSource
-	loggingDataSource           databaseloggingdatasourceinterfaces.LoggingDataSource
-	purchaseOrderItemLoader     purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
-	mapProcessorUtility         coreutilityinterfaces.MapProcessorUtility
+	purchaseOrderItemDataSource            databasepurchaseOrderitemdatasourceinterfaces.PurchaseOrderItemDataSource
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
+	purchaseOrderItemLoader                purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewProposeUpdatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemDataSource databasepurchaseOrderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	purchaseOrderItemLoader purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent, error) {
 	return &proposeUpdatePurchaseOrderItemTransactionComponent{
-		purchaseOrderItemDataSource: purchaseOrderItemDataSource,
-		loggingDataSource:           loggingDataSource,
-		purchaseOrderItemLoader:     purchaseOrderItemLoader,
-		mapProcessorUtility:         mapProcessorUtility,
+		purchaseOrderItemDataSource:            purchaseOrderItemDataSource,
+		loggingDataSource:                      loggingDataSource,
+		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
+		purchaseOrderItemLoader:                purchaseOrderItemLoader,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -56,18 +63,91 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		)
 	}
 
-	if updatePurchaseOrderItem.ProductVariant != nil {
-		_, err := updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
-			session,
-			updatePurchaseOrderItem.MouItem,
-			updatePurchaseOrderItem.ProductVariant,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/proposeUpdatePurchaseOrderItemComponent",
-				err,
+	if updatePurchaseOrderItem.DeliveryDetail != nil {
+		savedPhotos := existingPurchaseOrderItem.DeliveryDetail.Photos
+		for _, photoToUpdate := range updatePurchaseOrderItem.DeliveryDetail.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingPurchaseOrderItem.DeliveryDetail.Photos,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updatePurchaseOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updatePurchaseOrderItem.SubmittingAccount)
+				_, err := updatePurchaseOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrderItem",
+						err,
+					)
+				}
+
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItem
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingPurchaseOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updatePurchaseOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updatePurchaseOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdDescriptivePhoto, err := updatePurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
 			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updatePurchaseOrderItem",
+					err,
+				)
+			}
+
+			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
 		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"DeliveryDetail": map[string]interface{}{
+					"Photos": savedPhotos,
+				},
+			},
+		)
+		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
+	}
+
+	_, err = updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
+		session,
+		updatePurchaseOrderItem.MouItem,
+		updatePurchaseOrderItem.ProductVariant,
+		updatePurchaseOrderItem.DeliveryDetail,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/proposeUpdatePurchaseOrderItemComponent",
+			err,
+		)
+	}
+
+	if updatePurchaseOrderItem.ProductVariant != nil {
 		updatePurchaseOrderItem.UnitPrice = &updatePurchaseOrderItem.ProductVariant.RetailPrice
 		if existingPurchaseOrderItem.MouItem != nil {
 			index := funk.IndexOf(

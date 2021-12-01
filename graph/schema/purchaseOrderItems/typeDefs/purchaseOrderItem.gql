@@ -6,32 +6,12 @@ enum PurchaseOrderItemStatus {
   CANCELLED
 }
 
-enum ExpectedDeliverySchedule {
-  """
-  4AM to 6AM
-  """
-  DAWN
-  """
-  6.01AM to 8AM
-  """
-  MORNING
-  """
-  10.01AM to 12PM
-  """
-  NOON
-  """
-  12.01PM to 2PM
-  """
-  AFTERNOON
-}
-
 input CreatePurchaseOrderItem {
   quantity: Int!
-  notes: String
+  note: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly!
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: CreatePurchaseOrderItemDelivery
   proposalStatus: EntityProposalStatus
 }
 
@@ -40,11 +20,10 @@ input InternalCreatePurchaseOrderItem {
   quantity: Int!
   unitPrice: Int!
   subTotal: Int
-  notes: String
+  note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: InternalPurchaseOrderItemDelivery
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -58,11 +37,10 @@ input DatabaseCreatePurchaseOrderItem {
   quantity: Int!
   unitPrice: Int!
   subTotal: Int!
-  notes: String
+  note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: DatabaseCreatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
@@ -83,11 +61,10 @@ input UpdatePurchaseOrderItem {
   quantity: Int
   unitPrice: Int
   subTotal: Int
-  notes: String
+  note: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: UpdatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
@@ -107,11 +84,10 @@ input InternalUpdatePurchaseOrderItem {
   quantity: Int
   unitPrice: Int
   subTotal: Int
-  notes: String
+  note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: InternalPurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
@@ -128,11 +104,10 @@ input DatabaseUpdatePurchaseOrderItem {
   quantity: Int
   unitPrice: Int
   subTotal: Int
-  notes: String
+  note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: DatabaseUpdatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
@@ -150,11 +125,11 @@ input PurchaseOrderItemFilterFields {
   quantity: IntFilterField
   unitPrice: IntFilterField
   subTotal: IntFilterField
-  notes: StringFilterField
+  note: StringFilterField
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
   expectedDeliverySchedule: StringFilterField
-  deliveryNote: StringFilterField
+  deliveryDetail: PurchaseOrderItemDeliveryFilterFields
   status: StringFilterField
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnlyFilterField
@@ -173,11 +148,10 @@ type PurchaseOrderItem {
   quantity: Int!
   unitPrice: Int!
   subTotal: Int!
-  notes: String
+  note: String
   mouItem: MouItemForPurchaseOrderItem
   productVariant: ProductVariantForPurchaseOrderItem!
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  deliveryNote: String
+  deliveryDetail: PurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus!
   purchaseOrder: PurchaseOrder
   purchaseOrderToSupply: PurchaseOrderToSupply

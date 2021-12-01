@@ -6,6 +6,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
@@ -13,20 +14,23 @@ import (
 )
 
 type approveUpdatePurchaseOrderItemTransactionComponent struct {
-	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
-	loggingDataSource           databaseloggingdatasourceinterfaces.LoggingDataSource
-	mapProcessorUtility         coreutilityinterfaces.MapProcessorUtility
+	purchaseOrderItemDataSource            databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
+	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
+	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewApproveUpdatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent, error) {
 	return &approveUpdatePurchaseOrderItemTransactionComponent{
-		purchaseOrderItemDataSource: purchaseOrderItemDataSource,
-		loggingDataSource:           loggingDataSource,
-		mapProcessorUtility:         mapProcessorUtility,
+		purchaseOrderItemDataSource:            purchaseOrderItemDataSource,
+		loggingDataSource:                      loggingDataSource,
+		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
+		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
 }
 
@@ -113,6 +117,31 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
+		}
+
+		if existingPurchaseOrderItem.DeliveryDetail != nil {
+			for _, updateDescriptivePhoto := range existingPurchaseOrderItem.DeliveryDetail.Photos {
+				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+					ID: &updateDescriptivePhoto.ID,
+				}
+				updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updatePurchaseOrderItem.RecentApprovingAccount)
+				updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updatePurchaseOrderItem.ProposalStatus)
+
+				_, err := approvePOItemTrx.approveUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					updateDescriptivePhoto,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/approveUpdatePurchaseOrderItem",
+						err,
+					)
+				}
+			}
 		}
 	}
 

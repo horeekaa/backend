@@ -20,6 +20,7 @@ type proposeUpdatePurchaseOrderRepository struct {
 	proposeUpdatePurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent
 	createPurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
 	updatePurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent
+	approvePurchaseOrderItemComponent              purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -28,6 +29,7 @@ func NewProposeUpdatePurchaseOrderRepository(
 	proposeUpdatePurchaseOrderRepositoryTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent,
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
 	updatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
+	approvePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository, error) {
 	proposeUpdatePurchaseOrderRepo := &proposeUpdatePurchaseOrderRepository{
@@ -35,6 +37,7 @@ func NewProposeUpdatePurchaseOrderRepository(
 		proposeUpdatePurchaseOrderRepositoryTransactionComponent,
 		createPurchaseOrderItemComponent,
 		updatePurchaseOrderItemComponent,
+		approvePurchaseOrderItemComponent,
 		mongoDBTransaction,
 	}
 
@@ -82,6 +85,24 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 				) {
 					continue
 				}
+				if purchaseOrderItemToUpdate.ProposalStatus != nil {
+					purchaseOrderItemToUpdate.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+						return &m
+					}(*purchaseOrderToUpdate.SubmittingAccount)
+
+					_, err := updatePurchaseOrderRepo.approvePurchaseOrderItemComponent.TransactionBody(
+						operationOption,
+						purchaseOrderItemToUpdate,
+					)
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							"/proposeUpdatepurchaseOrderRepository",
+							err,
+						)
+					}
+					continue
+				}
+
 				purchaseOrderItemToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 					return &s
 				}(*purchaseOrderToUpdate.ProposalStatus)

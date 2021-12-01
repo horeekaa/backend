@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
+	databaseaddressdatasourceinterfaces "github.com/horeekaa/backend/features/addresses/data/dataSources/databases/interfaces/sources"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	databasemouitemdatasourceinterfaces "github.com/horeekaa/backend/features/mouItems/data/dataSources/databases/interfaces/sources"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
@@ -15,29 +17,38 @@ import (
 )
 
 type purchaseOrderItemLoader struct {
+	accountDataSource          databaseaccountdatasourceinterfaces.AccountDataSource
+	personDataSource           databaseaccountdatasourceinterfaces.PersonDataSource
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource
 	mouItemDataSource          databasemouitemdatasourceinterfaces.MouItemDataSource
 	productVariantDataSource   databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
 	tagDataSource              databasetagdatasourceinterfaces.TagDataSource
 	taggingDataSource          databasetaggingdatasourceinterfaces.TaggingDataSource
+	addressDataSource          databaseaddressdatasourceinterfaces.AddressDataSource
 }
 
 func NewPurchaseOrderItemLoader(
+	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
+	personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource,
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
+	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource,
 ) (purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader, error) {
 	return &purchaseOrderItemLoader{
+		accountDataSource,
+		personDataSource,
 		descriptivePhotoDataSource,
 		mouItemDataSource,
 		productVariantDataSource,
 		productDataSource,
 		tagDataSource,
 		taggingDataSource,
+		addressDataSource,
 	}, nil
 }
 
@@ -45,10 +56,84 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	mouItem *model.MouItemForPurchaseOrderItemInput,
 	productVariant *model.ProductVariantForPurchaseOrderItemInput,
+	delivery *model.InternalPurchaseOrderItemDelivery,
 ) (bool, error) {
 	mouItemLoadedChan := make(chan bool)
 	productVariantLoadedChan := make(chan bool)
+	deliveryLoadedChan := make(chan bool)
 	errChan := make(chan error)
+
+	go func() {
+		if delivery == nil {
+			deliveryLoadedChan <- true
+			return
+		}
+
+		addressLoadedChan := make(chan bool)
+		accountLoadedChan := make(chan bool)
+
+		go func() {
+			if delivery.Address == nil {
+				addressLoadedChan <- true
+				return
+			}
+			loadedAddress, err := purcOrderItemLoader.addressDataSource.GetMongoDataSource().FindByID(
+				delivery.Address.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			jsonTemp, _ := json.Marshal(loadedAddress)
+			json.Unmarshal(jsonTemp, &delivery.Address)
+
+			addressLoadedChan <- true
+		}()
+
+		go func() {
+			if delivery.Courier == nil {
+				accountLoadedChan <- true
+				return
+			}
+			account, err := purcOrderItemLoader.accountDataSource.GetMongoDataSource().FindByID(
+				delivery.Courier.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			jsonTemp, _ := json.Marshal(account)
+			json.Unmarshal(jsonTemp, &delivery.Courier)
+
+			person, err := purcOrderItemLoader.personDataSource.GetMongoDataSource().FindByID(
+				delivery.Courier.Person.ID,
+				session,
+			)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			jsonTemp, _ = json.Marshal(person)
+			json.Unmarshal(jsonTemp, &delivery.Courier.Person)
+
+			accountLoadedChan <- true
+		}()
+
+		for i := 0; i < 2; {
+			select {
+			case _ = <-addressLoadedChan:
+				i++
+			case _ = <-accountLoadedChan:
+				i++
+			}
+		}
+
+		deliveryLoadedChan <- true
+	}()
 
 	go func() {
 		if mouItem == nil {
@@ -71,6 +156,11 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	}()
 
 	go func() {
+		if productVariant == nil {
+			productVariantLoadedChan <- true
+			return
+		}
+
 		loadedProductVariant, err := purcOrderItemLoader.productVariantDataSource.GetMongoDataSource().FindByID(
 			productVariant.ID,
 			session,
@@ -185,13 +275,15 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 		productVariantLoadedChan <- true
 	}()
 
-	for i := 0; i < 2; {
+	for i := 0; i < 3; {
 		select {
 		case err := <-errChan:
 			return false, err
 		case _ = <-mouItemLoadedChan:
 			i++
 		case _ = <-productVariantLoadedChan:
+			i++
+		case _ = <-deliveryLoadedChan:
 			i++
 		}
 	}

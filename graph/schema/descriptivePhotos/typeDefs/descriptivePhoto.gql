@@ -4,6 +4,7 @@ enum DescriptivePhotoCategory {
   PRODUCT_VARIANT
   TAG
   SUPPLY_ORDER_ITEM
+  PURCHASE_ORDER_ITEM
 }
 
 enum DescriptivePhotoType {
