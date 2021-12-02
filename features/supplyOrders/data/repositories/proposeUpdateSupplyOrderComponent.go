@@ -86,6 +86,9 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 
 	totalPrice := 0
 	for _, item := range supplyOrderItems {
+		if item.ProposalStatus == model.EntityProposalStatusRejected {
+			continue
+		}
 		totalPrice += item.SubTotal
 	}
 	updateSupplyOrder.Total = &totalPrice
