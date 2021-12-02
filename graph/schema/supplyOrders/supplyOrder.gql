@@ -1,6 +1,6 @@
 extend type Mutation {
-    createSupplyOrder(createSupplyOrder: CreateSupplyOrder!): [SupplyOrder]!
-    updateSupplyOrder(updateSupplyOrder: UpdateSupplyOrder!): SupplyOrder
+    createSupplyOrder(createSupplyOrder: CreateSupplyOrder!): SupplyOrder!
+    updateSupplyOrder(updateSupplyOrder: UpdateSupplyOrder!): SupplyOrder!
 }
 
 extend type Query {

@@ -55,7 +55,7 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) validation(input supplyo
 	return input, nil
 }
 
-func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorderpresentationusecasetypes.CreateSupplyOrderUsecaseInput) ([]*model.SupplyOrder, error) {
+func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorderpresentationusecasetypes.CreateSupplyOrderUsecaseInput) (*model.SupplyOrder, error) {
 	validatedInput, err := createSupplyOrderUcase.validation(input)
 	if err != nil {
 		return nil, err

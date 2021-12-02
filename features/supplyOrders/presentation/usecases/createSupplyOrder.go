@@ -6,5 +6,5 @@ import (
 )
 
 type CreateSupplyOrderUsecase interface {
-	Execute(input supplyorderpresentationusecasetypes.CreateSupplyOrderUsecaseInput) ([]*model.SupplyOrder, error)
+	Execute(input supplyorderpresentationusecasetypes.CreateSupplyOrderUsecaseInput) (*model.SupplyOrder, error)
 }

@@ -17,7 +17,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-func (r *mutationResolver) CreateSupplyOrder(ctx context.Context, createSupplyOrder model.CreateSupplyOrder) ([]*model.SupplyOrder, error) {
+func (r *mutationResolver) CreateSupplyOrder(ctx context.Context, createSupplyOrder model.CreateSupplyOrder) (*model.SupplyOrder, error) {
 	var createSupplyOrderUsecase supplyorderpresentationusecaseinterfaces.CreateSupplyOrderUsecase
 	container.Make(&createSupplyOrderUsecase)
 	return createSupplyOrderUsecase.Execute(

@@ -23,5 +23,5 @@ type CreateSupplyOrderTransactionComponent interface {
 type CreateSupplyOrderRepository interface {
 	RunTransaction(
 		createSupplyOrderInput *model.InternalCreateSupplyOrder,
-	) ([]*model.SupplyOrder, error)
+	) (*model.SupplyOrder, error)
 }

@@ -48,7 +48,6 @@ func (createSupplyOrderRepo *createSupplyOrderRepository) TransactionBody(
 	input interface{},
 ) (interface{}, error) {
 	supplyOrderToCreate := input.(*model.InternalCreateSupplyOrder)
-	supplyOrders := []*model.SupplyOrder{}
 
 	if len(supplyOrderToCreate.Items) > 0 {
 		generatedObjectID := createSupplyOrderRepo.createSupplyOrderTransactionComponent.GenerateNewObjectID()
@@ -76,26 +75,20 @@ func (createSupplyOrderRepo *createSupplyOrderRepository) TransactionBody(
 			savedSupplyOrderItems = append(savedSupplyOrderItems, savedsupplyOrderItem)
 		}
 		supplyOrderToCreate.Items = savedSupplyOrderItems
-		supplyOrder, err := createSupplyOrderRepo.createSupplyOrderTransactionComponent.TransactionBody(
-			operationOption,
-			supplyOrderToCreate,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		supplyOrders = append(supplyOrders, supplyOrder)
 	}
 
-	return supplyOrders, nil
+	return createSupplyOrderRepo.createSupplyOrderTransactionComponent.TransactionBody(
+		operationOption,
+		supplyOrderToCreate,
+	)
 }
 
 func (createSupplyOrderRepo *createSupplyOrderRepository) RunTransaction(
 	input *model.InternalCreateSupplyOrder,
-) ([]*model.SupplyOrder, error) {
+) (*model.SupplyOrder, error) {
 	output, err := createSupplyOrderRepo.mongoDBTransaction.RunTransaction(input)
 	if err != nil {
 		return nil, err
 	}
-	return (output).([]*model.SupplyOrder), nil
+	return (output).(*model.SupplyOrder), nil
 }
