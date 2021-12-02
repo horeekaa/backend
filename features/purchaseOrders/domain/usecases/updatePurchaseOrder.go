@@ -107,6 +107,9 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	jsonTemp, _ := json.Marshal(validatedInput.UpdatePurchaseOrder)
 	json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
 
+	jsonTemp, _ = json.Marshal(accMemberAccess)
+	json.Unmarshal(jsonTemp, &purchaseOrderToUpdate.MemberAccess)
+
 	// if user is only going to approve proposal
 	if purchaseOrderToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval == nil {

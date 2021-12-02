@@ -109,6 +109,9 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 				purchaseOrderItemToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 					return &m
 				}(*purchaseOrderToUpdate.SubmittingAccount)
+				if *purchaseOrderToUpdate.MemberAccess.Organization.Type != model.OrganizationTypeCustomer {
+					purchaseOrderItemToUpdate.CustomerAgreed = func(b bool) *bool { return &b }(false)
+				}
 
 				_, err := updatePurchaseOrderRepo.updatePurchaseOrderItemComponent.TransactionBody(
 					operationOption,
@@ -142,6 +145,9 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 			purchaseOrderItemToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*purchaseOrderToUpdate.SubmittingAccount)
+			if *purchaseOrderToUpdate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
+				purchaseOrderItemToCreate.CustomerAgreed = func(b bool) *bool { return &b }(true)
+			}
 
 			savedPurchaseOrderItem, err := updatePurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
 				operationOption,

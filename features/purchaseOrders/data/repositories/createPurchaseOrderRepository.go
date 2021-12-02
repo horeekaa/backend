@@ -56,6 +56,9 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 		savedPurchaseOrderItems := map[string][]*model.InternalCreatePurchaseOrderItem{}
 		mouForPurchaseOrders := map[string]*model.ObjectIDOnly{}
 		for _, purchaseOrderItem := range purchaseOrderToCreate.MouItems {
+			if *purchaseOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
+				purchaseOrderItem.CustomerAgreed = func(b bool) *bool { return &b }(true)
+			}
 			if purchaseOrderItem.MouItem == nil {
 				continue
 			}

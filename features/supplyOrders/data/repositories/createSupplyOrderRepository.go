@@ -53,6 +53,9 @@ func (createSupplyOrderRepo *createSupplyOrderRepository) TransactionBody(
 		generatedObjectID := createSupplyOrderRepo.createSupplyOrderTransactionComponent.GenerateNewObjectID()
 		savedSupplyOrderItems := []*model.InternalCreateSupplyOrderItem{}
 		for _, supplyOrderItem := range supplyOrderToCreate.Items {
+			if *supplyOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypePartner {
+				supplyOrderItem.PartnerAgreed = func(b bool) *bool { return &b }(true)
+			}
 			supplyOrderItem.SupplyOrder = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}

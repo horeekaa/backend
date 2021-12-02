@@ -107,6 +107,9 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	jsonTemp, _ := json.Marshal(validatedInput.UpdateSupplyOrder)
 	json.Unmarshal(jsonTemp, supplyOrderToUpdate)
 
+	jsonTemp, _ = json.Marshal(accMemberAccess)
+	json.Unmarshal(jsonTemp, &supplyOrderToUpdate.MemberAccess)
+
 	for i, soItem := range validatedInput.UpdateSupplyOrder.Items {
 		if soItem.PickUpDetail != nil {
 			for j, descriptivePhoto := range soItem.PickUpDetail.Photos {

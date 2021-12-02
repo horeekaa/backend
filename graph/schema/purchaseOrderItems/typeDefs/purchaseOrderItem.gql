@@ -24,6 +24,7 @@ input InternalCreatePurchaseOrderItem {
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
   deliveryDetail: InternalPurchaseOrderItemDelivery
+  customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -42,6 +43,7 @@ input DatabaseCreatePurchaseOrderItem {
   productVariant: ProductVariantForPurchaseOrderItemInput!
   deliveryDetail: DatabaseCreatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
+  customerAgreed: Boolean!
   purchaseOrder: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -66,6 +68,7 @@ input UpdatePurchaseOrderItem {
   productVariant: ObjectIDOnly
   deliveryDetail: UpdatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -89,6 +92,7 @@ input InternalUpdatePurchaseOrderItem {
   productVariant: ProductVariantForPurchaseOrderItemInput
   deliveryDetail: InternalPurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
   proposalStatus: EntityProposalStatus
@@ -109,6 +113,7 @@ input DatabaseUpdatePurchaseOrderItem {
   productVariant: ProductVariantForPurchaseOrderItemInput
   deliveryDetail: DatabaseUpdatePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
   proposalStatus: EntityProposalStatus
@@ -131,6 +136,7 @@ input PurchaseOrderItemFilterFields {
   expectedDeliverySchedule: StringFilterField
   deliveryDetail: PurchaseOrderItemDeliveryFilterFields
   status: StringFilterField
+  customerAgreed: BooleanFilterField
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnlyFilterField
   proposalStatus: StringFilterField
@@ -153,6 +159,7 @@ type PurchaseOrderItem {
   productVariant: ProductVariantForPurchaseOrderItem!
   deliveryDetail: PurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus!
+  customerAgreed: Boolean!
   purchaseOrder: PurchaseOrder
   purchaseOrderToSupply: PurchaseOrderToSupply
   proposalStatus: EntityProposalStatus!

@@ -61,6 +61,7 @@ input InternalUpdateSupplyOrder {
   total: Int
   paidAmount: Int
   organization: OrganizationForSupplyOrderInput
+  memberAccess: InternalUpdateMemberAccess
   items: [InternalUpdateSupplyOrderItem]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String

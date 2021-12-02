@@ -106,6 +106,9 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 				supplyOrderItemToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 					return &m
 				}(*supplyOrderToUpdate.SubmittingAccount)
+				if *supplyOrderToUpdate.MemberAccess.Organization.Type != model.OrganizationTypePartner {
+					supplyOrderItemToUpdate.PartnerAgreed = func(b bool) *bool { return &b }(false)
+				}
 
 				_, err := updateSupplyOrderRepo.proposeUpdateSupplyOrderItemComponent.TransactionBody(
 					operationOption,
@@ -132,6 +135,9 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			supplyOrderItemToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*supplyOrderToUpdate.SubmittingAccount)
+			if *supplyOrderToUpdate.MemberAccess.Organization.Type == model.OrganizationTypePartner {
+				supplyOrderItemToCreate.PartnerAgreed = func(b bool) *bool { return &b }(true)
+			}
 
 			savedSupplyOrderItem, err := updateSupplyOrderRepo.createSupplyOrderItemComponent.TransactionBody(
 				operationOption,
