@@ -111,7 +111,6 @@ func (_ *RepositoriesDependency) Bind() {
 		&purchaseorderdomainrepositorydependencies.ApproveUpdatePurchaseOrderDependency{},
 		&purchaseorderdomainrepositorydependencies.ProposeUpdatePurchaseOrderDependency{},
 
-		&purchaseordertosupplydomainrepositorydependencies.CreatePurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.GetAllPurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.GetPurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.ProcessPurchaseOrderToSupplyDependency{},
