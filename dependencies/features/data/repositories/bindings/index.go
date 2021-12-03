@@ -149,9 +149,10 @@ func (_ *RepositoriesDependency) Bind() {
 
 		&supplyorderdomainrepositoryutilitydependencies.SupplyOrderLoaderDependency{},
 		&supplyorderdomainrepositorydependencies.CreateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.GetSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.GetAllSupplyOrderDependency{},
 		&supplyorderdomainrepositorydependencies.ApproveUpdateSupplyOrderDependency{},
 		&supplyorderdomainrepositorydependencies.ProposeUpdateSupplyOrderDependency{},
-		&supplyorderdomainrepositorydependencies.GetSupplyOrderDependency{},
 	}
 
 	for _, reg := range registrationList {
