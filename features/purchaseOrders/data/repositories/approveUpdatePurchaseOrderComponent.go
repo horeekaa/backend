@@ -128,6 +128,9 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 
 	if updatePurchaseOrder.ProposalStatus != nil {
 		if *updatePurchaseOrder.ProposalStatus == model.EntityProposalStatusApproved {
+			fieldsToUpdatePurchaseOrder.ProposedChanges.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
+				return &m
+			}(model.PurchaseOrderStatusProcessed)
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrder.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrder)
 		}

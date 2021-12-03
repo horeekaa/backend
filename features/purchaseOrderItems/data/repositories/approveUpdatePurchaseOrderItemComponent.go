@@ -10,12 +10,15 @@ import (
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
+	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type approveUpdatePurchaseOrderItemTransactionComponent struct {
 	purchaseOrderItemDataSource            databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
 	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	purchaseOrderToSupplyDataSource        databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
 	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 }
@@ -23,12 +26,14 @@ type approveUpdatePurchaseOrderItemTransactionComponent struct {
 func NewApproveUpdatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent, error) {
 	return &approveUpdatePurchaseOrderItemTransactionComponent{
 		purchaseOrderItemDataSource:            purchaseOrderItemDataSource,
 		loggingDataSource:                      loggingDataSource,
+		purchaseOrderToSupplyDataSource:        purchaseOrderToSupplyDataSource,
 		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
 		mapProcessorUtility:                    mapProcessorUtility,
 	}, nil
@@ -117,6 +122,99 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
+
+			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed {
+				existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
+					map[string]interface{}{
+						"productVariant._id":       existingPurchaseOrderItem.ProductVariant.ID,
+						"expectedDeliverySchedule": existingPurchaseOrderItem.DeliveryDetail.ExpectedDeliverySchedule,
+						"addressRegionGroup._id":   existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
+						"status":                   model.PurchaseOrderToSupplyStatusCummulating,
+					},
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/approveUpdatePurchaseOrderItem",
+						err,
+					)
+				}
+				if existingPurchaseOrderToSupply == nil {
+					poToSupplyToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
+						ProductVariant:           &model.ProductVariantForPurchaseOrderItemInput{},
+						AddressRegionGroup:       &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
+						ExpectedDeliverySchedule: *existingPurchaseOrderItem.DeliveryDetail.ExpectedDeliverySchedule,
+						Status:                   func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
+					}
+
+					jsonTemp, _ := json.Marshal(existingPurchaseOrderItem.ProductVariant)
+					json.Unmarshal(jsonTemp, &poToSupplyToCreate.ProductVariant)
+
+					jsonTemp, _ = json.Marshal(existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup)
+					json.Unmarshal(jsonTemp, &poToSupplyToCreate.AddressRegionGroup)
+
+					jsonTemp, _ = json.Marshal(
+						map[string]interface{}{
+							"Tags": funk.Map(
+								existingPurchaseOrderItem.ProductVariant.Product.Taggings,
+								func(t *model.TaggingForPurchaseOrderItem) interface{} {
+									return t.Tag
+								},
+							),
+						},
+					)
+					json.Unmarshal(jsonTemp, poToSupplyToCreate)
+
+					existingPurchaseOrderToSupply, err = approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Create(
+						poToSupplyToCreate,
+						session,
+					)
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							"/approveUpdatePurchaseOrderItem",
+							err,
+						)
+					}
+				}
+
+				updatedPOToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+					map[string]interface{}{
+						"_id": existingPurchaseOrderToSupply.ID,
+					},
+					&model.DatabaseUpdatePurchaseOrderToSupply{
+						QuantityRequested: func(i int) *int { return &i }(
+							existingPurchaseOrderToSupply.QuantityRequested +
+								(existingPurchaseOrderItem.ProposedChanges.Quantity - existingPurchaseOrderItem.Quantity),
+						),
+						PurchaseOrderItems: funk.Map(
+							append(
+								existingPurchaseOrderToSupply.PurchaseOrderItems,
+								&model.PurchaseOrderItem{
+									ID: existingPurchaseOrderItem.ID,
+								},
+							),
+							func(m *model.PurchaseOrderItem) *model.ObjectIDOnly {
+								return &model.ObjectIDOnly{
+									ID: &m.ID,
+								}
+							},
+						).([]*model.ObjectIDOnly),
+					},
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/approveUpdatePurchaseOrderItem",
+						err,
+					)
+				}
+				fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+					return &m
+				}(model.PurchaseOrderItemStatusAwaitingFulfillment)
+				fieldsToUpdatePurchaseOrderItem.PurchaseOrderToSupply = &model.ObjectIDOnly{
+					ID: &updatedPOToSupply.ID,
+				}
+			}
 		}
 
 		if existingPurchaseOrderItem.DeliveryDetail != nil {

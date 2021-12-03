@@ -140,7 +140,9 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					},
 					&model.DatabaseUpdatePurchaseOrderToSupply{
 						QuantityFulfilled: func(i int) *int { return &i }(
-							existingPOToSupply.QuantityFulfilled + *fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted,
+							existingPOToSupply.QuantityFulfilled +
+								(*fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted -
+									existingSupplyOrderItem.QuantityAccepted),
 						),
 					},
 					session,
