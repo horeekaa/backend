@@ -5,6 +5,5 @@ import (
 )
 
 func Route(r chi.Router) {
-	r.Get("/createPOToSupply", createPOToSupplyHandler())
 	r.Get("/processPOToSupply", processPOToSupplyHandler())
 }

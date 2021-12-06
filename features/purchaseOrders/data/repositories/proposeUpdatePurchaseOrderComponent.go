@@ -69,7 +69,6 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		session,
 		updatePurchaseOrder.Mou,
 		nil,
-		updatePurchaseOrder.Address,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -94,6 +93,9 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 
 	totalPrice := 0
 	for _, item := range purchaseOrderItems {
+		if item.ProposalStatus == model.EntityProposalStatusRejected {
+			continue
+		}
 		totalPrice += item.SubTotal
 	}
 	updatePurchaseOrder.Total = &totalPrice

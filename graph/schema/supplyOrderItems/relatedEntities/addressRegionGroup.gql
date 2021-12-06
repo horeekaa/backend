@@ -1,0 +1,14 @@
+input AddressRegionGroupForSupplyOrderItemInput {
+  _id: ObjectID!
+  publicId: String!
+}
+
+input AddressRegionGroupForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+}
+
+type AddressRegionGroupForSupplyOrderItem {
+  _id: ObjectID!
+  publicId: String!
+}

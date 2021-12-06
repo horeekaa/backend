@@ -1,0 +1,150 @@
+input CreateSupplyOrderItem {
+  quantityOffered: Int!
+  quantityAccepted: Int
+  notes: String
+  unitPrice: Int!
+  purchaseOrderToSupply: ObjectIDOnly!
+  proposalStatus: EntityProposalStatus
+  pickUpDetail: CreateSupplyOrderItemPickUp!
+}
+
+input InternalCreateSupplyOrderItem {
+  _id: ObjectID
+  quantityOffered: Int!
+  quantityAccepted: Int
+  notes: String
+  unitPrice: Int!
+  subTotal: Int!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
+  partnerAgreed: Boolean
+  supplyOrder: ObjectIDOnly
+  pickUpDetail: InternalSupplyOrderItemPickUp!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateSupplyOrderItem
+  recentLog: ObjectIDOnly
+}
+
+input DatabaseCreateSupplyOrderItem {
+  _id: ObjectID!
+  quantityOffered: Int!
+  quantityAccepted: Int!
+  notes: String
+  unitPrice: Int!
+  subTotal: Int!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
+  partnerAgreed: Boolean!
+  supplyOrder: ObjectIDOnly!
+  pickUpDetail: DatabaseCreateSupplyOrderItemPickUp!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateSupplyOrderItem
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateSupplyOrderItem {
+  _id: ObjectID
+  quantityOffered: Int
+  quantityAccepted: Int
+  notes: String
+  unitPrice: Int
+  subTotal: Int
+  purchaseOrderToSupply: ObjectIDOnly
+  partnerAgreed: Boolean
+  pickUpDetail: UpdateSupplyOrderItemPickUp
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdateSupplyOrderItem {
+  _id: ObjectID
+  quantityOffered: Int
+  quantityAccepted: Int
+  notes: String
+  unitPrice: Int
+  subTotal: Int
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
+  partnerAgreed: Boolean
+  supplyOrder: ObjectIDOnly
+  pickUpDetail: InternalSupplyOrderItemPickUp
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: InternalUpdateSupplyOrderItem
+}
+
+input DatabaseUpdateSupplyOrderItem {
+  _id: ObjectID!
+  quantityOffered: Int
+  quantityAccepted: Int
+  notes: String
+  unitPrice: Int
+  subTotal: Int
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
+  partnerAgreed: Boolean
+  supplyOrder: ObjectIDOnly
+  pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdateSupplyOrderItem
+  updatedAt: Time
+}
+
+input SupplyOrderItemFilterFields {
+  _id: ObjectID
+  quantityOffered: IntFilterField
+  quantityAccepted: IntFilterField
+  notes: StringFilterField
+  unitPrice: IntFilterField
+  subTotal: IntFilterField
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemFilterFields
+  partnerAgreed: BooleanFilterField
+  supplyOrder: ObjectIDOnlyFilterField
+  pickUpDetail: SupplyOrderItemPickUpFilterFields
+  proposalStatus: StringFilterField
+  proposalStatusReason: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: SupplyOrderItemFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type SupplyOrderItem {
+  _id: ObjectID!
+  quantityOffered: Int!
+  quantityAccepted: Int!
+  notes: String
+  unitPrice: Int!
+  subTotal: Int!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItem!
+  partnerAgreed: Boolean!
+  supplyOrder: SupplyOrder!
+  pickUpDetail: SupplyOrderItemPickUp!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: SupplyOrderItem
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

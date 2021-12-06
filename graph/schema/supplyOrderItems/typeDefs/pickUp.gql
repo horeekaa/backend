@@ -1,0 +1,61 @@
+input CreateSupplyOrderItemPickUp {
+  address: ObjectIDOnly!
+  photos: [CreateDescriptivePhoto]!
+  courier: ObjectIDOnly
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}
+
+input DatabaseCreateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput!
+  photos: [ObjectIDOnly]!
+  courier: AccountForSupplyOrderItemInput
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}
+
+input UpdateSupplyOrderItemPickUp {
+  address: ObjectIDOnly
+  photos: [UpdateDescriptivePhoto]
+  courier: ObjectIDOnly
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}
+
+input InternalSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput
+  photos: [InternalUpdateDescriptivePhoto]
+  courier: AccountForSupplyOrderItemInput
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}
+
+input DatabaseUpdateSupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItemInput
+  photos: [ObjectIDOnly]
+  courier: AccountForSupplyOrderItemInput
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}
+
+input SupplyOrderItemPickUpFilterFields {
+  note: StringFilterField
+  address: AddressForSupplyOrderItemFilterFields
+  courier: AccountForSupplyOrderItemFilterFields
+  scheduledPickUpTime: TimeFilterField
+  actualPickUpTime: TimeFilterField
+}
+
+type SupplyOrderItemPickUp {
+  address: AddressForSupplyOrderItem
+  photos: [DescriptivePhoto]
+  courier: AccountForSupplyOrderItem
+  scheduledPickUpTime: Time
+  actualPickUpTime: Time
+  note: String
+}

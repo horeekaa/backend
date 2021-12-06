@@ -3,6 +3,8 @@ enum DescriptivePhotoCategory {
   PRODUCT
   PRODUCT_VARIANT
   TAG
+  SUPPLY_ORDER_ITEM
+  PURCHASE_ORDER_ITEM
 }
 
 enum DescriptivePhotoType {

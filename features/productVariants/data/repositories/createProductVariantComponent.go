@@ -56,10 +56,11 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProductVariant,
 ) (*model.ProductVariant, error) {
+	generatedObjectID := createProdVariantTrx.GetCurrentObjectID()
 	if input.Photo != nil {
 		input.Photo.Category = model.DescriptivePhotoCategoryProductVariant
 		input.Photo.Object = &model.ObjectIDOnly{
-			ID: input.ID,
+			ID: &generatedObjectID,
 		}
 		input.Photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 			return &s
@@ -84,7 +85,6 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	}
 
 	newDocumentJson, _ := json.Marshal(*input)
-	generatedObjectID := createProdVariantTrx.GetCurrentObjectID()
 	loggingOutput, err := createProdVariantTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "ProductVariant",

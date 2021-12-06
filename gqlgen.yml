@@ -185,10 +185,36 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  PurchaseOrderItemDelivery:
+    fields:
+      photos:
+        resolver: true
   PurchaseOrderToSupply:
     fields:
       purchaseOrderItems:
         resolver: true
+  SupplyOrder:
+    fields:
+      items:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  SupplyOrderItem:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  SupplyOrderItemPickUp:
+    fields:
+      photos:
+        resolver: true        
   Tag:
     fields:
       submittingAccount:

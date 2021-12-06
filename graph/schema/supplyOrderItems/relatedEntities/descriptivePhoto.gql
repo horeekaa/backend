@@ -1,0 +1,24 @@
+input DescriptivePhotoForSupplyOrderItemInput {
+  _id: ObjectID!
+  photoUrl: String!
+  description: String
+  type: DescriptivePhotoType!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input DescriptivePhotoForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  photoUrl: StringFilterField
+  description: StringFilterField
+  type: StringFilterField
+}
+
+type DescriptivePhotoForSupplyOrderItem {
+  _id: ObjectID!
+  photoUrl: String!
+  description: String
+  type: DescriptivePhotoType!
+  createdAt: Time!
+  updatedAt: Time!
+}

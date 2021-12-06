@@ -1,0 +1,39 @@
+input OrganizationForSupplyOrderInput {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [DescriptivePhotoForSupplyOrderInput]
+  taggings: [TaggingForSupplyOrderInput]
+  submittingAccount: ObjectIDOnly
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input OrganizationForSupplyOrderFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
+  point: IntFilterField
+  unfinalizedPoint: IntFilterField
+  profilePhotos: DescriptivePhotoForSupplyOrderFilterFields
+  taggings: TaggingForSupplyOrderFilterFields
+  submittingAccount: ObjectIDOnly
+}
+
+type OrganizationForSupplyOrder {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  point: Int
+  unfinalizedPoint: Int
+  profilePhotos: [DescriptivePhotoForSupplyOrder]
+  taggings: [TaggingForSupplyOrder]
+  submittingAccount: ObjectIDOnlyOutput
+  createdAt: Time!
+  updatedAt: Time!
+}

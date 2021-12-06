@@ -59,6 +59,9 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			if purchaseOrderItem.MouItem == nil {
 				continue
 			}
+			if *purchaseOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
+				purchaseOrderItem.CustomerAgreed = func(b bool) *bool { return &b }(true)
+			}
 			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
@@ -114,6 +117,9 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 		generatedObjectID := createPurchaseOrderRepo.createPurchaseOrderTransactionComponent.GenerateNewObjectID()
 		savedPurchaseOrderItems := []*model.InternalCreatePurchaseOrderItem{}
 		for _, purchaseOrderItem := range purchaseOrderToCreate.RetailItems {
+			if *purchaseOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
+				purchaseOrderItem.CustomerAgreed = func(b bool) *bool { return &b }(true)
+			}
 			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}

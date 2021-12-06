@@ -1,0 +1,14 @@
+input TagForSupplyOrderInput {
+  _id: ObjectID!
+  name: String!
+}
+
+input TagForSupplyOrderFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+}
+
+type TagForSupplyOrder {
+  _id: ObjectID!
+  name: String!
+}

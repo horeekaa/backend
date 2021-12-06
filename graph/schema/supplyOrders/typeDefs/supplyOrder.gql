@@ -1,0 +1,122 @@
+input CreateSupplyOrder {
+  items: [CreateSupplyOrderItem]!
+  proposalStatus: EntityProposalStatus
+}
+
+input InternalCreateSupplyOrder {
+  _id: ObjectID
+  publicId: String
+  total: Int!
+  paidAmount: Int!
+  memberAccess: InternalCreateMemberAccess!
+  organization: OrganizationForSupplyOrderInput!
+  items: [InternalCreateSupplyOrderItem]!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: InternalUpdateSupplyOrder
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DatabaseCreateSupplyOrder {
+  _id: ObjectID!
+  publicId: String!
+  total: Int!
+  paidAmount: Int!
+  organization: OrganizationForSupplyOrderInput!
+  items: [ObjectIDOnly]!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateSupplyOrder
+  recentLog: ObjectIDOnly
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input UpdateSupplyOrder {
+  _id: ObjectID!
+  publicId: String
+  total: Int
+  paidAmount: Int
+  organization: ObjectIDOnly
+  items: [UpdateSupplyOrderItem]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  submittingAccount: ObjectIDOnly
+  """
+  Leave the field empty, will be overriden by server.
+  """
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input InternalUpdateSupplyOrder {
+  _id: ObjectID!
+  publicId: String
+  total: Int
+  paidAmount: Int
+  organization: OrganizationForSupplyOrderInput
+  memberAccess: InternalUpdateMemberAccess
+  items: [InternalUpdateSupplyOrderItem]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: InternalUpdateSupplyOrder
+}
+
+input DatabaseUpdateSupplyOrder {
+  _id: ObjectID!
+  publicId: String
+  total: Int
+  paidAmount: Int
+  organization: OrganizationForSupplyOrderInput
+  items: [ObjectIDOnly]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: DatabaseUpdateSupplyOrder
+  updatedAt: Time
+}
+
+input SupplyOrderFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  total: IntFilterField
+  paidAmount: IntFilterField
+  organization: OrganizationForSupplyOrderFilterFields
+  items: [ObjectIDOnly]
+  proposalStatus: StringFilterField
+  proposalStatusReason: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  proposedChanges: SupplyOrderFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type SupplyOrder {
+  _id: ObjectID!
+  publicId: String
+  total: Int!
+  paidAmount: Int!
+  organization: OrganizationForSupplyOrder!
+  items: [SupplyOrderItem]!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: SupplyOrder
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

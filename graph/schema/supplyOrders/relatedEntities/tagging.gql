@@ -1,0 +1,14 @@
+input TaggingForSupplyOrderInput {
+  _id: ObjectID!
+  tag: TagForSupplyOrderInput!
+}
+
+input TaggingForSupplyOrderFilterFields {
+  _id: ObjectID
+  tag: TagForSupplyOrderFilterFields
+}
+
+type TaggingForSupplyOrder {
+  _id: ObjectID!
+  tag: TagForSupplyOrder!
+}

@@ -24,6 +24,10 @@ import (
 	purchaseorderdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrders"
 	purchaseorderdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrders/utils"
 	purchaseordertosupplydomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrdersToSupply"
+	supplyorderitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrderItems"
+	supplyorderitemdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrderItems/utils"
+	supplyorderdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders"
+	supplyorderdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders/utils"
 	taggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/taggings"
 	tagdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
@@ -107,7 +111,6 @@ func (_ *RepositoriesDependency) Bind() {
 		&purchaseorderdomainrepositorydependencies.ApproveUpdatePurchaseOrderDependency{},
 		&purchaseorderdomainrepositorydependencies.ProposeUpdatePurchaseOrderDependency{},
 
-		&purchaseordertosupplydomainrepositorydependencies.CreatePurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.GetAllPurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.GetPurchaseOrderToSupplyDependency{},
 		&purchaseordertosupplydomainrepositorydependencies.ProcessPurchaseOrderToSupplyDependency{},
@@ -137,6 +140,19 @@ func (_ *RepositoriesDependency) Bind() {
 		&moudomainrepositorydependencies.ApproveUpdateMouDependency{},
 		&moudomainrepositorydependencies.GetAllMouDependency{},
 		&moudomainrepositorydependencies.GetMouDependency{},
+
+		&supplyorderitemdomainrepositoryutilitydependencies.SupplyOrderItemLoaderDependency{},
+		&supplyorderitemdomainrepositorydependencies.CreateSupplyOrderItemDependency{},
+		&supplyorderitemdomainrepositorydependencies.ApproveUpdateSupplyOrderItemDependency{},
+		&supplyorderitemdomainrepositorydependencies.ProposeUpdateSupplyOrderItemDependency{},
+		&supplyorderitemdomainrepositorydependencies.GetSupplyOrderItemDependency{},
+
+		&supplyorderdomainrepositoryutilitydependencies.SupplyOrderLoaderDependency{},
+		&supplyorderdomainrepositorydependencies.CreateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.GetSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.GetAllSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.ApproveUpdateSupplyOrderDependency{},
+		&supplyorderdomainrepositorydependencies.ProposeUpdateSupplyOrderDependency{},
 	}
 
 	for _, reg := range registrationList {

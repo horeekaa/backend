@@ -1,0 +1,10 @@
+package databasesupplyorderitemdatasourceinterfaces
+
+import (
+	mongodbsupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/mongodb/interfaces"
+)
+
+type SupplyOrderItemDataSource interface {
+	GetMongoDataSource() mongodbsupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSourceMongo
+	SetMongoDataSource(mongoRepo mongodbsupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSourceMongo) bool
+}
