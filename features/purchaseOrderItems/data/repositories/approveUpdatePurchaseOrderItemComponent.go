@@ -122,7 +122,6 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
-
 			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed {
 				existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
 					map[string]interface{}{

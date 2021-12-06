@@ -152,7 +152,6 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	jsonTemp, _ := json.Marshal(createPurchaseOrderItem)
 	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
 	json.Unmarshal(jsonTemp, &purchaseOrderItemToCreate.ProposedChanges)
-	purchaseOrderItemToCreate.Quantity = 0
 
 	createdPurchaseOrderItem, err := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().Create(
 		purchaseOrderItemToCreate,
