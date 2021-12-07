@@ -9,7 +9,7 @@ input CreateTagging {
 }
 
 input BulkCreateTagging {
-  tag: ObjectIDOnly!
+  tag: TagForTaggingInput!
   """
   The field is available for bulk insertion (as a list),
   however it is stored separately on each document.
@@ -31,7 +31,7 @@ input BulkCreateTagging {
 
 input InternalCreateTagging {
   _id: ObjectID!
-  tag: ObjectIDOnly!
+  tag: TagForTaggingInput!
   correlatedTags: [ObjectIDOnly]
   products: [ObjectIDOnly]
   organizations: [ObjectIDOnly]
@@ -52,7 +52,7 @@ input InternalCreateTagging {
 
 input DatabaseCreateTagging {
   _id: ObjectID!
-  tag: ObjectIDOnly!
+  tag: TagForTaggingInput!
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
@@ -78,7 +78,7 @@ input UpdateTagging {
 
 input BulkUpdateTagging {
   IDs: [ObjectID]
-  tag: ObjectIDOnly
+  tag: TagForTaggingInput
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
@@ -101,7 +101,7 @@ input InternalUpdateTagging {
   The `Tag` field is not required when updating. However,
   when adding new `Tagging`, the `Tag` field becomes necessary.
   """
-  tag: ObjectIDOnly
+  tag: TagForTaggingInput
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
@@ -120,7 +120,7 @@ input InternalUpdateTagging {
 
 input InternalBulkUpdateTagging {
   IDs: [ObjectID]
-  tag: ObjectIDOnly
+  tag: TagForTaggingInput
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
@@ -136,7 +136,7 @@ input InternalBulkUpdateTagging {
 
 input DatabaseUpdateTagging {
   _id: ObjectID!
-  tag: ObjectIDOnly
+  tag: TagForTaggingInput
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly
@@ -153,7 +153,7 @@ input DatabaseUpdateTagging {
 
 input TaggingFilterFields {
   _id: ObjectID
-  tag: ObjectIDOnly
+  tag: TagForTaggingFilterFields
   correlatedTag: ObjectIDOnly
   product: ObjectIDOnly
   organization: ObjectIDOnly

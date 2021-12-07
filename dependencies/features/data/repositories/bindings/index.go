@@ -29,6 +29,7 @@ import (
 	supplyorderdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders"
 	supplyorderdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/supplyOrders/utils"
 	taggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/taggings"
+	taggingdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/taggings/utils"
 	tagdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/tags"
 	dependencybindinginterfaces "github.com/horeekaa/backend/dependencies/interfaces"
 )
@@ -70,6 +71,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&memberaccessrefdomainrepositorydependencies.ProposeUpdateMemberAccessRefDependency{},
 		&memberaccessrefdomainrepositorydependencies.ApproveUpdateMemberAccessRefDependency{},
 
+		&taggingdomainrepositoryutilitydependencies.TaggingLoaderDependency{},
 		&taggingdomainrepositorydependencies.BulkCreateTaggingDependency{},
 		&taggingdomainrepositorydependencies.GetAllTaggingDependency{},
 		&taggingdomainrepositorydependencies.GetTaggingDependency{},

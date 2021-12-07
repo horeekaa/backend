@@ -106,11 +106,13 @@ input TagFilterFields {
   _id: ObjectID
   """
   Querying tag using this field will be done using
-  pattern matching in the database; which means 
+  pattern matching in the database; which means
   any tags with name containing phrases from
   the queried string will come as the results.
   """
   name: StringFilterField
+  startActivePeriod: TimeFilterField
+  endActivePeriod: TimeFilterField
   description: StringFilterField
   isActive: BooleanFilterField
   proposalStatus: StringFilterField

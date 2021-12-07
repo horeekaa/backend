@@ -1,0 +1,21 @@
+input TagForTaggingInput {
+  _id: ObjectID
+  startActivePeriod: Time
+  endActivePeriod: Time
+  createdAt: Time
+  updatedAt: Time
+}
+
+input TagForTaggingFilterFields {
+  _id: ObjectID
+  startActivePeriod: TimeFilterField
+  endActivePeriod: TimeFilterField
+}
+
+type TagForTagging {
+  _id: ObjectID
+  startActivePeriod: Time
+  endActivePeriod: Time
+  createdAt: Time
+  updatedAt: Time
+}
