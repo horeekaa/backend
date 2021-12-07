@@ -37,7 +37,7 @@ func (taggingLoaderUtil *taggingLoader) TransactionBody(
 	}
 
 	jsonTemp, _ := json.Marshal(loadedTag)
-	json.Unmarshal(jsonTemp, &tagForTagging)
+	json.Unmarshal(jsonTemp, tagForTagging)
 
 	return true, nil
 }
