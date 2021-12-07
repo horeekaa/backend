@@ -117,7 +117,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 			jsonTag, _ := json.Marshal(fieldsToUpdateTag.ProposedChanges)
 			json.Unmarshal(jsonTag, tagForTagging)
 
-			_, err := updateTagTrx.taggingDataSource.GetMongoDataSource().Update(
+			updateTagTrx.taggingDataSource.GetMongoDataSource().Update(
 				map[string]interface{}{
 					"tag._id": existingTag.ID,
 				},
@@ -126,12 +126,6 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 				},
 				session,
 			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateTag",
-					err,
-				)
-			}
 		}
 	}
 
