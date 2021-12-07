@@ -7,6 +7,7 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	tagdomainrepositoryinterfaces "github.com/horeekaa/backend/features/tags/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -14,18 +15,21 @@ import (
 
 type proposeUpdateTagTransactionComponent struct {
 	tagDataSource                    databasetagdatasourceinterfaces.TagDataSource
+	taggingDataSource                databasetaggingdatasourceinterfaces.TaggingDataSource
 	loggingDataSource                databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility              coreutilityinterfaces.MapProcessorUtility
 	proposeUpdateTagUsecaseComponent tagdomainrepositoryinterfaces.ProposeUpdateTagUsecaseComponent
 }
 
 func NewProposeUpdateTagTransactionComponent(
-	TagDataSource databasetagdatasourceinterfaces.TagDataSource,
+	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
+	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent, error) {
 	return &proposeUpdateTagTransactionComponent{
-		tagDataSource:       TagDataSource,
+		tagDataSource:       tagDataSource,
+		taggingDataSource:   taggingDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
 	}, nil
@@ -108,6 +112,26 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 		}
 		if *updateTag.ProposalStatus == model.EntityProposalStatusApproved {
 			json.Unmarshal(jsonUpdate, fieldsToUpdateTag)
+
+			tagForTagging := &model.TagForTaggingInput{}
+			jsonTag, _ := json.Marshal(fieldsToUpdateTag.ProposedChanges)
+			json.Unmarshal(jsonTag, tagForTagging)
+
+			_, err := updateTagTrx.taggingDataSource.GetMongoDataSource().Update(
+				map[string]interface{}{
+					"tag._id": existingTag.ID,
+				},
+				&model.DatabaseUpdateTagging{
+					Tag: tagForTagging,
+				},
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateTag",
+					err,
+				)
+			}
 		}
 	}
 
