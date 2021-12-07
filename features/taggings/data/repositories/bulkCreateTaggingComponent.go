@@ -10,6 +10,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
+	taggingdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories/utils"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,6 +23,7 @@ type bulkCreateTaggingTransactionComponent struct {
 	organizationDataSource        databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	productDataSource             databaseproductdatasourceinterfaces.ProductDataSource
 	createTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingUsecaseComponent
+	taggingLoaderUtility          taggingdomainrepositoryutilityinterfaces.TaggingLoader
 	generatedObjectID             *primitive.ObjectID
 }
 
@@ -31,6 +33,7 @@ func NewBulkCreateTaggingTransactionComponent(
 	tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	taggingLoaderUtility taggingdomainrepositoryutilityinterfaces.TaggingLoader,
 ) (taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent, error) {
 	return &bulkCreateTaggingTransactionComponent{
 		taggingDataSource:      taggingDataSource,
@@ -38,6 +41,7 @@ func NewBulkCreateTaggingTransactionComponent(
 		tagDataSource:          tagDataSource,
 		organizationDataSource: organizationDataSource,
 		productDataSource:      productDataSource,
+		taggingLoaderUtility:   taggingLoaderUtility,
 	}, nil
 }
 
@@ -75,6 +79,16 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateTagging,
 ) ([]*model.Tagging, error) {
+	_, err := bulkCreateTaggingTrx.taggingLoaderUtility.TransactionBody(
+		session,
+		input.Tag,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/bulkCreateTagging",
+			err,
+		)
+	}
 	taggings := []*model.Tagging{}
 	taggingsToCreate := []*model.DatabaseCreateTagging{}
 	jsonTemp, _ := json.Marshal(input)

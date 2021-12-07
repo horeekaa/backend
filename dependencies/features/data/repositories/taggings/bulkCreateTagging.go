@@ -9,6 +9,7 @@ import (
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	taggingdomainrepositories "github.com/horeekaa/backend/features/taggings/data/repositories"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
+	taggingdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories/utils"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 )
 
@@ -22,6 +23,7 @@ func (_ *BulkCreateTaggingDependency) Bind() {
 			tagDataSource databasetagdatasourceinterfaces.TagDataSource,
 			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+			taggingLoaderUtility taggingdomainrepositoryutilityinterfaces.TaggingLoader,
 		) taggingdomainrepositoryinterfaces.BulkCreateTaggingTransactionComponent {
 			bulkCreateTaggingComponent, _ := taggingdomainrepositories.NewBulkCreateTaggingTransactionComponent(
 				taggingDataSource,
@@ -29,6 +31,7 @@ func (_ *BulkCreateTaggingDependency) Bind() {
 				tagDataSource,
 				organizationDataSource,
 				productDataSource,
+				taggingLoaderUtility,
 			)
 			return bulkCreateTaggingComponent
 		},

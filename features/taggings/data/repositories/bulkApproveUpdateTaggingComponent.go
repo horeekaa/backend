@@ -11,6 +11,7 @@ import (
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	databasetaggingdatasourceinterfaces "github.com/horeekaa/backend/features/taggings/data/dataSources/databases/interfaces/sources"
 	taggingdomainrepositoryinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories"
+	taggingdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/taggings/domain/repositories/utils"
 	databasetagdatasourceinterfaces "github.com/horeekaa/backend/features/tags/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
@@ -22,6 +23,7 @@ type bulkApproveUpdateTaggingTransactionComponent struct {
 	productDataSource             databaseproductdatasourceinterfaces.ProductDataSource
 	loggingDataSource             databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility           coreutilityinterfaces.MapProcessorUtility
+	taggingLoaderUtility          taggingdomainrepositoryutilityinterfaces.TaggingLoader
 	updateTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingUsecaseComponent
 }
 
@@ -32,6 +34,7 @@ func NewBulkApproveUpdateTaggingTransactionComponent(
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
+	taggingLoaderUtility taggingdomainrepositoryutilityinterfaces.TaggingLoader,
 ) (taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent, error) {
 	return &bulkApproveUpdateTaggingTransactionComponent{
 		taggingDataSource:      taggingDataSource,
@@ -40,6 +43,7 @@ func NewBulkApproveUpdateTaggingTransactionComponent(
 		productDataSource:      productDataSource,
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
+		taggingLoaderUtility:   taggingLoaderUtility,
 	}, nil
 }
 
@@ -63,6 +67,16 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalBulkUpdateTagging,
 ) ([]*model.Tagging, error) {
+	_, err := bulkApproveUpdateTaggingComp.taggingLoaderUtility.TransactionBody(
+		session,
+		input.Tag,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/bulkApproveUpdateTagging",
+			err,
+		)
+	}
 	taggings := []*model.Tagging{}
 	if input.CorrelatedTag != nil {
 		_, err := bulkApproveUpdateTaggingComp.taggingDataSource.GetMongoDataSource().FindByID(
