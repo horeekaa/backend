@@ -46,7 +46,16 @@ input DatabaseCreateSupplyOrderItem {
   updatedAt: Time
 }
 
+input UpdateSupplyOrderItemPickUpOnly {
+  _id: ObjectID!
+  pickUpDetail: UpdateSupplyOrderItemPickUpByInternal
+}
+
 input UpdateSupplyOrderItem {
+  """
+  Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+  (b) If not present, the request will create new object.
+  """
   _id: ObjectID
   quantityOffered: Int
   quantityAccepted: Int

@@ -10,9 +10,22 @@ import (
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
+	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
+
+func (r *mutationResolver) UpdateSupplyOrderItemPickUp(ctx context.Context, updateSupplyOrderItemPickUp *model.UpdateSupplyOrderItemPickUpOnly) (*model.SupplyOrderItem, error) {
+	var updateSupplyOrderItemPickUpUsecase supplyorderitempresentationusecaseinterfaces.UpdateSupplyOrderItemPickUpUsecase
+	container.Make(&updateSupplyOrderItemPickUpUsecase)
+	return updateSupplyOrderItemPickUpUsecase.Execute(
+		supplyorderitempresentationusecasetypes.UpdateSupplyOrderItemPickUpUsecaseInput{
+			Context:                     ctx,
+			UpdateSupplyOrderItemPickUp: updateSupplyOrderItemPickUp,
+		},
+	)
+}
 
 func (r *supplyOrderItemResolver) SubmittingAccount(ctx context.Context, obj *model.SupplyOrderItem) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase

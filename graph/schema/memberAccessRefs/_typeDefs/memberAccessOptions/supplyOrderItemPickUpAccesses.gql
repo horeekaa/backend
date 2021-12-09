@@ -1,0 +1,7 @@
+input SupplyOrderItemPickUpAccessesInput {
+  supplyOrderItemPickUpUpdate: Boolean
+}
+
+type SupplyOrderItemPickUpAccesses {
+  supplyOrderItemPickUpUpdate: Boolean
+}

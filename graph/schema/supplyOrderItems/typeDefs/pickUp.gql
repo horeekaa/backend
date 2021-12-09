@@ -1,9 +1,13 @@
+enum PickUpStatus {
+  ADDRESS_NOTED
+  DRIVER_ASSIGNED
+  PICKING_UP
+  PICKED_UP
+}
+
 input CreateSupplyOrderItemPickUp {
   address: ObjectIDOnly!
-  photos: [CreateDescriptivePhoto]!
-  courier: ObjectIDOnly
-  scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  scheduledPickUpTime: Time!
   note: String
 }
 
@@ -13,16 +17,20 @@ input DatabaseCreateSupplyOrderItemPickUp {
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus!
   note: String
 }
 
 input UpdateSupplyOrderItemPickUp {
   address: ObjectIDOnly
+  scheduledPickUpTime: Time
+  note: String
+}
+
+input UpdateSupplyOrderItemPickUpByInternal {
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
-  scheduledPickUpTime: Time
   actualPickUpTime: Time
-  note: String
 }
 
 input InternalSupplyOrderItemPickUp {
@@ -31,6 +39,7 @@ input InternalSupplyOrderItemPickUp {
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus
   note: String
 }
 
@@ -40,6 +49,7 @@ input DatabaseUpdateSupplyOrderItemPickUp {
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus
   note: String
 }
 
@@ -49,6 +59,7 @@ input SupplyOrderItemPickUpFilterFields {
   courier: AccountForSupplyOrderItemFilterFields
   scheduledPickUpTime: TimeFilterField
   actualPickUpTime: TimeFilterField
+  status: StringFilterField
 }
 
 type SupplyOrderItemPickUp {
@@ -57,5 +68,6 @@ type SupplyOrderItemPickUp {
   courier: AccountForSupplyOrderItem
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus!
   note: String
 }

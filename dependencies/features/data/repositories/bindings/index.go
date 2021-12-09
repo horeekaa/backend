@@ -149,6 +149,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&supplyorderitemdomainrepositorydependencies.ApproveUpdateSupplyOrderItemDependency{},
 		&supplyorderitemdomainrepositorydependencies.ProposeUpdateSupplyOrderItemDependency{},
 		&supplyorderitemdomainrepositorydependencies.GetSupplyOrderItemDependency{},
+		&supplyorderitemdomainrepositorydependencies.ProposeUpdateSupplyOrderItemPickUpDependency{},
 
 		&supplyorderdomainrepositoryutilitydependencies.SupplyOrderLoaderDependency{},
 		&supplyorderdomainrepositorydependencies.CreateSupplyOrderDependency{},
