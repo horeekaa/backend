@@ -1,4 +1,4 @@
-package purchaseorderItempresentationusecasedependencies
+package purchaseorderitempresentationusecasedependencies
 
 import (
 	"github.com/golobby/container/v2"

@@ -1,4 +1,4 @@
-package purchaseorderItempresentationusecases
+package purchaseorderitempresentationusecases
 
 import (
 	horeekaacorefailuretoerror "github.com/horeekaa/backend/core/errors/errors/failureToError"
