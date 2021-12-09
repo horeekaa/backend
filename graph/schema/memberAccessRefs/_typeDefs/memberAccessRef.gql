@@ -14,6 +14,7 @@ input MemberAccessRefOptionsInput {
   bulkTaggingAccesses: BulkTaggingAccessesInput
   mouAccesses: MouAccessesInput
   purchaseOrderAccesses: PurchaseOrderAccessesInput
+  purchaseOrderItemDeliveryAccesses: PurchaseOrderItemDeliveryAccessesInput
   supplyOrderAccesses: SupplyOrderAccessesInput
 }
 
@@ -28,6 +29,7 @@ type MemberAccessRefOptions {
   bulkTaggingAccesses: BulkTaggingAccesses
   mouAccesses: MouAccesses
   purchaseOrderAccesses: PurchaseOrderAccesses
+  purchaseOrderItemDeliveryAccesses: PurchaseOrderItemDeliveryAccesses
   supplyOrderAccesses: SupplyOrderAccesses
 }
 

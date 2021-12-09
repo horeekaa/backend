@@ -54,6 +54,11 @@ input DatabaseCreatePurchaseOrderItem {
   updatedAt: Time
 }
 
+input UpdatePurchaseOrderItemDeliveryOnly {
+  _id: ObjectID!
+  deliveryDetail: UpdatePurchaseOrderItemDeliveryByInternal
+}
+
 input UpdatePurchaseOrderItem {
   """
   Note: ID is optional in here. (a) If present, an update will occur when submitting the request.

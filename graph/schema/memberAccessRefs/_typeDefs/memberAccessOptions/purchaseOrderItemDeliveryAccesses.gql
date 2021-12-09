@@ -1,0 +1,7 @@
+input PurchaseOrderItemDeliveryAccessesInput {
+  purchaseOrderItemDeliveryUpdate: Boolean
+}
+
+type PurchaseOrderItemDeliveryAccesses {
+  purchaseOrderItemDeliveryUpdate: Boolean
+}

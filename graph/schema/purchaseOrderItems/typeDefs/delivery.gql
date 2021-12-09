@@ -18,6 +18,7 @@ enum DeliveryTimeSlot {
 }
 
 enum DeliveryStatus {
+  ADDRESS_NOTED
   DRIVER_ASSIGNED
   IN_DELIVERY
   DELIVERED
@@ -46,6 +47,12 @@ input UpdatePurchaseOrderItemDelivery {
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
   note: String
+}
+
+input UpdatePurchaseOrderItemDeliveryByInternal {
+  photos: [UpdateDescriptivePhoto]
+  courier: ObjectIDOnly
+  actualDeliveryTime: Time
 }
 
 input InternalPurchaseOrderItemDelivery {
