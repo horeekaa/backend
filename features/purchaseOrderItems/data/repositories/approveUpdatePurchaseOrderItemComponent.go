@@ -126,10 +126,11 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed {
 				existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
 					map[string]interface{}{
-						"productVariant._id":       existingPurchaseOrderItem.ProductVariant.ID,
-						"expectedDeliverySchedule": existingPurchaseOrderItem.DeliveryDetail.ExpectedDeliverySchedule,
-						"addressRegionGroup._id":   existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-						"status":                   model.PurchaseOrderToSupplyStatusCummulating,
+						"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
+						"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+						"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+						"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
+						"status":                 model.PurchaseOrderToSupplyStatusCummulating,
 					},
 					session,
 				)
@@ -141,10 +142,11 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 				}
 				if existingPurchaseOrderToSupply == nil {
 					poToSupplyToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
-						ProductVariant:           &model.ProductVariantForPurchaseOrderItemInput{},
-						AddressRegionGroup:       &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
-						ExpectedDeliverySchedule: *existingPurchaseOrderItem.DeliveryDetail.ExpectedDeliverySchedule,
-						Status:                   func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
+						ProductVariant:      &model.ProductVariantForPurchaseOrderItemInput{},
+						AddressRegionGroup:  &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
+						TimeSlot:            existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+						ExpectedArrivalDate: existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+						Status:              func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
 					}
 
 					jsonTemp, _ := json.Marshal(existingPurchaseOrderItem.ProductVariant)

@@ -1,7 +1,6 @@
 enum PurchaseOrderStatus {
   OPEN
   PROCESSED
-  IN_DELIVERY
   CANCELLED
   DONE
 }

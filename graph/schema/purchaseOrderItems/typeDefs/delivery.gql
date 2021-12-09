@@ -1,4 +1,4 @@
-enum ExpectedDeliverySchedule {
+enum DeliveryTimeSlot {
   """
   4AM to 6AM
   """
@@ -17,12 +17,16 @@ enum ExpectedDeliverySchedule {
   AFTERNOON
 }
 
+enum DeliveryStatus {
+  DRIVER_ASSIGNED
+  IN_DELIVERY
+  DELIVERED
+}
+
 input CreatePurchaseOrderItemDelivery {
   address: ObjectIDOnly!
-  photos: [CreateDescriptivePhoto]!
-  courier: ObjectIDOnly
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  actualDeliveryTime: Time
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   note: String
 }
 
@@ -30,17 +34,17 @@ input DatabaseCreatePurchaseOrderItemDelivery {
   address: AddressForPurchaseOrderItemInput!
   photos: [ObjectIDOnly]!
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   actualDeliveryTime: Time
+  status: DeliveryStatus!
   note: String
 }
 
 input UpdatePurchaseOrderItemDelivery {
   address: ObjectIDOnly
-  photos: [UpdateDescriptivePhoto]
-  courier: ObjectIDOnly
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  actualDeliveryTime: Time
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   note: String
 }
 
@@ -48,8 +52,10 @@ input InternalPurchaseOrderItemDelivery {
   address: AddressForPurchaseOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   actualDeliveryTime: Time
+  status: DeliveryStatus
   note: String
 }
 
@@ -57,8 +63,10 @@ input DatabaseUpdatePurchaseOrderItemDelivery {
   address: AddressForPurchaseOrderItemInput
   photos: [ObjectIDOnly]
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   actualDeliveryTime: Time
+  status: DeliveryStatus
   note: String
 }
 
@@ -66,15 +74,19 @@ input PurchaseOrderItemDeliveryFilterFields {
   note: StringFilterField
   address: AddressForPurchaseOrderItemFilterFields
   courier: AccountForPurchaseOrderItemFilterFields
-  expectedDeliverySchedule: StringFilterField
+  timeSlot: StringFilterField
+  expectedArrivalDate: TimeFilterField
   actualDeliveryTime: TimeFilterField
+  status: StringFilterField
 }
 
 type PurchaseOrderItemDelivery {
-  address: AddressForPurchaseOrderItem
+  address: AddressForPurchaseOrderItem!
   photos: [DescriptivePhoto]
   courier: AccountForPurchaseOrderItem
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   actualDeliveryTime: Time
+  status: DeliveryStatus!
   note: String
 }
