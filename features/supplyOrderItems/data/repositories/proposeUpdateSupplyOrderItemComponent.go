@@ -63,6 +63,75 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		)
 	}
 
+	if updateSupplyOrderItem.Photos != nil {
+		savedPhotos := existingSupplyOrderItem.Photos
+		for _, photoToUpdate := range updateSupplyOrderItem.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingSupplyOrderItem.Photos,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updateSupplyOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updateSupplyOrderItem.SubmittingAccount)
+				_, err := updateSupplyOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateSupplyOrderItem",
+						err,
+					)
+				}
+
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingSupplyOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateSupplyOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateSupplyOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdDescriptivePhoto, err := updateSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateSupplyOrderItem",
+					err,
+				)
+			}
+
+			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Photos": savedPhotos,
+			},
+		)
+		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+	}
+
 	if updateSupplyOrderItem.PickUpDetail != nil {
 		savedPhotos := existingSupplyOrderItem.PickUpDetail.Photos
 		for _, photoToUpdate := range updateSupplyOrderItem.PickUpDetail.Photos {

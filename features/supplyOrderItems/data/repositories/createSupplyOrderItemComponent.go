@@ -61,6 +61,36 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	createSupplyOrderItem *model.InternalCreateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
 	generatedObjectID := createSupplyOrderItemTrx.GetCurrentObjectID()
+	for i, photo := range createSupplyOrderItem.Photos {
+		photoToCreate := &model.InternalCreateDescriptivePhoto{}
+
+		jsonTemp, _ := json.Marshal(photo)
+		json.Unmarshal(jsonTemp, &photoToCreate)
+		photoToCreate.Photo.File = photo.Photo.File
+		photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
+		photoToCreate.Object = &model.ObjectIDOnly{
+			ID: &generatedObjectID,
+		}
+		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &s
+		}(*photoToCreate.ProposalStatus)
+		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			return &m
+		}(*photoToCreate.SubmittingAccount)
+		descriptivePhoto, err := createSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			photoToCreate,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createSupplyOrderItemComponent",
+				err,
+			)
+		}
+
+		jsonTemp, _ = json.Marshal(descriptivePhoto)
+		json.Unmarshal(jsonTemp, &createSupplyOrderItem.Photos[i])
+	}
 	for i, photo := range createSupplyOrderItem.PickUpDetail.Photos {
 		photoToCreate := &model.InternalCreateDescriptivePhoto{}
 

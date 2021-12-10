@@ -6,6 +6,7 @@ input CreateSupplyOrderItem {
   purchaseOrderToSupply: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
   pickUpDetail: CreateSupplyOrderItemPickUp!
+  photos: [CreateDescriptivePhoto]
 }
 
 input InternalCreateSupplyOrderItem {
@@ -19,6 +20,7 @@ input InternalCreateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: InternalSupplyOrderItemPickUp!
+  photos: [InternalCreateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -37,6 +39,7 @@ input DatabaseCreateSupplyOrderItem {
   partnerAgreed: Boolean!
   supplyOrder: ObjectIDOnly!
   pickUpDetail: DatabaseCreateSupplyOrderItemPickUp!
+  photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -65,6 +68,7 @@ input UpdateSupplyOrderItem {
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
   pickUpDetail: UpdateSupplyOrderItemPickUp
+  photos: [UpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -88,6 +92,7 @@ input InternalUpdateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: InternalSupplyOrderItemPickUp
+  photos: [InternalUpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -107,6 +112,7 @@ input DatabaseUpdateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
+  photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -148,6 +154,7 @@ type SupplyOrderItem {
   partnerAgreed: Boolean!
   supplyOrder: SupplyOrder!
   pickUpDetail: SupplyOrderItemPickUp!
+  photos: [DescriptivePhoto]!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!
