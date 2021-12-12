@@ -56,6 +56,7 @@ input UpdatePurchaseOrderItemDeliveryByInternal {
 }
 
 input InternalPurchaseOrderItemDelivery {
+  publicId: String
   address: AddressForPurchaseOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForPurchaseOrderItemInput
@@ -67,6 +68,7 @@ input InternalPurchaseOrderItemDelivery {
 }
 
 input DatabaseUpdatePurchaseOrderItemDelivery {
+  publicId: String
   address: AddressForPurchaseOrderItemInput
   photos: [ObjectIDOnly]
   courier: AccountForPurchaseOrderItemInput
@@ -78,6 +80,7 @@ input DatabaseUpdatePurchaseOrderItemDelivery {
 }
 
 input PurchaseOrderItemDeliveryFilterFields {
+  publicId: StringFilterField
   note: StringFilterField
   address: AddressForPurchaseOrderItemFilterFields
   courier: AccountForPurchaseOrderItemFilterFields
@@ -88,6 +91,7 @@ input PurchaseOrderItemDeliveryFilterFields {
 }
 
 type PurchaseOrderItemDelivery {
+  publicId: String
   address: AddressForPurchaseOrderItem!
   photos: [DescriptivePhoto]
   courier: AccountForPurchaseOrderItem

@@ -2,6 +2,8 @@ package purchaseorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -132,6 +134,26 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			},
 		)
 		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
+
+		if updatePurchaseOrderItem.DeliveryDetail.Courier != nil {
+			generatedObjectID := updatePurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updatePurchaseOrderItem.DeliveryDetail.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"DV",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
+
+			updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
+				return &m
+			}(model.DeliveryStatusDriverAssigned)
+		}
 	}
 
 	_, err = updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(

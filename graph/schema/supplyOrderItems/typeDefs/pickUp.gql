@@ -34,6 +34,7 @@ input UpdateSupplyOrderItemPickUpByInternal {
 }
 
 input InternalSupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForSupplyOrderItemInput
@@ -44,6 +45,7 @@ input InternalSupplyOrderItemPickUp {
 }
 
 input DatabaseUpdateSupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItemInput
   photos: [ObjectIDOnly]
   courier: AccountForSupplyOrderItemInput
@@ -54,6 +56,7 @@ input DatabaseUpdateSupplyOrderItemPickUp {
 }
 
 input SupplyOrderItemPickUpFilterFields {
+  publicId: StringFilterField
   note: StringFilterField
   address: AddressForSupplyOrderItemFilterFields
   courier: AccountForSupplyOrderItemFilterFields
@@ -63,6 +66,7 @@ input SupplyOrderItemPickUpFilterFields {
 }
 
 type SupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItem
   photos: [DescriptivePhoto]
   courier: AccountForSupplyOrderItem

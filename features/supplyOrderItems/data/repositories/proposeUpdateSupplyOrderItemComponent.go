@@ -2,6 +2,8 @@ package supplyorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -201,6 +203,26 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			},
 		)
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+
+		if updateSupplyOrderItem.PickUpDetail.Courier != nil {
+			generatedObjectID := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updateSupplyOrderItem.PickUpDetail.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"PK",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
+
+			updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
+				return &m
+			}(model.PickUpStatusDriverAssigned)
+		}
 	}
 
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(

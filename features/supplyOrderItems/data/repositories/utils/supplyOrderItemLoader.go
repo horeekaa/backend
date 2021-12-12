@@ -87,6 +87,10 @@ func (supOrderItemLoader *supplyOrderItemLoader) TransactionBody(
 			jsonTemp, _ := json.Marshal(loadedAddress)
 			json.Unmarshal(jsonTemp, &pickUp.Address)
 
+			*pickUp.Status = model.PickUpStatusAddressNoted
+			*pickUp.Courier = model.AccountForSupplyOrderItemInput{}
+			*pickUp.PublicID = ""
+
 			addressLoadedChan <- true
 		}()
 

@@ -99,6 +99,10 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			jsonTemp, _ := json.Marshal(loadedAddress)
 			json.Unmarshal(jsonTemp, &delivery.Address)
 
+			*delivery.Status = model.DeliveryStatusAddressNoted
+			*delivery.Courier = model.AccountForPurchaseOrderItemInput{}
+			*delivery.PublicID = ""
+
 			addressLoadedChan <- true
 		}()
 
