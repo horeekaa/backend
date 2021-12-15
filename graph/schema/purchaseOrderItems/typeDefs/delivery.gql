@@ -40,6 +40,7 @@ input DatabaseCreatePurchaseOrderItemDelivery {
   actualDeliveryTime: Time
   status: DeliveryStatus!
   note: String
+  courierResponded: Boolean!
 }
 
 input UpdatePurchaseOrderItemDelivery {
@@ -53,6 +54,7 @@ input UpdatePurchaseOrderItemDeliveryByInternal {
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
   actualDeliveryTime: Time
+  courierResponded: Boolean
 }
 
 input InternalPurchaseOrderItemDelivery {
@@ -65,6 +67,7 @@ input InternalPurchaseOrderItemDelivery {
   actualDeliveryTime: Time
   status: DeliveryStatus
   note: String
+  courierResponded: Boolean
 }
 
 input DatabaseUpdatePurchaseOrderItemDelivery {
@@ -77,6 +80,7 @@ input DatabaseUpdatePurchaseOrderItemDelivery {
   actualDeliveryTime: Time
   status: DeliveryStatus
   note: String
+  courierResponded: Boolean
 }
 
 input PurchaseOrderItemDeliveryFilterFields {
@@ -88,6 +92,7 @@ input PurchaseOrderItemDeliveryFilterFields {
   expectedArrivalDate: TimeFilterField
   actualDeliveryTime: TimeFilterField
   status: StringFilterField
+  courierResponded: BooleanFilterField
 }
 
 type PurchaseOrderItemDelivery {
@@ -100,4 +105,5 @@ type PurchaseOrderItemDelivery {
   actualDeliveryTime: Time
   status: DeliveryStatus!
   note: String
+  courierResponded: Boolean!
 }

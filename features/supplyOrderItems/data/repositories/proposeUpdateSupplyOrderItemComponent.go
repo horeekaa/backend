@@ -218,10 +218,14 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					),
 				),
 			)
+		}
 
-			updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
-				return &m
-			}(model.PickUpStatusDriverAssigned)
+		if updateSupplyOrderItem.PickUpDetail.CourierResponded != nil {
+			if *updateSupplyOrderItem.PickUpDetail.CourierResponded {
+				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
+					return &m
+				}(model.PickUpStatusDriverAssigned)
+			}
 		}
 	}
 

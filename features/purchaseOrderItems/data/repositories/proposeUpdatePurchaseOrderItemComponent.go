@@ -149,10 +149,14 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					),
 				),
 			)
+		}
 
-			updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
-				return &m
-			}(model.DeliveryStatusDriverAssigned)
+		if updatePurchaseOrderItem.DeliveryDetail.CourierResponded != nil {
+			if *updatePurchaseOrderItem.DeliveryDetail.CourierResponded {
+				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
+					return &m
+				}(model.DeliveryStatusDriverAssigned)
+			}
 		}
 	}
 

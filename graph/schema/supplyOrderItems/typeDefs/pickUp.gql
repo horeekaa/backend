@@ -19,6 +19,7 @@ input DatabaseCreateSupplyOrderItemPickUp {
   actualPickUpTime: Time
   status: PickUpStatus!
   note: String
+  courierResponded: Boolean!
 }
 
 input UpdateSupplyOrderItemPickUp {
@@ -31,6 +32,7 @@ input UpdateSupplyOrderItemPickUpByInternal {
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
   actualPickUpTime: Time
+  courierResponded: Boolean
 }
 
 input InternalSupplyOrderItemPickUp {
@@ -42,6 +44,7 @@ input InternalSupplyOrderItemPickUp {
   actualPickUpTime: Time
   status: PickUpStatus
   note: String
+  courierResponded: Boolean
 }
 
 input DatabaseUpdateSupplyOrderItemPickUp {
@@ -53,6 +56,7 @@ input DatabaseUpdateSupplyOrderItemPickUp {
   actualPickUpTime: Time
   status: PickUpStatus
   note: String
+  courierResponded: Boolean
 }
 
 input SupplyOrderItemPickUpFilterFields {
@@ -63,6 +67,7 @@ input SupplyOrderItemPickUpFilterFields {
   scheduledPickUpTime: TimeFilterField
   actualPickUpTime: TimeFilterField
   status: StringFilterField
+  courierResponded: BooleanFilterField
 }
 
 type SupplyOrderItemPickUp {
@@ -74,4 +79,5 @@ type SupplyOrderItemPickUp {
   actualPickUpTime: Time
   status: PickUpStatus!
   note: String
+  courierResponded: Boolean!
 }
