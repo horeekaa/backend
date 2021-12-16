@@ -108,6 +108,11 @@ func (updatePurchaseOrderItemDeliveryUcase *updatePurchaseOrderItemDeliveryUseca
 			purchaseOrderItemToUpdate.DeliveryDetail.Photos[i].Photo.File = descriptivePhoto.Photo.File
 		}
 	}
+	for i, descriptivePhoto := range validatedInput.UpdatePurchaseOrderItemDelivery.DeliveryDetail.PhotosAfterReceived {
+		if descriptivePhoto.Photo != nil {
+			purchaseOrderItemToUpdate.DeliveryDetail.PhotosAfterReceived[i].Photo.File = descriptivePhoto.Photo.File
+		}
+	}
 
 	purchaseOrderItemToUpdate.ProposalStatus =
 		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)

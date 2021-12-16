@@ -66,6 +66,75 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	}
 
 	if updatePurchaseOrderItem.DeliveryDetail != nil {
+		savedPhotosAfterReceived := existingPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived
+		for _, photoToUpdate := range updatePurchaseOrderItem.DeliveryDetail.PhotosAfterReceived {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updatePurchaseOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updatePurchaseOrderItem.SubmittingAccount)
+				_, err := updatePurchaseOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrderItem",
+						err,
+					)
+				}
+
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItemAfterReceived
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingPurchaseOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updatePurchaseOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updatePurchaseOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdAfterReceivedPhoto, err := updatePurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updatePurchaseOrderItem",
+					err,
+				)
+			}
+
+			savedPhotosAfterReceived = append(savedPhotosAfterReceived, createdAfterReceivedPhoto)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"DeliveryDetail": map[string]interface{}{
+					"PhotosAfterReceived": savedPhotosAfterReceived,
+				},
+			},
+		)
+		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
+
 		savedPhotos := existingPurchaseOrderItem.DeliveryDetail.Photos
 		for _, photoToUpdate := range updatePurchaseOrderItem.DeliveryDetail.Photos {
 			if photoToUpdate.ID != nil {
@@ -126,7 +195,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 
 			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
 		}
-		jsonTemp, _ := json.Marshal(
+		jsonTemp, _ = json.Marshal(
 			map[string]interface{}{
 				"DeliveryDetail": map[string]interface{}{
 					"Photos": savedPhotos,

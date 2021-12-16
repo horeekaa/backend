@@ -62,6 +62,36 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	createPurchaseOrderItem *model.InternalCreatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
 	generatedObjectID := createPurchaseOrderItemTrx.GetCurrentObjectID()
+	for i, photo := range createPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived {
+		photoToCreate := &model.InternalCreateDescriptivePhoto{}
+
+		jsonTemp, _ := json.Marshal(photo)
+		json.Unmarshal(jsonTemp, &photoToCreate)
+		photoToCreate.Photo.File = photo.Photo.File
+		photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItemAfterReceived
+		photoToCreate.Object = &model.ObjectIDOnly{
+			ID: &generatedObjectID,
+		}
+		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			return &s
+		}(*photoToCreate.ProposalStatus)
+		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			return &m
+		}(*photoToCreate.SubmittingAccount)
+		descriptivePhoto, err := createPurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			photoToCreate,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createPurchaseOrderItemComponent",
+				err,
+			)
+		}
+
+		jsonTemp, _ = json.Marshal(descriptivePhoto)
+		json.Unmarshal(jsonTemp, &createPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived[i])
+	}
 	for i, photo := range createPurchaseOrderItem.DeliveryDetail.Photos {
 		photoToCreate := &model.InternalCreateDescriptivePhoto{}
 
