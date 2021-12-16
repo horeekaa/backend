@@ -33,6 +33,7 @@ input UpdateSupplyOrderItemPickUpByInternal {
   courier: ObjectIDOnly
   actualPickUpTime: Time
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input InternalSupplyOrderItemPickUp {
@@ -45,6 +46,7 @@ input InternalSupplyOrderItemPickUp {
   status: PickUpStatus
   note: String
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input DatabaseUpdateSupplyOrderItemPickUp {
@@ -57,6 +59,7 @@ input DatabaseUpdateSupplyOrderItemPickUp {
   status: PickUpStatus
   note: String
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input SupplyOrderItemPickUpFilterFields {
@@ -68,6 +71,7 @@ input SupplyOrderItemPickUpFilterFields {
   actualPickUpTime: TimeFilterField
   status: StringFilterField
   courierResponded: BooleanFilterField
+  noOfPackages: IntFilterField
 }
 
 type SupplyOrderItemPickUp {
@@ -80,4 +84,5 @@ type SupplyOrderItemPickUp {
   status: PickUpStatus!
   note: String
   courierResponded: Boolean!
+  noOfPackages: Int
 }

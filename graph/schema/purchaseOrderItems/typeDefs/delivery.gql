@@ -55,6 +55,7 @@ input UpdatePurchaseOrderItemDeliveryByInternal {
   courier: ObjectIDOnly
   actualDeliveryTime: Time
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input InternalPurchaseOrderItemDelivery {
@@ -68,6 +69,7 @@ input InternalPurchaseOrderItemDelivery {
   status: DeliveryStatus
   note: String
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input DatabaseUpdatePurchaseOrderItemDelivery {
@@ -81,6 +83,7 @@ input DatabaseUpdatePurchaseOrderItemDelivery {
   status: DeliveryStatus
   note: String
   courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input PurchaseOrderItemDeliveryFilterFields {
@@ -93,6 +96,7 @@ input PurchaseOrderItemDeliveryFilterFields {
   actualDeliveryTime: TimeFilterField
   status: StringFilterField
   courierResponded: BooleanFilterField
+  noOfPackages: IntFilterField
 }
 
 type PurchaseOrderItemDelivery {
@@ -106,4 +110,5 @@ type PurchaseOrderItemDelivery {
   status: DeliveryStatus!
   note: String
   courierResponded: Boolean!
+  noOfPackages: Int
 }
