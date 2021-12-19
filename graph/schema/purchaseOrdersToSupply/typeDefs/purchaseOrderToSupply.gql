@@ -2,6 +2,7 @@ enum PurchaseOrderToSupplyStatus {
   CUMMULATING
   OPEN
   FULFILLED
+  DISTRIBUTED
 }
 
 input CreatePurchaseOrderToSupply {
@@ -17,6 +18,7 @@ input CreatePurchaseOrderToSupply {
 input InternalCreatePurchaseOrderToSupply {
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
@@ -29,6 +31,7 @@ input InternalCreatePurchaseOrderToSupply {
 input DatabaseCreatePurchaseOrderToSupply {
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
@@ -44,6 +47,7 @@ input UpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
@@ -57,6 +61,7 @@ input InternalUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
@@ -70,6 +75,7 @@ input DatabaseUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
@@ -84,6 +90,7 @@ input PurchaseOrderToSupplyFilterFields {
   _id: ObjectID
   quantityRequested: IntFilterField
   quantityFulfilled: IntFilterField
+  quantityDistributed: IntFilterField
   productVariant: ProductVariantFilterFields
   timeSlot: StringFilterField
   expectedArrivalDate: TimeFilterField
@@ -99,6 +106,7 @@ type PurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItem!
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!

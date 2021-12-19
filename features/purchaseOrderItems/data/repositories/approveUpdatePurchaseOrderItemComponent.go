@@ -140,35 +140,70 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 						err,
 					)
 				}
-				if existingPurchaseOrderToSupply == nil {
-					poToSupplyToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
-						ProductVariant:      &model.ProductVariantForPurchaseOrderItemInput{},
-						AddressRegionGroup:  &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
-						TimeSlot:            existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
-						ExpectedArrivalDate: existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
-						Status:              func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
+
+				if existingPurchaseOrderItem.Status == model.PurchaseOrderItemStatusPendingConfirmation {
+					if existingPurchaseOrderToSupply == nil {
+						poToSupplyToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
+							ProductVariant:      &model.ProductVariantForPurchaseOrderItemInput{},
+							AddressRegionGroup:  &model.AddressRegionGroupForPurchaseOrderToSupplyInput{},
+							TimeSlot:            existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+							ExpectedArrivalDate: existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+							Status:              func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusCummulating),
+						}
+
+						jsonTemp, _ := json.Marshal(existingPurchaseOrderItem.ProductVariant)
+						json.Unmarshal(jsonTemp, &poToSupplyToCreate.ProductVariant)
+
+						jsonTemp, _ = json.Marshal(existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup)
+						json.Unmarshal(jsonTemp, &poToSupplyToCreate.AddressRegionGroup)
+
+						jsonTemp, _ = json.Marshal(
+							map[string]interface{}{
+								"Tags": funk.Map(
+									existingPurchaseOrderItem.ProductVariant.Product.Taggings,
+									func(t *model.TaggingForPurchaseOrderItem) interface{} {
+										return t.Tag
+									},
+								),
+							},
+						)
+						json.Unmarshal(jsonTemp, poToSupplyToCreate)
+
+						existingPurchaseOrderToSupply, err = approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Create(
+							poToSupplyToCreate,
+							session,
+						)
+						if err != nil {
+							return nil, horeekaacoreexceptiontofailure.ConvertException(
+								"/approveUpdatePurchaseOrderItem",
+								err,
+							)
+						}
 					}
 
-					jsonTemp, _ := json.Marshal(existingPurchaseOrderItem.ProductVariant)
-					json.Unmarshal(jsonTemp, &poToSupplyToCreate.ProductVariant)
-
-					jsonTemp, _ = json.Marshal(existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup)
-					json.Unmarshal(jsonTemp, &poToSupplyToCreate.AddressRegionGroup)
-
-					jsonTemp, _ = json.Marshal(
+					updatedPOToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 						map[string]interface{}{
-							"Tags": funk.Map(
-								existingPurchaseOrderItem.ProductVariant.Product.Taggings,
-								func(t *model.TaggingForPurchaseOrderItem) interface{} {
-									return t.Tag
-								},
-							),
+							"_id": existingPurchaseOrderToSupply.ID,
 						},
-					)
-					json.Unmarshal(jsonTemp, poToSupplyToCreate)
-
-					existingPurchaseOrderToSupply, err = approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Create(
-						poToSupplyToCreate,
+						&model.DatabaseUpdatePurchaseOrderToSupply{
+							QuantityRequested: func(i int) *int { return &i }(
+								existingPurchaseOrderToSupply.QuantityRequested +
+									(existingPurchaseOrderItem.ProposedChanges.Quantity - existingPurchaseOrderItem.Quantity),
+							),
+							PurchaseOrderItems: funk.Map(
+								append(
+									existingPurchaseOrderToSupply.PurchaseOrderItems,
+									&model.PurchaseOrderItem{
+										ID: existingPurchaseOrderItem.ID,
+									},
+								),
+								func(m *model.PurchaseOrderItem) *model.ObjectIDOnly {
+									return &model.ObjectIDOnly{
+										ID: &m.ID,
+									}
+								},
+							).([]*model.ObjectIDOnly),
+						},
 						session,
 					)
 					if err != nil {
@@ -177,44 +212,52 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 							err,
 						)
 					}
+					fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+						return &m
+					}(model.PurchaseOrderItemStatusAwaitingFulfillment)
+					fieldsToUpdatePurchaseOrderItem.PurchaseOrderToSupply = &model.ObjectIDOnly{
+						ID: &updatedPOToSupply.ID,
+					}
 				}
 
-				updatedPOToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
-					map[string]interface{}{
-						"_id": existingPurchaseOrderToSupply.ID,
-					},
-					&model.DatabaseUpdatePurchaseOrderToSupply{
-						QuantityRequested: func(i int) *int { return &i }(
-							existingPurchaseOrderToSupply.QuantityRequested +
-								(existingPurchaseOrderItem.ProposedChanges.Quantity - existingPurchaseOrderItem.Quantity),
-						),
-						PurchaseOrderItems: funk.Map(
-							append(
-								existingPurchaseOrderToSupply.PurchaseOrderItems,
-								&model.PurchaseOrderItem{
-									ID: existingPurchaseOrderItem.ID,
-								},
-							),
-							func(m *model.PurchaseOrderItem) *model.ObjectIDOnly {
-								return &model.ObjectIDOnly{
-									ID: &m.ID,
-								}
-							},
-						).([]*model.ObjectIDOnly),
-					},
-					session,
-				)
-				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdatePurchaseOrderItem",
-						err,
+				if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled > 0 {
+					if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
+						fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+							return &m
+						}(model.PurchaseOrderItemStatusPartiallyFulfilled)
+					} else {
+						fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+							return &m
+						}(model.PurchaseOrderItemStatusFullfilled)
+					}
+
+					quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
+						(existingPurchaseOrderItem.ProposedChanges.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
+
+					poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+						QuantityDistributed: &quantityDistributed,
+					}
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+						return &s
+					}(model.PurchaseOrderToSupplyStatusFulfilled)
+					if quantityDistributed >= existingPurchaseOrderToSupply.QuantityFulfilled {
+						poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+							return &s
+						}(model.PurchaseOrderToSupplyStatusDistributed)
+					}
+					_, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+						map[string]interface{}{
+							"_id": existingPurchaseOrderToSupply.ID,
+						},
+						poToSupplyToUpdate,
+						session,
 					)
-				}
-				fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
-					return &m
-				}(model.PurchaseOrderItemStatusAwaitingFulfillment)
-				fieldsToUpdatePurchaseOrderItem.PurchaseOrderToSupply = &model.ObjectIDOnly{
-					ID: &updatedPOToSupply.ID,
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							"/approveUpdatePurchaseOrderItem",
+							err,
+						)
+					}
 				}
 			}
 		}
