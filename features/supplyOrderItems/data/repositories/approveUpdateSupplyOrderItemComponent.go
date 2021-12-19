@@ -134,17 +134,21 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					)
 				}
 
+				quantityFulfilled := existingPOToSupply.QuantityFulfilled +
+					(*fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted -
+						existingSupplyOrderItem.QuantityAccepted)
+				poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+					QuantityFulfilled: &quantityFulfilled,
+				}
+				poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusOpen)
+				if quantityFulfilled >= existingPOToSupply.QuantityRequested {
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusFulfilled)
+				}
 				_, err = approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 					map[string]interface{}{
 						"_id": fieldsToUpdateSupplyOrderItem.ProposedChanges.PurchaseOrderToSupply.ID,
 					},
-					&model.DatabaseUpdatePurchaseOrderToSupply{
-						QuantityFulfilled: func(i int) *int { return &i }(
-							existingPOToSupply.QuantityFulfilled +
-								(*fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted -
-									existingSupplyOrderItem.QuantityAccepted),
-						),
-					},
+					poToSupplyToUpdate,
 					session,
 				)
 				if err != nil {

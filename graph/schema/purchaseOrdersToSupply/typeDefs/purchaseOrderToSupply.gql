@@ -1,6 +1,7 @@
 enum PurchaseOrderToSupplyStatus {
   CUMMULATING
-  PROCESSED
+  OPEN
+  FULFILLED
 }
 
 input CreatePurchaseOrderToSupply {

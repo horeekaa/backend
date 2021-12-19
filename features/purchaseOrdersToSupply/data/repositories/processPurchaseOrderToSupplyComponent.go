@@ -176,7 +176,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 		&model.DatabaseUpdatePurchaseOrderToSupply{
 			Status: func(m model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
 				return &m
-			}(model.PurchaseOrderToSupplyStatusProcessed),
+			}(model.PurchaseOrderToSupplyStatusOpen),
 		},
 		operationOption,
 	)
