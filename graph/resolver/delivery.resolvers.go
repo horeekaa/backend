@@ -12,6 +12,28 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
+func (r *purchaseOrderItemDeliveryResolver) PhotosAfterReceived(ctx context.Context, obj *model.PurchaseOrderItemDelivery) ([]*model.DescriptivePhoto, error) {
+	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
+	container.Make(&getDescriptivePhotoUsecase)
+
+	descriptivePhotos := []*model.DescriptivePhoto{}
+	if obj.PhotosAfterReceived != nil {
+		for _, photo := range obj.PhotosAfterReceived {
+			descriptivePhoto, err := getDescriptivePhotoUsecase.Execute(
+				&model.DescriptivePhotoFilterFields{
+					ID: &photo.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			descriptivePhotos = append(descriptivePhotos, descriptivePhoto)
+		}
+	}
+	return descriptivePhotos, nil
+}
+
 func (r *purchaseOrderItemDeliveryResolver) Photos(ctx context.Context, obj *model.PurchaseOrderItemDelivery) ([]*model.DescriptivePhoto, error) {
 	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
 	container.Make(&getDescriptivePhotoUsecase)

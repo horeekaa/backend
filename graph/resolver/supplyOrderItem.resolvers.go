@@ -9,6 +9,7 @@ import (
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
 	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
@@ -25,6 +26,28 @@ func (r *mutationResolver) UpdateSupplyOrderItemPickUp(ctx context.Context, upda
 			UpdateSupplyOrderItemPickUp: updateSupplyOrderItemPickUp,
 		},
 	)
+}
+
+func (r *supplyOrderItemResolver) Photos(ctx context.Context, obj *model.SupplyOrderItem) ([]*model.DescriptivePhoto, error) {
+	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
+	container.Make(&getDescriptivePhotoUsecase)
+
+	descriptivePhotos := []*model.DescriptivePhoto{}
+	if obj.Photos != nil {
+		for _, photo := range obj.Photos {
+			descriptivePhoto, err := getDescriptivePhotoUsecase.Execute(
+				&model.DescriptivePhotoFilterFields{
+					ID: &photo.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			descriptivePhotos = append(descriptivePhotos, descriptivePhoto)
+		}
+	}
+	return descriptivePhotos, nil
 }
 
 func (r *supplyOrderItemResolver) SubmittingAccount(ctx context.Context, obj *model.SupplyOrderItem) (*model.Account, error) {

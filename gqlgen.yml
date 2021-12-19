@@ -189,6 +189,8 @@ models:
     fields:
       photos:
         resolver: true
+      photosAfterReceived:
+        resolver: true
   PurchaseOrderToSupply:
     fields:
       purchaseOrderItems:
@@ -205,6 +207,8 @@ models:
         resolver: true
   SupplyOrderItem:
     fields:
+      photos:
+        resolver: true
       submittingAccount:
         resolver: true
       recentApprovingAccount:
