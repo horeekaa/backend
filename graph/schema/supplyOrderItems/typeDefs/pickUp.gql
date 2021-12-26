@@ -1,9 +1,13 @@
+enum PickUpStatus {
+  ADDRESS_NOTED
+  DRIVER_ASSIGNED
+  PICKING_UP
+  PICKED_UP
+}
+
 input CreateSupplyOrderItemPickUp {
   address: ObjectIDOnly!
-  photos: [CreateDescriptivePhoto]!
-  courier: ObjectIDOnly
-  scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  scheduledPickUpTime: Time!
   note: String
 }
 
@@ -13,49 +17,72 @@ input DatabaseCreateSupplyOrderItemPickUp {
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus!
   note: String
+  courierResponded: Boolean!
 }
 
 input UpdateSupplyOrderItemPickUp {
   address: ObjectIDOnly
-  photos: [UpdateDescriptivePhoto]
-  courier: ObjectIDOnly
   scheduledPickUpTime: Time
-  actualPickUpTime: Time
   note: String
 }
 
+input UpdateSupplyOrderItemPickUpByInternal {
+  photos: [UpdateDescriptivePhoto]
+  courier: ObjectIDOnly
+  actualPickUpTime: Time
+  courierResponded: Boolean
+  noOfPackages: Int
+}
+
 input InternalSupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus
   note: String
+  courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input DatabaseUpdateSupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItemInput
   photos: [ObjectIDOnly]
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus
   note: String
+  courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input SupplyOrderItemPickUpFilterFields {
+  publicId: StringFilterField
   note: StringFilterField
   address: AddressForSupplyOrderItemFilterFields
   courier: AccountForSupplyOrderItemFilterFields
   scheduledPickUpTime: TimeFilterField
   actualPickUpTime: TimeFilterField
+  status: StringFilterField
+  courierResponded: BooleanFilterField
+  noOfPackages: IntFilterField
 }
 
 type SupplyOrderItemPickUp {
+  publicId: String
   address: AddressForSupplyOrderItem
   photos: [DescriptivePhoto]
   courier: AccountForSupplyOrderItem
   scheduledPickUpTime: Time
   actualPickUpTime: Time
+  status: PickUpStatus!
   note: String
+  courierResponded: Boolean!
+  noOfPackages: Int
 }

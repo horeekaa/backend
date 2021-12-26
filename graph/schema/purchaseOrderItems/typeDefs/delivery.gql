@@ -1,4 +1,4 @@
-enum ExpectedDeliverySchedule {
+enum DeliveryTimeSlot {
   """
   4AM to 6AM
   """
@@ -17,12 +17,17 @@ enum ExpectedDeliverySchedule {
   AFTERNOON
 }
 
+enum DeliveryStatus {
+  ADDRESS_NOTED
+  DRIVER_ASSIGNED
+  IN_DELIVERY
+  DELIVERED
+}
+
 input CreatePurchaseOrderItemDelivery {
   address: ObjectIDOnly!
-  photos: [CreateDescriptivePhoto]!
-  courier: ObjectIDOnly
-  expectedDeliverySchedule: ExpectedDeliverySchedule
-  actualDeliveryTime: Time
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   note: String
 }
 
@@ -30,51 +35,84 @@ input DatabaseCreatePurchaseOrderItemDelivery {
   address: AddressForPurchaseOrderItemInput!
   photos: [ObjectIDOnly]!
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   actualDeliveryTime: Time
+  status: DeliveryStatus!
   note: String
+  courierResponded: Boolean!
 }
 
 input UpdatePurchaseOrderItemDelivery {
   address: ObjectIDOnly
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
+  note: String
+}
+
+input UpdatePurchaseOrderItemDeliveryByInternal {
+  photosAfterReceived: [UpdateDescriptivePhoto]
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
-  expectedDeliverySchedule: ExpectedDeliverySchedule
   actualDeliveryTime: Time
-  note: String
+  courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input InternalPurchaseOrderItemDelivery {
+  publicId: String
   address: AddressForPurchaseOrderItemInput
+  photosAfterReceived: [InternalUpdateDescriptivePhoto]
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   actualDeliveryTime: Time
+  status: DeliveryStatus
   note: String
+  courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input DatabaseUpdatePurchaseOrderItemDelivery {
+  publicId: String
   address: AddressForPurchaseOrderItemInput
+  photosAfterReceived: [ObjectIDOnly]
   photos: [ObjectIDOnly]
   courier: AccountForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   actualDeliveryTime: Time
+  status: DeliveryStatus
   note: String
+  courierResponded: Boolean
+  noOfPackages: Int
 }
 
 input PurchaseOrderItemDeliveryFilterFields {
+  publicId: StringFilterField
   note: StringFilterField
   address: AddressForPurchaseOrderItemFilterFields
   courier: AccountForPurchaseOrderItemFilterFields
-  expectedDeliverySchedule: StringFilterField
+  timeSlot: StringFilterField
+  expectedArrivalDate: TimeFilterField
   actualDeliveryTime: TimeFilterField
+  status: StringFilterField
+  courierResponded: BooleanFilterField
+  noOfPackages: IntFilterField
 }
 
 type PurchaseOrderItemDelivery {
-  address: AddressForPurchaseOrderItem
+  publicId: String
+  address: AddressForPurchaseOrderItem!
+  photosAfterReceived: [DescriptivePhoto]
   photos: [DescriptivePhoto]
   courier: AccountForPurchaseOrderItem
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   actualDeliveryTime: Time
+  status: DeliveryStatus!
   note: String
+  courierResponded: Boolean!
+  noOfPackages: Int
 }

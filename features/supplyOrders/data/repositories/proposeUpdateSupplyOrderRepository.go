@@ -138,6 +138,9 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			if *supplyOrderToUpdate.MemberAccess.Organization.Type == model.OrganizationTypePartner {
 				supplyOrderItemToCreate.PartnerAgreed = func(b bool) *bool { return &b }(true)
 			}
+			for i, descPhoto := range supplyOrderItemToUpdate.Photos {
+				supplyOrderItemToCreate.Photos[i].Photo.File = descPhoto.Photo.File
+			}
 
 			savedSupplyOrderItem, err := updateSupplyOrderRepo.createSupplyOrderItemComponent.TransactionBody(
 				operationOption,

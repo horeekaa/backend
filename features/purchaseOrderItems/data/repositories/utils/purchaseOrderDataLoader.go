@@ -2,6 +2,7 @@ package purchaseorderitemdomainrepositoryutilities
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
@@ -68,6 +69,16 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			deliveryLoadedChan <- true
 			return
 		}
+		if delivery.ExpectedArrivalDate != nil {
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			*delivery.ExpectedArrivalDate = time.Date(
+				delivery.ExpectedArrivalDate.Year(),
+				delivery.ExpectedArrivalDate.Month(),
+				delivery.ExpectedArrivalDate.Day(),
+				0, 0, 0, 0,
+				loc,
+			)
+		}
 
 		addressLoadedChan := make(chan bool)
 		accountLoadedChan := make(chan bool)
@@ -87,6 +98,10 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			}
 			jsonTemp, _ := json.Marshal(loadedAddress)
 			json.Unmarshal(jsonTemp, &delivery.Address)
+
+			*delivery.Status = model.DeliveryStatusAddressNoted
+			*delivery.Courier = model.AccountForPurchaseOrderItemInput{}
+			*delivery.PublicID = ""
 
 			addressLoadedChan <- true
 		}()

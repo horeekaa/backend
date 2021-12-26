@@ -1,12 +1,15 @@
 enum PurchaseOrderToSupplyStatus {
   CUMMULATING
-  PROCESSED
+  OPEN
+  FULFILLED
+  DISTRIBUTED
 }
 
 input CreatePurchaseOrderToSupply {
   quantityRequested: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupplyInput]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
@@ -15,8 +18,10 @@ input CreatePurchaseOrderToSupply {
 input InternalCreatePurchaseOrderToSupply {
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [InternalCreatePurchaseOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
@@ -26,8 +31,10 @@ input InternalCreatePurchaseOrderToSupply {
 input DatabaseCreatePurchaseOrderToSupply {
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
@@ -40,8 +47,10 @@ input UpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [UpdatePurchaseOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
@@ -52,8 +61,10 @@ input InternalUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [InternalUpdatePurchaseOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
@@ -64,8 +75,10 @@ input DatabaseUpdatePurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int
   quantityFulfilled: Int
+  quantityDistributed: Int
   productVariant: ProductVariantForPurchaseOrderItemInput
-  expectedDeliverySchedule: ExpectedDeliverySchedule
+  timeSlot: DeliveryTimeSlot
+  expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
@@ -77,8 +90,10 @@ input PurchaseOrderToSupplyFilterFields {
   _id: ObjectID
   quantityRequested: IntFilterField
   quantityFulfilled: IntFilterField
+  quantityDistributed: IntFilterField
   productVariant: ProductVariantFilterFields
-  expectedDeliverySchedule: StringFilterField
+  timeSlot: StringFilterField
+  expectedArrivalDate: TimeFilterField
   tags: ObjectIDOnlyFilterField
   purchaseOrderItems: ObjectIDOnlyFilterField
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
@@ -91,8 +106,10 @@ type PurchaseOrderToSupply {
   _id: ObjectID!
   quantityRequested: Int!
   quantityFulfilled: Int!
+  quantityDistributed: Int!
   productVariant: ProductVariantForPurchaseOrderItem!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupply]!
   purchaseOrderItems: [PurchaseOrderItem]!
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!

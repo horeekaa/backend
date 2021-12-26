@@ -36,6 +36,7 @@ input InternalCreatePurchaseOrderItem {
 input DatabaseCreatePurchaseOrderItem {
   _id: ObjectID!
   quantity: Int!
+  quantityFulfilled: Int!
   unitPrice: Int!
   subTotal: Int!
   note: String
@@ -54,6 +55,11 @@ input DatabaseCreatePurchaseOrderItem {
   updatedAt: Time
 }
 
+input UpdatePurchaseOrderItemDeliveryOnly {
+  _id: ObjectID!
+  deliveryDetail: UpdatePurchaseOrderItemDeliveryByInternal
+}
+
 input UpdatePurchaseOrderItem {
   """
   Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
@@ -61,6 +67,7 @@ input UpdatePurchaseOrderItem {
   """
   _id: ObjectID
   quantity: Int
+  quantityFulfilled: Int
   unitPrice: Int
   subTotal: Int
   note: String
@@ -85,6 +92,7 @@ input UpdatePurchaseOrderItem {
 input InternalUpdatePurchaseOrderItem {
   _id: ObjectID
   quantity: Int
+  quantityFulfilled: Int
   unitPrice: Int
   subTotal: Int
   note: String
@@ -106,6 +114,7 @@ input InternalUpdatePurchaseOrderItem {
 input DatabaseUpdatePurchaseOrderItem {
   _id: ObjectID!
   quantity: Int
+  quantityFulfilled: Int
   unitPrice: Int
   subTotal: Int
   note: String
@@ -128,6 +137,7 @@ input DatabaseUpdatePurchaseOrderItem {
 input PurchaseOrderItemFilterFields {
   _id: ObjectID
   quantity: IntFilterField
+  quantityFulfilled: IntFilterField
   unitPrice: IntFilterField
   subTotal: IntFilterField
   note: StringFilterField
@@ -152,6 +162,7 @@ input PurchaseOrderItemFilterFields {
 type PurchaseOrderItem {
   _id: ObjectID!
   quantity: Int!
+  quantityFulfilled: Int!
   unitPrice: Int!
   subTotal: Int!
   note: String

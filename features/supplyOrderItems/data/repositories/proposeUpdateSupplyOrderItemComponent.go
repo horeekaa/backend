@@ -2,6 +2,8 @@ package supplyorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -61,6 +63,75 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			"/proposeUpdateSupplyOrderItemComponent",
 			err,
 		)
+	}
+
+	if updateSupplyOrderItem.Photos != nil {
+		savedPhotos := existingSupplyOrderItem.Photos
+		for _, photoToUpdate := range updateSupplyOrderItem.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingSupplyOrderItem.Photos,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updateSupplyOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updateSupplyOrderItem.SubmittingAccount)
+				_, err := updateSupplyOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateSupplyOrderItem",
+						err,
+					)
+				}
+
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingSupplyOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateSupplyOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateSupplyOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdDescriptivePhoto, err := updateSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateSupplyOrderItem",
+					err,
+				)
+			}
+
+			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"Photos": savedPhotos,
+			},
+		)
+		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
 	if updateSupplyOrderItem.PickUpDetail != nil {
@@ -132,6 +203,30 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			},
 		)
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+
+		if updateSupplyOrderItem.PickUpDetail.Courier != nil {
+			generatedObjectID := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updateSupplyOrderItem.PickUpDetail.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"PK",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
+		}
+
+		if updateSupplyOrderItem.PickUpDetail.CourierResponded != nil {
+			if *updateSupplyOrderItem.PickUpDetail.CourierResponded {
+				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
+					return &m
+				}(model.PickUpStatusDriverAssigned)
+			}
+		}
 	}
 
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(

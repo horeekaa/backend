@@ -112,10 +112,8 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 	json.Unmarshal(jsonTemp, &supplyOrderToCreate.MemberAccess)
 
 	for i, soItem := range validatedInput.CreateSupplyOrder.Items {
-		if soItem.PickUpDetail != nil {
-			for j, descriptivePhoto := range soItem.PickUpDetail.Photos {
-				supplyOrderToCreate.Items[i].PickUpDetail.Photos[j].Photo.File = descriptivePhoto.Photo.File
-			}
+		for j, descriptivePhoto := range soItem.Photos {
+			supplyOrderToCreate.Items[i].Photos[j].Photo.File = descriptivePhoto.Photo.File
 		}
 	}
 

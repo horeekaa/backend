@@ -10,11 +10,24 @@ import (
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
+	purchaseorderitempresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases/types"
 	purchaseorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrders/presentation/usecases"
 	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
+
+func (r *mutationResolver) UpdatePurchaseOrderItemDelivery(ctx context.Context, updatePurchaseOrderItemDelivery *model.UpdatePurchaseOrderItemDeliveryOnly) (*model.PurchaseOrderItem, error) {
+	var updatePurchaseOrderItemDeliveryUsecase purchaseorderitempresentationusecaseinterfaces.UpdatePurchaseOrderItemDeliveryUsecase
+	container.Make(&updatePurchaseOrderItemDeliveryUsecase)
+	return updatePurchaseOrderItemDeliveryUsecase.Execute(
+		purchaseorderitempresentationusecasetypes.UpdatePurchaseOrderItemDeliveryUsecaseInput{
+			Context:                         ctx,
+			UpdatePurchaseOrderItemDelivery: updatePurchaseOrderItemDelivery,
+		},
+	)
+}
 
 func (r *purchaseOrderItemResolver) PurchaseOrder(ctx context.Context, obj *model.PurchaseOrderItem) (*model.PurchaseOrder, error) {
 	var getPurchaseOrderUsecase purchaseorderpresentationusecaseinterfaces.GetPurchaseOrderUsecase

@@ -111,10 +111,8 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	json.Unmarshal(jsonTemp, &supplyOrderToUpdate.MemberAccess)
 
 	for i, soItem := range validatedInput.UpdateSupplyOrder.Items {
-		if soItem.PickUpDetail != nil {
-			for j, descriptivePhoto := range soItem.PickUpDetail.Photos {
-				supplyOrderToUpdate.Items[i].PickUpDetail.Photos[j].Photo.File = descriptivePhoto.Photo.File
-			}
+		for j, descriptivePhoto := range soItem.Photos {
+			supplyOrderToUpdate.Items[i].Photos[j].Photo.File = descriptivePhoto.Photo.File
 		}
 	}
 

@@ -2,7 +2,8 @@ input PurchaseOrderToSupplyForSupplyOrderItemInput {
   _id: ObjectID!
   quantityRequested: Int!
   productVariant: ProductVariantForSupplyOrderItemInput!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   addressRegionGroup: AddressRegionGroupForSupplyOrderItemInput!
   createdAt: Time!
   updatedAt: Time!
@@ -12,7 +13,8 @@ input PurchaseOrderToSupplyForSupplyOrderItemFilterFields {
   _id: ObjectID
   quantityRequested: IntFilterField
   productVariant: ProductVariantForSupplyOrderItemFilterFields
-  expectedDeliverySchedule: StringFilterField
+  timeSlot: StringFilterField
+  expectedArrivalDate: TimeFilterField
   addressRegionGroup: AddressRegionGroupForSupplyOrderItemFilterFields
 }
 
@@ -20,7 +22,8 @@ type PurchaseOrderToSupplyForSupplyOrderItem {
   _id: ObjectID!
   quantityRequested: Int!
   productVariant: ProductVariantForSupplyOrderItem!
-  expectedDeliverySchedule: ExpectedDeliverySchedule!
+  timeSlot: DeliveryTimeSlot!
+  expectedArrivalDate: Time!
   addressRegionGroup: AddressRegionGroupForSupplyOrderItem!
   createdAt: Time!
   updatedAt: Time!
