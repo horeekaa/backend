@@ -118,6 +118,20 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 						err,
 					)
 				}
+
+				if descPhotoToUpdate.IsActive != nil {
+					if !*descPhotoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotos,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *descPhotoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotos = append(savedPhotos[:index], savedPhotos[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 
@@ -187,6 +201,19 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 						"/proposeUpdateProductRepository",
 						err,
 					)
+				}
+				if variantToUpdate.IsActive != nil {
+					if !*variantToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedVariants,
+							func(pv *model.ProductVariant) bool {
+								return pv.ID == *variantToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedVariants = append(savedVariants[:index], savedVariants[index+1:]...)
+						}
+					}
 				}
 				continue
 			}
@@ -265,6 +292,19 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 						"/proposeUpdateProductRepository",
 						err,
 					)
+				}
+				if taggingToUpdate.IsActive != nil {
+					if !*taggingToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedTaggings,
+							func(tg *model.Tagging) bool {
+								return tg.ID == *taggingToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedTaggings = append(savedTaggings[:index], savedTaggings[index+1:]...)
+						}
+					}
 				}
 				continue
 			}
