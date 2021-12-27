@@ -97,6 +97,20 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 						err,
 					)
 				}
+
+				if mouItemToUpdate.IsActive != nil {
+					if !*mouItemToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedMouItems,
+							func(mi *model.MouItem) bool {
+								return mi.ID == *mouItemToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedMouItems = append(savedMouItems[:index], savedMouItems[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 
