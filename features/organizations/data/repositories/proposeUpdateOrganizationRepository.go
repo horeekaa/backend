@@ -119,6 +119,20 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 						err,
 					)
 				}
+
+				if descPhotoToUpdate.IsActive != nil {
+					if !*descPhotoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotos,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *descPhotoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotos = append(savedPhotos[:index], savedPhotos[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 
@@ -188,6 +202,20 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 						"/proposeUpdateOrganizationRepository",
 						err,
 					)
+				}
+
+				if addressToUpdate.IsActive != nil {
+					if !*addressToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedAddresses,
+							func(ad *model.Address) bool {
+								return ad.ID == *addressToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedAddresses = append(savedAddresses[:index], savedAddresses[index+1:]...)
+						}
+					}
 				}
 				continue
 			}
@@ -263,6 +291,20 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 						"/proposeUpdateOrganizationRepository",
 						err,
 					)
+				}
+
+				if taggingToUpdate.IsActive != nil {
+					if !*taggingToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedTaggings,
+							func(tg *model.Tagging) bool {
+								return tg.ID == *taggingToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedTaggings = append(savedTaggings[:index], savedTaggings[index+1:]...)
+						}
+					}
 				}
 				continue
 			}
