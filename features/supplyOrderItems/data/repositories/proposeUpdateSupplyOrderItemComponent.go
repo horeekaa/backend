@@ -95,6 +95,19 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					)
 				}
 
+				if photoToUpdate.IsActive != nil {
+					if !*photoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotos,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *photoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotos = append(savedPhotos[:index], savedPhotos[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
@@ -164,6 +177,19 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					)
 				}
 
+				if photoToUpdate.IsActive != nil {
+					if !*photoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotos,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *photoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotos = append(savedPhotos[:index], savedPhotos[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
