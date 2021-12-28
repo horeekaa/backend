@@ -44,6 +44,7 @@ input DatabaseCreateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType!
   object: ObjectIDOnly!
+  isActive: Boolean!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -65,6 +66,7 @@ input UpdateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean
+  isActive: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
   proposalStatus: EntityProposalStatus
@@ -87,6 +89,7 @@ input InternalUpdateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean
+  isActive: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType
@@ -107,6 +110,7 @@ input DatabaseUpdateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean
+  isActive: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType
@@ -128,6 +132,7 @@ input AddressFilterFields {
   addressNote: StringFilterField
   phoneNumber: StringFilterField
   isDefault: BooleanFilterField
+  isActive: BooleanFilterField
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressFilterField
   type: StringFilterField
@@ -149,6 +154,7 @@ type Address {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean!
+  isActive: Boolean!
   resolvedGeocoding: ResolvedGeocoding
   addressRegionGroup: AddressRegionGroupForAddress
   type: AddressType!

@@ -104,6 +104,19 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 						err,
 					)
 				}
+				if descPhotoToUpdate.IsActive != nil {
+					if !*descPhotoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotos,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *descPhotoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotos = append(savedPhotos[:index], savedPhotos[index+1:]...)
+						}
+					}
+				}
 				continue
 			}
 
