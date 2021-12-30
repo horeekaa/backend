@@ -253,6 +253,26 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				}(model.PickUpStatusDriverAssigned)
 			}
 		}
+
+		if updateSupplyOrderItem.PickUpDetail.StartedPickingUp != nil {
+			if *updateSupplyOrderItem.PickUpDetail.StartedPickingUp {
+				currentTime := time.Now().UTC()
+				updateSupplyOrderItem.PickUpDetail.StartPickUpTime = &currentTime
+				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
+					return &m
+				}(model.PickUpStatusPickingUp)
+			}
+		}
+
+		if updateSupplyOrderItem.PickUpDetail.FinishedPickingUp != nil {
+			if *updateSupplyOrderItem.PickUpDetail.FinishedPickingUp {
+				currentTime := time.Now().UTC()
+				updateSupplyOrderItem.PickUpDetail.FinishPickUpTime = &currentTime
+				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
+					return &m
+				}(model.PickUpStatusPickedUp)
+			}
+		}
 	}
 
 	_, err = updateSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(

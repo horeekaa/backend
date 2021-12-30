@@ -253,6 +253,26 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				}(model.DeliveryStatusDriverAssigned)
 			}
 		}
+
+		if updatePurchaseOrderItem.DeliveryDetail.StartedDelivering != nil {
+			if *updatePurchaseOrderItem.DeliveryDetail.StartedDelivering {
+				currentTime := time.Now().UTC()
+				updatePurchaseOrderItem.DeliveryDetail.StartDeliveryTime = &currentTime
+				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
+					return &m
+				}(model.DeliveryStatusDelivering)
+			}
+		}
+
+		if updatePurchaseOrderItem.DeliveryDetail.FinishedDelivering != nil {
+			if *updatePurchaseOrderItem.DeliveryDetail.FinishedDelivering {
+				currentTime := time.Now().UTC()
+				updatePurchaseOrderItem.DeliveryDetail.FinishDeliveryTime = &currentTime
+				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
+					return &m
+				}(model.DeliveryStatusDelivered)
+			}
+		}
 	}
 
 	_, err = updatePurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
