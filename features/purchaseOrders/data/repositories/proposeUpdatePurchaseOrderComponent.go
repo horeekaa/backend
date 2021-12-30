@@ -2,6 +2,7 @@ package purchaseorderdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
@@ -155,6 +156,53 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 				"/updatePurchaseOrder",
 				err,
 			)
+		}
+	}
+
+	if updatePurchaseOrder.MarkAsReceived != nil {
+		if *updatePurchaseOrder.MarkAsReceived {
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			currentTime := time.Now().UTC()
+			updatePurchaseOrder.ReceivingDateTime = &currentTime
+			updatePurchaseOrder.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
+				return &m
+			}(model.PurchaseOrderStatusPaymentNeeded)
+
+			if existingPurchaseOrder.Type == model.PurchaseOrderTypeMouBased {
+				existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
+					existingPurchaseOrder.Mou.ID,
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrder",
+						err,
+					)
+				}
+
+				paymentDueDate := currentTime.In(loc).AddDate(
+					0, 0,
+					*existingMou.PaymentCompletionLimitInDays,
+				)
+				paymentDueDate = time.Date(
+					paymentDueDate.Year(),
+					paymentDueDate.Month()+1,
+					1, 0, 0, 0, 0,
+					paymentDueDate.Location(),
+				).UTC()
+
+				updatePurchaseOrder.PaymentDueDate = &paymentDueDate
+			} else {
+				currentTime = currentTime.In(loc)
+				currentTime = time.Date(
+					currentTime.Year(),
+					currentTime.Month(),
+					currentTime.Day(), 0, 0, 0, 0,
+					currentTime.Location(),
+				).UTC()
+
+				updatePurchaseOrder.PaymentDueDate = &currentTime
+			}
 		}
 	}
 
