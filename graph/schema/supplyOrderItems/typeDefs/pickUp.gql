@@ -16,10 +16,10 @@ input DatabaseCreateSupplyOrderItemPickUp {
   photos: [ObjectIDOnly]!
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  startPickUpTime: Time
+  finishPickUpTime: Time
   status: PickUpStatus!
   note: String
-  courierResponded: Boolean!
 }
 
 input UpdateSupplyOrderItemPickUp {
@@ -31,7 +31,8 @@ input UpdateSupplyOrderItemPickUp {
 input UpdateSupplyOrderItemPickUpByInternal {
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
-  actualPickUpTime: Time
+  startedPickingUp: Boolean
+  finishedPickingUp: Boolean
   courierResponded: Boolean
   noOfPackages: Int
 }
@@ -42,7 +43,10 @@ input InternalSupplyOrderItemPickUp {
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  startPickUpTime: Time
+  finishPickUpTime: Time
+  startedPickingUp: Boolean
+  finishedPickingUp: Boolean
   status: PickUpStatus
   note: String
   courierResponded: Boolean
@@ -55,10 +59,10 @@ input DatabaseUpdateSupplyOrderItemPickUp {
   photos: [ObjectIDOnly]
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  startPickUpTime: Time
+  finishPickUpTime: Time
   status: PickUpStatus
   note: String
-  courierResponded: Boolean
   noOfPackages: Int
 }
 
@@ -68,9 +72,9 @@ input SupplyOrderItemPickUpFilterFields {
   address: AddressForSupplyOrderItemFilterFields
   courier: AccountForSupplyOrderItemFilterFields
   scheduledPickUpTime: TimeFilterField
-  actualPickUpTime: TimeFilterField
+  startPickUpTime: TimeFilterField
+  finishPickUpTime: TimeFilterField
   status: StringFilterField
-  courierResponded: BooleanFilterField
   noOfPackages: IntFilterField
 }
 
@@ -80,9 +84,9 @@ type SupplyOrderItemPickUp {
   photos: [DescriptivePhoto]
   courier: AccountForSupplyOrderItem
   scheduledPickUpTime: Time
-  actualPickUpTime: Time
+  startPickUpTime: Time
+  finishPickUpTime: Time
   status: PickUpStatus!
   note: String
-  courierResponded: Boolean!
   noOfPackages: Int
 }

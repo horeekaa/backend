@@ -2,7 +2,8 @@ enum PurchaseOrderStatus {
   OPEN
   PROCESSED
   CANCELLED
-  DONE
+  PAYMENT_NEEDED
+  PAID
 }
 
 enum PurchaseOrderType {
@@ -69,6 +70,7 @@ input UpdatePurchaseOrder {
   finalSalesAmount: Int
   status: PurchaseOrderStatus
   paymentDueDate: Time
+  markAsReceived: Boolean
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -93,6 +95,8 @@ input InternalUpdatePurchaseOrder {
   status: PurchaseOrderStatus
   paymentDueDate: Time
   memberAccess: InternalUpdateMemberAccess
+  markAsReceived: Boolean
+  receivingDateTime: Time
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -113,6 +117,7 @@ input DatabaseUpdatePurchaseOrder {
   status: PurchaseOrderStatus
   paymentDueDate: Time
   organization: OrganizationForPurchaseOrderInput
+  receivingDateTime: Time
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -136,6 +141,7 @@ input PurchaseOrderFilterFields {
   status: StringFilterField
   paymentDueDate: TimeFilterField
   organization: OrganizationFilterFields
+  receivingDateTime: TimeFilterField
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -160,6 +166,7 @@ type PurchaseOrder {
   status: PurchaseOrderStatus!
   paymentDueDate: Time
   organization: OrganizationForPurchaseOrder!
+  receivingDateTime: Time
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

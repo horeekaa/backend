@@ -20,7 +20,7 @@ enum DeliveryTimeSlot {
 enum DeliveryStatus {
   ADDRESS_NOTED
   DRIVER_ASSIGNED
-  IN_DELIVERY
+  DELIVERING
   DELIVERED
 }
 
@@ -37,10 +37,10 @@ input DatabaseCreatePurchaseOrderItemDelivery {
   courier: AccountForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
-  actualDeliveryTime: Time
+  startDeliveryTime: Time
+  finishDeliveryTime: Time
   status: DeliveryStatus!
   note: String
-  courierResponded: Boolean!
 }
 
 input UpdatePurchaseOrderItemDelivery {
@@ -54,7 +54,8 @@ input UpdatePurchaseOrderItemDeliveryByInternal {
   photosAfterReceived: [UpdateDescriptivePhoto]
   photos: [UpdateDescriptivePhoto]
   courier: ObjectIDOnly
-  actualDeliveryTime: Time
+  startedDelivering: Boolean
+  finishedDelivering: Boolean
   courierResponded: Boolean
   noOfPackages: Int
 }
@@ -67,7 +68,10 @@ input InternalPurchaseOrderItemDelivery {
   courier: AccountForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
-  actualDeliveryTime: Time
+  startDeliveryTime: Time
+  finishDeliveryTime: Time
+  startedDelivering: Boolean
+  finishedDelivering: Boolean
   status: DeliveryStatus
   note: String
   courierResponded: Boolean
@@ -82,10 +86,10 @@ input DatabaseUpdatePurchaseOrderItemDelivery {
   courier: AccountForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
-  actualDeliveryTime: Time
+  startDeliveryTime: Time
+  finishDeliveryTime: Time
   status: DeliveryStatus
   note: String
-  courierResponded: Boolean
   noOfPackages: Int
 }
 
@@ -96,9 +100,9 @@ input PurchaseOrderItemDeliveryFilterFields {
   courier: AccountForPurchaseOrderItemFilterFields
   timeSlot: StringFilterField
   expectedArrivalDate: TimeFilterField
-  actualDeliveryTime: TimeFilterField
+  startDeliveryTime: TimeFilterField
+  finishDeliveryTime: TimeFilterField
   status: StringFilterField
-  courierResponded: BooleanFilterField
   noOfPackages: IntFilterField
 }
 
@@ -110,9 +114,9 @@ type PurchaseOrderItemDelivery {
   courier: AccountForPurchaseOrderItem
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
-  actualDeliveryTime: Time
+  startDeliveryTime: Time
+  finishDeliveryTime: Time
   status: DeliveryStatus!
   note: String
-  courierResponded: Boolean!
   noOfPackages: Int
 }

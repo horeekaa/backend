@@ -64,6 +64,34 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreatePurchaseOrder,
 ) (*model.PurchaseOrder, error) {
+	purchaseOrder, err := createPurchaseOrderTrx.purchaseOrderDataSource.GetMongoDataSource().FindOne(
+		map[string]interface{}{
+			"status": map[string]interface{}{
+				"$in": [...]model.PurchaseOrderStatus{
+					model.PurchaseOrderStatusPaymentNeeded,
+					model.PurchaseOrderStatusOpen,
+					model.PurchaseOrderStatusProcessed,
+				},
+			},
+			"type":             model.PurchaseOrderTypeRetail,
+			"organization._id": input.MemberAccess.Organization.ID,
+		},
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createPurchaseOrder",
+			err,
+		)
+	}
+	if purchaseOrder != nil {
+		return nil, horeekaacorefailure.NewFailureObject(
+			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
+			"/createPurchaseOrder",
+			nil,
+		)
+	}
+
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	generatedObjectID := createPurchaseOrderTrx.GetCurrentObjectID()
 	splittedId := strings.Split(generatedObjectID.Hex(), "")
@@ -98,7 +126,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	purchaseOrderToCreate.Organization = &model.OrganizationForPurchaseOrderInput{
 		ID: input.MemberAccess.Organization.ID,
 	}
-	_, err := createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
+	_, err = createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
 		session,
 		purchaseOrderToCreate.Mou,
 		purchaseOrderToCreate.Organization,
