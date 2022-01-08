@@ -5,6 +5,13 @@ input OrganizationForPartyInput {
   type: OrganizationType!
 }
 
+input OrganizationForPartyFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
+}
+
 type OrganizationForParty {
   _id: ObjectID!
   name: String!

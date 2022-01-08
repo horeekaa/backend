@@ -146,8 +146,8 @@ input MouFilterFields {
   minimumOrderValueBeforeDelivery: IntFilterField
   paymentCompletionLimitInDays: IntFilterField
   maximumDispatchTimeInDaysAfterConfirmation: IntFilterField
-  firstParty: PartyInput
-  secondParty: PartyInput
+  firstParty: PartyFilterFields
+  secondParty: PartyFilterFields
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
