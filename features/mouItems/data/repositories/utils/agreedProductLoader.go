@@ -103,19 +103,21 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 				)
 			}
 
-			loadedDescriptivePhoto, err := agreedProdLoader.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
-				loadedVariant.Photo.ID,
-				session,
-			)
-			if err != nil {
-				errChan <- horeekaacoreexceptiontofailure.ConvertException(
-					"/agreedProductLoader",
-					err,
+			if loadedVariant.Photo != nil {
+				loadedDescriptivePhoto, err := agreedProdLoader.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
+					loadedVariant.Photo.ID,
+					session,
 				)
-			}
+				if err != nil {
+					errChan <- horeekaacoreexceptiontofailure.ConvertException(
+						"/agreedProductLoader",
+						err,
+					)
+				}
 
-			loadedDescriptivePhotoJson, _ := json.Marshal(loadedDescriptivePhoto)
-			json.Unmarshal(loadedDescriptivePhotoJson, &loadedVariant.Photo)
+				loadedDescriptivePhotoJson, _ := json.Marshal(loadedDescriptivePhoto)
+				json.Unmarshal(loadedDescriptivePhotoJson, &loadedVariant.Photo)
+			}
 
 			loadedVariantJson, _ := json.Marshal(loadedVariant)
 			json.Unmarshal(loadedVariantJson, &agreedProductOutput.Variants[i])
