@@ -6,6 +6,14 @@ input AccountForPartyInput {
   person: PersonForPartyInput
 }
 
+input AccountForPartyFilterFields {
+  _id: ObjectID
+  email: StringFilterField
+  language: StringFilterField
+  type: StringFilterField
+  person: PersonForPartyFilterFields
+}
+
 type AccountForParty {
   _id: ObjectID!
   email: String

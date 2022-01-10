@@ -115,8 +115,8 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 		if accessible := funk.GetOrElse(
 			funk.Get(memberAccess, "Access.MouAccesses.MouReadOwned"), false,
 		).(bool); accessible {
-			validatedInput.FilterFields.SecondParty = &model.PartyInput{
-				Organization: &model.ObjectIDOnly{
+			validatedInput.FilterFields.SecondParty = &model.PartyFilterFields{
+				Organization: &model.OrganizationForPartyFilterFields{
 					ID: &memberAccess.Organization.ID,
 				},
 			}

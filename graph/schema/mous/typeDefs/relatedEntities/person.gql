@@ -5,6 +5,13 @@ input PersonForPartyInput {
   phoneNumber: String
 }
 
+input PersonForPartyFilterFields {
+  _id: ObjectID
+  firstName: StringFilterField
+  lastName: StringFilterField
+  phoneNumber: StringFilterField
+}
+
 type PersonForParty {
   _id: ObjectID!
   firstName: String!

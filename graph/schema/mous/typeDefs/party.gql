@@ -1,20 +1,28 @@
 input PartyInput {
   organization: ObjectIDOnly!
-  accountInCharge: ObjectIDOnly!
+  accountInCharge: ObjectIDOnly
   signature: SignatureInput
 }
 
 input InternalPartyInput {
   organization: OrganizationForPartyInput!
-  accountInCharge: AccountForPartyInput!
+  accountInCharge: AccountForPartyInput
   signature: InternalSignatureInput
   createdAt: Time
   updatedAt: Time
 }
 
+input PartyFilterFields {
+  organization: OrganizationForPartyFilterFields
+  accountInCharge: AccountForPartyFilterFields
+  signature: SignatureFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
 type Party {
   organization: OrganizationForParty!
-  accountInCharge: AccountForParty!
+  accountInCharge: AccountForParty
   signature: Signature
   createdAt: Time
   updatedAt: Time
