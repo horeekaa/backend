@@ -148,6 +148,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 		}
 	}
 	createPurchaseOrderItem.SubTotal = func(i int) *int { return &i }(createPurchaseOrderItem.Quantity * createPurchaseOrderItem.UnitPrice)
+	createPurchaseOrderItem.SalesAmount = createPurchaseOrderItem.SubTotal
 
 	newDocumentJson, _ := json.Marshal(*createPurchaseOrderItem)
 	loggingOutput, err := createPurchaseOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
@@ -182,7 +183,6 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	jsonTemp, _ := json.Marshal(createPurchaseOrderItem)
 	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
 	json.Unmarshal(jsonTemp, &purchaseOrderItemToCreate.ProposedChanges)
-	purchaseOrderItemToCreate.Quantity = 0
 
 	createdPurchaseOrderItem, err := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().Create(
 		purchaseOrderItemToCreate,
