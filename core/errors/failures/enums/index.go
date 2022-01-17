@@ -16,8 +16,9 @@ const (
 	ObjectNotFound       string = "OBJECT_NOT_FOUND"
 	NothingToBeApproved  string = "NOTHING_TO_BE_APPROVED"
 
-	POItemMismatchWithPOType       string = "PO_ITEM_MISMATCH_WITH_PO_TYPE"
-	POSalesAmountExceedCreditLimit string = "PO_SALES_AMOUNT_EXCEED_CREDIT_LIMIT"
+	POItemMismatchWithPOType            string = "PO_ITEM_MISMATCH_WITH_PO_TYPE"
+	POSalesAmountExceedCreditLimit      string = "PO_SALES_AMOUNT_EXCEED_CREDIT_LIMIT"
+	POReturnAmountExceedFulfilledAmount string = "PO_RETURN_AMOUNT_EXCEED_FULFILLED_AMOUNT"
 
 	UpstreamFailures string = "UPSTREAM_FAILURES"
 	UnknownFailures  string = "UNKNOWN_FAILURES"

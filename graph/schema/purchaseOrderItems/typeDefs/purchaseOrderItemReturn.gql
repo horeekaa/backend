@@ -1,0 +1,63 @@
+input CreatePurchaseOrderItemReturn {
+  quantity: Int!
+  note: String
+  photos: [CreateDescriptivePhoto]
+}
+
+input DatabaseCreatePurchaseOrderItemReturn {
+  publicId: String!
+  quantity: Int!
+  subTotal: Int!
+  note: String
+  photos: [ObjectIDOnly]
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePurchaseOrderItemReturn {
+  quantity: Int
+  subTotal: Int
+  note: String
+  """
+  Leave the field null/empty array or fill it with updates to the product's photos.
+  (a) If ID is present, then it will be update operation(s) to existing photos.
+  (b) If ID is not present, then it will be additional photo(s)
+   appended to the list of product's photos.
+  """
+  photos: [UpdateDescriptivePhoto]
+}
+
+input InternalPurchaseOrderItemReturn {
+  publicId: String
+  quantity: Int
+  subTotal: Int
+  note: String
+  photos: [InternalUpdateDescriptivePhoto]
+}
+
+input DatabaseUpdatePurchaseOrderItemReturn {
+  publicId: String
+  quantity: Int
+  subTotal: Int
+  note: String
+  photos: [ObjectIDOnly]
+  updatedAt: Time
+}
+
+input PurchaseOrderItemReturnFilterFields {
+  publicId: StringFilterField
+  quantity: IntFilterField
+  subTotal: IntFilterField
+  note: StringFilterField
+  updatedAt: TimeFilterField
+}
+
+type PurchaseOrderItemReturn {
+  publicId: String!
+  quantity: Int!
+  subTotal: Int!
+  note: String
+  photos: [DescriptivePhoto]
+  createdAt: Time!
+  updatedAt: Time!
+}

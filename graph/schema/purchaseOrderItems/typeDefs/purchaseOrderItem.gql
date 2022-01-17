@@ -20,6 +20,7 @@ input InternalCreatePurchaseOrderItem {
   quantity: Int!
   unitPrice: Int!
   subTotal: Int
+  salesAmount: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
@@ -39,6 +40,7 @@ input DatabaseCreatePurchaseOrderItem {
   quantityFulfilled: Int!
   unitPrice: Int!
   subTotal: Int!
+  salesAmount: Int!
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
@@ -77,6 +79,7 @@ input UpdatePurchaseOrderItem {
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
+  purchaseOrderItemReturn: UpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -95,6 +98,7 @@ input InternalUpdatePurchaseOrderItem {
   quantityFulfilled: Int
   unitPrice: Int
   subTotal: Int
+  salesAmount: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
@@ -103,6 +107,7 @@ input InternalUpdatePurchaseOrderItem {
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
+  purchaseOrderItemReturn: InternalPurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -117,6 +122,7 @@ input DatabaseUpdatePurchaseOrderItem {
   quantityFulfilled: Int
   unitPrice: Int
   subTotal: Int
+  salesAmount: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
@@ -125,6 +131,7 @@ input DatabaseUpdatePurchaseOrderItem {
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   purchaseOrderToSupply: ObjectIDOnly
+  purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -140,6 +147,7 @@ input PurchaseOrderItemFilterFields {
   quantityFulfilled: IntFilterField
   unitPrice: IntFilterField
   subTotal: IntFilterField
+  salesAmount: IntFilterField
   note: StringFilterField
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
@@ -147,8 +155,9 @@ input PurchaseOrderItemFilterFields {
   deliveryDetail: PurchaseOrderItemDeliveryFilterFields
   status: StringFilterField
   customerAgreed: BooleanFilterField
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: ObjectIDOnlyFilterField
   purchaseOrderToSupply: ObjectIDOnlyFilterField
+  purchaseOrderItemReturn: PurchaseOrderItemReturnFilterFields
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -165,6 +174,7 @@ type PurchaseOrderItem {
   quantityFulfilled: Int!
   unitPrice: Int!
   subTotal: Int!
+  salesAmount: Int!
   note: String
   mouItem: MouItemForPurchaseOrderItem
   productVariant: ProductVariantForPurchaseOrderItem!
@@ -173,6 +183,7 @@ type PurchaseOrderItem {
   customerAgreed: Boolean!
   purchaseOrder: PurchaseOrder
   purchaseOrderToSupply: PurchaseOrderToSupply
+  purchaseOrderItemReturn: PurchaseOrderItemReturn!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

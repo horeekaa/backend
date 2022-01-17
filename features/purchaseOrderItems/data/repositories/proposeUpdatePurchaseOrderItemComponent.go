@@ -6,6 +6,8 @@ import (
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
@@ -63,6 +65,89 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			"/proposeUpdatePurchaseOrderItemComponent",
 			err,
 		)
+	}
+	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		savedPhotosReturn := existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos
+		for _, photoToUpdate := range updatePurchaseOrderItem.PurchaseOrderItemReturn.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updatePurchaseOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updatePurchaseOrderItem.SubmittingAccount)
+				_, err := updatePurchaseOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updatePurchaseOrderItem",
+						err,
+					)
+				}
+
+				if photoToUpdate.IsActive != nil {
+					if !*photoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotosReturn,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *photoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotosReturn = append(savedPhotosReturn[:index], savedPhotosReturn[index+1:]...)
+						}
+					}
+				}
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItemReturn
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingPurchaseOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updatePurchaseOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updatePurchaseOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdReturnPhoto, err := updatePurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updatePurchaseOrderItem",
+					err,
+				)
+			}
+
+			savedPhotosReturn = append(savedPhotosReturn, createdReturnPhoto)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"PurchaseOrderItemReturn": map[string]interface{}{
+					"Photos": savedPhotosReturn,
+				},
+			},
+		)
+		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
 	}
 
 	if updatePurchaseOrderItem.DeliveryDetail != nil {
@@ -312,9 +397,33 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	if updatePurchaseOrderItem.Quantity != nil {
 		quantity = *updatePurchaseOrderItem.Quantity
 	}
+	quantityFulfilled := existingPurchaseOrderItem.QuantityFulfilled
+	if updatePurchaseOrderItem.QuantityFulfilled != nil {
+		quantityFulfilled = *updatePurchaseOrderItem.QuantityFulfilled
+	}
 	subTotal := quantity * unitPrice
-
+	if quantityFulfilled > 0 {
+		subTotal = quantityFulfilled * unitPrice
+	}
 	updatePurchaseOrderItem.SubTotal = &subTotal
+
+	subTotalReturn := 0
+	if existingPurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		subTotalReturn = existingPurchaseOrderItem.PurchaseOrderItemReturn.SubTotal
+	}
+	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		subTotalReturn = *updatePurchaseOrderItem.PurchaseOrderItemReturn.Quantity * unitPrice
+		if subTotalReturn > subTotal {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POReturnAmountExceedFulfilledAmount,
+				"/updatePurchaseOrderItem",
+				nil,
+			)
+		}
+		updatePurchaseOrderItem.PurchaseOrderItemReturn.SubTotal = &subTotalReturn
+	}
+	salesAmount := subTotal - subTotalReturn
+	updatePurchaseOrderItem.SalesAmount = &salesAmount
 
 	newDocumentJson, _ := json.Marshal(*updatePurchaseOrderItem)
 	oldDocumentJson, _ := json.Marshal(*existingPurchaseOrderItem)

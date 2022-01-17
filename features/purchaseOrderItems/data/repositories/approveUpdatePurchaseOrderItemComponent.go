@@ -181,6 +181,10 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 						}
 					}
 
+					existingPurchaseOrderItemQuantity := existingPurchaseOrderItem.Quantity
+					if existingPurchaseOrderItem.ProposalStatus == model.EntityProposalStatusProposed {
+						existingPurchaseOrderItemQuantity = 0
+					}
 					updatedPOToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 						map[string]interface{}{
 							"_id": existingPurchaseOrderToSupply.ID,
@@ -188,7 +192,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 						&model.DatabaseUpdatePurchaseOrderToSupply{
 							QuantityRequested: func(i int) *int { return &i }(
 								existingPurchaseOrderToSupply.QuantityRequested +
-									(existingPurchaseOrderItem.ProposedChanges.Quantity - existingPurchaseOrderItem.Quantity),
+									(existingPurchaseOrderItem.ProposedChanges.Quantity - existingPurchaseOrderItemQuantity),
 							),
 							PurchaseOrderItems: funk.Map(
 								append(
@@ -262,8 +266,8 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			}
 		}
 
-		if existingPurchaseOrderItem.DeliveryDetail != nil {
-			for _, updateDescriptivePhoto := range existingPurchaseOrderItem.DeliveryDetail.Photos {
+		if existingPurchaseOrderItem.PurchaseOrderItemReturn != nil {
+			for _, updateDescriptivePhoto := range existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos {
 				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
 					ID: &updateDescriptivePhoto.ID,
 				}
