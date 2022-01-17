@@ -93,13 +93,19 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	}
 
 	totalPrice := 0
+	totalReturn := 0
 	for _, item := range purchaseOrderItems {
 		if item.ProposalStatus == model.EntityProposalStatusRejected {
 			continue
 		}
 		totalPrice += item.SubTotal
+		if item.PurchaseOrderItemReturn != nil {
+			totalReturn += item.PurchaseOrderItemReturn.SubTotal
+		}
 	}
 	updatePurchaseOrder.Total = &totalPrice
+	updatePurchaseOrder.TotalReturn = &totalReturn
+	totalSales := totalPrice - totalReturn
 
 	totalDiscounted := existingPurchaseOrder.TotalDiscounted
 	if updatePurchaseOrder.TotalDiscounted != nil {
@@ -112,10 +118,10 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	}
 
 	if discountInPercent > 0 {
-		totalDiscounted = totalPrice * discountInPercent
+		totalDiscounted = totalSales * discountInPercent
 	}
 
-	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalPrice - totalDiscounted)
+	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalSales - totalDiscounted)
 
 	if existingPurchaseOrder.Mou != nil {
 		mouId := existingPurchaseOrder.Mou.ID
