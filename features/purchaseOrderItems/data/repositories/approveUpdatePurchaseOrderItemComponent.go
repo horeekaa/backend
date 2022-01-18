@@ -59,7 +59,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			err,
 		)
 	}
-	if existingPurchaseOrderItem.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved {
+	if existingPurchaseOrderItem.ProposedChanges.ProposalStatus != model.EntityProposalStatusProposed {
 		return existingPurchaseOrderItem, nil
 	}
 
@@ -120,6 +120,11 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 
 	if updatePurchaseOrderItem.ProposalStatus != nil {
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
+			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled >= existingPurchaseOrderItem.Quantity {
+				fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed = func(b bool) *bool {
+					return &b
+				}(true)
+			}
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
 
