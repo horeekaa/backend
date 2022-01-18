@@ -86,6 +86,7 @@ type AddressRegionGroup {
   publicId: String!
   cities: [City]
   proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
   proposedChanges: AddressRegionGroup
