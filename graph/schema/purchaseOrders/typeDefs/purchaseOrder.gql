@@ -160,7 +160,7 @@ type PurchaseOrder {
   _id: ObjectID!
   publicId: String!
   items: [PurchaseOrderItem]
-  mou: MouForPurchaseOrder!
+  mou: MouForPurchaseOrder
   total: Int!
   discountInPercent: Int!
   totalDiscounted: Int!

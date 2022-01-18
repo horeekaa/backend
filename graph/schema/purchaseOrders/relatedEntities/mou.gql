@@ -17,19 +17,19 @@ input MouForPurchaseOrderInput {
 }
 
 type MouForPurchaseOrder {
-  _id: ObjectID!
-  title: String!
+  _id: ObjectID
+  title: String
   description: String
-  startDate: Time!
-  endDate: Time!
+  startDate: Time
+  endDate: Time
   isActive: Boolean
-  creditLimit: Int!
+  creditLimit: Int
   remainingCreditLimit: Int
   minimumOrderValueBeforeDelivery: Int
   paymentCompletionLimitInDays: Int
   maximumDispatchTimeInDaysAfterConfirmation: Int
-  firstParty: Party!
-  secondParty: Party!
-  createdAt: Time!
-  updatedAt: Time!
+  firstParty: Party
+  secondParty: Party
+  createdAt: Time
+  updatedAt: Time
 }

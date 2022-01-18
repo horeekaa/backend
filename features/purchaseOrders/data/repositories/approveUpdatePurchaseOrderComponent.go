@@ -136,7 +136,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 		}
 		if *updatePurchaseOrder.ProposalStatus == model.EntityProposalStatusRejected {
 			if existingPurchaseOrder.Mou != nil {
-				mouId := existingPurchaseOrder.Mou.ID
+				mouId := *existingPurchaseOrder.Mou.ID
 				if updatePurchaseOrder.Mou != nil {
 					mouId = updatePurchaseOrder.Mou.ID
 				}

@@ -124,7 +124,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalSales - totalDiscounted)
 
 	if existingPurchaseOrder.Mou != nil {
-		mouId := existingPurchaseOrder.Mou.ID
+		mouId := *existingPurchaseOrder.Mou.ID
 		if updatePurchaseOrder.Mou != nil {
 			mouId = updatePurchaseOrder.Mou.ID
 		}
@@ -176,7 +176,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 
 			if existingPurchaseOrder.Type == model.PurchaseOrderTypeMouBased {
 				existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
-					existingPurchaseOrder.Mou.ID,
+					*existingPurchaseOrder.Mou.ID,
 					session,
 				)
 				if err != nil {
