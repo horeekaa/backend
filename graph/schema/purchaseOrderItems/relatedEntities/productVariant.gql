@@ -6,7 +6,7 @@ input ProductVariantForPurchaseOrderItemInput {
   soldInUnit: SellingUnitType
   targetUnitCost: Int!
   photo: DescriptivePhotoForPurchaseOrderItemInput
-  product: ProductForPurchaseOrderItemInput
+  product: ProductForPurchaseOrderItemInput!
   createdAt: Time!
   updatedAt: Time!
 }
@@ -19,7 +19,7 @@ type ProductVariantForPurchaseOrderItem {
   soldInUnit: SellingUnitType
   targetUnitCost: Int!
   photo: DescriptivePhotoForPurchaseOrderItem
-  product: ProductForPurchaseOrderItem
+  product: ProductForPurchaseOrderItem!
   createdAt: Time!
   updatedAt: Time!
 }
