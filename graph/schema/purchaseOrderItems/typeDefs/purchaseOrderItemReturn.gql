@@ -41,6 +41,7 @@ input DatabaseUpdatePurchaseOrderItemReturn {
   subTotal: Int
   note: String
   photos: [ObjectIDOnly]
+  createdAt: Time
   updatedAt: Time
 }
 
@@ -49,6 +50,7 @@ input PurchaseOrderItemReturnFilterFields {
   quantity: IntFilterField
   subTotal: IntFilterField
   note: StringFilterField
+  createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
 
