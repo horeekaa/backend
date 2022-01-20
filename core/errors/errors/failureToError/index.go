@@ -39,6 +39,7 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.POItemMismatchWithPOType:            true,
 	horeekaacorefailureenums.POSalesAmountExceedCreditLimit:      true,
 	horeekaacorefailureenums.POReturnAmountExceedFulfilledAmount: true,
+	horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill:     true,
 }
 
 var generalError = map[string]bool{

@@ -19,6 +19,7 @@ const (
 	POItemMismatchWithPOType            string = "PO_ITEM_MISMATCH_WITH_PO_TYPE"
 	POSalesAmountExceedCreditLimit      string = "PO_SALES_AMOUNT_EXCEED_CREDIT_LIMIT"
 	POReturnAmountExceedFulfilledAmount string = "PO_RETURN_AMOUNT_EXCEED_FULFILLED_AMOUNT"
+	UnapprovedPONotAllowedToFulfill     string = "UNAPPROVED_PO_NOT_ALLOWED_TO_FULFILL"
 
 	UpstreamFailures string = "UPSTREAM_FAILURES"
 	UnknownFailures  string = "UNKNOWN_FAILURES"
