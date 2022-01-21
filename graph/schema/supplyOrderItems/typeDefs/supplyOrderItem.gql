@@ -1,3 +1,10 @@
+enum SupplyOrderItemStatus {
+  AWAITING_ACCEPTANCE
+  PARTIALLY_ACCEPTED
+  ACCEPTED
+  CANCELLED
+}
+
 input CreateSupplyOrderItem {
   quantityOffered: Int!
   quantityAccepted: Int
@@ -39,6 +46,7 @@ input DatabaseCreateSupplyOrderItem {
   partnerAgreed: Boolean!
   supplyOrder: ObjectIDOnly!
   pickUpDetail: DatabaseCreateSupplyOrderItemPickUp!
+  status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -68,6 +76,7 @@ input UpdateSupplyOrderItem {
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
   pickUpDetail: UpdateSupplyOrderItemPickUp
+  status: SupplyOrderItemStatus
   photos: [UpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -92,6 +101,7 @@ input InternalUpdateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: InternalSupplyOrderItemPickUp
+  status: SupplyOrderItemStatus
   photos: [InternalUpdateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -112,6 +122,7 @@ input DatabaseUpdateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
+  status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -133,6 +144,7 @@ input SupplyOrderItemFilterFields {
   partnerAgreed: BooleanFilterField
   supplyOrder: ObjectIDOnlyFilterField
   pickUpDetail: SupplyOrderItemPickUpFilterFields
+  status: StringFilterField
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -154,6 +166,7 @@ type SupplyOrderItem {
   partnerAgreed: Boolean!
   supplyOrder: SupplyOrder!
   pickUpDetail: SupplyOrderItemPickUp!
+  status: SupplyOrderItemStatus!
   photos: [DescriptivePhoto]!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
