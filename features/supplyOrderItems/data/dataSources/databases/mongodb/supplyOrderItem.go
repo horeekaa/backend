@@ -151,9 +151,13 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) setDefaultVal
 ) (bool, error) {
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
+	defaultSupplyOrderItemStatus := model.SupplyOrderItemStatusAwaitingAcceptance
 
 	if input.ProposalStatus == nil {
 		input.ProposalStatus = &defaultProposalStatus
+	}
+	if input.Status == nil {
+		input.Status = &defaultSupplyOrderItemStatus
 	}
 
 	input.CreatedAt = &currentTime
