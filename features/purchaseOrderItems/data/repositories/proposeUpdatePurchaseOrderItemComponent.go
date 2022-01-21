@@ -466,34 +466,34 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				updatePurchaseOrderItem.CustomerAgreed = func(b bool) *bool {
 					return &b
 				}(true)
-			}
 
-			quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
-				(*updatePurchaseOrderItem.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
+				quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
+					(*updatePurchaseOrderItem.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
 
-			poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
-				QuantityDistributed: &quantityDistributed,
-			}
-			poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
-				return &s
-			}(model.PurchaseOrderToSupplyStatusFulfilled)
-			if quantityDistributed >= existingPurchaseOrderToSupply.QuantityFulfilled {
+				poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+					QuantityDistributed: &quantityDistributed,
+				}
 				poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
 					return &s
-				}(model.PurchaseOrderToSupplyStatusDistributed)
-			}
-			_, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
-				map[string]interface{}{
-					"_id": existingPurchaseOrderToSupply.ID,
-				},
-				poToSupplyToUpdate,
-				session,
-			)
-			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePurchaseOrderItem",
-					err,
+				}(model.PurchaseOrderToSupplyStatusFulfilled)
+				if quantityDistributed >= existingPurchaseOrderToSupply.QuantityFulfilled {
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+						return &s
+					}(model.PurchaseOrderToSupplyStatusDistributed)
+				}
+				_, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+					map[string]interface{}{
+						"_id": existingPurchaseOrderToSupply.ID,
+					},
+					poToSupplyToUpdate,
+					session,
 				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdatePurchaseOrderItem",
+						err,
+					)
+				}
 			}
 		}
 	}
