@@ -58,7 +58,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 			err,
 		)
 	}
-	if existingSupplyOrderItem.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved {
+	if existingSupplyOrderItem.ProposedChanges.ProposalStatus != model.EntityProposalStatusProposed {
 		return existingSupplyOrderItem, nil
 	}
 
@@ -123,45 +123,47 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 			json.Unmarshal(jsonUpdate, fieldsToUpdateSupplyOrderItem)
 
 			if *fieldsToUpdateSupplyOrderItem.ProposedChanges.PartnerAgreed {
-				existingPOToSupply, err := approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
-					fieldsToUpdateSupplyOrderItem.ProposedChanges.PurchaseOrderToSupply.ID,
-					session,
-				)
-				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateSupplyOrderItem",
-						err,
+				if *fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted > 0 {
+					existingPOToSupply, err := approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
+						fieldsToUpdateSupplyOrderItem.ProposedChanges.PurchaseOrderToSupply.ID,
+						session,
 					)
-				}
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							"/approveUpdateSupplyOrderItem",
+							err,
+						)
+					}
 
-				quantityFulfilled := existingPOToSupply.QuantityFulfilled +
-					(*fieldsToUpdateSupplyOrderItem.ProposedChanges.QuantityAccepted -
-						existingSupplyOrderItem.QuantityAccepted)
-				poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
-					QuantityFulfilled: &quantityFulfilled,
-				}
-				poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusOpen)
-				if quantityFulfilled >= existingPOToSupply.QuantityRequested {
-					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusFulfilled)
-				}
-				_, err = approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
-					map[string]interface{}{
-						"_id": fieldsToUpdateSupplyOrderItem.ProposedChanges.PurchaseOrderToSupply.ID,
-					},
-					poToSupplyToUpdate,
-					session,
-				)
-				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateSupplyOrderItem",
-						err,
+					quantityFulfilled := existingPOToSupply.QuantityFulfilled +
+						(existingSupplyOrderItem.ProposedChanges.QuantityAccepted -
+							existingSupplyOrderItem.QuantityAccepted)
+					poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+						QuantityFulfilled: &quantityFulfilled,
+					}
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusOpen)
+					if quantityFulfilled >= existingPOToSupply.QuantityRequested {
+						poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusFulfilled)
+					}
+					_, err = approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+						map[string]interface{}{
+							"_id": existingPOToSupply.ID,
+						},
+						poToSupplyToUpdate,
+						session,
 					)
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							"/approveUpdateSupplyOrderItem",
+							err,
+						)
+					}
 				}
 			}
 		}
 
-		if existingSupplyOrderItem.PickUpDetail != nil {
-			for _, updateDescriptivePhoto := range existingSupplyOrderItem.PickUpDetail.Photos {
+		if existingSupplyOrderItem.SupplyOrderItemReturn != nil {
+			for _, updateDescriptivePhoto := range existingSupplyOrderItem.SupplyOrderItemReturn.Photos {
 				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
 					ID: &updateDescriptivePhoto.ID,
 				}

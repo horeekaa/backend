@@ -85,13 +85,21 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	}
 
 	totalPrice := 0
+	totalReturn := 0
 	for _, item := range supplyOrderItems {
-		if item.ProposalStatus == model.EntityProposalStatusRejected {
+		if item.ProposalStatus == model.EntityProposalStatusRejected || !item.PartnerAgreed {
 			continue
 		}
 		totalPrice += item.SubTotal
+		if item.SupplyOrderItemReturn != nil {
+			totalReturn += item.SupplyOrderItemReturn.SubTotal
+		}
 	}
 	updateSupplyOrder.Total = &totalPrice
+	updateSupplyOrder.TotalReturn = &totalReturn
+	totalSales := totalPrice - totalReturn
+
+	updateSupplyOrder.FinalSalesAmount = &totalSales
 
 	newDocumentJson, _ := json.Marshal(*updateSupplyOrder)
 	oldDocumentJson, _ := json.Marshal(*existingSupplyOrder)

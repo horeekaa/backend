@@ -6,10 +6,13 @@ import (
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	supplyorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories/utils"
@@ -20,6 +23,7 @@ import (
 type proposeUpdateSupplyOrderItemTransactionComponent struct {
 	supplyOrderItemDataSource              databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	purchaseOrderToSupplyDataSource        databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
 	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	supplyOrderItemLoader                  supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
@@ -29,6 +33,7 @@ type proposeUpdateSupplyOrderItemTransactionComponent struct {
 func NewProposeUpdateSupplyOrderItemTransactionComponent(
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	supplyOrderItemLoader supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader,
@@ -37,6 +42,7 @@ func NewProposeUpdateSupplyOrderItemTransactionComponent(
 	return &proposeUpdateSupplyOrderItemTransactionComponent{
 		supplyOrderItemDataSource:              supplyOrderItemDataSource,
 		loggingDataSource:                      loggingDataSource,
+		purchaseOrderToSupplyDataSource:        purchaseOrderToSupplyDataSource,
 		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
 		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
 		supplyOrderItemLoader:                  supplyOrderItemLoader,
@@ -293,17 +299,110 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	}
 
 	quantity := existingSupplyOrderItem.QuantityOffered
-	if existingSupplyOrderItem.QuantityAccepted > 0 {
-		quantity = existingSupplyOrderItem.QuantityAccepted
-	}
 	if updateSupplyOrderItem.QuantityOffered != nil {
 		quantity = *updateSupplyOrderItem.QuantityOffered
 	}
+
+	quantityAccepted := existingSupplyOrderItem.QuantityAccepted
 	if updateSupplyOrderItem.QuantityAccepted != nil {
-		quantity = *updateSupplyOrderItem.QuantityAccepted
+		quantityAccepted = *updateSupplyOrderItem.QuantityAccepted
 	}
 	subTotal := quantity * unitPrice
+	if quantityAccepted > 0 {
+		subTotal = quantityAccepted * unitPrice
+	}
 	updateSupplyOrderItem.SubTotal = &subTotal
+
+	subTotalReturn := 0
+	if existingSupplyOrderItem.SupplyOrderItemReturn != nil {
+		subTotalReturn = existingSupplyOrderItem.SupplyOrderItemReturn.SubTotal
+	}
+	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+		subTotalReturn = *updateSupplyOrderItem.SupplyOrderItemReturn.Quantity * unitPrice
+		if subTotalReturn > subTotal {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.SOReturnAmountExceedFulfilledAmount,
+				"/updateSupplyOrderItem",
+				nil,
+			)
+		}
+		updateSupplyOrderItem.SupplyOrderItemReturn.SubTotal = &subTotalReturn
+	}
+	salesAmount := subTotal - subTotalReturn
+	updateSupplyOrderItem.SalesAmount = &salesAmount
+
+	if updateSupplyOrderItem.QuantityAccepted != nil {
+		if *updateSupplyOrderItem.QuantityAccepted > 0 {
+			existingPOToSupply, err := updateSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
+				existingSupplyOrderItem.PurchaseOrderToSupply.ID,
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdateSupplyOrderItem",
+					err,
+				)
+			}
+			if *updateSupplyOrderItem.QuantityAccepted < existingSupplyOrderItem.QuantityOffered {
+				updateSupplyOrderItem.Status = func(m model.SupplyOrderItemStatus) *model.SupplyOrderItemStatus {
+					return &m
+				}(model.SupplyOrderItemStatusPartiallyAccepted)
+			} else {
+				updateSupplyOrderItem.Status = func(m model.SupplyOrderItemStatus) *model.SupplyOrderItemStatus {
+					return &m
+				}(model.SupplyOrderItemStatusAccepted)
+				updateSupplyOrderItem.PartnerAgreed = func(b bool) *bool {
+					return &b
+				}(true)
+
+				quantityFulfilled := existingPOToSupply.QuantityFulfilled +
+					(*updateSupplyOrderItem.QuantityAccepted - existingSupplyOrderItem.QuantityAccepted)
+
+				poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+					QuantityFulfilled: &quantityFulfilled,
+				}
+				poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+					return &s
+				}(model.PurchaseOrderToSupplyStatusOpen)
+				if quantityFulfilled >= existingPOToSupply.QuantityRequested {
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+						return &s
+					}(model.PurchaseOrderToSupplyStatusFulfilled)
+				}
+				_, err = updateSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+					map[string]interface{}{
+						"_id": existingPOToSupply.ID,
+					},
+					poToSupplyToUpdate,
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdateSupplyOrderItem",
+						err,
+					)
+				}
+			}
+		}
+	}
+
+	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+		if existingSupplyOrderItem.SupplyOrderItemReturn == nil {
+			generatedObjectID := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updateSupplyOrderItem.SupplyOrderItemReturn.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"ISR",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
+		}
+	}
 
 	newDocumentJson, _ := json.Marshal(*updateSupplyOrderItem)
 	oldDocumentJson, _ := json.Marshal(*existingSupplyOrderItem)

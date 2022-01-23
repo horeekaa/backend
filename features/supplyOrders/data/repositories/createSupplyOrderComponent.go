@@ -66,6 +66,7 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 		totalPrice += item.SubTotal
 	}
 	createSupplyOrder.Total = totalPrice
+	createSupplyOrder.FinalSalesAmount = totalPrice
 
 	createSupplyOrder.Organization = &model.OrganizationForSupplyOrderInput{
 		ID: createSupplyOrder.MemberAccess.Organization.ID,

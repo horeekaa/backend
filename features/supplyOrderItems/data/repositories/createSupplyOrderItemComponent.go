@@ -138,6 +138,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		quantity = *createSupplyOrderItem.QuantityAccepted
 	}
 	createSupplyOrderItem.SubTotal = quantity * createSupplyOrderItem.UnitPrice
+	createSupplyOrderItem.SalesAmount = &createSupplyOrderItem.SubTotal
 
 	newDocumentJson, _ := json.Marshal(*createSupplyOrderItem)
 	loggingOutput, err := createSupplyOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
@@ -172,7 +173,6 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	jsonTemp, _ := json.Marshal(createSupplyOrderItem)
 	json.Unmarshal(jsonTemp, supplyOrderItemToCreate)
 	json.Unmarshal(jsonTemp, &supplyOrderItemToCreate.ProposedChanges)
-	supplyOrderItemToCreate.QuantityAccepted = 0
 
 	createdsupplyOrderItem, err := createSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().Create(
 		supplyOrderItemToCreate,

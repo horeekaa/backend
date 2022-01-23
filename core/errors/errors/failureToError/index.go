@@ -40,6 +40,8 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.POSalesAmountExceedCreditLimit:      true,
 	horeekaacorefailureenums.POReturnAmountExceedFulfilledAmount: true,
 	horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill:     true,
+
+	horeekaacorefailureenums.SOReturnAmountExceedFulfilledAmount: true,
 }
 
 var generalError = map[string]bool{

@@ -8,6 +8,7 @@ input InternalCreateSupplyOrder {
   publicId: String
   total: Int!
   paidAmount: Int!
+  finalSalesAmount: Int!
   memberAccess: InternalCreateMemberAccess!
   organization: OrganizationForSupplyOrderInput!
   items: [InternalCreateSupplyOrderItem]!
@@ -24,6 +25,8 @@ input DatabaseCreateSupplyOrder {
   _id: ObjectID!
   publicId: String!
   total: Int!
+  totalReturn: Int!
+  finalSalesAmount: Int!
   paidAmount: Int!
   organization: OrganizationForSupplyOrderInput!
   items: [ObjectIDOnly]!
@@ -60,6 +63,8 @@ input InternalUpdateSupplyOrder {
   publicId: String
   total: Int
   paidAmount: Int
+  totalReturn: Int
+  finalSalesAmount: Int
   organization: OrganizationForSupplyOrderInput
   memberAccess: InternalUpdateMemberAccess
   items: [InternalUpdateSupplyOrderItem]
@@ -76,6 +81,8 @@ input DatabaseUpdateSupplyOrder {
   publicId: String
   total: Int
   paidAmount: Int
+  totalReturn: Int
+  finalSalesAmount: Int
   organization: OrganizationForSupplyOrderInput
   items: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
@@ -92,6 +99,8 @@ input SupplyOrderFilterFields {
   publicId: StringFilterField
   total: IntFilterField
   paidAmount: IntFilterField
+  totalReturn: IntFilterField
+  finalSalesAmount: IntFilterField
   organization: OrganizationForSupplyOrderFilterFields
   items: [ObjectIDOnly]
   proposalStatus: StringFilterField
@@ -109,6 +118,8 @@ type SupplyOrder {
   publicId: String
   total: Int!
   paidAmount: Int!
+  totalReturn: Int!
+  finalSalesAmount: Int!
   organization: OrganizationForSupplyOrder!
   items: [SupplyOrderItem]!
   proposalStatus: EntityProposalStatus!

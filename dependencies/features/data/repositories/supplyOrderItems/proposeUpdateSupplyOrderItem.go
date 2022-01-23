@@ -5,6 +5,7 @@ import (
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositories "github.com/horeekaa/backend/features/supplyOrderItems/data/repositories"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
@@ -18,6 +19,7 @@ func (_ *ProposeUpdateSupplyOrderItemDependency) Bind() {
 		func(
 			supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			supplyOrderItemLoader supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader,
@@ -26,6 +28,7 @@ func (_ *ProposeUpdateSupplyOrderItemDependency) Bind() {
 			proposeUpdateSupplyOrderItemComponent, _ := supplyorderitemdomainrepositories.NewProposeUpdateSupplyOrderItemTransactionComponent(
 				supplyOrderItemDataSource,
 				loggingDataSource,
+				purchaseOrderToSupplyDataSource,
 				createDescriptivePhotoComponent,
 				proposeUpdateDescriptivePhotoComponent,
 				supplyOrderItemLoader,

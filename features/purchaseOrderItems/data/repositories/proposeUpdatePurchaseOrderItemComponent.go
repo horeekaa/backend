@@ -454,7 +454,6 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					nil,
 				)
 			}
-
 			if *updatePurchaseOrderItem.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
 				updatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
 					return &m
