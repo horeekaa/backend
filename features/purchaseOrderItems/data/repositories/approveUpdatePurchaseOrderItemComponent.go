@@ -120,11 +120,6 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 
 	if updatePurchaseOrderItem.ProposalStatus != nil {
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
-			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled >= existingPurchaseOrderItem.Quantity {
-				fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed = func(b bool) *bool {
-					return &b
-				}(true)
-			}
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
 
@@ -230,16 +225,6 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 				}
 
 				if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled > 0 {
-					if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
-						fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
-							return &m
-						}(model.PurchaseOrderItemStatusPartiallyFulfilled)
-					} else {
-						fieldsToUpdatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
-							return &m
-						}(model.PurchaseOrderItemStatusFullfilled)
-					}
-
 					quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
 						(existingPurchaseOrderItem.ProposedChanges.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
 

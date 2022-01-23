@@ -138,6 +138,12 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefault
 			nil,
 		)
 	}
+	if input.PurchaseOrderItemReturn != nil {
+		if existingObject.PurchaseOrderItemReturn == nil {
+			input.PurchaseOrderItemReturn.CreatedAt = &currentTime
+		}
+		input.PurchaseOrderItemReturn.UpdatedAt = &currentTime
+	}
 
 	input.UpdatedAt = &currentTime
 

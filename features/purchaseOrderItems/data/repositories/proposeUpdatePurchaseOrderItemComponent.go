@@ -15,6 +15,7 @@ import (
 	databasepurchaseOrderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	purchaseorderitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories/utils"
+	databasepurchaseordertosupplydatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
 )
@@ -22,6 +23,7 @@ import (
 type proposeUpdatePurchaseOrderItemTransactionComponent struct {
 	purchaseOrderItemDataSource            databasepurchaseOrderitemdatasourceinterfaces.PurchaseOrderItemDataSource
 	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
+	purchaseOrderToSupplyDataSource        databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
 	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	purchaseOrderItemLoader                purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
@@ -31,6 +33,7 @@ type proposeUpdatePurchaseOrderItemTransactionComponent struct {
 func NewProposeUpdatePurchaseOrderItemTransactionComponent(
 	purchaseOrderItemDataSource databasepurchaseOrderitemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	purchaseOrderItemLoader purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader,
@@ -39,6 +42,7 @@ func NewProposeUpdatePurchaseOrderItemTransactionComponent(
 	return &proposeUpdatePurchaseOrderItemTransactionComponent{
 		purchaseOrderItemDataSource:            purchaseOrderItemDataSource,
 		loggingDataSource:                      loggingDataSource,
+		purchaseOrderToSupplyDataSource:        purchaseOrderToSupplyDataSource,
 		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
 		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
 		purchaseOrderItemLoader:                purchaseOrderItemLoader,
@@ -424,6 +428,93 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	}
 	salesAmount := subTotal - subTotalReturn
 	updatePurchaseOrderItem.SalesAmount = &salesAmount
+
+	if updatePurchaseOrderItem.QuantityFulfilled != nil {
+		if *updatePurchaseOrderItem.QuantityFulfilled > 0 {
+			existingPurchaseOrderToSupply, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
+				map[string]interface{}{
+					"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
+					"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+					"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+					"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
+					"status":                 model.PurchaseOrderToSupplyStatusCummulating,
+				},
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdatePurchaseOrderItem",
+					err,
+				)
+			}
+			if existingPurchaseOrderToSupply == nil {
+				return nil, horeekaacorefailure.NewFailureObject(
+					horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
+					"/proposeUpdatePurchaseOrderItem",
+					nil,
+				)
+			}
+
+			if *updatePurchaseOrderItem.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
+				updatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+					return &m
+				}(model.PurchaseOrderItemStatusPartiallyFulfilled)
+			} else {
+				updatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
+					return &m
+				}(model.PurchaseOrderItemStatusFullfilled)
+				updatePurchaseOrderItem.CustomerAgreed = func(b bool) *bool {
+					return &b
+				}(true)
+
+				quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
+					(*updatePurchaseOrderItem.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
+
+				poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
+					QuantityDistributed: &quantityDistributed,
+				}
+				poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+					return &s
+				}(model.PurchaseOrderToSupplyStatusFulfilled)
+				if quantityDistributed >= existingPurchaseOrderToSupply.QuantityFulfilled {
+					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus {
+						return &s
+					}(model.PurchaseOrderToSupplyStatusDistributed)
+				}
+				_, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+					map[string]interface{}{
+						"_id": existingPurchaseOrderToSupply.ID,
+					},
+					poToSupplyToUpdate,
+					session,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdatePurchaseOrderItem",
+						err,
+					)
+				}
+			}
+		}
+	}
+
+	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		if existingPurchaseOrderItem.PurchaseOrderItemReturn == nil {
+			generatedObjectID := updatePurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updatePurchaseOrderItem.PurchaseOrderItemReturn.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"IPR",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
+		}
+	}
 
 	newDocumentJson, _ := json.Marshal(*updatePurchaseOrderItem)
 	oldDocumentJson, _ := json.Marshal(*existingPurchaseOrderItem)
