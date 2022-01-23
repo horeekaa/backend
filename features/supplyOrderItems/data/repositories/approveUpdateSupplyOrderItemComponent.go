@@ -162,8 +162,8 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 			}
 		}
 
-		if existingSupplyOrderItem.PickUpDetail != nil {
-			for _, updateDescriptivePhoto := range existingSupplyOrderItem.PickUpDetail.Photos {
+		if existingSupplyOrderItem.SupplyOrderItemReturn != nil {
+			for _, updateDescriptivePhoto := range existingSupplyOrderItem.SupplyOrderItemReturn.Photos {
 				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
 					ID: &updateDescriptivePhoto.ID,
 				}

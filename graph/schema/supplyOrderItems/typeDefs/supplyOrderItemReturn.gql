@@ -1,0 +1,65 @@
+input CreateSupplyOrderItemReturn {
+  quantity: Int!
+  note: String
+  photos: [CreateDescriptivePhoto]
+}
+
+input DatabaseCreateSupplyOrderItemReturn {
+  publicId: String!
+  quantity: Int!
+  subTotal: Int!
+  note: String
+  photos: [ObjectIDOnly]
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateSupplyOrderItemReturn {
+  quantity: Int
+  subTotal: Int
+  note: String
+  """
+  Leave the field null/empty array or fill it with updates to the product's photos.
+  (a) If ID is present, then it will be update operation(s) to existing photos.
+  (b) If ID is not present, then it will be additional photo(s)
+   appended to the list of product's photos.
+  """
+  photos: [UpdateDescriptivePhoto]
+}
+
+input InternalSupplyOrderItemReturn {
+  publicId: String
+  quantity: Int
+  subTotal: Int
+  note: String
+  photos: [InternalUpdateDescriptivePhoto]
+}
+
+input DatabaseUpdateSupplyOrderItemReturn {
+  publicId: String
+  quantity: Int
+  subTotal: Int
+  note: String
+  photos: [ObjectIDOnly]
+  createdAt: Time
+  updatedAt: Time
+}
+
+input SupplyOrderItemReturnFilterFields {
+  publicId: StringFilterField
+  quantity: IntFilterField
+  subTotal: IntFilterField
+  note: StringFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type SupplyOrderItemReturn {
+  publicId: String!
+  quantity: Int!
+  subTotal: Int!
+  note: String
+  photos: [DescriptivePhoto]
+  createdAt: Time!
+  updatedAt: Time!
+}

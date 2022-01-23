@@ -23,6 +23,7 @@ input InternalCreateSupplyOrderItem {
   notes: String
   unitPrice: Int!
   subTotal: Int!
+  salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
@@ -42,6 +43,7 @@ input DatabaseCreateSupplyOrderItem {
   notes: String
   unitPrice: Int!
   subTotal: Int!
+  salesAmount: Int!
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean!
   supplyOrder: ObjectIDOnly!
@@ -73,11 +75,13 @@ input UpdateSupplyOrderItem {
   notes: String
   unitPrice: Int
   subTotal: Int
+  salesAmount: Int
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
   pickUpDetail: UpdateSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [UpdateDescriptivePhoto]
+  supplyOrderItemReturn: UpdateSupplyOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -97,12 +101,14 @@ input InternalUpdateSupplyOrderItem {
   notes: String
   unitPrice: Int
   subTotal: Int
+  salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: InternalSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [InternalUpdateDescriptivePhoto]
+  supplyOrderItemReturn: InternalSupplyOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -118,12 +124,14 @@ input DatabaseUpdateSupplyOrderItem {
   notes: String
   unitPrice: Int
   subTotal: Int
+  salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
+  supplyOrderItemReturn: DatabaseUpdateSupplyOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -140,11 +148,13 @@ input SupplyOrderItemFilterFields {
   notes: StringFilterField
   unitPrice: IntFilterField
   subTotal: IntFilterField
+  salesAmount: IntFilterField
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemFilterFields
   partnerAgreed: BooleanFilterField
   supplyOrder: ObjectIDOnlyFilterField
   pickUpDetail: SupplyOrderItemPickUpFilterFields
   status: StringFilterField
+  supplyOrderItemReturn: SupplyOrderItemReturnFilterFields
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -162,12 +172,14 @@ type SupplyOrderItem {
   notes: String
   unitPrice: Int!
   subTotal: Int!
+  salesAmount: Int!
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItem!
   partnerAgreed: Boolean!
   supplyOrder: SupplyOrder!
   pickUpDetail: SupplyOrderItemPickUp!
   status: SupplyOrderItemStatus!
   photos: [DescriptivePhoto]!
+  supplyOrderItemReturn: SupplyOrderItemReturn
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

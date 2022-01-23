@@ -6,6 +6,8 @@ import (
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
+	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
@@ -311,6 +313,24 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	}
 	updateSupplyOrderItem.SubTotal = &subTotal
 
+	subTotalReturn := 0
+	if existingSupplyOrderItem.SupplyOrderItemReturn != nil {
+		subTotalReturn = existingSupplyOrderItem.SupplyOrderItemReturn.SubTotal
+	}
+	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+		subTotalReturn = *updateSupplyOrderItem.SupplyOrderItemReturn.Quantity * unitPrice
+		if subTotalReturn > subTotal {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.SOReturnAmountExceedFulfilledAmount,
+				"/updateSupplyOrderItem",
+				nil,
+			)
+		}
+		updateSupplyOrderItem.SupplyOrderItemReturn.SubTotal = &subTotalReturn
+	}
+	salesAmount := subTotal - subTotalReturn
+	updateSupplyOrderItem.SalesAmount = &salesAmount
+
 	if updateSupplyOrderItem.QuantityAccepted != nil {
 		if *updateSupplyOrderItem.QuantityAccepted > 0 {
 			existingPOToSupply, err := updateSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
@@ -363,6 +383,24 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					)
 				}
 			}
+		}
+	}
+
+	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+		if existingSupplyOrderItem.SupplyOrderItemReturn == nil {
+			generatedObjectID := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
+			loc, _ := time.LoadLocation("Asia/Bangkok")
+			splittedId := strings.Split(generatedObjectID.Hex(), "")
+			updateSupplyOrderItem.SupplyOrderItemReturn.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+				"ISR",
+				time.Now().In(loc).Format("20060102"),
+				strings.ToUpper(
+					strings.Join(
+						splittedId[len(splittedId)-4:],
+						"",
+					),
+				),
+			)
 		}
 	}
 
