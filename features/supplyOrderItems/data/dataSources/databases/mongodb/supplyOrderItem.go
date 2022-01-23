@@ -139,6 +139,12 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) setDefaultVal
 		)
 	}
 
+	if input.SupplyOrderItemReturn != nil {
+		if existingObject.SupplyOrderItemReturn == nil {
+			input.SupplyOrderItemReturn.CreatedAt = &currentTime
+		}
+		input.SupplyOrderItemReturn.UpdatedAt = &currentTime
+	}
 	if input.ProposedChanges != nil {
 		input.ProposedChanges.UpdatedAt = &currentTime
 	}
