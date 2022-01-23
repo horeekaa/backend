@@ -430,31 +430,30 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	updatePurchaseOrderItem.SalesAmount = &salesAmount
 
 	if updatePurchaseOrderItem.QuantityFulfilled != nil {
-		existingPurchaseOrderToSupply, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
-			map[string]interface{}{
-				"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
-				"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
-				"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
-				"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-				"status":                 model.PurchaseOrderToSupplyStatusCummulating,
-			},
-			session,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/proposeUpdatePurchaseOrderItem",
-				err,
-			)
-		}
-		if existingPurchaseOrderToSupply == nil {
-			return nil, horeekaacorefailure.NewFailureObject(
-				horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
-				"/proposeUpdatePurchaseOrderItem",
-				nil,
-			)
-		}
-
 		if *updatePurchaseOrderItem.QuantityFulfilled > 0 {
+			existingPurchaseOrderToSupply, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
+				map[string]interface{}{
+					"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
+					"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+					"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+					"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
+					"status":                 model.PurchaseOrderToSupplyStatusCummulating,
+				},
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdatePurchaseOrderItem",
+					err,
+				)
+			}
+			if existingPurchaseOrderToSupply == nil {
+				return nil, horeekaacorefailure.NewFailureObject(
+					horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
+					"/proposeUpdatePurchaseOrderItem",
+					nil,
+				)
+			}
 			if *updatePurchaseOrderItem.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
 				updatePurchaseOrderItem.Status = func(m model.PurchaseOrderItemStatus) *model.PurchaseOrderItemStatus {
 					return &m
