@@ -256,8 +256,8 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			}
 		}
 
-		if existingPurchaseOrderItem.PurchaseOrderItemReturn != nil {
-			for _, updateDescriptivePhoto := range existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos {
+		if existingPurchaseOrderItem.ProposedChanges.PurchaseOrderItemReturn != nil {
+			for _, updateDescriptivePhoto := range existingPurchaseOrderItem.ProposedChanges.PurchaseOrderItemReturn.Photos {
 				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
 					ID: &updateDescriptivePhoto.ID,
 				}
