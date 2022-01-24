@@ -203,7 +203,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(photoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingSupplyOrderItem.ID,
 			}
@@ -285,7 +285,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(photoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingSupplyOrderItem.ID,
 			}
