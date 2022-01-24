@@ -119,9 +119,9 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 			json.Unmarshal(jsonUpdate, fieldsToUpdateProductVariant)
 		}
 
-		if existingProductVariant.Photo != nil {
+		if existingProductVariant.ProposedChanges.Photo != nil {
 			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
-				ID: &existingProductVariant.Photo.ID,
+				ID: &existingProductVariant.ProposedChanges.Photo.ID,
 			}
 			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
