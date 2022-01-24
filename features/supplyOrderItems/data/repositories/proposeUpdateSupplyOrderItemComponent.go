@@ -71,6 +71,90 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		)
 	}
 
+	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+		savedPhotosReturn := existingSupplyOrderItem.SupplyOrderItemReturn.Photos
+		for _, photoToUpdate := range updateSupplyOrderItem.SupplyOrderItemReturn.Photos {
+			if photoToUpdate.ID != nil {
+				if !funk.Contains(
+					existingSupplyOrderItem.SupplyOrderItemReturn.Photos,
+					func(dp *model.DescriptivePhoto) bool {
+						return dp.ID == *photoToUpdate.ID
+					},
+				) {
+					continue
+				}
+
+				photoToUpdate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+					return &s
+				}(*updateSupplyOrderItem.ProposalStatus)
+				photoToUpdate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+					return &m
+				}(*updateSupplyOrderItem.SubmittingAccount)
+				_, err := updateSupplyOrderItemTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					session,
+					photoToUpdate,
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/updateSupplyOrderItem",
+						err,
+					)
+				}
+
+				if photoToUpdate.IsActive != nil {
+					if !*photoToUpdate.IsActive {
+						index := funk.IndexOf(
+							savedPhotosReturn,
+							func(dp *model.DescriptivePhoto) bool {
+								return dp.ID == *photoToUpdate.ID
+							},
+						)
+						if index > -1 {
+							savedPhotosReturn = append(savedPhotosReturn[:index], savedPhotosReturn[index+1:]...)
+						}
+					}
+				}
+				continue
+			}
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(photoToUpdate)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemReturn
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingSupplyOrderItem.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateSupplyOrderItem.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateSupplyOrderItem.SubmittingAccount)
+			if photoToUpdate.Photo != nil {
+				photoToCreate.Photo.File = photoToUpdate.Photo.File
+			}
+			createdReturnPhoto, err := updateSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
+				session,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateSupplyOrderItem",
+					err,
+				)
+			}
+
+			savedPhotosReturn = append(savedPhotosReturn, createdReturnPhoto)
+		}
+		jsonTemp, _ := json.Marshal(
+			map[string]interface{}{
+				"SupplyOrderItemReturn": map[string]interface{}{
+					"Photos": savedPhotosReturn,
+				},
+			},
+		)
+		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+	}
+
 	if updateSupplyOrderItem.Photos != nil {
 		savedPhotos := existingSupplyOrderItem.Photos
 		for _, photoToUpdate := range updateSupplyOrderItem.Photos {
@@ -119,7 +203,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(photoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingSupplyOrderItem.ID,
 			}
@@ -201,7 +285,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(photoToUpdate)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItemOnPickup
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingSupplyOrderItem.ID,
 			}

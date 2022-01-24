@@ -162,8 +162,8 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 			}
 		}
 
-		if existingSupplyOrderItem.SupplyOrderItemReturn != nil {
-			for _, updateDescriptivePhoto := range existingSupplyOrderItem.SupplyOrderItemReturn.Photos {
+		if existingSupplyOrderItem.ProposedChanges.SupplyOrderItemReturn != nil {
+			for _, updateDescriptivePhoto := range existingSupplyOrderItem.ProposedChanges.SupplyOrderItemReturn.Photos {
 				updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
 					ID: &updateDescriptivePhoto.ID,
 				}
@@ -184,6 +184,28 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 						err,
 					)
 				}
+			}
+		}
+		for _, updateDescriptivePhoto := range existingSupplyOrderItem.ProposedChanges.Photos {
+			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+				ID: &updateDescriptivePhoto.ID,
+			}
+			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*updateSupplyOrderItem.RecentApprovingAccount)
+			updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*updateSupplyOrderItem.ProposalStatus)
+
+			_, err := approveSupplyOrderItemTrx.approveUpdateDescriptivePhotoComponent.TransactionBody(
+				session,
+				updateDescriptivePhoto,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/approveUpdateSupplyOrderItem",
+					err,
+				)
 			}
 		}
 	}
