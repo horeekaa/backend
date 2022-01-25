@@ -139,6 +139,14 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 			)
 		}
 
+		if *updatePurchaseOrder.Total < *existingMou.MinimumOrderValueBeforeDelivery {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
+				"/updatePurchaseOrder",
+				nil,
+			)
+		}
+
 		existingMou.RemainingCreditLimit -= *updatePurchaseOrder.FinalSalesAmount - existingPurchaseOrder.FinalSalesAmount
 		if existingMou.RemainingCreditLimit < 0 {
 			return nil, horeekaacorefailure.NewFailureObject(

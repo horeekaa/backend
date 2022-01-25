@@ -18,6 +18,7 @@ const (
 
 	POItemMismatchWithPOType            string = "PO_ITEM_MISMATCH_WITH_PO_TYPE"
 	POSalesAmountExceedCreditLimit      string = "PO_SALES_AMOUNT_EXCEED_CREDIT_LIMIT"
+	POMinimumOrderValueHasNotMet        string = "PO_MINIMUM_ORDER_VALUE_HAS_NOT_MET"
 	POReturnAmountExceedFulfilledAmount string = "PO_RETURN_AMOUNT_EXCEED_FULFILLED_AMOUNT"
 	UnapprovedPONotAllowedToFulfill     string = "UNAPPROVED_PO_NOT_ALLOWED_TO_FULFILL"
 	SOReturnAmountExceedFulfilledAmount string = "SO_RETURN_AMOUNT_EXCEED_FULFILLED_AMOUNT"
