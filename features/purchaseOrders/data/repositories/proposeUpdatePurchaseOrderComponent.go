@@ -95,7 +95,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	totalPrice := 0
 	totalReturn := 0
 	for _, item := range purchaseOrderItems {
-		if item.ProposalStatus == model.EntityProposalStatusRejected || !item.CustomerAgreed {
+		if !item.CustomerAgreed {
 			continue
 		}
 		totalPrice += item.SubTotal
@@ -136,6 +136,14 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
 				"/updatePurchaseOrder",
 				err,
+			)
+		}
+
+		if *updatePurchaseOrder.Total < *existingMou.MinimumOrderValueBeforeDelivery {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
+				"/updatePurchaseOrder",
+				nil,
 			)
 		}
 

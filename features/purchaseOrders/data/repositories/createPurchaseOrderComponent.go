@@ -138,6 +138,14 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		)
 	}
 	if purchaseOrderToCreate.Mou != nil {
+		if input.Total < *purchaseOrderToCreate.Mou.MinimumOrderValueBeforeDelivery {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
+				"/createPurchaseOrder",
+				nil,
+			)
+		}
+
 		*purchaseOrderToCreate.Mou.RemainingCreditLimit -= input.FinalSalesAmount
 		if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
 			return nil, horeekaacorefailure.NewFailureObject(
