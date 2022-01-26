@@ -6,6 +6,7 @@ import (
 	mongodbaddressregiongroupdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/addressRegionGroups/databases/mongodb"
 	mongodbaddressdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/addresses/databases/mongodb"
 	mongodbdescriptivephotodatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/descriptivePhotos/databases/mongodb"
+	mongodbinvoicedatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/invoices/databases/mongodb"
 	mongodbloggingdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/loggings/databases/mongodb"
 	mongodbmemberaccessrefdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccessRefs/databases/mongodb"
 	mongodbmemberaccessdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/memberAccesses/databases/mongodb"
@@ -51,6 +52,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbpurchaseordertosupplydatasourcedependencies.PurchaseOrderToSupplyDataSourceDependency{},
 		&mongodbsupplyorderitemdatasourcedependencies.SupplyOrderItemDataSourceDependency{},
 		&mongodbsupplyorderdatasourcedependencies.SupplyOrderDataSourceDependency{},
+		&mongodbinvoicedatasourcedependencies.InvoiceDataSourceDependency{},
 	}
 
 	for _, reg := range registrationList {
