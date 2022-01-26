@@ -47,7 +47,6 @@ input DatabaseCreatePurchaseOrder {
   totalDiscounted: Int!
   totalReturn: Int!
   finalSalesAmount: Int!
-  paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus
   paymentDueDate: Time
@@ -140,7 +139,6 @@ input PurchaseOrderFilterFields {
   totalDiscounted: IntFilterField
   finalSalesAmount: IntFilterField
   totalReturn: IntFilterField
-  paidAmount: IntFilterField
   type: StringFilterField
   status: StringFilterField
   paymentDueDate: TimeFilterField
@@ -166,7 +164,6 @@ type PurchaseOrder {
   totalDiscounted: Int!
   finalSalesAmount: Int!
   totalReturn: Int!
-  paidAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus!
   paymentDueDate: Time
