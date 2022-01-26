@@ -1,0 +1,17 @@
+input InvoiceForPurchaseOrderInput {
+  _id: ObjectID
+  publicId: String
+  createdAt: Time
+}
+
+input InvoiceForPurchaseOrderFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  createdAt: TimeFilterField
+}
+
+type InvoiceForPurchaseOrder {
+  _id: ObjectID
+  publicId: String
+  createdAt: Time
+}

@@ -2,8 +2,8 @@ enum PurchaseOrderStatus {
   OPEN
   PROCESSED
   CANCELLED
-  PAYMENT_NEEDED
-  PAID
+  WAITING_FOR_INVOICE
+  INVOICED
 }
 
 enum PurchaseOrderType {
@@ -23,8 +23,6 @@ input InternalCreatePurchaseOrder {
   items: [InternalCreatePurchaseOrderItem]
   mou: MouForPurchaseOrderInput!
   total: Int!
-  discountInPercent: Int!
-  totalDiscounted: Int!
   finalSalesAmount: Int!
   type: PurchaseOrderType!
   status: PurchaseOrderStatus
@@ -43,8 +41,6 @@ input DatabaseCreatePurchaseOrder {
   items: [ObjectIDOnly]
   mou: MouForPurchaseOrderInput!
   total: Int!
-  discountInPercent: Int!
-  totalDiscounted: Int!
   totalReturn: Int!
   finalSalesAmount: Int!
   type: PurchaseOrderType!
@@ -65,12 +61,11 @@ input UpdatePurchaseOrder {
   items: [UpdatePurchaseOrderItem]
   mou: ObjectIDOnly
   total: Int
-  discountInPercent: Int
-  totalDiscounted: Int
   finalSalesAmount: Int
   status: PurchaseOrderStatus
   paymentDueDate: Time
   markAsReceived: Boolean
+  invoice: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   """
@@ -88,8 +83,6 @@ input InternalUpdatePurchaseOrder {
   items: [InternalUpdatePurchaseOrderItem]
   mou: MouForPurchaseOrderInput
   total: Int
-  discountInPercent: Int
-  totalDiscounted: Int
   finalSalesAmount: Int
   totalReturn: Int
   type: PurchaseOrderType
@@ -98,6 +91,7 @@ input InternalUpdatePurchaseOrder {
   memberAccess: InternalUpdateMemberAccess
   markAsReceived: Boolean
   receivingDateTime: Time
+  invoice: InvoiceForPurchaseOrderInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -111,8 +105,6 @@ input DatabaseUpdatePurchaseOrder {
   items: [ObjectIDOnly]
   mou: MouForPurchaseOrderInput
   total: Int
-  discountInPercent: Int
-  totalDiscounted: Int
   totalReturn: Int
   finalSalesAmount: Int
   type: PurchaseOrderType
@@ -120,6 +112,7 @@ input DatabaseUpdatePurchaseOrder {
   paymentDueDate: Time
   organization: OrganizationForPurchaseOrderInput
   receivingDateTime: Time
+  invoice: InvoiceForPurchaseOrderInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -135,8 +128,6 @@ input PurchaseOrderFilterFields {
   items: [ObjectIDOnly]
   mou: MouFilterFields
   total: IntFilterField
-  discountInPercent: IntFilterField
-  totalDiscounted: IntFilterField
   finalSalesAmount: IntFilterField
   totalReturn: IntFilterField
   type: StringFilterField
@@ -144,6 +135,7 @@ input PurchaseOrderFilterFields {
   paymentDueDate: TimeFilterField
   organization: OrganizationFilterFields
   receivingDateTime: TimeFilterField
+  invoice: InvoiceForPurchaseOrderFilterFields
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -160,8 +152,6 @@ type PurchaseOrder {
   items: [PurchaseOrderItem]
   mou: MouForPurchaseOrder
   total: Int!
-  discountInPercent: Int!
-  totalDiscounted: Int!
   finalSalesAmount: Int!
   totalReturn: Int!
   type: PurchaseOrderType!
@@ -169,6 +159,7 @@ type PurchaseOrder {
   paymentDueDate: Time
   organization: OrganizationForPurchaseOrder!
   receivingDateTime: Time
+  invoice: InvoiceForPurchaseOrder
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

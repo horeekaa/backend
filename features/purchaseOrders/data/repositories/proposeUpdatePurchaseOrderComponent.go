@@ -107,21 +107,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	updatePurchaseOrder.TotalReturn = &totalReturn
 	totalSales := totalPrice - totalReturn
 
-	totalDiscounted := existingPurchaseOrder.TotalDiscounted
-	if updatePurchaseOrder.TotalDiscounted != nil {
-		totalDiscounted = *updatePurchaseOrder.TotalDiscounted
-	}
-
-	discountInPercent := existingPurchaseOrder.DiscountInPercent
-	if updatePurchaseOrder.DiscountInPercent != nil {
-		discountInPercent = *updatePurchaseOrder.DiscountInPercent
-	}
-
-	if discountInPercent > 0 {
-		totalDiscounted = totalSales * discountInPercent
-	}
-
-	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalSales - totalDiscounted)
+	updatePurchaseOrder.FinalSalesAmount = func(i int) *int { return &i }(totalSales)
 
 	if existingPurchaseOrder.Mou != nil {
 		mouId := *existingPurchaseOrder.Mou.ID
@@ -180,7 +166,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 			updatePurchaseOrder.ReceivingDateTime = &currentTime
 			updatePurchaseOrder.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
 				return &m
-			}(model.PurchaseOrderStatusPaymentNeeded)
+			}(model.PurchaseOrderStatusWaitingForInvoice)
 
 			if existingPurchaseOrder.Type == model.PurchaseOrderTypeMouBased {
 				existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
