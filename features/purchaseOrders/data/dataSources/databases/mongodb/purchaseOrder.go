@@ -121,6 +121,28 @@ func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) Update(
 	return &output, nil
 }
 
+func (purchaseOrderDataSourceMongo *purchaseOrderDataSourceMongo) UpdateAll(
+	updateCriteria map[string]interface{},
+	updateData *model.DatabaseUpdatePurchaseOrder,
+	operationOptions *mongodbcoretypes.OperationOptions,
+) (bool, error) {
+	currentTime := time.Now()
+	updateData.UpdatedAt = &currentTime
+
+	_, err := purchaseOrderDataSourceMongo.basicOperation.UpdateAll(
+		updateCriteria,
+		map[string]interface{}{
+			"$set": updateData,
+		},
+		operationOptions,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
 	input *model.DatabaseUpdatePurchaseOrder,

@@ -16,5 +16,6 @@ type PurchaseOrderDataSourceMongo interface {
 	) ([]*model.PurchaseOrder, error)
 	Create(input *model.DatabaseCreatePurchaseOrder, operationOptions *mongodbcoretypes.OperationOptions) (*model.PurchaseOrder, error)
 	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdatePurchaseOrder, operationOptions *mongodbcoretypes.OperationOptions) (*model.PurchaseOrder, error)
+	UpdateAll(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdatePurchaseOrder, operationOptions *mongodbcoretypes.OperationOptions) (bool, error)
 	GenerateObjectID() primitive.ObjectID
 }
