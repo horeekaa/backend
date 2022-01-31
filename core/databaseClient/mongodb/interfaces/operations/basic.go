@@ -24,4 +24,9 @@ type BasicOperation interface {
 		output interface{},
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) (bool, error)
+	UpdateAll(
+		updateCriteria interface{},
+		updateData interface{},
+		operationOptions *mongodbcoretypes.OperationOptions,
+	) (bool, error)
 }
