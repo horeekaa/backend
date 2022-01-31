@@ -28,7 +28,7 @@ input DatabaseCreateInvoice {
   endInvoiceDate: Time
   purchaseOrders: [ObjectIDOnly]
   totalValue: Int!
-  discountInPercent: Int
+  discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
   paidAmount: Int!
@@ -98,7 +98,7 @@ type Invoice {
   startInvoiceDate: Time!
   endInvoiceDate: Time!
   totalValue: Int!
-  discountInPercent: Int
+  discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
   paymentDueDate: Time!
