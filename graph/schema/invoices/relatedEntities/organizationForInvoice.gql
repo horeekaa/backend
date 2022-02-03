@@ -1,0 +1,26 @@
+input OrganizationForInvoiceInput {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+input OrganizationForInvoiceFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type OrganizationForInvoice {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  createdAt: Time!
+  updatedAt: Time!
+}

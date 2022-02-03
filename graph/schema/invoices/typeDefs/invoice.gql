@@ -10,6 +10,8 @@ input CreateInvoice {
   discountInPercent: Int
   totalDiscounted: Int
   paymentDueDate: Time
+  organization: ObjectIDOnly
+  mou: ObjectIDOnly
 }
 
 input InternalCreateInvoice {
@@ -19,6 +21,8 @@ input InternalCreateInvoice {
   discountInPercent: Int
   totalDiscounted: Int!
   paymentDueDate: Time
+  organization: ObjectIDOnly
+  mou: ObjectIDOnly
 }
 
 input DatabaseCreateInvoice {
@@ -33,6 +37,8 @@ input DatabaseCreateInvoice {
   totalPayable: Int!
   paidAmount: Int!
   paymentDueDate: Time
+  organization: OrganizationForInvoiceInput!
+  mou: MouForInvoiceInput
   status: InvoiceStatus
   createdAt: Time
   updatedAt: Time
@@ -86,6 +92,8 @@ input InvoiceFilterFields {
   totalDiscounted: IntFilterField
   totalPayable: IntFilterField
   paymentDueDate: TimeFilterField
+  organization: OrganizationForInvoiceFilterFields
+  mou: MouForInvoiceFilterFields
   status: StringFilterField
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
@@ -102,6 +110,8 @@ type Invoice {
   totalDiscounted: Int!
   totalPayable: Int!
   paymentDueDate: Time!
+  organization: OrganizationForInvoice
+  mou: MouForInvoice
   status: InvoiceStatus
   createdAt: Time
   updatedAt: Time

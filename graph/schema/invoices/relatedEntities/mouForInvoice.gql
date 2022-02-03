@@ -1,0 +1,47 @@
+input MouForInvoiceInput {
+  _id: ObjectID
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: PartyInput
+  secondParty: PartyInput
+  createdAt: Time
+  updatedAt: Time
+}
+
+input MouForInvoiceFilterFields {
+  _id: ObjectID
+  title: StringFilterField
+  description: StringFilterField
+  startDate: TimeFilterField
+  endDate: TimeFilterField
+  creditLimit: IntFilterField
+  minimumOrderValueBeforeDelivery: IntFilterField
+  paymentCompletionLimitInDays: IntFilterField
+  maximumDispatchTimeInDaysAfterConfirmation: IntFilterField
+  firstParty: PartyFilterFields
+  secondParty: PartyFilterFields
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type MouForInvoice {
+  _id: ObjectID
+  title: String
+  description: String
+  startDate: Time
+  endDate: Time
+  creditLimit: Int
+  minimumOrderValueBeforeDelivery: Int
+  paymentCompletionLimitInDays: Int
+  maximumDispatchTimeInDaysAfterConfirmation: Int
+  firstParty: Party
+  secondParty: Party
+  createdAt: Time
+  updatedAt: Time
+}
