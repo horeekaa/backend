@@ -5,6 +5,7 @@ import (
 	addressregiongrouppresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/addressRegionGroups"
 	addresspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/addresses"
 	descriptivephotopresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/descriptivePhotos"
+	invoicepresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/invoices"
 	loggingpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/loggings"
 	memberaccessrefpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccessRefs"
 	memberaccesspresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/memberAccesses"
@@ -40,6 +41,11 @@ func (_ *UsecasesDependency) Bind() {
 		&addressregiongrouppresentationusecasedependencies.GetAllAddressRegionGroupUsecaseDependency{},
 		&addressregiongrouppresentationusecasedependencies.GetAddressRegionGroupUsecaseDependency{},
 		&addressregiongrouppresentationusecasedependencies.UpdateAddressRegionGroupUsecaseDependency{},
+
+		&invoicepresentationusecasedependencies.CreateInvoiceUsecaseDependency{},
+		&invoicepresentationusecasedependencies.GetAllInvoiceUsecaseDependency{},
+		&invoicepresentationusecasedependencies.GetInvoiceUsecaseDependency{},
+		&invoicepresentationusecasedependencies.UpdateInvoiceUsecaseDependency{},
 
 		&loggingpresentationusecasedependencies.GetLoggingUsecaseDependency{},
 
