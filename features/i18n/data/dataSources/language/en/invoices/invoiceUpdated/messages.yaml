@@ -1,0 +1,2 @@
+invoice_updated_notification_title: "Your invoice due on {{.formattedDueDate}} has been updated"
+invoice_updated_notification_body: "Click here to view the details of the invoice"
