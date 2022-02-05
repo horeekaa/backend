@@ -1,23 +1,33 @@
 package invoicedomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type updateInvoiceRepository struct {
+	memberAccessDataSource            databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	updateInvoiceTransactionComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
+	createNotificationComponent       notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewUpdateInvoiceRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	updateInvoiceRepositoryTransactionComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (invoicedomainrepositoryinterfaces.UpdateInvoiceRepository, error) {
 	updateInvoiceRepo := &updateInvoiceRepository{
+		memberAccessDataSource,
 		updateInvoiceRepositoryTransactionComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 	}
 
@@ -41,11 +51,11 @@ func (updateInvoiceRepo *updateInvoiceRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
-	invoiceToCreate := input.(*model.InternalUpdateInvoice)
+	invoiceToUpdate := input.(*model.InternalUpdateInvoice)
 
 	return updateInvoiceRepo.updateInvoiceTransactionComponent.TransactionBody(
 		operationOption,
-		invoiceToCreate,
+		invoiceToUpdate,
 	)
 }
 
@@ -56,5 +66,43 @@ func (updateInvoiceRepo *updateInvoiceRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.Invoice), nil
+
+	updatedInvoice := (output).(*model.Invoice)
+	go func() {
+		memberAccessesToNotify, err := updateInvoiceRepo.memberAccessDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"organization._id": updatedInvoice.Organization.ID,
+				"status":           model.MemberAccessStatusActive,
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return
+		}
+
+		jsonInvPayload, _ := json.Marshal(updatedInvoice)
+		for _, memberAccess := range memberAccessesToNotify {
+			notifToCreate := &model.InternalCreateNotification{
+				NotificationCategory: model.NotificationCategoryInvoiceUpdated,
+				RecipientAccount: &model.ObjectIDOnly{
+					ID: &memberAccess.Account.ID,
+				},
+				PayloadOptions: &model.PayloadOptionsInput{
+					InvoiceUpdatedPayload: &model.InvoiceUpdatedPayloadInput{
+						Invoice: &model.InvoiceForNotifPayloadInput{},
+					},
+				},
+			}
+			json.Unmarshal(jsonInvPayload, &notifToCreate.PayloadOptions.InvoiceUpdatedPayload.Invoice)
+			_, err := updateInvoiceRepo.createNotificationComponent.TransactionBody(
+				&mongodbcoretypes.OperationOptions{},
+				notifToCreate,
+			)
+			if err != nil {
+				return
+			}
+		}
+	}()
+	return updatedInvoice, nil
 }
