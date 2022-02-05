@@ -1,0 +1,11 @@
+input InvoiceForNotifPayloadInput {
+  _id: ObjectID
+  publicId: String
+  paymentDueDate: Time
+}
+
+type InvoiceForNotifPayload {
+  _id: ObjectID
+  publicId: String
+  paymentDueDate: Time
+}

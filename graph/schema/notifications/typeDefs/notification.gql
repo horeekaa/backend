@@ -4,6 +4,8 @@ enum NotificationCategory {
   ORG_APPROVAL
 
   PURCHASE_ORDER_SUPPLY_BROADCAST
+
+  INVOICE_CREATED
 }
 
 type NotificationMessage {
@@ -15,12 +17,14 @@ input PayloadOptionsInput {
   invitationRequestPayload: InvitationRequestPayloadInput
   invitationAcceptedPayload: InvitationAcceptedPayloadInput
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayloadInput
+  invoiceCreatedPayload: InvoiceCreatedPayloadInput
 }
 
 type PayloadOptions {
   invitationRequestPayload: InvitationRequestPayload
   invitationAcceptedPayload: InvitationAcceptedPayload
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayload
+  invoiceCreatedPayload: InvoiceCreatedPayload
 }
 
 input InternalCreateNotification {
