@@ -6,6 +6,8 @@ import (
 	databaseinvoicedatasourceinterfaces "github.com/horeekaa/backend/features/invoices/data/dataSources/databases/interfaces/sources"
 	invoicedomainrepositories "github.com/horeekaa/backend/features/invoices/data/repositories"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 )
 
@@ -27,11 +29,15 @@ func (_ *CreateInvoiceDependency) Bind() {
 
 	container.Transient(
 		func(
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			trxComponent invoicedomainrepositoryinterfaces.CreateInvoiceTransactionComponent,
+			notificationTrx notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) invoicedomainrepositoryinterfaces.CreateInvoiceRepository {
 			createInvoiceRepo, _ := invoicedomainrepositories.NewCreateInvoiceRepository(
+				memberAccessDataSource,
 				trxComponent,
+				notificationTrx,
 				mongoDBTransaction,
 			)
 			return createInvoiceRepo
