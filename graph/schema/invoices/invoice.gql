@@ -1,0 +1,8 @@
+extend type Mutation {
+    createInvoice(createInvoice: CreateInvoice!): [Invoice]!
+    updateInvoice(updateInvoice: UpdateInvoice!): Invoice
+}
+
+extend type Query {
+    invoices(filterFields: InvoiceFilterFields!, paginationOpt: PaginationOptionInput): [Invoice]!
+}
