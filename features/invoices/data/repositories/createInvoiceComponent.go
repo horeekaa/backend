@@ -82,8 +82,10 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 	}
 
 	query := map[string]interface{}{
-		"status":         model.PurchaseOrderStatusWaitingForInvoice,
-		"paymentDueDate": invoiceToCreate.PaymentDueDate,
+		"status": model.PurchaseOrderStatusWaitingForInvoice,
+		"paymentDueDate": map[string]interface{}{
+			"$lte": invoiceToCreate.PaymentDueDate,
+		},
 	}
 	if invoiceToCreate.StartInvoiceDate != nil && invoiceToCreate.EndInvoiceDate != nil {
 		invoiceToCreate.StartInvoiceDate = func(t time.Time) *time.Time { return &t }(
@@ -199,6 +201,7 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 			}
 			invoiceToCreate.TotalDiscounted = totalDiscounted
 			invoiceToCreate.TotalPayable = totalPrice - totalDiscounted
+			invoiceToCreate.PaymentDueDate = purchaseOrders[0].PaymentDueDate
 
 			newInvoice, err := createInvoiceTrx.invoiceDataSource.GetMongoDataSource().Create(
 				invoiceToCreate,

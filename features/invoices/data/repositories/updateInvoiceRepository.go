@@ -71,8 +71,10 @@ func (updateInvoiceRepo *updateInvoiceRepository) RunTransaction(
 	go func() {
 		memberAccessesToNotify, err := updateInvoiceRepo.memberAccessDataSource.GetMongoDataSource().Find(
 			map[string]interface{}{
-				"organization._id": updatedInvoice.Organization.ID,
-				"status":           model.MemberAccessStatusActive,
+				"organization._id":   updatedInvoice.Organization.ID,
+				"status":             model.MemberAccessStatusActive,
+				"proposalStatus":     model.EntityProposalStatusApproved,
+				"invitationAccepted": true,
 			},
 			&mongodbcoretypes.PaginationOptions{},
 			&mongodbcoretypes.OperationOptions{},

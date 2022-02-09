@@ -68,6 +68,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		map[string]interface{}{
 			"status": map[string]interface{}{
 				"$in": [...]model.PurchaseOrderStatus{
+					model.PurchaseOrderStatusWaitingForInvoice,
 					model.PurchaseOrderStatusInvoiced,
 					model.PurchaseOrderStatusOpen,
 					model.PurchaseOrderStatusProcessed,

@@ -72,8 +72,10 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 		for _, invoice := range createdInvoices {
 			memberAccessesToNotify, err := createInvoiceRepo.memberAccessDataSource.GetMongoDataSource().Find(
 				map[string]interface{}{
-					"organization._id": invoice.Organization.ID,
-					"status":           model.MemberAccessStatusActive,
+					"organization._id":   invoice.Organization.ID,
+					"status":             model.MemberAccessStatusActive,
+					"proposalStatus":     model.EntityProposalStatusApproved,
+					"invitationAccepted": true,
 				},
 				&mongodbcoretypes.PaginationOptions{},
 				&mongodbcoretypes.OperationOptions{},

@@ -4,6 +4,7 @@ enum PurchaseOrderStatus {
   CANCELLED
   WAITING_FOR_INVOICE
   INVOICED
+  PAID
 }
 
 enum PurchaseOrderType {
