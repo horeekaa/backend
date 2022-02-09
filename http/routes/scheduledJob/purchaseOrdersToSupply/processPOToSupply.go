@@ -8,7 +8,7 @@ import (
 	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 )
 
-func processPOToSupplyHandler() http.HandlerFunc {
+func ProcessPOToSupplyHandler() http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			googleInternalAuth := r.Header.Get("X-Appengine-Cron")

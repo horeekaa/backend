@@ -1,0 +1,7 @@
+input InvoiceUpdatedPayloadInput {
+  invoice: InvoiceForNotifPayloadInput!
+}
+
+type InvoiceUpdatedPayload {
+  invoice: InvoiceForNotifPayload!
+}

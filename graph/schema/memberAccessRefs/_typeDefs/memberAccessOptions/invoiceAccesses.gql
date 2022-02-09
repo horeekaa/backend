@@ -1,0 +1,13 @@
+input InvoiceAccessesInput {
+  invoiceCreate: Boolean
+  invoiceUpdate: Boolean
+  invoiceReadAll: Boolean
+  invoiceReadOwned: Boolean
+}
+
+type InvoiceAccesses {
+  invoiceCreate: Boolean
+  invoiceUpdate: Boolean
+  invoiceReadAll: Boolean
+  invoiceReadOwned: Boolean
+}

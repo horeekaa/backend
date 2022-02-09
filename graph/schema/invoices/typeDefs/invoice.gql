@@ -1,0 +1,118 @@
+enum InvoiceStatus {
+  AVAILABLE
+  PAYMENT_NEEDED
+  PAID
+}
+
+input CreateInvoice {
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  discountInPercent: Int
+  totalDiscounted: Int
+  paymentDueDate: Time
+  organization: ObjectIDOnly
+  mou: ObjectIDOnly
+}
+
+input InternalCreateInvoice {
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  totalValue: Int!
+  discountInPercent: Int
+  totalDiscounted: Int!
+  paymentDueDate: Time
+  organization: ObjectIDOnly
+  mou: ObjectIDOnly
+}
+
+input DatabaseCreateInvoice {
+  _id: ObjectID!
+  publicId: String!
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  purchaseOrders: [ObjectIDOnly]
+  totalValue: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  totalPayable: Int!
+  paidAmount: Int!
+  paymentDueDate: Time
+  organization: OrganizationForInvoiceInput!
+  mou: MouForInvoiceInput
+  status: InvoiceStatus
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdateInvoice {
+  _id: ObjectID!
+  purchaseOrders: [ObjectIDOnly]
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  discountInPercent: Int
+  totalDiscounted: Int
+  paymentDueDate: Time
+  status: InvoiceStatus
+}
+
+input InternalUpdateInvoice {
+  _id: ObjectID!
+  purchaseOrders: [ObjectIDOnly]
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  totalValue: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  totalPayable: Int
+  paymentDueDate: Time
+  status: InvoiceStatus
+}
+
+input DatabaseUpdateInvoice {
+  _id: ObjectID!
+  purchaseOrders: [ObjectIDOnly]
+  startInvoiceDate: Time
+  endInvoiceDate: Time
+  totalValue: Int
+  discountInPercent: Int
+  totalDiscounted: Int
+  totalPayable: Int
+  paymentDueDate: Time
+  status: InvoiceStatus
+  updatedAt: Time
+}
+
+input InvoiceFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  startInvoiceDate: TimeFilterField
+  endInvoiceDate: TimeFilterField
+  totalValue: IntFilterField
+  discountInPercent: IntFilterField
+  totalDiscounted: IntFilterField
+  totalPayable: IntFilterField
+  paymentDueDate: TimeFilterField
+  organization: OrganizationForInvoiceFilterFields
+  mou: MouForInvoiceFilterFields
+  status: StringFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type Invoice {
+  _id: ObjectID!
+  publicId: String!
+  purchaseOrders: [PurchaseOrder]
+  startInvoiceDate: Time!
+  endInvoiceDate: Time!
+  totalValue: Int!
+  discountInPercent: Int!
+  totalDiscounted: Int!
+  totalPayable: Int!
+  paymentDueDate: Time!
+  organization: OrganizationForInvoice
+  mou: MouForInvoice
+  status: InvoiceStatus
+  createdAt: Time
+  updatedAt: Time
+}

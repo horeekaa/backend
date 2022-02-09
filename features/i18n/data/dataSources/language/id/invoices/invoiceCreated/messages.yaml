@@ -1,0 +1,2 @@
+invoice_created_notification_title: "Faktur baru jatuh tempo pada {{.formattedDueDate}} sudah tersedia"
+invoice_created_notification_body: "Klik disini untuk melihat detil faktur nya"

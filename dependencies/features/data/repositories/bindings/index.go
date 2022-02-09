@@ -6,6 +6,7 @@ import (
 	addressdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses"
 	addressdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/addresses/utils"
 	descriptivephotodomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/descriptivePhotos"
+	invoicedomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/invoices"
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
@@ -56,6 +57,11 @@ func (_ *RepositoriesDependency) Bind() {
 		&addressregiongroupdomainrepositorydependencies.ApproveUpdateAddressRegionGroupDependency{},
 		&addressregiongroupdomainrepositorydependencies.GetAllAddressRegionGroupDependency{},
 		&addressregiongroupdomainrepositorydependencies.GetAddressRegionGroupDependency{},
+
+		&invoicedomainrepositorydependencies.CreateInvoiceDependency{},
+		&invoicedomainrepositorydependencies.GetAllInvoiceDependency{},
+		&invoicedomainrepositorydependencies.GetInvoiceDependency{},
+		&invoicedomainrepositorydependencies.UpdateInvoiceDependency{},
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
 

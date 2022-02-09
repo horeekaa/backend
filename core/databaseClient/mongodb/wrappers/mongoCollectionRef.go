@@ -61,6 +61,20 @@ func (colRef *mongoCollectionRef) UpdateOne(
 	return out, nil
 }
 
+func (colRef *mongoCollectionRef) UpdateMany(
+	ctx context.Context,
+	filter interface{},
+	update interface{},
+	opts ...*options.UpdateOptions,
+) (interface{}, error) {
+	out, err := colRef.Collection.UpdateMany(ctx, filter, update, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
 func NewMongoCollectionRef(wrappedMongoCollection *mongo.Collection) (mongodbcorewrapperinterfaces.MongoCollectionRef, error) {
 	return &mongoCollectionRef{
 		wrappedMongoCollection,

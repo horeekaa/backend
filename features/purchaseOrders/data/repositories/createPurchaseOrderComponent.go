@@ -68,7 +68,8 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		map[string]interface{}{
 			"status": map[string]interface{}{
 				"$in": [...]model.PurchaseOrderStatus{
-					model.PurchaseOrderStatusPaymentNeeded,
+					model.PurchaseOrderStatusWaitingForInvoice,
+					model.PurchaseOrderStatusInvoiced,
 					model.PurchaseOrderStatusOpen,
 					model.PurchaseOrderStatusProcessed,
 				},
@@ -114,11 +115,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		totalPrice += *item.SubTotal
 	}
 	input.Total = totalPrice
-
-	if input.DiscountInPercent > 0 {
-		input.TotalDiscounted = totalPrice * input.DiscountInPercent
-	}
-	input.FinalSalesAmount = input.Total - input.TotalDiscounted
+	input.FinalSalesAmount = input.Total
 
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, purchaseOrderToCreate)

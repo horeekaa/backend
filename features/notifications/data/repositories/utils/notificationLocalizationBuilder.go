@@ -68,6 +68,35 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_body",
 		)
 		break
+	case model.NotificationCategoryInvoiceCreated:
+		formattedDueDate := input.PayloadOptions.InvoiceCreatedPayload.Invoice.PaymentDueDate.Format(
+			"02/01/2006",
+		)
+		titleText = localizer.Get(
+			"invoices.invoiceCreated.messages.invoice_created_notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"formattedDueDate": formattedDueDate,
+			},
+		)
+		bodyText = localizer.Get(
+			"invoices.invoiceCreated.messages.invoice_created_notification_body",
+		)
+		break
+
+	case model.NotificationCategoryInvoiceUpdated:
+		formattedDueDate := input.PayloadOptions.InvoiceUpdatedPayload.Invoice.PaymentDueDate.Format(
+			"02/01/2006",
+		)
+		titleText = localizer.Get(
+			"invoices.invoiceUpdated.messages.invoice_updated_notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"formattedDueDate": formattedDueDate,
+			},
+		)
+		bodyText = localizer.Get(
+			"invoices.invoiceUpdated.messages.invoice_updated_notification_body",
+		)
+		break
 
 	}
 

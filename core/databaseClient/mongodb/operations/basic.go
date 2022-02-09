@@ -341,3 +341,79 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 
 	return true, err
 }
+
+func (bscOperation *basicOperation) UpdateAll(updateCriteria interface{}, updateData interface{}, operationOptions *mongodbcoretypes.OperationOptions) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), bscOperation.timeout*time.Second)
+	defer cancel()
+
+	var updateCriteriaMap map[string]interface{}
+	bsonUpdateCriteria, err := bson.Marshal(updateCriteria)
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
+			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(bsonUpdateCriteria, &updateCriteriaMap)
+	bscOperation.mapProcessorUtility.RemoveNil(updateCriteriaMap)
+	flattenedUpdateCriteriaMap := make(map[string]interface{})
+	bscOperation.mapProcessorUtility.FlattenMap(
+		"",
+		updateCriteriaMap,
+		&flattenedUpdateCriteriaMap,
+	)
+	var bsonUpdateCriteriaObject bson.M
+	bsonUpdateCriteria, err = bson.Marshal(flattenedUpdateCriteriaMap)
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
+			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(bsonUpdateCriteria, &bsonUpdateCriteriaObject)
+
+	var updateDataMap map[string]interface{}
+	bsonUpdateData, err := bson.Marshal(updateData)
+	bson.Unmarshal(bsonUpdateData, &updateDataMap)
+	bscOperation.mapProcessorUtility.RemoveNil(updateDataMap)
+	delete(updateDataMap["$set"].(map[string]interface{}), "_id")
+
+	var bsonUpdateObject bson.M
+	data, err := bson.Marshal(updateDataMap)
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpstreamException,
+			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			err,
+		)
+	}
+	bson.Unmarshal(data, &bsonUpdateObject)
+
+	if operationOptions.Session != nil {
+		_, err = bscOperation.collectionRef.UpdateMany(
+			operationOptions.Session,
+			bsonUpdateCriteriaObject,
+			bsonUpdateObject,
+		)
+		if cmdErr, ok := err.(mongo.CommandError); ok && cmdErr.HasErrorLabel("TransientTransactionError") {
+			return false, err
+		}
+	} else {
+		_, err = bscOperation.collectionRef.UpdateMany(
+			ctx,
+			bsonUpdateCriteriaObject,
+			bsonUpdateObject,
+		)
+	}
+	if err != nil {
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.UpdateObjectFailed,
+			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			err,
+		)
+	}
+
+	return true, err
+}

@@ -100,9 +100,11 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 		go func() {
 			loadedMemberAccesses, err := processPOToSupplyTrx.memberAccessDataSource.GetMongoDataSource().Find(
 				map[string]interface{}{
-					"organization._id":  tagging.Organization.ID,
-					"organization.type": model.OrganizationTypePartner,
-					"status":            model.MemberAccessStatusActive,
+					"organization._id":   tagging.Organization.ID,
+					"organization.type":  model.OrganizationTypePartner,
+					"status":             model.MemberAccessStatusActive,
+					"proposalStatus":     model.EntityProposalStatusApproved,
+					"invitationAccepted": true,
 				},
 				&mongodbcoretypes.PaginationOptions{},
 				operationOption,

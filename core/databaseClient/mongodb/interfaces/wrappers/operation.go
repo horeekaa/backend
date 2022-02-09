@@ -24,4 +24,5 @@ type MongoCollectionRef interface {
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (MongoCursor, error)
 	InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (MongoInsertOneResult, error)
 	UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (interface{}, error)
+	UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (interface{}, error)
 }
