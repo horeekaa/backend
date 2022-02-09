@@ -59,41 +59,43 @@ func (createInvoiceUcase *createInvoiceUsecase) Execute(input invoicepresentatio
 		return nil, err
 	}
 
-	account, err := createInvoiceUcase.getAccountFromAuthDataRepo.Execute(
-		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			Context: validatedInput.Context,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createInvoiceUsecase",
-			err,
-		)
-	}
-	if account == nil {
-		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createInvoiceUsecase",
-			nil,
-		)
-	}
-
-	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
-	_, err = createInvoiceUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrgBased,
-				Access:              createInvoiceUcase.createInvoiceAccessIdentity,
+	if !validatedInput.CronAuthenticated {
+		account, err := createInvoiceUcase.getAccountFromAuthDataRepo.Execute(
+			accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+				Context: validatedInput.Context,
 			},
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createInvoiceUsecase",
-			err,
 		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/createInvoiceUsecase",
+				err,
+			)
+		}
+		if account == nil {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AuthenticationTokenNotExist,
+				401,
+				"/createInvoiceUsecase",
+				nil,
+			)
+		}
+
+		memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
+		_, err = createInvoiceUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeOrgBased,
+					Access:              createInvoiceUcase.createInvoiceAccessIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				"/createInvoiceUsecase",
+				err,
+			)
+		}
 	}
 
 	invoiceToCreate := &model.InternalCreateInvoice{}

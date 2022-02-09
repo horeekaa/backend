@@ -7,8 +7,9 @@ import (
 )
 
 type CreateInvoiceUsecaseInput struct {
-	Context       context.Context
-	CreateInvoice *model.CreateInvoice
+	Context           context.Context
+	CreateInvoice     *model.CreateInvoice
+	CronAuthenticated bool
 }
 
 type UpdateInvoiceUsecaseInput struct {
