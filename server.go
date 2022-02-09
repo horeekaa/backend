@@ -6,7 +6,7 @@ import (
 	"os"
 
 	authenticationmiddlewares "github.com/horeekaa/backend/http/middlewares/authentication"
-	purchaseordertosupplyscheduledjobroutes "github.com/horeekaa/backend/http/routes/scheduledJob/purchaseOrdersToSupply"
+	scheduledjobroutes "github.com/horeekaa/backend/http/routes/scheduledJob"
 	"github.com/joho/godotenv"
 
 	masterdependencies "github.com/horeekaa/backend/dependencies"
@@ -50,7 +50,7 @@ func main() {
 	})
 
 	router.Route("/scheduledJob", func(r chi.Router) {
-		r.Route("/v1", purchaseordertosupplyscheduledjobroutes.Route)
+		r.Route("/v1", scheduledjobroutes.Route)
 	})
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)

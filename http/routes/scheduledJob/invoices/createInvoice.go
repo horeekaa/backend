@@ -10,7 +10,7 @@ import (
 	"github.com/horeekaa/backend/model"
 )
 
-func createInvoiceHandler() http.HandlerFunc {
+func CreateInvoiceHandler() http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			googleInternalAuth := r.Header.Get("X-Appengine-Cron")
