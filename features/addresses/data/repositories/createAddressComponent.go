@@ -57,16 +57,19 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateAddress,
 ) (*model.Address, error) {
-	input.ResolvedGeocoding = &model.ResolvedGeocodingInput{}
-	input.AddressRegionGroup = &model.AddressRegionGroupForAddressInput{}
+	addressToCreate := &model.DatabaseCreateAddress{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, addressToCreate)
+	addressToCreate.ResolvedGeocoding = &model.ResolvedGeocodingInput{}
+	addressToCreate.AddressRegionGroup = &model.AddressRegionGroupForAddressInput{}
 	_, err := createAddrTrx.addressLoader.Execute(
 		session,
 		&addressdomainrepositorytypes.LatLngGeocode{
-			Latitude:  input.Latitude,
-			Longitude: input.Longitude,
+			Latitude:  addressToCreate.Latitude,
+			Longitude: addressToCreate.Longitude,
 		},
-		input.ResolvedGeocoding,
-		input.AddressRegionGroup,
+		addressToCreate.ResolvedGeocoding,
+		addressToCreate.AddressRegionGroup,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -75,7 +78,7 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 		)
 	}
 
-	newDocumentJson, _ := json.Marshal(*input)
+	newDocumentJson, _ := json.Marshal(*addressToCreate)
 	generatedObjectID := createAddrTrx.GetCurrentObjectID()
 	loggingOutput, err := createAddrTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -85,10 +88,10 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: addressToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *addressToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -99,15 +102,13 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 		)
 	}
 
-	input.ID = &generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	addressToCreate.ID = generatedObjectID
+	addressToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *addressToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		addressToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: addressToCreate.SubmittingAccount.ID}
 	}
 
-	addressToCreate := &model.DatabaseCreateAddress{}
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, addressToCreate)
+	jsonTemp, _ = json.Marshal(addressToCreate)
 	json.Unmarshal(jsonTemp, &addressToCreate.ProposedChanges)
 
 	createdAddress, err := createAddrTrx.addressDataSource.GetMongoDataSource().Create(
