@@ -63,7 +63,11 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateTag,
 ) (*model.Tag, error) {
-	newDocumentJson, _ := json.Marshal(*input)
+	tagToCreate := &model.DatabaseCreateTag{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, tagToCreate)
+
+	newDocumentJson, _ := json.Marshal(*tagToCreate)
 	generatedObjectID := createTagTrx.GetCurrentObjectID()
 	loggingOutput, err := createTagTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -73,10 +77,10 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: tagToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *tagToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -87,16 +91,13 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	tagToCreate.ID = generatedObjectID
+	tagToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *tagToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		tagToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: tagToCreate.SubmittingAccount.ID}
 	}
 
-	tagToCreate := &model.DatabaseCreateTag{}
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, tagToCreate)
+	jsonTemp, _ = json.Marshal(tagToCreate)
 	json.Unmarshal(jsonTemp, &tagToCreate.ProposedChanges)
 
 	newTag, err := createTagTrx.tagDataSource.GetMongoDataSource().Create(

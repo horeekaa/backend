@@ -53,8 +53,12 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) PreTransaction(
 
 func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateTag *model.InternalUpdateTag,
+	input *model.InternalUpdateTag,
 ) (*model.Tag, error) {
+	updateTag := &model.DatabaseUpdateTag{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateTag)
+
 	existingTag, err := updateTagTrx.tagDataSource.GetMongoDataSource().FindByID(
 		updateTag.ID,
 		session,
