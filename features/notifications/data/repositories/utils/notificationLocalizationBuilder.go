@@ -1,6 +1,8 @@
 package notificationdomainrepositoryutilities
 
 import (
+	"strings"
+
 	golocalizei18ncoreclientinterfaces "github.com/horeekaa/backend/core/i18n/go-localize/interfaces/init"
 	golocalizei18ncoretypes "github.com/horeekaa/backend/core/i18n/go-localize/types"
 	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
@@ -24,7 +26,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 	output *model.Notification,
 ) (bool, error) {
 	notifLocalBuilder.goLocalizeI18N.Initialize(
-		input.RecipientAccount.Language.String(),
+		strings.ToLower(input.RecipientAccount.Language.String()),
 		"id",
 	)
 	localizer, _ := notifLocalBuilder.goLocalizeI18N.GetLocalizer()

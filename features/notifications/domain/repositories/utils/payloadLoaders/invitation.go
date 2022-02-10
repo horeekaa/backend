@@ -8,6 +8,6 @@ import (
 type InvitationPayloadLoader interface {
 	TransactionBody(
 		operationOptions *mongodbcoretypes.OperationOptions,
-		notification *model.InternalCreateNotification,
+		notification *model.DatabaseCreateNotification,
 	) (bool, error)
 }

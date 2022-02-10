@@ -9,3 +9,15 @@ type PersonForNotifPayload {
   firstName: String!
   lastName: String!
 }
+
+input PersonForNotifRecipientInput {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+}
+
+type PersonForNotifRecipient {
+  _id: ObjectID!
+  firstName: String!
+  lastName: String!
+}

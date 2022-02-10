@@ -13,3 +13,19 @@ type AccountForNotifPayload {
   type: AccountType!
   person: PersonForNotifPayload!
 }
+
+input AccountForNotifRecipientInput {
+  _id: ObjectID!
+  language: Language!
+  type: AccountType!
+  person: PersonForNotifRecipientInput!
+  deviceTokens: [String!]!
+}
+
+type AccountForNotifRecipient {
+  _id: ObjectID!
+  language: Language!
+  type: AccountType!
+  person: PersonForNotifRecipient!
+  deviceTokens: [String!]!
+}
