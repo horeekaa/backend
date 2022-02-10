@@ -9,7 +9,6 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	firebasemessagingcoreoperationinterfaces "github.com/horeekaa/backend/core/messaging/firebase/interfaces/operations"
 	firebasemessagingcoretypes "github.com/horeekaa/backend/core/messaging/firebase/types"
-	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
@@ -17,7 +16,6 @@ import (
 )
 
 type createNotificationTransactionComponent struct {
-	accountDataSource        databaseaccountdatasourceinterfaces.AccountDataSource
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	firebaseMessaging        firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
@@ -25,14 +23,12 @@ type createNotificationTransactionComponent struct {
 }
 
 func NewCreateNotificationTransactionComponent(
-	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
 	firebaseMessaging firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation,
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 	masterPayloadLoader notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader,
 ) (notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent, error) {
 	return &createNotificationTransactionComponent{
-		accountDataSource:        accountDataSource,
 		notificationDataSource:   notificationDataSource,
 		firebaseMessaging:        firebaseMessaging,
 		notifLocalizationBuilder: notifLocalizationBuilder,
@@ -50,17 +46,20 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateNotification,
 ) (*model.Notification, error) {
-	_, err := createNotifTrx.masterPayloadLoader.TransactionBody(
-		session,
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	notificationToCreate := &model.DatabaseCreateNotification{}
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, notificationToCreate)
+
+	_, err := createNotifTrx.masterPayloadLoader.TransactionBody(
+		session,
+		notificationToCreate,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/createNotification",
+			err,
+		)
+	}
 
 	createdNotification, err := createNotifTrx.notificationDataSource.GetMongoDataSource().Create(
 		notificationToCreate,
@@ -78,17 +77,6 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 
 	createNotifTrx.notifLocalizationBuilder.Execute(createdNotification, notificationToOutput)
 
-	recipientAccount, err := createNotifTrx.accountDataSource.GetMongoDataSource().FindByID(
-		*input.RecipientAccount.ID,
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createNotification",
-			err,
-		)
-	}
-
 	payloadJson, _ := json.Marshal(notificationToCreate.PayloadOptions)
 	_, err = createNotifTrx.firebaseMessaging.SendMulticastMessage(
 		context.Background(),
@@ -100,7 +88,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 			Data: map[string]string{
 				"payloadOptions": string(payloadJson),
 			},
-			Tokens: recipientAccount.DeviceTokens,
+			Tokens: createdNotification.RecipientAccount.DeviceTokens,
 		},
 	)
 	if err != nil {

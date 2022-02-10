@@ -26,7 +26,7 @@ func NewInvitationPayloadLoader(
 
 func (invitationPyload *invitationPayloadLoader) TransactionBody(
 	operationOptions *mongodbcoretypes.OperationOptions,
-	notification *model.InternalCreateNotification,
+	notification *model.DatabaseCreateNotification,
 ) (bool, error) {
 	memberAccess := &model.MemberAccessForNotifPayloadInput{}
 	switch notification.NotificationCategory {
