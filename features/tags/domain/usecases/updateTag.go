@@ -63,6 +63,9 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 	if err != nil {
 		return nil, err
 	}
+	tagToUpdate := &model.InternalUpdateTag{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateTag)
+	json.Unmarshal(jsonTemp, tagToUpdate)
 
 	account, err := updateTagUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -100,12 +103,6 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 			err,
 		)
 	}
-
-	tagToUpdate := &model.InternalUpdateTag{
-		ID: validatedInput.UpdateTag.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateTag)
-	json.Unmarshal(jsonTemp, tagToUpdate)
 
 	for i, descriptivePhoto := range validatedInput.UpdateTag.Photos {
 		if descriptivePhoto.Photo != nil {
