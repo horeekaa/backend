@@ -71,6 +71,9 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	if err != nil {
 		return nil, err
 	}
+	organizationToUpdate := &model.InternalUpdateOrganization{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateOrganization)
+	json.Unmarshal(jsonTemp, organizationToUpdate)
 
 	account, err := updateOrganizationUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -117,12 +120,6 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			err,
 		)
 	}
-
-	organizationToUpdate := &model.InternalUpdateOrganization{
-		ID: validatedInput.UpdateOrganization.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateOrganization)
-	json.Unmarshal(jsonTemp, organizationToUpdate)
 
 	existingOrganization, err := updateOrganizationUcase.getOrganizationRepo.Execute(
 		&model.OrganizationFilterFields{

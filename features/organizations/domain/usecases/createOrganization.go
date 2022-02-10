@@ -53,8 +53,6 @@ func (createOrganizationUcase *createOrganizationUsecase) validation(input organ
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateOrganization.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -63,6 +61,9 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 	if err != nil {
 		return nil, err
 	}
+	organizationToCreate := &model.InternalCreateOrganization{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateOrganization)
+	json.Unmarshal(jsonTemp, organizationToCreate)
 
 	account, err := createOrganizationUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -130,16 +131,14 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		}
 	}
 
+	organizationToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval != nil {
 		if *accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
-			validatedInput.CreateOrganization.ProposalStatus =
+			organizationToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	organizationToCreate := &model.InternalCreateOrganization{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateOrganization)
-	json.Unmarshal(jsonTemp, organizationToCreate)
 
 	organizationToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdOrganization, err := createOrganizationUcase.createOrganizationRepo.RunTransaction(
