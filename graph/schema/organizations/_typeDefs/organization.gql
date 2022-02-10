@@ -8,13 +8,10 @@ input CreateOrganization {
   name: String!
   phoneNumber: String!
   type: OrganizationType!
-  point: Int
-  unfinalizedPoint: Int
   profilePhotos: [CreateDescriptivePhoto]
   taggings: [CreateTagging]
   addresses: [CreateAddress]
   taxIdentification: NewIDCard
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateOrganization {
@@ -22,8 +19,6 @@ input InternalCreateOrganization {
   name: String!
   phoneNumber: String!
   type: OrganizationType!
-  point: Int
-  unfinalizedPoint: Int
   profilePhotos: [InternalCreateDescriptivePhoto]
   taggings: [InternalCreateTagging]
   addresses: [InternalCreateAddress]
@@ -31,8 +26,6 @@ input InternalCreateOrganization {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateOrganization
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateOrganization {
@@ -70,14 +63,6 @@ input UpdateOrganization {
   taxIdentification: UpdateIDCard
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateOrganization {
@@ -97,8 +82,6 @@ input InternalUpdateOrganization {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateOrganization
 }
 
 input DatabaseUpdateOrganization {
