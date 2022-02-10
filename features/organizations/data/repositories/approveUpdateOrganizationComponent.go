@@ -49,8 +49,12 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) PreTransact
 
 func (approveProdTrx *approveUpdateOrganizationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateOrganization *model.InternalUpdateOrganization,
+	input *model.InternalUpdateOrganization,
 ) (*model.Organization, error) {
+	updateOrganization := &model.DatabaseUpdateOrganization{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateOrganization)
+
 	existingOrganization, err := approveProdTrx.organizationDataSource.GetMongoDataSource().FindByID(
 		updateOrganization.ID,
 		session,
@@ -81,7 +85,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateOrganization.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,

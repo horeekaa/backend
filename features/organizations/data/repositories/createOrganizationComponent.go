@@ -63,7 +63,11 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateOrganization,
 ) (*model.Organization, error) {
-	newDocumentJson, _ := json.Marshal(*input)
+	organizationToCreate := &model.DatabaseCreateOrganization{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, organizationToCreate)
+
+	newDocumentJson, _ := json.Marshal(*organizationToCreate)
 	generatedObjectID := createOrganizationTrx.GetCurrentObjectID()
 	loggingOutput, err := createOrganizationTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -73,10 +77,10 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: organizationToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *organizationToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -87,16 +91,13 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	organizationToCreate.ID = generatedObjectID
+	organizationToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *organizationToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		organizationToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: organizationToCreate.SubmittingAccount.ID}
 	}
 
-	organizationToCreate := &model.DatabaseCreateOrganization{}
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, organizationToCreate)
+	jsonTemp, _ = json.Marshal(organizationToCreate)
 	json.Unmarshal(jsonTemp, &organizationToCreate.ProposedChanges)
 
 	newOrganization, err := createOrganizationTrx.organizationDataSource.GetMongoDataSource().Create(
