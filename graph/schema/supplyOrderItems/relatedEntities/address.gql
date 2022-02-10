@@ -19,7 +19,7 @@ input AddressForSupplyOrderItemFilterFields {
   phoneNumber: StringFilterField
   isDefault: BooleanFilterField
   resolvedGeocoding: ResolvedGeocodingInput
-  addressRegionGroup: AddressRegionGroupForAddressFilterField
+  addressRegionGroup: AddressRegionGroupForAddressFilterFields
 }
 
 type AddressForSupplyOrderItem {

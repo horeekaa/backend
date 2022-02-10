@@ -10,7 +10,6 @@ input CreateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean!
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateAddress {
@@ -21,14 +20,11 @@ input InternalCreateAddress {
   addressNote: String
   phoneNumber: String
   isDefault: Boolean!
-  resolvedGeocoding: ResolvedGeocodingInput
-  addressRegionGroup: AddressRegionGroupForAddressInput
   type: AddressType!
   object: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateAddress
   recentLog: ObjectIDOnly
 }
 
@@ -71,14 +67,6 @@ input UpdateAddress {
   addressRegionGroup: AddressRegionGroupForAddressInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateAddress {
@@ -92,14 +80,11 @@ input InternalUpdateAddress {
   isActive: Boolean
   resolvedGeocoding: ResolvedGeocodingInput
   addressRegionGroup: AddressRegionGroupForAddressInput
-  type: AddressType
-  object: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateAddress
 }
 
 input DatabaseUpdateAddress {
@@ -133,8 +118,8 @@ input AddressFilterFields {
   phoneNumber: StringFilterField
   isDefault: BooleanFilterField
   isActive: BooleanFilterField
-  resolvedGeocoding: ResolvedGeocodingInput
-  addressRegionGroup: AddressRegionGroupForAddressFilterField
+  resolvedGeocoding: ResolvedGeocodingFilterFields
+  addressRegionGroup: AddressRegionGroupForAddressFilterFields
   type: StringFilterField
   object: ObjectIDOnly
   proposalStatus: StringFilterField
