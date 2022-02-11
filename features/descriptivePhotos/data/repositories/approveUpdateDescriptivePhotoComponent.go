@@ -43,10 +43,14 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Pr
 
 func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateDescriptivePhoto *model.InternalUpdateDescriptivePhoto,
+	input *model.InternalUpdateDescriptivePhoto,
 ) (*model.DescriptivePhoto, error) {
+	updateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateDescriptivePhoto)
+
 	existingDescriptivePhoto, err := approveDescPhotoTrx.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
-		*updateDescriptivePhoto.ID,
+		updateDescriptivePhoto.ID,
 		session,
 	)
 	if err != nil {
@@ -78,7 +82,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateDescriptivePhoto.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -100,7 +104,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 	updateDescriptivePhoto.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{
-		ID: *updateDescriptivePhoto.ID,
+		ID: updateDescriptivePhoto.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingDescriptivePhoto.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateDescriptivePhoto.ProposedChanges)
