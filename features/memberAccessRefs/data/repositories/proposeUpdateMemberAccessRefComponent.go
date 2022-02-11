@@ -49,8 +49,12 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) PreTransa
 
 func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMemberAccessRef *model.InternalUpdateMemberAccessRef,
+	input *model.InternalUpdateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
+	updateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMemberAccessRef)
+
 	existingMemberAccessRef, err := updateProdTrx.memberAccessRefDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccessRef.ID,
 		session,
@@ -88,7 +92,7 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	}
 	updateMemberAccessRef.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	fieldsToUpdateMemberAccessRef := &model.InternalUpdateMemberAccessRef{
+	fieldsToUpdateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{
 		ID: updateMemberAccessRef.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingMemberAccessRef)
