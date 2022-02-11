@@ -36,7 +36,6 @@ input CreateDescriptivePhoto {
   photoUrl: String
   description: String
   type: DescriptivePhotoType!
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateDescriptivePhoto {
@@ -50,10 +49,6 @@ input InternalCreateDescriptivePhoto {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateDescriptivePhoto
-  recentLog: ObjectIDOnly
-  createdAt: Time
-  updatedAt: Time
 }
 
 input DatabaseCreateDescriptivePhoto {
@@ -90,14 +85,6 @@ input UpdateDescriptivePhoto {
   isActive: Boolean
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateDescriptivePhoto {
@@ -115,9 +102,6 @@ input InternalUpdateDescriptivePhoto {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateDescriptivePhoto
-  recentLog: ObjectIDOnly
-  updatedAt: Time
 }
 
 input DatabaseUpdateDescriptivePhoto {
@@ -137,11 +121,11 @@ input DatabaseUpdateDescriptivePhoto {
 
 input DescriptivePhotoFilterFields {
   _id: ObjectID
-  photoUrl: String
-  category: DescriptivePhotoCategory
-  type: DescriptivePhotoType
-  object: ObjectIDOnly
-  isActive: Boolean
+  photoUrl: StringFilterField
+  category: StringFilterField
+  type: StringFilterField
+  object: ObjectIDOnlyFilterField
+  isActive: BooleanFilterField
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
