@@ -15,22 +15,32 @@ input CreateMemberAccess {
   """
   memberAccessRefType: MemberAccessRefType!
   status: MemberAccessStatus
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateMemberAccess {
   _id: ObjectID!
   account: ObjectIDOnly!
   invitationAccepted: Boolean
-  organization: InternalUpdateOrganization
-  organizationLatestUpdate: AttachOrganizationInput
+  organization: ObjectIDOnly!
+  organizationMembershipRole: OrganizationMembershipRole
+  memberAccessRefType: MemberAccessRefType!
+  status: MemberAccessStatus!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input DatabaseCreateMemberAccess {
+  _id: ObjectID!
+  account: ObjectIDOnly!
+  invitationAccepted: Boolean
+  organization: OrganizationForMemberAccessInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptionsInput!
-  defaultAccess: InternalUpdateMemberAccessRef
-  defaultAccessLatestUpdate: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnly!
   status: MemberAccessStatus!
-  proposedChanges: InternalUpdateMemberAccess
+  proposedChanges: DatabaseUpdateMemberAccess
   recentLog: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -47,23 +57,25 @@ input UpdateMemberAccess {
   status: MemberAccessStatus
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateMemberAccess {
   _id: ObjectID!
   invitationAccepted: Boolean
-  organization: InternalUpdateOrganization
-  organizationLatestUpdate: AttachOrganizationInput
   organizationMembershipRole: OrganizationMembershipRole
-  defaultAccess: InternalUpdateMemberAccessRef
+  access: MemberAccessRefOptionsInput
+  status: MemberAccessStatus
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input DatabaseUpdateMemberAccess {
+  _id: ObjectID!
+  invitationAccepted: Boolean
+  organization: OrganizationForMemberAccessInput
+  organizationMembershipRole: OrganizationMembershipRole
   defaultAccessLatestUpdate: ObjectIDOnly
   access: MemberAccessRefOptionsInput
   status: MemberAccessStatus
@@ -72,7 +84,7 @@ input InternalUpdateMemberAccess {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateMemberAccess
+  proposedChanges: DatabaseUpdateMemberAccess
   updatedAt: Time
 }
 
@@ -80,13 +92,11 @@ input MemberAccessFilterFields {
   _id: ObjectID
   invitationAccepted: BooleanFilterField
   account: ObjectIDOnly
-  organization: AttachOrganizationInput
-  organizationLatestUpdate: AttachOrganizationInput
+  organization: OrganizationForMemberAccessFilterFields
   organizationMembershipRole: StringFilterField
   memberAccessRefType: StringFilterField
   access: MemberAccessRefOptionsInput
-  defaultAccess: ObjectIDOnly
-  defaultAccessLatestUpdate: ObjectIDOnly
+  defaultAccessLatestUpdate: ObjectIDOnlyFilterField
   status: StringFilterField
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -99,18 +109,16 @@ input InternalMemberAccessFilterFields {
   _id: ObjectID
   invitationAccepted: Boolean
   account: ObjectIDOnly
-  organization: AttachOrganizationInput
-  organizationLatestUpdate: AttachOrganizationInput
+  organization: OrganizationForMemberAccessInput
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType
   access: MemberAccessRefOptionsInput
-  defaultAccess: ObjectIDOnly
   defaultAccessLatestUpdate: ObjectIDOnly
   status: MemberAccessStatus
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: MemberAccessFilterFields
+  proposedChanges: InternalMemberAccessFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -119,12 +127,10 @@ type MemberAccess {
   invitationAccepted: Boolean!
   account: Account!
   organization: Organization
-  organizationLatestUpdate: Organization
   organizationMembershipRole: OrganizationMembershipRole
   memberAccessRefType: MemberAccessRefType!
   access: MemberAccessRefOptions!
-  defaultAccess: MemberAccessRef!
-  defaultAccessLatestUpdate: MemberAccessRef
+  defaultAccessLatestUpdate: MemberAccessRef!
   status: MemberAccessStatus!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String

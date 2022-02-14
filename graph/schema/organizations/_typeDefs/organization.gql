@@ -106,11 +106,6 @@ input DatabaseUpdateOrganization {
   updatedAt: Time
 }
 
-input AttachOrganizationInput {
-  _id: ObjectID
-  type: OrganizationType
-}
-
 input OrganizationFilterFields {
   _id: ObjectID
   name: StringFilterField
