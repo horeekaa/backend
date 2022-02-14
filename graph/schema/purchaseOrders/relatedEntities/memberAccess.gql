@@ -1,0 +1,9 @@
+input MemberAccessForPurchaseOrderInput {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccessInput!
+}
+
+type MemberAccessForPurchaseOrder {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccess!
+}
