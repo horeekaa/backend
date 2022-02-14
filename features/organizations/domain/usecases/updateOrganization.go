@@ -204,8 +204,8 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 					Account: &model.ObjectIDOnly{
 						ID: &existingOrganization.SubmittingAccount.ID,
 					},
-					Organization: &model.InternalUpdateOrganization{
-						ID: updateOrganizationOutput.ID,
+					Organization: &model.ObjectIDOnly{
+						ID: &updateOrganizationOutput.ID,
 					},
 					OrganizationMembershipRole: func(r model.OrganizationMembershipRole) *model.OrganizationMembershipRole {
 						return &r
