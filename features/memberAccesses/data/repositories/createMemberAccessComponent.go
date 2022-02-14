@@ -79,8 +79,12 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMemberAccess,
 ) (*model.MemberAccess, error) {
+	memberAccessToCreate := &model.DatabaseCreateMemberAccess{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, memberAccessToCreate)
+
 	_, err := createMemberAccessTrx.accountDataSource.GetMongoDataSource().FindByID(
-		*input.Account.ID,
+		*memberAccessToCreate.Account.ID,
 		session,
 	)
 	if err != nil {
@@ -92,10 +96,10 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 
 	duplicateMemberAccess, err := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
-			"account._id":         input.Account.ID,
+			"account._id":         memberAccessToCreate.Account.ID,
 			"status":              model.MemberAccessStatusActive,
 			"proposalStatus":      model.EntityProposalStatusApproved,
-			"memberAccessRefType": input.MemberAccessRefType,
+			"memberAccessRefType": memberAccessToCreate.MemberAccessRefType,
 		},
 		session,
 	)
@@ -114,12 +118,12 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	}
 
 	queryMap := map[string]interface{}{
-		"memberAccessRefType": input.MemberAccessRefType,
+		"memberAccessRefType": memberAccessToCreate.MemberAccessRefType,
 		"proposalStatus":      model.EntityProposalStatusApproved,
 	}
-	if input.Organization != nil {
+	if memberAccessToCreate.Organization != nil {
 		orgToAdd, err := createMemberAccessTrx.organizationDataSource.GetMongoDataSource().FindByID(
-			input.Organization.ID,
+			*memberAccessToCreate.Organization.ID,
 			session,
 		)
 		if err != nil {
@@ -131,11 +135,10 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		queryMap["organizationType"] = orgToAdd.Type
 
 		jsonTemp, _ := json.Marshal(orgToAdd)
-		json.Unmarshal(jsonTemp, &input.Organization)
-		json.Unmarshal(jsonTemp, &input.OrganizationLatestUpdate)
+		json.Unmarshal(jsonTemp, &memberAccessToCreate.Organization)
 	}
-	if input.OrganizationMembershipRole != nil {
-		queryMap["organizationMembershipRole"] = *input.OrganizationMembershipRole
+	if memberAccessToCreate.OrganizationMembershipRole != nil {
+		queryMap["organizationMembershipRole"] = *memberAccessToCreate.OrganizationMembershipRole
 	}
 
 	memberAccessRef, err := createMemberAccessTrx.memberAccessRefDataSource.GetMongoDataSource().FindOne(
@@ -155,18 +158,16 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 			nil,
 		)
 	}
-	jsonTemp, _ := json.Marshal(memberAccessRef.Access)
-	json.Unmarshal(jsonTemp, &input.Access)
+	jsonAccessRef, _ := json.Marshal(memberAccessRef.Access)
+	json.Unmarshal(jsonAccessRef, &memberAccessToCreate.Access)
 
-	input.Status = model.MemberAccessStatusActive
+	memberAccessToCreate.Status = model.MemberAccessStatusActive
 
-	jsonTemp, _ = json.Marshal(memberAccessRef)
-	json.Unmarshal(jsonTemp, &input.DefaultAccess)
-	input.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
+	memberAccessToCreate.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
 		ID: &memberAccessRef.ID,
 	}
 
-	newDocumentJson, _ := json.Marshal(*input)
+	newDocumentJson, _ := json.Marshal(*memberAccessToCreate)
 	generatedObjectID := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -176,10 +177,10 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: memberAccessToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *memberAccessToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -190,17 +191,17 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	memberAccessToCreate.ID = generatedObjectID
+	memberAccessToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *memberAccessToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		memberAccessToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: memberAccessToCreate.SubmittingAccount.ID}
 	}
 
-	jsonTemp, _ = json.Marshal(input)
-	json.Unmarshal(jsonTemp, &input.ProposedChanges)
+	jsonTemp, _ = json.Marshal(memberAccessToCreate)
+	json.Unmarshal(jsonTemp, &memberAccessToCreate.ProposedChanges)
 
 	newMemberAccess, err := createMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().Create(
-		input,
+		memberAccessToCreate,
 		session,
 	)
 	if err != nil {

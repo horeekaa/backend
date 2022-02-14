@@ -59,8 +59,12 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 
 func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMemberAccess *model.InternalUpdateMemberAccess,
+	input *model.InternalUpdateMemberAccess,
 ) (*model.MemberAccess, error) {
+	updateMemberAccess := &model.DatabaseUpdateMemberAccess{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMemberAccess)
+
 	existingMemberAccess, err := proposeUpdateMemberAccTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccess.ID,
 		session,
@@ -83,7 +87,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	}
 	if updateMemberAccess.Organization != nil {
 		orgToUpdate, err := proposeUpdateMemberAccTrx.organizationDataSource.GetMongoDataSource().FindByID(
-			updateMemberAccess.Organization.ID,
+			*updateMemberAccess.Organization.ID,
 			session,
 		)
 		if err != nil {
@@ -96,7 +100,6 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 
 		jsonTemp, _ := json.Marshal(orgToUpdate)
 		json.Unmarshal(jsonTemp, &updateMemberAccess.Organization)
-		json.Unmarshal(jsonTemp, &updateMemberAccess.OrganizationLatestUpdate)
 	}
 
 	if queryMap["organizationMembershipRole"] != nil {
@@ -122,9 +125,6 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 		}
 		jsonTemp, _ := json.Marshal(memberAccessRef.Access)
 		json.Unmarshal(jsonTemp, &updateMemberAccess.Access)
-
-		jsonTemp, _ = json.Marshal(memberAccessRef)
-		json.Unmarshal(jsonTemp, &updateMemberAccess.DefaultAccess)
 
 		updateMemberAccess.DefaultAccessLatestUpdate = &model.ObjectIDOnly{
 			ID: &memberAccessRef.ID,
@@ -157,7 +157,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	}
 	updateMemberAccess.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	fieldsToUpdateMemberAccess := &model.InternalUpdateMemberAccess{
+	fieldsToUpdateMemberAccess := &model.DatabaseUpdateMemberAccess{
 		ID: updateMemberAccess.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingMemberAccess)
