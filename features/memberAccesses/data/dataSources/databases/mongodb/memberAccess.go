@@ -74,7 +74,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 	return memberAccesses, err
 }
 
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.InternalCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
+func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.DatabaseCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
 	_, err := memberAccDataSourceMongo.setDefaultValuesWhenCreate(
 		input,
 	)
@@ -93,7 +93,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(
 	updateCriteria map[string]interface{},
-	updateData *model.InternalUpdateMemberAccess,
+	updateData *model.DatabaseUpdateMemberAccess,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.MemberAccess, error) {
 	_, err := memberAccDataSourceMongo.setDefaultValuesWhenUpdate(
@@ -123,7 +123,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
-	input *model.InternalUpdateMemberAccess,
+	input *model.DatabaseUpdateMemberAccess,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	var currentTime = time.Now()
@@ -147,7 +147,7 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhe
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.InternalCreateMemberAccess,
+	input *model.DatabaseCreateMemberAccess,
 ) (bool, error) {
 	var currentTime = time.Now()
 	if input.InvitationAccepted == nil {
