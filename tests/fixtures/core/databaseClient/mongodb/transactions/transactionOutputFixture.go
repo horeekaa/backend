@@ -30,7 +30,6 @@ var TransactionOutput model.MemberAccess = model.MemberAccess{
 			OrganizationUpdate:    func(b bool) *bool { return &b }(true),
 		},
 	},
-	DefaultAccess:     &model.MemberAccessRef{ID: primitive.ObjectID{byte(255)}},
 	SubmittingAccount: &model.Account{ID: primitive.ObjectID{byte(255)}},
 	ProposalStatus:    model.EntityProposalStatusProposed,
 }
