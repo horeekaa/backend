@@ -49,8 +49,6 @@ func (createMmbAccessUcase *createMemberAccessUsecase) validation(input memberac
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateMemberAccess.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -59,6 +57,9 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 	if err != nil {
 		return nil, err
 	}
+	memberAccessToCreate := &model.InternalCreateMemberAccess{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateMemberAccess)
+	json.Unmarshal(jsonTemp, memberAccessToCreate)
 
 	account, err := createMmbAccessUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -96,16 +97,15 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 			err,
 		)
 	}
+
+	memberAccessToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval != nil {
 		if *accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval {
-			validatedInput.CreateMemberAccess.ProposalStatus =
+			memberAccessToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	memberAccessToCreate := &model.InternalCreateMemberAccess{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateMemberAccess)
-	json.Unmarshal(jsonTemp, memberAccessToCreate)
 
 	memberAccessToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdMemberAccess, err := createMmbAccessUcase.createMemberAccessRepo.RunTransaction(
