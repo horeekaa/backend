@@ -63,6 +63,9 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	if err != nil {
 		return nil, err
 	}
+	purchaseOrderToUpdate := &model.InternalUpdatePurchaseOrder{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdatePurchaseOrder)
+	json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
 
 	account, err := updatePurchaseOrderUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -100,12 +103,6 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 			err,
 		)
 	}
-
-	purchaseOrderToUpdate := &model.InternalUpdatePurchaseOrder{
-		ID: validatedInput.UpdatePurchaseOrder.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdatePurchaseOrder)
-	json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
 
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &purchaseOrderToUpdate.MemberAccess)
