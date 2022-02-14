@@ -63,6 +63,9 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	if err != nil {
 		return nil, err
 	}
+	supplyOrderToUpdate := &model.InternalUpdateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateSupplyOrder)
+	json.Unmarshal(jsonTemp, supplyOrderToUpdate)
 
 	account, err := updateSupplyOrderUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -100,12 +103,6 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 			err,
 		)
 	}
-
-	supplyOrderToUpdate := &model.InternalUpdateSupplyOrder{
-		ID: validatedInput.UpdateSupplyOrder.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateSupplyOrder)
-	json.Unmarshal(jsonTemp, supplyOrderToUpdate)
 
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &supplyOrderToUpdate.MemberAccess)
