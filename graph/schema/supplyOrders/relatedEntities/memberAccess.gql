@@ -1,0 +1,9 @@
+input MemberAccessForSupplyOrderInput {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccessInput!
+}
+
+type MemberAccessForSupplyOrder {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccess!
+}

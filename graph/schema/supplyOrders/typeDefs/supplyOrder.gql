@@ -1,24 +1,13 @@
 input CreateSupplyOrder {
   items: [CreateSupplyOrderItem]!
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateSupplyOrder {
-  _id: ObjectID
-  publicId: String
-  total: Int!
-  paidAmount: Int!
-  finalSalesAmount: Int!
-  memberAccess: InternalCreateMemberAccess!
-  organization: OrganizationForSupplyOrderInput!
   items: [InternalCreateSupplyOrderItem]!
+  memberAccess: MemberAccessForSupplyOrderInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateSupplyOrder
-  recentLog: ObjectIDOnly
-  createdAt: Time
-  updatedAt: Time
 }
 
 input DatabaseCreateSupplyOrder {
@@ -41,39 +30,19 @@ input DatabaseCreateSupplyOrder {
 
 input UpdateSupplyOrder {
   _id: ObjectID!
-  publicId: String
-  total: Int
-  paidAmount: Int
-  organization: ObjectIDOnly
   items: [UpdateSupplyOrderItem]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateSupplyOrder {
   _id: ObjectID!
-  publicId: String
-  total: Int
-  paidAmount: Int
-  totalReturn: Int
-  finalSalesAmount: Int
-  organization: OrganizationForSupplyOrderInput
-  memberAccess: InternalUpdateMemberAccess
+  memberAccess: MemberAccessForSupplyOrderInput!
   items: [InternalUpdateSupplyOrderItem]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateSupplyOrder
 }
 
 input DatabaseUpdateSupplyOrder {
