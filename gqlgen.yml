@@ -75,7 +75,7 @@ models:
     fields:
       defaultAccessLatestUpdate:
         resolver: true
-      organizationLatestUpdate:
+      organization:
         resolver: true
       account:
         resolver: true
