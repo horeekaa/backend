@@ -46,8 +46,12 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) PreTra
 
 func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateSupplyOrder *model.InternalUpdateSupplyOrder,
+	input *model.InternalUpdateSupplyOrder,
 ) (*model.SupplyOrder, error) {
+	updateSupplyOrder := &model.DatabaseUpdateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateSupplyOrder)
+
 	existingSupplyOrder, err := updateSupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().FindByID(
 		updateSupplyOrder.ID,
 		session,
@@ -141,7 +145,6 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 
 	jsonUpdate, _ = json.Marshal(updatesupplyOrderMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdatesupplyOrder.ProposedChanges)
-	jsonUpdate, err = json.Marshal(fieldsToUpdatesupplyOrder.ProposedChanges)
 
 	if updateSupplyOrder.ProposalStatus != nil {
 		fieldsToUpdatesupplyOrder.RecentApprovingAccount = &model.ObjectIDOnly{

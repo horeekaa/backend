@@ -42,8 +42,12 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) PreTr
 
 func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateSupplyOrder *model.InternalUpdateSupplyOrder,
+	input *model.InternalUpdateSupplyOrder,
 ) (*model.SupplyOrder, error) {
+	updateSupplyOrder := &model.DatabaseUpdateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateSupplyOrder)
+
 	existingSupplyOrder, err := approvesupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().FindByID(
 		updateSupplyOrder.ID,
 		session,
@@ -85,7 +89,7 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateSupplyOrder.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
