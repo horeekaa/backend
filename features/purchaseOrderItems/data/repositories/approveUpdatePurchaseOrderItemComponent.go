@@ -47,10 +47,14 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) PreT
 
 func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updatePurchaseOrderItem *model.InternalUpdatePurchaseOrderItem,
+	input *model.InternalUpdatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
+	updatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
+
 	existingPurchaseOrderItem, err := approvePOItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().FindByID(
-		*updatePurchaseOrderItem.ID,
+		updatePurchaseOrderItem.ID,
 		session,
 	)
 	if err != nil {
@@ -82,7 +86,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updatePurchaseOrderItem.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -104,7 +108,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{
-		ID: *updatePurchaseOrderItem.ID,
+		ID: updatePurchaseOrderItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingPurchaseOrderItem.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdatePurchaseOrderItem.ProposedChanges)

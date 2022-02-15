@@ -59,74 +59,18 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) P
 
 func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	createPurchaseOrderItem *model.InternalCreatePurchaseOrderItem,
+	input *model.InternalCreatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
+	purchaseOrderItemToCreate := &model.DatabaseCreatePurchaseOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
+
 	generatedObjectID := createPurchaseOrderItemTrx.GetCurrentObjectID()
-	for i, photo := range createPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived {
-		photoToCreate := &model.InternalCreateDescriptivePhoto{}
-
-		jsonTemp, _ := json.Marshal(photo)
-		json.Unmarshal(jsonTemp, &photoToCreate)
-		photoToCreate.Photo.File = photo.Photo.File
-		photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItemAfterReceived
-		photoToCreate.Object = &model.ObjectIDOnly{
-			ID: &generatedObjectID,
-		}
-		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-			return &s
-		}(*photoToCreate.ProposalStatus)
-		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-			return &m
-		}(*photoToCreate.SubmittingAccount)
-		descriptivePhoto, err := createPurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
-			photoToCreate,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createPurchaseOrderItemComponent",
-				err,
-			)
-		}
-
-		jsonTemp, _ = json.Marshal(descriptivePhoto)
-		json.Unmarshal(jsonTemp, &createPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived[i])
-	}
-	for i, photo := range createPurchaseOrderItem.DeliveryDetail.Photos {
-		photoToCreate := &model.InternalCreateDescriptivePhoto{}
-
-		jsonTemp, _ := json.Marshal(photo)
-		json.Unmarshal(jsonTemp, &photoToCreate)
-		photoToCreate.Photo.File = photo.Photo.File
-		photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderItem
-		photoToCreate.Object = &model.ObjectIDOnly{
-			ID: &generatedObjectID,
-		}
-		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-			return &s
-		}(*photoToCreate.ProposalStatus)
-		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-			return &m
-		}(*photoToCreate.SubmittingAccount)
-		descriptivePhoto, err := createPurchaseOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
-			photoToCreate,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createPurchaseOrderItemComponent",
-				err,
-			)
-		}
-
-		jsonTemp, _ = json.Marshal(descriptivePhoto)
-		json.Unmarshal(jsonTemp, &createPurchaseOrderItem.DeliveryDetail.Photos[i])
-	}
 	_, err := createPurchaseOrderItemTrx.purchaseOrderItemLoader.TransactionBody(
 		session,
-		createPurchaseOrderItem.MouItem,
-		createPurchaseOrderItem.ProductVariant,
-		createPurchaseOrderItem.DeliveryDetail,
+		purchaseOrderItemToCreate.MouItem,
+		purchaseOrderItemToCreate.ProductVariant,
+		purchaseOrderItemToCreate.DeliveryDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -135,22 +79,22 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 		)
 	}
 
-	createPurchaseOrderItem.UnitPrice = createPurchaseOrderItem.ProductVariant.RetailPrice
-	if createPurchaseOrderItem.MouItem != nil {
+	purchaseOrderItemToCreate.UnitPrice = purchaseOrderItemToCreate.ProductVariant.RetailPrice
+	if purchaseOrderItemToCreate.MouItem != nil {
 		index := funk.IndexOf(
-			createPurchaseOrderItem.MouItem.AgreedProduct.Variants,
+			purchaseOrderItemToCreate.MouItem.AgreedProduct.Variants,
 			func(pv *model.InternalAgreedProductVariantInput) bool {
-				return pv.ID == createPurchaseOrderItem.ProductVariant.ID
+				return pv.ID == purchaseOrderItemToCreate.ProductVariant.ID
 			},
 		)
 		if index > -1 {
-			createPurchaseOrderItem.UnitPrice = *createPurchaseOrderItem.MouItem.AgreedProduct.Variants[index].RetailPrice
+			purchaseOrderItemToCreate.UnitPrice = *purchaseOrderItemToCreate.MouItem.AgreedProduct.Variants[index].RetailPrice
 		}
 	}
-	createPurchaseOrderItem.SubTotal = func(i int) *int { return &i }(createPurchaseOrderItem.Quantity * createPurchaseOrderItem.UnitPrice)
-	createPurchaseOrderItem.SalesAmount = createPurchaseOrderItem.SubTotal
+	purchaseOrderItemToCreate.SubTotal = purchaseOrderItemToCreate.Quantity * purchaseOrderItemToCreate.UnitPrice
+	purchaseOrderItemToCreate.SalesAmount = purchaseOrderItemToCreate.SubTotal
 
-	newDocumentJson, _ := json.Marshal(*createPurchaseOrderItem)
+	newDocumentJson, _ := json.Marshal(*purchaseOrderItemToCreate)
 	loggingOutput, err := createPurchaseOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "PurchaseOrderItem",
@@ -159,10 +103,10 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: createPurchaseOrderItem.SubmittingAccount.ID,
+				ID: purchaseOrderItemToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *createPurchaseOrderItem.ProposalStatus,
+			ProposalStatus: *purchaseOrderItemToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -173,15 +117,13 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 		)
 	}
 
-	createPurchaseOrderItem.ID = &generatedObjectID
-	createPurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *createPurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
-		createPurchaseOrderItem.RecentApprovingAccount = &model.ObjectIDOnly{ID: createPurchaseOrderItem.SubmittingAccount.ID}
+	purchaseOrderItemToCreate.ID = generatedObjectID
+	purchaseOrderItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *purchaseOrderItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		purchaseOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: purchaseOrderItemToCreate.SubmittingAccount.ID}
 	}
 
-	purchaseOrderItemToCreate := &model.DatabaseCreatePurchaseOrderItem{}
-	jsonTemp, _ := json.Marshal(createPurchaseOrderItem)
-	json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
+	jsonTemp, _ = json.Marshal(purchaseOrderItemToCreate)
 	json.Unmarshal(jsonTemp, &purchaseOrderItemToCreate.ProposedChanges)
 
 	createdPurchaseOrderItem, err := createPurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().Create(
