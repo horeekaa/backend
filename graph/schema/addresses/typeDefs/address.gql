@@ -25,7 +25,6 @@ input InternalCreateAddress {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateAddress {
@@ -84,7 +83,6 @@ input InternalUpdateAddress {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseUpdateAddress {
