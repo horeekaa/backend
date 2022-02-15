@@ -107,6 +107,14 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &purchaseOrderToUpdate.MemberAccess)
 
+	for i, poItem := range validatedInput.UpdatePurchaseOrder.Items {
+		if poItem.PurchaseOrderItemReturn != nil {
+			for j, descriptivePhoto := range poItem.PurchaseOrderItemReturn.Photos {
+				purchaseOrderToUpdate.Items[i].PurchaseOrderItemReturn.Photos[j].Photo.File = descriptivePhoto.Photo.File
+			}
+		}
+	}
+
 	// if user is only going to approve proposal
 	if purchaseOrderToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval == nil {

@@ -111,6 +111,12 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		for j, descriptivePhoto := range soItem.Photos {
 			supplyOrderToUpdate.Items[i].Photos[j].Photo.File = descriptivePhoto.Photo.File
 		}
+
+		if soItem.SupplyOrderItemReturn != nil {
+			for j, descriptivePhoto := range soItem.SupplyOrderItemReturn.Photos {
+				supplyOrderToUpdate.Items[i].SupplyOrderItemReturn.Photos[j].Photo.File = descriptivePhoto.Photo.File
+			}
+		}
 	}
 
 	// if user is only going to approve proposal
