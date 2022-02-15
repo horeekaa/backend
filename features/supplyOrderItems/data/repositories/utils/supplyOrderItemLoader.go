@@ -35,7 +35,7 @@ func NewSupplyOrderItemLoader(
 func (supOrderItemLoader *supplyOrderItemLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	purchaseOrderToSupply *model.PurchaseOrderToSupplyForSupplyOrderItemInput,
-	pickUp *model.InternalSupplyOrderItemPickUp,
+	pickUp *model.DatabaseSupplyOrderItemPickUp,
 ) (bool, error) {
 	purchaseOrderToSupplyLoadedChan := make(chan bool)
 	pickUpLoadedChan := make(chan bool)
