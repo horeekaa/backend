@@ -7,11 +7,9 @@ enum SupplyOrderItemStatus {
 
 input CreateSupplyOrderItem {
   quantityOffered: Int!
-  quantityAccepted: Int
-  notes: String
+  note: String
   unitPrice: Int!
   purchaseOrderToSupply: ObjectIDOnly!
-  proposalStatus: EntityProposalStatus
   pickUpDetail: CreateSupplyOrderItemPickUp!
   photos: [CreateDescriptivePhoto]
 }
@@ -19,35 +17,31 @@ input CreateSupplyOrderItem {
 input InternalCreateSupplyOrderItem {
   _id: ObjectID
   quantityOffered: Int!
-  quantityAccepted: Int
-  notes: String
   unitPrice: Int!
   subTotal: Int!
-  salesAmount: Int
-  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
+  note: String
+  purchaseOrderToSupply: ObjectIDOnly!
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
-  pickUpDetail: InternalSupplyOrderItemPickUp!
+  pickUpDetail: InternalCreateSupplyOrderItemPickUp!
   photos: [InternalCreateDescriptivePhoto]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateSupplyOrderItem
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateSupplyOrderItem {
   _id: ObjectID!
   quantityOffered: Int!
   quantityAccepted: Int!
-  notes: String
+  note: String
   unitPrice: Int!
   subTotal: Int!
   salesAmount: Int!
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean!
   supplyOrder: ObjectIDOnly!
-  pickUpDetail: DatabaseCreateSupplyOrderItemPickUp!
+  pickUpDetail: DatabaseSupplyOrderItemPickUp!
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
@@ -72,63 +66,48 @@ input UpdateSupplyOrderItem {
   _id: ObjectID
   quantityOffered: Int
   quantityAccepted: Int
-  notes: String
+  note: String
   unitPrice: Int
-  subTotal: Int
-  salesAmount: Int
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
   pickUpDetail: UpdateSupplyOrderItemPickUp
-  status: SupplyOrderItemStatus
   photos: [UpdateDescriptivePhoto]
   supplyOrderItemReturn: UpdateSupplyOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateSupplyOrderItem {
   _id: ObjectID
   quantityOffered: Int
   quantityAccepted: Int
-  notes: String
+  note: String
   unitPrice: Int
   subTotal: Int
-  salesAmount: Int
-  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
+  purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
-  pickUpDetail: InternalSupplyOrderItemPickUp
-  status: SupplyOrderItemStatus
+  pickUpDetail: InternalUpdateSupplyOrderItemPickUp
   photos: [InternalUpdateDescriptivePhoto]
   supplyOrderItemReturn: InternalSupplyOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateSupplyOrderItem
 }
 
 input DatabaseUpdateSupplyOrderItem {
   _id: ObjectID!
   quantityOffered: Int
   quantityAccepted: Int
-  notes: String
+  note: String
   unitPrice: Int
   subTotal: Int
   salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
-  pickUpDetail: DatabaseUpdateSupplyOrderItemPickUp
+  pickUpDetail: DatabaseSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
   supplyOrderItemReturn: DatabaseUpdateSupplyOrderItemReturn
@@ -145,7 +124,7 @@ input SupplyOrderItemFilterFields {
   _id: ObjectID
   quantityOffered: IntFilterField
   quantityAccepted: IntFilterField
-  notes: StringFilterField
+  note: StringFilterField
   unitPrice: IntFilterField
   subTotal: IntFilterField
   salesAmount: IntFilterField
@@ -169,7 +148,7 @@ type SupplyOrderItem {
   _id: ObjectID!
   quantityOffered: Int!
   quantityAccepted: Int!
-  notes: String
+  note: String
   unitPrice: Int!
   subTotal: Int!
   salesAmount: Int!

@@ -11,14 +11,9 @@ input CreateSupplyOrderItemPickUp {
   note: String
 }
 
-input DatabaseCreateSupplyOrderItemPickUp {
-  address: AddressForSupplyOrderItemInput!
-  photos: [ObjectIDOnly]!
-  courier: AccountForSupplyOrderItemInput
-  scheduledPickUpTime: Time
-  startPickUpTime: Time
-  finishPickUpTime: Time
-  status: PickUpStatus!
+input InternalCreateSupplyOrderItemPickUp {
+  address: ObjectIDOnly!
+  scheduledPickUpTime: Time!
   note: String
 }
 
@@ -37,23 +32,19 @@ input UpdateSupplyOrderItemPickUpByInternal {
   noOfPackages: Int
 }
 
-input InternalSupplyOrderItemPickUp {
-  publicId: String
+input InternalUpdateSupplyOrderItemPickUp {
   address: AddressForSupplyOrderItemInput
   photos: [InternalUpdateDescriptivePhoto]
   courier: AccountForSupplyOrderItemInput
   scheduledPickUpTime: Time
-  startPickUpTime: Time
-  finishPickUpTime: Time
   startedPickingUp: Boolean
   finishedPickingUp: Boolean
-  status: PickUpStatus
   note: String
   courierResponded: Boolean
   noOfPackages: Int
 }
 
-input DatabaseUpdateSupplyOrderItemPickUp {
+input DatabaseSupplyOrderItemPickUp {
   publicId: String
   address: AddressForSupplyOrderItemInput
   photos: [ObjectIDOnly]
