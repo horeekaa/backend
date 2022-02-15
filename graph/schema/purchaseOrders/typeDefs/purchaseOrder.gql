@@ -21,7 +21,7 @@ input InternalCreatePurchaseOrder {
   mouItems: [InternalCreatePurchaseOrderItem]
   retailItems: [InternalCreatePurchaseOrderItem]
   items: [InternalCreatePurchaseOrderItem]
-  mou: MouForPurchaseOrderInput!
+  mou: ObjectIDOnly!
   type: PurchaseOrderType!
   memberAccess: MemberAccessForPurchaseOrderInput!
   proposalStatus: EntityProposalStatus
@@ -65,13 +65,13 @@ input UpdatePurchaseOrder {
 input InternalUpdatePurchaseOrder {
   _id: ObjectID!
   items: [InternalUpdatePurchaseOrderItem]
-  mou: MouForPurchaseOrderInput
+  mou: ObjectIDOnly
   type: PurchaseOrderType
   status: PurchaseOrderStatus
   paymentDueDate: Time
   memberAccess: MemberAccessForPurchaseOrderInput!
   markAsReceived: Boolean
-  invoice: InvoiceForPurchaseOrderInput
+  invoice: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
