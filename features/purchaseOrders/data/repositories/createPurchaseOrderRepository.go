@@ -97,8 +97,8 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 		for _, e := range reflect.ValueOf(savedPurchaseOrderItems).MapKeys() {
 			purchaseOrderToCreate.Items = savedPurchaseOrderItems[e.String()]
 			purchaseOrderToCreate.Type = model.PurchaseOrderTypeMouBased
-			purchaseOrderToCreate.Mou = &model.MouForPurchaseOrderInput{
-				ID: *mouForPurchaseOrders[e.String()].ID,
+			purchaseOrderToCreate.Mou = &model.ObjectIDOnly{
+				ID: mouForPurchaseOrders[e.String()].ID,
 			}
 
 			purchaseOrder, err := createPurchaseOrderRepo.createPurchaseOrderTransactionComponent.TransactionBody(
