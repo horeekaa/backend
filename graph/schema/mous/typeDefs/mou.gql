@@ -11,7 +11,6 @@ input CreateMou {
   items: [CreateMouItem]
   firstParty: PartyInput!
   secondParty: PartyInput!
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateMou {
@@ -32,8 +31,6 @@ input InternalCreateMou {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateMou
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateMou {
@@ -77,14 +74,6 @@ input UpdateMou {
   secondParty: PartyInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateMou {
@@ -106,8 +95,6 @@ input InternalUpdateMou {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateMou
 }
 
 input DatabaseUpdateMou {
