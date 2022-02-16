@@ -38,10 +38,14 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) PreTransactio
 
 func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMouItem *model.InternalUpdateMouItem,
+	input *model.InternalUpdateMouItem,
 ) (*model.MouItem, error) {
+	updateMouItem := &model.DatabaseUpdateMouItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMouItem)
+
 	existingMouItem, err := approveProdVarTrx.mouItemDataSource.GetMongoDataSource().FindByID(
-		*updateMouItem.ID,
+		updateMouItem.ID,
 		session,
 	)
 	if err != nil {
@@ -73,7 +77,7 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateMouItem.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -95,7 +99,7 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 	updateMouItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdateMouItem := &model.DatabaseUpdateMouItem{
-		ID: *updateMouItem.ID,
+		ID: updateMouItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingMouItem.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateMouItem.ProposedChanges)
