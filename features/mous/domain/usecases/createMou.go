@@ -50,8 +50,6 @@ func (createMouUcase *createMouUsecase) validation(input moupresentationusecaset
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateMou.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -60,6 +58,9 @@ func (createMouUcase *createMouUsecase) Execute(input moupresentationusecasetype
 	if err != nil {
 		return nil, err
 	}
+	mouToCreate := &model.InternalCreateMou{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateMou)
+	json.Unmarshal(jsonTemp, mouToCreate)
 
 	account, err := createMouUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -97,16 +98,15 @@ func (createMouUcase *createMouUsecase) Execute(input moupresentationusecasetype
 			err,
 		)
 	}
+
+	mouToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.MouAccesses.MouApproval != nil {
 		if *accMemberAccess.Access.MouAccesses.MouApproval {
-			validatedInput.CreateMou.ProposalStatus =
+			mouToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	mouToCreate := &model.InternalCreateMou{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateMou)
-	json.Unmarshal(jsonTemp, mouToCreate)
 
 	mouToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdMou, err := createMouUcase.createMouRepo.RunTransaction(

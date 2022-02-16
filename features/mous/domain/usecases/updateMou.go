@@ -63,6 +63,9 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 	if err != nil {
 		return nil, err
 	}
+	mouToUpdate := &model.InternalUpdateMou{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateMou)
+	json.Unmarshal(jsonTemp, mouToUpdate)
 
 	account, err := updateMouUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -100,12 +103,6 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 			err,
 		)
 	}
-
-	mouToUpdate := &model.InternalUpdateMou{
-		ID: validatedInput.UpdateMou.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateMou)
-	json.Unmarshal(jsonTemp, mouToUpdate)
 
 	// if user is only going to approve proposal
 	if mouToUpdate.ProposalStatus != nil {
