@@ -64,6 +64,9 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	if err != nil {
 		return nil, err
 	}
+	productToUpdate := &model.InternalUpdateProduct{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateProduct)
+	json.Unmarshal(jsonTemp, productToUpdate)
 
 	account, err := updateProductUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -101,12 +104,6 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 			err,
 		)
 	}
-
-	productToUpdate := &model.InternalUpdateProduct{
-		ID: validatedInput.UpdateProduct.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateProduct)
-	json.Unmarshal(jsonTemp, productToUpdate)
 
 	for i, descriptivePhoto := range validatedInput.UpdateProduct.Photos {
 		if descriptivePhoto.Photo != nil {
