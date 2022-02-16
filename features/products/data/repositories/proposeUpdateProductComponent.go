@@ -49,8 +49,12 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) PreTransaction(
 
 func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateProduct *model.InternalUpdateProduct,
+	input *model.InternalUpdateProduct,
 ) (*model.Product, error) {
+	updateProduct := &model.DatabaseUpdateProduct{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateProduct)
+
 	existingProduct, err := updateProdTrx.productDataSource.GetMongoDataSource().FindByID(
 		updateProduct.ID,
 		session,

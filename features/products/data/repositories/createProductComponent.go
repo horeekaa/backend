@@ -63,7 +63,11 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProduct,
 ) (*model.Product, error) {
-	newDocumentJson, _ := json.Marshal(*input)
+	productToCreate := &model.DatabaseCreateProduct{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, productToCreate)
+
+	newDocumentJson, _ := json.Marshal(*productToCreate)
 	generatedObjectID := createProductTrx.GetCurrentObjectID()
 	loggingOutput, err := createProductTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -73,10 +77,10 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: productToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *productToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -87,16 +91,13 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	productToCreate.ID = generatedObjectID
+	productToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *productToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		productToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productToCreate.SubmittingAccount.ID}
 	}
 
-	productToCreate := &model.DatabaseCreateProduct{}
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, productToCreate)
+	jsonTemp, _ = json.Marshal(productToCreate)
 	json.Unmarshal(jsonTemp, &productToCreate.ProposedChanges)
 
 	newProduct, err := createProductTrx.productDataSource.GetMongoDataSource().Create(
