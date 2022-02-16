@@ -83,7 +83,7 @@ input InternalUpdatePurchaseOrderItem {
   subTotal: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
-  productVariant: ProductVariantForPurchaseOrderItemInput
+  productVariant: ObjectIDOnly
   deliveryDetail: InternalUpdatePurchaseOrderItemDelivery
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
