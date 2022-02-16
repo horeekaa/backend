@@ -46,10 +46,14 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Pre
 
 func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateProductVariant *model.InternalUpdateProductVariant,
+	input *model.InternalUpdateProductVariant,
 ) (*model.ProductVariant, error) {
+	updateProductVariant := &model.DatabaseUpdateProductVariant{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateProductVariant)
+
 	existingProductVariant, err := updateProdVariantTrx.productVariantDataSource.GetMongoDataSource().FindByID(
-		*updateProductVariant.ID,
+		updateProductVariant.ID,
 		session,
 	)
 	if err != nil {
@@ -59,17 +63,17 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 		)
 	}
 
-	if updateProductVariant.Photo != nil {
-		if updateProductVariant.Photo.ID != nil {
-			updateProductVariant.Photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+	if input.Photo != nil {
+		if input.Photo.ID != nil {
+			input.Photo.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
-			}(*updateProductVariant.ProposalStatus)
-			updateProductVariant.Photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			}(*input.ProposalStatus)
+			input.Photo.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
-			}(*updateProductVariant.SubmittingAccount)
+			}(*input.SubmittingAccount)
 			_, err := updateProdVariantTrx.proposeUpdateDescriptivePhotoComponent.TransactionBody(
 				session,
-				updateProductVariant.Photo,
+				input.Photo,
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -79,7 +83,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 			}
 		} else {
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
-			jsonTemp, _ := json.Marshal(updateProductVariant.Photo)
+			jsonTemp, _ := json.Marshal(input.Photo)
 			json.Unmarshal(jsonTemp, photoToCreate)
 			photoToCreate.Category = model.DescriptivePhotoCategoryProductVariant
 			photoToCreate.Object = &model.ObjectIDOnly{
@@ -87,12 +91,12 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 			}
 			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
-			}(*updateProductVariant.ProposalStatus)
+			}(*input.ProposalStatus)
 			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
-			}(*updateProductVariant.SubmittingAccount)
-			if funk.Get(updateProductVariant, "Photo.Photo") != nil {
-				photoToCreate.Photo.File = updateProductVariant.Photo.Photo.File
+			}(*input.SubmittingAccount)
+			if funk.Get(input, "Photo.Photo") != nil {
+				photoToCreate.Photo.File = input.Photo.Photo.File
 			}
 			createdDescriptivePhoto, err := updateProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
 				session,
@@ -111,6 +115,12 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 					&model.InternalUpdateDescriptivePhoto{
 						ID:       &existingProductVariant.Photo.ID,
 						IsActive: func(b bool) *bool { return &b }(false),
+						SubmittingAccount: func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+							return &m
+						}(*input.SubmittingAccount),
+						ProposalStatus: func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+							return &s
+						}(*input.ProposalStatus),
 					},
 				)
 				if err != nil {
@@ -120,7 +130,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 					)
 				}
 			}
-			updateProductVariant.Photo = &model.InternalUpdateDescriptivePhoto{
+			updateProductVariant.Photo = &model.ObjectIDOnly{
 				ID: &createdDescriptivePhoto.ID,
 			}
 		}
@@ -153,7 +163,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdateProductVariant := &model.DatabaseUpdateProductVariant{
-		ID: *updateProductVariant.ID,
+		ID: updateProductVariant.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingProductVariant)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateProductVariant.ProposedChanges)
