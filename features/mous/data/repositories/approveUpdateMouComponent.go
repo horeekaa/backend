@@ -38,8 +38,12 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) PreTransaction(
 
 func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMou *model.InternalUpdateMou,
+	input *model.InternalUpdateMou,
 ) (*model.Mou, error) {
+	updateMou := &model.DatabaseUpdateMou{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMou)
+
 	existingMou, err := approveMouTrx.mouDataSource.GetMongoDataSource().FindByID(
 		updateMou.ID,
 		session,
@@ -70,7 +74,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateMou.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,

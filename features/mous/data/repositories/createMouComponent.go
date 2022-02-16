@@ -58,8 +58,25 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMou,
 ) (*model.Mou, error) {
-	newDocumentJson, _ := json.Marshal(*input)
+	mouToCreate := &model.DatabaseCreateMou{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, mouToCreate)
+
 	generatedObjectID := createMouTrx.GetCurrentObjectID()
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	splittedId := strings.Split(generatedObjectID.Hex(), "")
+	mouToCreate.PublicID = func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
+		"MOU",
+		time.Now().In(loc).Format("20060102"),
+		strings.ToUpper(
+			strings.Join(
+				splittedId[len(splittedId)-4:],
+				"",
+			),
+		),
+	)
+
+	newDocumentJson, _ := json.Marshal(*mouToCreate)
 	loggingOutput, err := createMouTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Mou",
@@ -68,10 +85,10 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: mouToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *mouToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -82,29 +99,11 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		)
 	}
 
-	loc, _ := time.LoadLocation("Asia/Bangkok")
-	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
-		"MOU",
-		time.Now().In(loc).Format("20060102"),
-		strings.ToUpper(
-			strings.Join(
-				splittedId[len(splittedId)-4:],
-				"",
-			),
-		),
-	)
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	mouToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *mouToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		mouToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouToCreate.SubmittingAccount.ID}
 	}
 
-	mouToCreate := &model.DatabaseCreateMou{
-		ID: generatedObjectID,
-	}
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, mouToCreate)
 	_, err = createMouTrx.partyLoader.TransactionBody(
 		session,
 		input.FirstParty,

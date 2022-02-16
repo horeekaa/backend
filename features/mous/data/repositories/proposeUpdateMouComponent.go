@@ -42,9 +42,13 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) PreTransaction(
 
 func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMou *model.InternalUpdateMou,
+	input *model.InternalUpdateMou,
 ) (*model.Mou, error) {
-	existingmou, err := updateMouTrx.mouDataSource.GetMongoDataSource().FindByID(
+	updateMou := &model.DatabaseUpdateMou{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMou)
+
+	existingMou, err := updateMouTrx.mouDataSource.GetMongoDataSource().FindByID(
 		updateMou.ID,
 		session,
 	)
@@ -56,12 +60,12 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	}
 
 	newDocumentJson, _ := json.Marshal(*updateMou)
-	oldDocumentJson, _ := json.Marshal(*existingmou)
+	oldDocumentJson, _ := json.Marshal(*existingMou)
 	loggingOutput, err := updateMouTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "Mou",
 			Document: &model.ObjectIDOnly{
-				ID: &existingmou.ID,
+				ID: &existingMou.ID,
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			OldDocumentJSON: func(s string) *string { return &s }(string(oldDocumentJson)),
@@ -81,10 +85,33 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	}
 	updateMou.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
+	_, err = updateMouTrx.partyLoader.TransactionBody(
+		session,
+		input.FirstParty,
+		updateMou.ProposedChanges.FirstParty,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateMou",
+			err,
+		)
+	}
+	_, err = updateMouTrx.partyLoader.TransactionBody(
+		session,
+		input.SecondParty,
+		updateMou.ProposedChanges.SecondParty,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			"/updateMou",
+			err,
+		)
+	}
+
 	fieldsToUpdateMou := &model.DatabaseUpdateMou{
 		ID: updateMou.ID,
 	}
-	jsonExisting, _ := json.Marshal(existingmou)
+	jsonExisting, _ := json.Marshal(existingMou)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateMou.ProposedChanges)
 
 	var updateMouMap map[string]interface{}
@@ -95,30 +122,6 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 
 	jsonUpdate, _ = json.Marshal(updateMouMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateMou.ProposedChanges)
-
-	_, err = updateMouTrx.partyLoader.TransactionBody(
-		session,
-		updateMou.FirstParty,
-		fieldsToUpdateMou.ProposedChanges.FirstParty,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
-			err,
-		)
-	}
-	_, err = updateMouTrx.partyLoader.TransactionBody(
-		session,
-		updateMou.SecondParty,
-		fieldsToUpdateMou.ProposedChanges.SecondParty,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
-			err,
-		)
-	}
-	jsonUpdate, err = json.Marshal(fieldsToUpdateMou.ProposedChanges)
 
 	if updateMou.ProposalStatus != nil {
 		fieldsToUpdateMou.RecentApprovingAccount = &model.ObjectIDOnly{
