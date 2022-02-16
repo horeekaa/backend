@@ -13,6 +13,13 @@ input InternalAgreedProductInput {
   updatedAt: Time
 }
 
+input AgreedProductFilterFields {
+  name: StringFilterField
+  description: StringFilterField
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
 type AgreedProduct {
   name: String
   description: String
