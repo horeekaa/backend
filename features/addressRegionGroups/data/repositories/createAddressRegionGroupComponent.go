@@ -54,12 +54,15 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateAddressRegionGroup,
 ) (*model.AddressRegionGroup, error) {
-	newDocumentJson, _ := json.Marshal(*input)
-	generatedObjectID := createAddressRegionGroupTrx.GetCurrentObjectID()
+	addressRegionGroupToCreate := &model.DatabaseCreateAddressRegionGroup{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, addressRegionGroupToCreate)
 
+	newDocumentJson, _ := json.Marshal(*addressRegionGroupToCreate)
+	generatedObjectID := createAddressRegionGroupTrx.GetCurrentObjectID()
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	input.PublicID = func(s ...string) *string { joinedString := strings.Join(s, "/"); return &joinedString }(
+	addressRegionGroupToCreate.PublicID = func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
 		"ARG",
 		time.Now().In(loc).Format("20060102"),
 		strings.ToUpper(
@@ -77,10 +80,10 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: addressRegionGroupToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *addressRegionGroupToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -91,16 +94,13 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	addressRegionGroupToCreate.ID = generatedObjectID
+	addressRegionGroupToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *addressRegionGroupToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		addressRegionGroupToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: addressRegionGroupToCreate.SubmittingAccount.ID}
 	}
 
-	addressRegionGroupToCreate := &model.DatabaseCreateAddressRegionGroup{}
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, addressRegionGroupToCreate)
+	jsonTemp, _ = json.Marshal(addressRegionGroupToCreate)
 	json.Unmarshal(jsonTemp, &addressRegionGroupToCreate.ProposedChanges)
 
 	newAddressRegionGroup, err := createAddressRegionGroupTrx.addressRegionGroupDataSource.GetMongoDataSource().Create(

@@ -74,7 +74,7 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 	return memberAccessRefs, err
 }
 
-func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
+func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.DatabaseCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
 	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenCreate(
 		input,
 	)
@@ -93,7 +93,7 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *mo
 
 func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Update(
 	updateCriteria map[string]interface{},
-	updateData *model.InternalUpdateMemberAccessRef,
+	updateData *model.DatabaseUpdateMemberAccessRef,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.MemberAccessRef, error) {
 	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenUpdate(
@@ -123,7 +123,7 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Update(
 
 func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
-	input *model.InternalUpdateMemberAccessRef,
+	input *model.DatabaseUpdateMemberAccessRef,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	var currentTime = time.Now()
@@ -147,7 +147,7 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 }
 
 func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.InternalCreateMemberAccessRef,
+	input *model.DatabaseCreateMemberAccessRef,
 ) (bool, error) {
 	var currentTime = time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed

@@ -57,7 +57,7 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	mouItem *model.MouItemForPurchaseOrderItemInput,
 	productVariant *model.ProductVariantForPurchaseOrderItemInput,
-	delivery *model.InternalPurchaseOrderItemDelivery,
+	delivery *model.DatabasePurchaseOrderItemDelivery,
 ) (bool, error) {
 	mouItemLoadedChan := make(chan bool)
 	productVariantLoadedChan := make(chan bool)

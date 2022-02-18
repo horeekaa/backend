@@ -1,22 +1,18 @@
 input CreateAddressRegionGroup {
   cities: [City]
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateAddressRegionGroup {
   _id: ObjectID!
-  publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateAddressRegionGroup
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateAddressRegionGroup {
   _id: ObjectID!
-  publicId: String
+  publicId: String!
   cities: [City]
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -29,35 +25,22 @@ input DatabaseCreateAddressRegionGroup {
 
 input UpdateAddressRegionGroup {
   _id: ObjectID!
-  publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateAddressRegionGroup {
   _id: ObjectID!
-  publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateAddressRegionGroup
 }
 
 input DatabaseUpdateAddressRegionGroup {
   _id: ObjectID!
-  publicId: String
   cities: [City]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String

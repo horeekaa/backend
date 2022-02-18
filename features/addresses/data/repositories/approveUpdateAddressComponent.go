@@ -38,10 +38,14 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) PreTransaction(
 
 func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateAddress *model.InternalUpdateAddress,
+	input *model.InternalUpdateAddress,
 ) (*model.Address, error) {
+	updateAddress := &model.DatabaseUpdateAddress{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateAddress)
+
 	existingAddress, err := approveAddrTrx.addressDataSource.GetMongoDataSource().FindByID(
-		*updateAddress.ID,
+		updateAddress.ID,
 		session,
 	)
 	if err != nil {
@@ -73,7 +77,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateAddress.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -95,7 +99,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	updateAddress.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdateAddress := &model.DatabaseUpdateAddress{
-		ID: *updateAddress.ID,
+		ID: updateAddress.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingAddress.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateAddress.ProposedChanges)

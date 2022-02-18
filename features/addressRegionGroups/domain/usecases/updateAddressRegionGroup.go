@@ -63,6 +63,9 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 	if err != nil {
 		return nil, err
 	}
+	addressRegionGroupToUpdate := &model.InternalUpdateAddressRegionGroup{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateAddressRegionGroup)
+	json.Unmarshal(jsonTemp, addressRegionGroupToUpdate)
 
 	account, err := updateAddressRegionGroupUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -100,12 +103,6 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 			err,
 		)
 	}
-
-	addressRegionGroupToUpdate := &model.InternalUpdateAddressRegionGroup{
-		ID: validatedInput.UpdateAddressRegionGroup.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateAddressRegionGroup)
-	json.Unmarshal(jsonTemp, addressRegionGroupToUpdate)
 
 	// if user is only going to approve proposal
 	if addressRegionGroupToUpdate.ProposalStatus != nil {

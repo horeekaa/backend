@@ -38,8 +38,12 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 
 func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateAddressRegionGroup *model.InternalUpdateAddressRegionGroup,
+	input *model.InternalUpdateAddressRegionGroup,
 ) (*model.AddressRegionGroup, error) {
+	updateAddressRegionGroup := &model.DatabaseUpdateAddressRegionGroup{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateAddressRegionGroup)
+
 	existingAddressRegionGroup, err := approveAddressRegionGroupTrx.addressRegionGroupDataSource.GetMongoDataSource().FindByID(
 		updateAddressRegionGroup.ID,
 		session,
@@ -70,7 +74,7 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateAddressRegionGroup.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,

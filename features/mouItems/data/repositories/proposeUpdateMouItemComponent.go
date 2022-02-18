@@ -42,10 +42,14 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) PreTransaction
 
 func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMouItem *model.InternalUpdateMouItem,
+	input *model.InternalUpdateMouItem,
 ) (*model.MouItem, error) {
+	updateMouItem := &model.DatabaseUpdateMouItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMouItem)
+
 	existingMouItem, err := updateMouItemTrx.mouItemDataSource.GetMongoDataSource().FindByID(
-		*updateMouItem.ID,
+		updateMouItem.ID,
 		session,
 	)
 	if err != nil {
@@ -90,7 +94,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 	updateMouItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdateMouItem := &model.DatabaseUpdateMouItem{
-		ID: *updateMouItem.ID,
+		ID: updateMouItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingMouItem)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateMouItem.ProposedChanges)

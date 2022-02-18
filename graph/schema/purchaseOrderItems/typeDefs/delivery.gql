@@ -31,15 +31,10 @@ input CreatePurchaseOrderItemDelivery {
   note: String
 }
 
-input DatabaseCreatePurchaseOrderItemDelivery {
-  address: AddressForPurchaseOrderItemInput!
-  photos: [ObjectIDOnly]!
-  courier: AccountForPurchaseOrderItemInput
+input InternalCreatePurchaseOrderItemDelivery {
+  address: ObjectIDOnly!
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
-  startDeliveryTime: Time
-  finishDeliveryTime: Time
-  status: DeliveryStatus!
   note: String
 }
 
@@ -60,25 +55,21 @@ input UpdatePurchaseOrderItemDeliveryByInternal {
   noOfPackages: Int
 }
 
-input InternalPurchaseOrderItemDelivery {
-  publicId: String
+input InternalUpdatePurchaseOrderItemDelivery {
   address: AddressForPurchaseOrderItemInput
   photosAfterReceived: [InternalUpdateDescriptivePhoto]
   photos: [InternalUpdateDescriptivePhoto]
-  courier: AccountForPurchaseOrderItemInput
   timeSlot: DeliveryTimeSlot
   expectedArrivalDate: Time
-  startDeliveryTime: Time
-  finishDeliveryTime: Time
+  courier: ObjectIDOnly
   startedDelivering: Boolean
   finishedDelivering: Boolean
-  status: DeliveryStatus
   note: String
   courierResponded: Boolean
   noOfPackages: Int
 }
 
-input DatabaseUpdatePurchaseOrderItemDelivery {
+input DatabasePurchaseOrderItemDelivery {
   publicId: String
   address: AddressForPurchaseOrderItemInput
   photosAfterReceived: [ObjectIDOnly]

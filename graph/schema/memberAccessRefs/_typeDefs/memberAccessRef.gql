@@ -42,7 +42,6 @@ input CreateMemberAccessRef {
   memberAccessRefType: MemberAccessRefType!
   organizationMembershipRole: OrganizationMembershipRole
   organizationType: OrganizationType
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateMemberAccessRef {
@@ -54,7 +53,18 @@ input InternalCreateMemberAccessRef {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateMemberAccessRef
+}
+
+input DatabaseCreateMemberAccessRef {
+  _id: ObjectID!
+  access: MemberAccessRefOptionsInput!
+  memberAccessRefType: MemberAccessRefType!
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateMemberAccessRef
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -68,14 +78,6 @@ input UpdateMemberAccessRef {
   organizationType: OrganizationType
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateMemberAccessRef {
@@ -88,7 +90,19 @@ input InternalUpdateMemberAccessRef {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateMemberAccessRef
+}
+
+input DatabaseUpdateMemberAccessRef {
+  _id: ObjectID!
+  access: MemberAccessRefOptionsInput
+  memberAccessRefType: MemberAccessRefType
+  organizationMembershipRole: OrganizationMembershipRole
+  organizationType: OrganizationType
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdateMemberAccessRef
   recentLog: ObjectIDOnly
   updatedAt: Time
 }

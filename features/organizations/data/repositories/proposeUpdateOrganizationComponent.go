@@ -49,8 +49,12 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) PreTransactio
 
 func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateOrganization *model.InternalUpdateOrganization,
+	input *model.InternalUpdateOrganization,
 ) (*model.Organization, error) {
+	updateOrganization := &model.DatabaseUpdateOrganization{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateOrganization)
+
 	existingOrganization, err := updateOrgTrx.organizationDataSource.GetMongoDataSource().FindByID(
 		updateOrganization.ID,
 		session,

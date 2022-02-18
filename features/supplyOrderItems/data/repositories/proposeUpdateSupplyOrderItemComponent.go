@@ -58,10 +58,14 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 
 func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateSupplyOrderItem *model.InternalUpdateSupplyOrderItem,
+	input *model.InternalUpdateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
+	updateSupplyOrderItem := &model.DatabaseUpdateSupplyOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+
 	existingSupplyOrderItem, err := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().FindByID(
-		*updateSupplyOrderItem.ID,
+		updateSupplyOrderItem.ID,
 		session,
 	)
 	if err != nil {
@@ -71,9 +75,9 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		)
 	}
 
-	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {
+	if input.SupplyOrderItemReturn != nil {
 		savedPhotosReturn := existingSupplyOrderItem.SupplyOrderItemReturn.Photos
-		for _, photoToUpdate := range updateSupplyOrderItem.SupplyOrderItemReturn.Photos {
+		for _, photoToUpdate := range input.SupplyOrderItemReturn.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingSupplyOrderItem.SupplyOrderItemReturn.Photos,
@@ -155,9 +159,9 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
-	if updateSupplyOrderItem.Photos != nil {
+	if input.Photos != nil {
 		savedPhotos := existingSupplyOrderItem.Photos
-		for _, photoToUpdate := range updateSupplyOrderItem.Photos {
+		for _, photoToUpdate := range input.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingSupplyOrderItem.Photos,
@@ -237,9 +241,9 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 	}
 
-	if updateSupplyOrderItem.PickUpDetail != nil {
+	if input.PickUpDetail != nil {
 		savedPhotos := existingSupplyOrderItem.PickUpDetail.Photos
-		for _, photoToUpdate := range updateSupplyOrderItem.PickUpDetail.Photos {
+		for _, photoToUpdate := range input.PickUpDetail.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingSupplyOrderItem.PickUpDetail.Photos,
@@ -320,7 +324,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		)
 		json.Unmarshal(jsonTemp, updateSupplyOrderItem)
 
-		if updateSupplyOrderItem.PickUpDetail.Courier != nil {
+		if input.PickUpDetail.Courier != nil {
 			generatedObjectID := updateSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
 			loc, _ := time.LoadLocation("Asia/Bangkok")
 			splittedId := strings.Split(generatedObjectID.Hex(), "")
@@ -336,16 +340,16 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			)
 		}
 
-		if updateSupplyOrderItem.PickUpDetail.CourierResponded != nil {
-			if *updateSupplyOrderItem.PickUpDetail.CourierResponded {
+		if input.PickUpDetail.CourierResponded != nil {
+			if *input.PickUpDetail.CourierResponded {
 				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
 					return &m
 				}(model.PickUpStatusDriverAssigned)
 			}
 		}
 
-		if updateSupplyOrderItem.PickUpDetail.StartedPickingUp != nil {
-			if *updateSupplyOrderItem.PickUpDetail.StartedPickingUp {
+		if input.PickUpDetail.StartedPickingUp != nil {
+			if *input.PickUpDetail.StartedPickingUp {
 				currentTime := time.Now().UTC()
 				updateSupplyOrderItem.PickUpDetail.StartPickUpTime = &currentTime
 				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
@@ -354,8 +358,8 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			}
 		}
 
-		if updateSupplyOrderItem.PickUpDetail.FinishedPickingUp != nil {
-			if *updateSupplyOrderItem.PickUpDetail.FinishedPickingUp {
+		if input.PickUpDetail.FinishedPickingUp != nil {
+			if *input.PickUpDetail.FinishedPickingUp {
 				currentTime := time.Now().UTC()
 				updateSupplyOrderItem.PickUpDetail.FinishPickUpTime = &currentTime
 				updateSupplyOrderItem.PickUpDetail.Status = func(m model.PickUpStatus) *model.PickUpStatus {
@@ -515,7 +519,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	updateSupplyOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdatesupplyOrderItem := &model.DatabaseUpdateSupplyOrderItem{
-		ID: *updateSupplyOrderItem.ID,
+		ID: updateSupplyOrderItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingSupplyOrderItem)
 	json.Unmarshal(jsonExisting, &fieldsToUpdatesupplyOrderItem.ProposedChanges)

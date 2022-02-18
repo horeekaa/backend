@@ -46,10 +46,14 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 
 func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateSupplyOrderItem *model.InternalUpdateSupplyOrderItem,
+	input *model.InternalUpdateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
+	updateSupplyOrderItem := &model.DatabaseUpdateSupplyOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateSupplyOrderItem)
+
 	existingSupplyOrderItem, err := approveSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().FindByID(
-		*updateSupplyOrderItem.ID,
+		updateSupplyOrderItem.ID,
 		session,
 	)
 	if err != nil {
@@ -81,7 +85,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateSupplyOrderItem.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -103,7 +107,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 	updateSupplyOrderItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdateSupplyOrderItem := &model.DatabaseUpdateSupplyOrderItem{
-		ID: *updateSupplyOrderItem.ID,
+		ID: updateSupplyOrderItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingSupplyOrderItem.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateSupplyOrderItem.ProposedChanges)

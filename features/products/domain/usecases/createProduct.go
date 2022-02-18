@@ -51,8 +51,6 @@ func (createProductUcase *createProductUsecase) validation(input productpresenta
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateProduct.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -61,6 +59,9 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	if err != nil {
 		return nil, err
 	}
+	productToCreate := &model.InternalCreateProduct{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateProduct)
+	json.Unmarshal(jsonTemp, productToCreate)
 
 	account, err := createProductUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -98,16 +99,15 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 			err,
 		)
 	}
+
+	productToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.ProductAccesses.ProductApproval != nil {
 		if *accMemberAccess.Access.ProductAccesses.ProductApproval {
-			validatedInput.CreateProduct.ProposalStatus =
+			productToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	productToCreate := &model.InternalCreateProduct{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateProduct)
-	json.Unmarshal(jsonTemp, productToCreate)
 
 	for i, descriptivePhoto := range validatedInput.CreateProduct.Photos {
 		if descriptivePhoto.Photo != nil {

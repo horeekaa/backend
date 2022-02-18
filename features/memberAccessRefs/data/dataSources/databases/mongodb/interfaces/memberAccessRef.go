@@ -14,7 +14,7 @@ type MemberAccessRefDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.MemberAccessRef, error)
-	Create(input *model.InternalCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
-	Update(updateCriteria map[string]interface{}, updateData *model.InternalUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
+	Create(input *model.DatabaseCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error)
 	GenerateObjectID() primitive.ObjectID
 }

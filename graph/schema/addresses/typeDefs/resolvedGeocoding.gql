@@ -6,6 +6,14 @@ input ResolvedGeocodingInput {
   streetName: String
 }
 
+input ResolvedGeocodingFilterFields {
+  province: StringFilterField
+  district: StringFilterField
+  municipality: StringFilterField
+  zipCode: StringFilterField
+  streetName: StringFilterField
+}
+
 type ResolvedGeocoding {
   province: String
   district: String

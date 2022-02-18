@@ -26,7 +26,6 @@ input CreateProductVariant {
   soldInUnit: SellingUnitType
   isActive: Boolean
   photo: CreateDescriptivePhoto
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateProductVariant {
@@ -45,8 +44,6 @@ input InternalCreateProductVariant {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateProductVariant
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateProductVariant {
@@ -89,14 +86,6 @@ input UpdateProductVariant {
   photo: UpdateDescriptivePhoto
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateProductVariant {
@@ -115,8 +104,6 @@ input InternalUpdateProductVariant {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateProductVariant
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseUpdateProductVariant {

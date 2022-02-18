@@ -63,6 +63,9 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	if err != nil {
 		return nil, err
 	}
+	supplyOrderToUpdate := &model.InternalUpdateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateSupplyOrder)
+	json.Unmarshal(jsonTemp, supplyOrderToUpdate)
 
 	account, err := updateSupplyOrderUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -101,18 +104,18 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		)
 	}
 
-	supplyOrderToUpdate := &model.InternalUpdateSupplyOrder{
-		ID: validatedInput.UpdateSupplyOrder.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateSupplyOrder)
-	json.Unmarshal(jsonTemp, supplyOrderToUpdate)
-
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &supplyOrderToUpdate.MemberAccess)
 
 	for i, soItem := range validatedInput.UpdateSupplyOrder.Items {
 		for j, descriptivePhoto := range soItem.Photos {
 			supplyOrderToUpdate.Items[i].Photos[j].Photo.File = descriptivePhoto.Photo.File
+		}
+
+		if soItem.SupplyOrderItemReturn != nil {
+			for j, descriptivePhoto := range soItem.SupplyOrderItemReturn.Photos {
+				supplyOrderToUpdate.Items[i].SupplyOrderItemReturn.Photos[j].Photo.File = descriptivePhoto.Photo.File
+			}
 		}
 	}
 

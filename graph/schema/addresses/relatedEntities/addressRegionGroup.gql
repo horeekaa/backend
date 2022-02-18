@@ -3,7 +3,7 @@ input AddressRegionGroupForAddressInput {
   publicId: String!
 }
 
-input AddressRegionGroupForAddressFilterField {
+input AddressRegionGroupForAddressFilterFields {
   _id: ObjectID
   publicId: StringFilterField
 }

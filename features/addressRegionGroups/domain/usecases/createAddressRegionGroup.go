@@ -50,8 +50,6 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) validation
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateAddressRegionGroup.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -60,6 +58,9 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) Execute(in
 	if err != nil {
 		return nil, err
 	}
+	addressRegionGroupToCreate := &model.InternalCreateAddressRegionGroup{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateAddressRegionGroup)
+	json.Unmarshal(jsonTemp, addressRegionGroupToCreate)
 
 	account, err := createAddressRegionGroupUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -97,16 +98,15 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) Execute(in
 			err,
 		)
 	}
+
+	addressRegionGroupToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.AddressRegionGroupAccesses.AddressRegionGroupApproval != nil {
 		if *accMemberAccess.Access.AddressRegionGroupAccesses.AddressRegionGroupApproval {
-			validatedInput.CreateAddressRegionGroup.ProposalStatus =
+			addressRegionGroupToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	addressRegionGroupToCreate := &model.InternalCreateAddressRegionGroup{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateAddressRegionGroup)
-	json.Unmarshal(jsonTemp, addressRegionGroupToCreate)
 
 	addressRegionGroupToCreate.SubmittingAccount = &model.ObjectIDOnly{ID: &account.ID}
 	createdAddressRegionGroup, err := createAddressRegionGroupUcase.createAddressRegionGroupRepo.RunTransaction(

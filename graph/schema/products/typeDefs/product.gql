@@ -5,7 +5,6 @@ input CreateProduct {
   photos: [CreateDescriptivePhoto]
   variants: [CreateProductVariant]
   taggings: [CreateTagging]
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateProduct {
@@ -16,14 +15,9 @@ input InternalCreateProduct {
   photos: [InternalCreateDescriptivePhoto]
   variants: [InternalCreateProductVariant]
   taggings: [InternalCreateTagging]
-  syncedWithES: Boolean!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateProduct
-  recentLog: ObjectIDOnly
-  createdAt: Time
-  updatedAt: Time
 }
 
 input DatabaseCreateProduct {
@@ -60,14 +54,6 @@ input UpdateProduct {
   taggings: [UpdateTagging]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateProduct {
@@ -78,13 +64,10 @@ input InternalUpdateProduct {
   photos: [InternalUpdateDescriptivePhoto]
   variants: [InternalUpdateProductVariant]
   taggings: [InternalUpdateTagging]
-  syncedWithES: Boolean
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateProduct
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseUpdateProduct {

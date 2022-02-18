@@ -57,13 +57,6 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) GetCurren
 func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) PreTransaction(
 	input *model.InternalCreatePurchaseOrder,
 ) (*model.InternalCreatePurchaseOrder, error) {
-	return input, nil
-}
-
-func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) TransactionBody(
-	session *mongodbcoretypes.OperationOptions,
-	input *model.InternalCreatePurchaseOrder,
-) (*model.PurchaseOrder, error) {
 	purchaseOrder, err := createPurchaseOrderTrx.purchaseOrderDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
 			"status": map[string]interface{}{
@@ -77,7 +70,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 			"type":             model.PurchaseOrderTypeRetail,
 			"organization._id": input.MemberAccess.Organization.ID,
 		},
-		session,
+		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -92,38 +85,43 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 			nil,
 		)
 	}
+	return input, nil
+}
+
+func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) TransactionBody(
+	session *mongodbcoretypes.OperationOptions,
+	input *model.InternalCreatePurchaseOrder,
+) (*model.PurchaseOrder, error) {
+	purchaseOrderToCreate := &model.DatabaseCreatePurchaseOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
 
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	generatedObjectID := createPurchaseOrderTrx.GetCurrentObjectID()
 	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	purchaseOrderToCreate := &model.DatabaseCreatePurchaseOrder{
-		ID: generatedObjectID,
-		PublicID: func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
-			"PO",
-			time.Now().In(loc).Format("20060102"),
-			strings.ToUpper(
-				strings.Join(
-					splittedId[len(splittedId)-4:],
-					"",
-				),
+	purchaseOrderToCreate.ID = generatedObjectID
+	purchaseOrderToCreate.PublicID = func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
+		"PO",
+		time.Now().In(loc).Format("20060102"),
+		strings.ToUpper(
+			strings.Join(
+				splittedId[len(splittedId)-4:],
+				"",
 			),
 		),
-	}
+	)
 
 	totalPrice := 0
 	for _, item := range input.Items {
 		totalPrice += *item.SubTotal
 	}
-	input.Total = totalPrice
-	input.FinalSalesAmount = input.Total
-
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
+	purchaseOrderToCreate.Total = totalPrice
+	purchaseOrderToCreate.FinalSalesAmount = purchaseOrderToCreate.Total
 
 	purchaseOrderToCreate.Organization = &model.OrganizationForPurchaseOrderInput{
-		ID: input.MemberAccess.Organization.ID,
+		ID: *input.MemberAccess.Organization.ID,
 	}
-	_, err = createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
+	_, err := createPurchaseOrderTrx.purchaseOrderDataLoader.TransactionBody(
 		session,
 		purchaseOrderToCreate.Mou,
 		purchaseOrderToCreate.Organization,
@@ -135,7 +133,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		)
 	}
 	if purchaseOrderToCreate.Mou != nil {
-		if input.Total < *purchaseOrderToCreate.Mou.MinimumOrderValueBeforeDelivery {
+		if purchaseOrderToCreate.Total < *purchaseOrderToCreate.Mou.MinimumOrderValueBeforeDelivery {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
 				"/createPurchaseOrder",
@@ -143,7 +141,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 			)
 		}
 
-		*purchaseOrderToCreate.Mou.RemainingCreditLimit -= input.FinalSalesAmount
+		*purchaseOrderToCreate.Mou.RemainingCreditLimit -= purchaseOrderToCreate.FinalSalesAmount
 		if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POSalesAmountExceedCreditLimit,

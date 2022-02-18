@@ -56,13 +56,17 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMouItem,
 ) (*model.MouItem, error) {
+	mouItemToCreate := &model.DatabaseCreateMouItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, mouItemToCreate)
+
 	createMouItemTrx.agreedProductLoader.TransactionBody(
 		session,
-		input.Product,
-		input.AgreedProduct,
+		mouItemToCreate.Product,
+		mouItemToCreate.AgreedProduct,
 	)
 
-	newDocumentJson, _ := json.Marshal(*input)
+	newDocumentJson, _ := json.Marshal(*mouItemToCreate)
 	generatedObjectID := createMouItemTrx.GetCurrentObjectID()
 	loggingOutput, err := createMouItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -72,10 +76,10 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: mouItemToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *mouItemToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -86,15 +90,13 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 		)
 	}
 
-	input.ID = &generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	mouItemToCreate.ID = generatedObjectID
+	mouItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *mouItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		mouItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouItemToCreate.SubmittingAccount.ID}
 	}
 
-	mouItemToCreate := &model.DatabaseCreateMouItem{}
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, mouItemToCreate)
+	jsonTemp, _ = json.Marshal(mouItemToCreate)
 	json.Unmarshal(jsonTemp, &mouItemToCreate.ProposedChanges)
 
 	createdVariant, err := createMouItemTrx.mouItemDataSource.GetMongoDataSource().Create(

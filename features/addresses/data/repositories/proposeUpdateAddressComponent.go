@@ -43,10 +43,14 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) PreTransaction(
 
 func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateAddress *model.InternalUpdateAddress,
+	input *model.InternalUpdateAddress,
 ) (*model.Address, error) {
+	updateAddress := &model.DatabaseUpdateAddress{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateAddress)
+
 	existingAddress, err := updateAddrTrx.addressDataSource.GetMongoDataSource().FindByID(
-		*updateAddress.ID,
+		updateAddress.ID,
 		session,
 	)
 	if err != nil {
@@ -103,7 +107,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	updateAddress.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdateAddress := &model.DatabaseUpdateAddress{
-		ID: *updateAddress.ID,
+		ID: updateAddress.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingAddress)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateAddress.ProposedChanges)

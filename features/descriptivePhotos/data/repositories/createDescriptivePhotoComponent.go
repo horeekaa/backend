@@ -58,6 +58,10 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateDescriptivePhoto,
 ) (*model.DescriptivePhoto, error) {
+	descPhotoToCreate := &model.DatabaseCreateDescriptivePhoto{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, descPhotoToCreate)
+
 	if input.Photo != nil {
 		photoUrl, err := createDescPhotoTrx.gcsBasicImageStoring.UploadImage(
 			context.Background(),
@@ -70,10 +74,10 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 				err,
 			)
 		}
-		input.PhotoURL = &photoUrl
+		descPhotoToCreate.PhotoURL = &photoUrl
 	}
 
-	newDocumentJson, _ := json.Marshal(*input)
+	newDocumentJson, _ := json.Marshal(*descPhotoToCreate)
 	generatedObjectID := createDescPhotoTrx.GetCurrentObjectID()
 	loggingOutput, err := createDescPhotoTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -83,10 +87,10 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: descPhotoToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *descPhotoToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -96,15 +100,13 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 			err,
 		)
 	}
-	input.ID = &generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	descPhotoToCreate.ID = &generatedObjectID
+	descPhotoToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *descPhotoToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		descPhotoToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: descPhotoToCreate.SubmittingAccount.ID}
 	}
 
-	descPhotoToCreate := &model.DatabaseCreateDescriptivePhoto{}
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, descPhotoToCreate)
+	jsonTemp, _ = json.Marshal(descPhotoToCreate)
 	json.Unmarshal(jsonTemp, &descPhotoToCreate.ProposedChanges)
 
 	createdDescPhoto, err := createDescPhotoTrx.descriptivePhotoDataSource.GetMongoDataSource().Create(

@@ -44,10 +44,14 @@ func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) Pre
 
 func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateDescriptivePhoto *model.InternalUpdateDescriptivePhoto,
+	input *model.InternalUpdateDescriptivePhoto,
 ) (*model.DescriptivePhoto, error) {
+	updateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateDescriptivePhoto)
+
 	existingDescriptivePhoto, err := updateDescPhotoTrx.descriptivePhotoDataSource.GetMongoDataSource().FindByID(
-		*updateDescriptivePhoto.ID,
+		updateDescriptivePhoto.ID,
 		session,
 	)
 	if err != nil {
@@ -57,7 +61,7 @@ func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) Tra
 		)
 	}
 
-	if updateDescriptivePhoto.Photo != nil {
+	if input.Photo != nil {
 		go func() {
 			updateDescPhotoTrx.gcsBasicImageStoring.DeleteImage(
 				context.Background(),
@@ -67,7 +71,7 @@ func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) Tra
 		photoUrl, err := updateDescPhotoTrx.gcsBasicImageStoring.UploadImage(
 			context.Background(),
 			existingDescriptivePhoto.Category,
-			googlecloudstoragecoretypes.GCSFileUpload(*updateDescriptivePhoto.Photo),
+			googlecloudstoragecoretypes.GCSFileUpload(*input.Photo),
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -105,7 +109,7 @@ func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) Tra
 	updateDescriptivePhoto.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{
-		ID: *updateDescriptivePhoto.ID,
+		ID: updateDescriptivePhoto.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingDescriptivePhoto)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateDescriptivePhoto.ProposedChanges)

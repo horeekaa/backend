@@ -56,6 +56,10 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateProductVariant,
 ) (*model.ProductVariant, error) {
+	productVariantToCreate := &model.DatabaseCreateProductVariant{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, productVariantToCreate)
+
 	generatedObjectID := createProdVariantTrx.GetCurrentObjectID()
 	if input.Photo != nil {
 		input.Photo.Category = model.DescriptivePhotoCategoryProductVariant
@@ -79,12 +83,12 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 			)
 		}
 
-		input.Photo = &model.InternalCreateDescriptivePhoto{
+		productVariantToCreate.Photo = &model.ObjectIDOnly{
 			ID: &descriptivePhoto.ID,
 		}
 	}
 
-	newDocumentJson, _ := json.Marshal(*input)
+	newDocumentJson, _ := json.Marshal(*productVariantToCreate)
 	loggingOutput, err := createProdVariantTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "ProductVariant",
@@ -93,10 +97,10 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: productVariantToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *productVariantToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -107,19 +111,17 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 		)
 	}
 
-	input.ID = &generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	productVariantToCreate.ID = generatedObjectID
+	productVariantToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *productVariantToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		productVariantToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productVariantToCreate.SubmittingAccount.ID}
 	}
 
-	variantToCreate := &model.DatabaseCreateProductVariant{}
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, variantToCreate)
-	json.Unmarshal(jsonTemp, &variantToCreate.ProposedChanges)
+	jsonTemp, _ = json.Marshal(productVariantToCreate)
+	json.Unmarshal(jsonTemp, &productVariantToCreate.ProposedChanges)
 
 	createdVariant, err := createProdVariantTrx.productVariantDataSource.GetMongoDataSource().Create(
-		variantToCreate,
+		productVariantToCreate,
 		session,
 	)
 	if err != nil {

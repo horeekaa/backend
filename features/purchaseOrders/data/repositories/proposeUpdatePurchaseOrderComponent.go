@@ -53,8 +53,12 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Pr
 
 func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updatePurchaseOrder *model.InternalUpdatePurchaseOrder,
+	input *model.InternalUpdatePurchaseOrder,
 ) (*model.PurchaseOrder, error) {
+	updatePurchaseOrder := &model.DatabaseUpdatePurchaseOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updatePurchaseOrder)
+
 	existingPurchaseOrder, err := updatePurchaseOrderTrx.purchaseOrderDataSource.GetMongoDataSource().FindByID(
 		updatePurchaseOrder.ID,
 		session,
@@ -159,8 +163,8 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		}
 	}
 
-	if updatePurchaseOrder.MarkAsReceived != nil {
-		if *updatePurchaseOrder.MarkAsReceived {
+	if input.MarkAsReceived != nil {
+		if *input.MarkAsReceived {
 			loc, _ := time.LoadLocation("Asia/Bangkok")
 			currentTime := time.Now().UTC()
 			updatePurchaseOrder.ReceivingDateTime = &currentTime
@@ -246,7 +250,6 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 
 	jsonUpdate, _ = json.Marshal(updatepurchaseOrderMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdatePurchaseOrder.ProposedChanges)
-	jsonUpdate, err = json.Marshal(fieldsToUpdatePurchaseOrder.ProposedChanges)
 
 	if updatePurchaseOrder.ProposalStatus != nil {
 		fieldsToUpdatePurchaseOrder.RecentApprovingAccount = &model.ObjectIDOnly{

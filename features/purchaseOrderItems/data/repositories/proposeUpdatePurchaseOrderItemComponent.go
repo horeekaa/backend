@@ -58,10 +58,14 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 
 func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updatePurchaseOrderItem *model.InternalUpdatePurchaseOrderItem,
+	input *model.InternalUpdatePurchaseOrderItem,
 ) (*model.PurchaseOrderItem, error) {
+	updatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
+
 	existingPurchaseOrderItem, err := updatePurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().FindByID(
-		*updatePurchaseOrderItem.ID,
+		updatePurchaseOrderItem.ID,
 		session,
 	)
 	if err != nil {
@@ -70,9 +74,9 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			err,
 		)
 	}
-	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+	if input.PurchaseOrderItemReturn != nil {
 		savedPhotosReturn := existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos
-		for _, photoToUpdate := range updatePurchaseOrderItem.PurchaseOrderItemReturn.Photos {
+		for _, photoToUpdate := range input.PurchaseOrderItemReturn.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos,
@@ -154,9 +158,9 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
 	}
 
-	if updatePurchaseOrderItem.DeliveryDetail != nil {
+	if input.DeliveryDetail != nil {
 		savedPhotosAfterReceived := existingPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived
-		for _, photoToUpdate := range updatePurchaseOrderItem.DeliveryDetail.PhotosAfterReceived {
+		for _, photoToUpdate := range input.DeliveryDetail.PhotosAfterReceived {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingPurchaseOrderItem.DeliveryDetail.PhotosAfterReceived,
@@ -238,7 +242,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
 
 		savedPhotos := existingPurchaseOrderItem.DeliveryDetail.Photos
-		for _, photoToUpdate := range updatePurchaseOrderItem.DeliveryDetail.Photos {
+		for _, photoToUpdate := range input.DeliveryDetail.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
 					existingPurchaseOrderItem.DeliveryDetail.Photos,
@@ -319,7 +323,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		)
 		json.Unmarshal(jsonTemp, updatePurchaseOrderItem)
 
-		if updatePurchaseOrderItem.DeliveryDetail.Courier != nil {
+		if input.DeliveryDetail.Courier != nil {
 			generatedObjectID := updatePurchaseOrderItemTrx.purchaseOrderItemDataSource.GetMongoDataSource().GenerateObjectID()
 			loc, _ := time.LoadLocation("Asia/Bangkok")
 			splittedId := strings.Split(generatedObjectID.Hex(), "")
@@ -335,16 +339,16 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			)
 		}
 
-		if updatePurchaseOrderItem.DeliveryDetail.CourierResponded != nil {
-			if *updatePurchaseOrderItem.DeliveryDetail.CourierResponded {
+		if input.DeliveryDetail.CourierResponded != nil {
+			if *input.DeliveryDetail.CourierResponded {
 				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
 					return &m
 				}(model.DeliveryStatusDriverAssigned)
 			}
 		}
 
-		if updatePurchaseOrderItem.DeliveryDetail.StartedDelivering != nil {
-			if *updatePurchaseOrderItem.DeliveryDetail.StartedDelivering {
+		if input.DeliveryDetail.StartedDelivering != nil {
+			if *input.DeliveryDetail.StartedDelivering {
 				currentTime := time.Now().UTC()
 				updatePurchaseOrderItem.DeliveryDetail.StartDeliveryTime = &currentTime
 				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
@@ -353,8 +357,8 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			}
 		}
 
-		if updatePurchaseOrderItem.DeliveryDetail.FinishedDelivering != nil {
-			if *updatePurchaseOrderItem.DeliveryDetail.FinishedDelivering {
+		if input.DeliveryDetail.FinishedDelivering != nil {
+			if *input.DeliveryDetail.FinishedDelivering {
 				currentTime := time.Now().UTC()
 				updatePurchaseOrderItem.DeliveryDetail.FinishDeliveryTime = &currentTime
 				updatePurchaseOrderItem.DeliveryDetail.Status = func(m model.DeliveryStatus) *model.DeliveryStatus {
@@ -542,7 +546,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
 	fieldsToUpdatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{
-		ID: *updatePurchaseOrderItem.ID,
+		ID: updatePurchaseOrderItem.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingPurchaseOrderItem)
 	json.Unmarshal(jsonExisting, &fieldsToUpdatePurchaseOrderItem.ProposedChanges)

@@ -56,24 +56,40 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) PreTransactio
 
 func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	createSupplyOrder *model.InternalCreateSupplyOrder,
+	input *model.InternalCreateSupplyOrder,
 ) (*model.SupplyOrder, error) {
+	supplyOrderToCreate := &model.DatabaseCreateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, supplyOrderToCreate)
+
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	generatedObjectID := createSupplyOrderTrx.GetCurrentObjectID()
+	splittedId := strings.Split(generatedObjectID.Hex(), "")
+	supplyOrderToCreate.ID = generatedObjectID
+	supplyOrderToCreate.PublicID = func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
+		"SO",
+		time.Now().In(loc).Format("20060102"),
+		strings.ToUpper(
+			strings.Join(
+				splittedId[len(splittedId)-4:],
+				"",
+			),
+		),
+	)
 
 	totalPrice := 0
-	for _, item := range createSupplyOrder.Items {
+	for _, item := range input.Items {
 		totalPrice += item.SubTotal
 	}
-	createSupplyOrder.Total = totalPrice
-	createSupplyOrder.FinalSalesAmount = totalPrice
+	supplyOrderToCreate.Total = totalPrice
+	supplyOrderToCreate.FinalSalesAmount = totalPrice
 
-	createSupplyOrder.Organization = &model.OrganizationForSupplyOrderInput{
-		ID: createSupplyOrder.MemberAccess.Organization.ID,
+	supplyOrderToCreate.Organization = &model.OrganizationForSupplyOrderInput{
+		ID: *input.MemberAccess.Organization.ID,
 	}
 	_, err := createSupplyOrderTrx.supplyOrderDataLoader.TransactionBody(
 		session,
-		createSupplyOrder.Organization,
+		supplyOrderToCreate.Organization,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -82,7 +98,7 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 		)
 	}
 
-	newDocumentJson, _ := json.Marshal(*createSupplyOrder)
+	newDocumentJson, _ := json.Marshal(*supplyOrderToCreate)
 	loggingOutput, err := createSupplyOrderTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "SupplyOrder",
@@ -91,10 +107,10 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: createSupplyOrder.SubmittingAccount.ID,
+				ID: supplyOrderToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *createSupplyOrder.ProposalStatus,
+			ProposalStatus: *supplyOrderToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -105,27 +121,12 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 		)
 	}
 
-	createSupplyOrder.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *createSupplyOrder.ProposalStatus == model.EntityProposalStatusApproved {
-		createSupplyOrder.RecentApprovingAccount = &model.ObjectIDOnly{ID: createSupplyOrder.SubmittingAccount.ID}
+	supplyOrderToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *supplyOrderToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		supplyOrderToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: supplyOrderToCreate.SubmittingAccount.ID}
 	}
 
-	splittedId := strings.Split(generatedObjectID.Hex(), "")
-	supplyOrderToCreate := &model.DatabaseCreateSupplyOrder{
-		ID: generatedObjectID,
-		PublicID: func(s ...string) string { joinedString := strings.Join(s, "/"); return joinedString }(
-			"SO",
-			time.Now().In(loc).Format("20060102"),
-			strings.ToUpper(
-				strings.Join(
-					splittedId[len(splittedId)-4:],
-					"",
-				),
-			),
-		),
-	}
-	jsonTemp, _ := json.Marshal(createSupplyOrder)
-	json.Unmarshal(jsonTemp, &supplyOrderToCreate)
+	jsonTemp, _ = json.Marshal(supplyOrderToCreate)
 	json.Unmarshal(jsonTemp, &supplyOrderToCreate.ProposedChanges)
 
 	newsupplyOrder, err := createSupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().Create(

@@ -30,14 +30,14 @@ func (r *memberAccessResolver) Account(ctx context.Context, obj *model.MemberAcc
 	)
 }
 
-func (r *memberAccessResolver) OrganizationLatestUpdate(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
+func (r *memberAccessResolver) Organization(ctx context.Context, obj *model.MemberAccess) (*model.Organization, error) {
 	var getOrganizationUsecase organizationpresentationusecaseinterfaces.GetOrganizationUsecase
 	container.Make(&getOrganizationUsecase)
 
 	var filterFields *model.OrganizationFilterFields
-	if obj.OrganizationLatestUpdate != nil {
+	if obj.Organization != nil {
 		filterFields = &model.OrganizationFilterFields{}
-		filterFields.ID = &obj.OrganizationLatestUpdate.ID
+		filterFields.ID = &obj.Organization.ID
 	}
 	return getOrganizationUsecase.Execute(
 		filterFields,
@@ -49,7 +49,7 @@ func (r *memberAccessResolver) DefaultAccessLatestUpdate(ctx context.Context, ob
 	container.Make(&getMemberAccessRefUsecase)
 	return getMemberAccessRefUsecase.Execute(
 		&model.MemberAccessRefFilterFields{
-			ID: &obj.DefaultAccess.ID,
+			ID: &obj.DefaultAccessLatestUpdate.ID,
 		},
 	)
 }

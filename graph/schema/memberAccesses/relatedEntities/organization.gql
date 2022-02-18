@@ -1,0 +1,14 @@
+input OrganizationForMemberAccessInput {
+  _id: ObjectID
+  type: OrganizationType
+}
+
+input OrganizationForMemberAccessFilterFields {
+  _id: ObjectID
+  type: StringFilterField
+}
+
+type OrganizationForMemberAccess {
+  _id: ObjectID
+  type: OrganizationType
+}

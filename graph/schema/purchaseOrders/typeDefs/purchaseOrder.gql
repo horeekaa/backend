@@ -15,25 +15,18 @@ enum PurchaseOrderType {
 input CreatePurchaseOrder {
   mouItems: [CreatePurchaseOrderItem]
   retailItems: [CreatePurchaseOrderItem]
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreatePurchaseOrder {
   mouItems: [InternalCreatePurchaseOrderItem]
   retailItems: [InternalCreatePurchaseOrderItem]
   items: [InternalCreatePurchaseOrderItem]
-  mou: MouForPurchaseOrderInput!
-  total: Int!
-  finalSalesAmount: Int!
+  mou: ObjectIDOnly!
   type: PurchaseOrderType!
-  status: PurchaseOrderStatus
-  paymentDueDate: Time
-  memberAccess: InternalCreateMemberAccess
+  memberAccess: MemberAccessForPurchaseOrderInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdatePurchaseOrder
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreatePurchaseOrder {
@@ -61,44 +54,28 @@ input UpdatePurchaseOrder {
   _id: ObjectID!
   items: [UpdatePurchaseOrderItem]
   mou: ObjectIDOnly
-  total: Int
-  finalSalesAmount: Int
   status: PurchaseOrderStatus
   paymentDueDate: Time
   markAsReceived: Boolean
   invoice: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdatePurchaseOrder {
   _id: ObjectID!
   items: [InternalUpdatePurchaseOrderItem]
-  mou: MouForPurchaseOrderInput
-  total: Int
-  finalSalesAmount: Int
-  totalReturn: Int
+  mou: ObjectIDOnly
   type: PurchaseOrderType
   status: PurchaseOrderStatus
   paymentDueDate: Time
-  memberAccess: InternalUpdateMemberAccess
+  memberAccess: MemberAccessForPurchaseOrderInput!
   markAsReceived: Boolean
-  receivingDateTime: Time
-  invoice: InvoiceForPurchaseOrderInput
+  invoice: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdatePurchaseOrder
 }
 
 input DatabaseUpdatePurchaseOrder {

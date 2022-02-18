@@ -46,8 +46,12 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) P
 
 func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updatePurchaseOrder *model.InternalUpdatePurchaseOrder,
+	input *model.InternalUpdatePurchaseOrder,
 ) (*model.PurchaseOrder, error) {
+	updatePurchaseOrder := &model.DatabaseUpdatePurchaseOrder{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updatePurchaseOrder)
+
 	existingPurchaseOrder, err := approvePurchaseOrderTrx.purchaseOrderDataSource.GetMongoDataSource().FindByID(
 		updatePurchaseOrder.ID,
 		session,
@@ -90,7 +94,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updatePurchaseOrder.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,

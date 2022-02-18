@@ -58,10 +58,14 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) PreTr
 
 func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	createSupplyOrderItem *model.InternalCreateSupplyOrderItem,
+	input *model.InternalCreateSupplyOrderItem,
 ) (*model.SupplyOrderItem, error) {
+	supplyOrderItemToCreate := &model.DatabaseCreateSupplyOrderItem{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, supplyOrderItemToCreate)
+
 	generatedObjectID := createSupplyOrderItemTrx.GetCurrentObjectID()
-	for i, photo := range createSupplyOrderItem.Photos {
+	for i, photo := range input.Photos {
 		photoToCreate := &model.InternalCreateDescriptivePhoto{}
 
 		jsonTemp, _ := json.Marshal(photo)
@@ -89,42 +93,12 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		}
 
 		jsonTemp, _ = json.Marshal(descriptivePhoto)
-		json.Unmarshal(jsonTemp, &createSupplyOrderItem.Photos[i])
-	}
-	for i, photo := range createSupplyOrderItem.PickUpDetail.Photos {
-		photoToCreate := &model.InternalCreateDescriptivePhoto{}
-
-		jsonTemp, _ := json.Marshal(photo)
-		json.Unmarshal(jsonTemp, &photoToCreate)
-		photoToCreate.Photo.File = photo.Photo.File
-		photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderItem
-		photoToCreate.Object = &model.ObjectIDOnly{
-			ID: &generatedObjectID,
-		}
-		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-			return &s
-		}(*photoToCreate.ProposalStatus)
-		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-			return &m
-		}(*photoToCreate.SubmittingAccount)
-		descriptivePhoto, err := createSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
-			photoToCreate,
-		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createSupplyOrderItemComponent",
-				err,
-			)
-		}
-
-		jsonTemp, _ = json.Marshal(descriptivePhoto)
-		json.Unmarshal(jsonTemp, &createSupplyOrderItem.PickUpDetail.Photos[i])
+		json.Unmarshal(jsonTemp, &supplyOrderItemToCreate.Photos[i])
 	}
 	_, err := createSupplyOrderItemTrx.supplyOrderItemLoader.TransactionBody(
 		session,
-		createSupplyOrderItem.PurchaseOrderToSupply,
-		createSupplyOrderItem.PickUpDetail,
+		supplyOrderItemToCreate.PurchaseOrderToSupply,
+		supplyOrderItemToCreate.PickUpDetail,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -133,14 +107,14 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		)
 	}
 
-	quantity := createSupplyOrderItem.QuantityOffered
-	if createSupplyOrderItem.QuantityAccepted != nil {
-		quantity = *createSupplyOrderItem.QuantityAccepted
+	quantity := supplyOrderItemToCreate.QuantityOffered
+	if supplyOrderItemToCreate.QuantityAccepted > 0 {
+		quantity = supplyOrderItemToCreate.QuantityAccepted
 	}
-	createSupplyOrderItem.SubTotal = quantity * createSupplyOrderItem.UnitPrice
-	createSupplyOrderItem.SalesAmount = &createSupplyOrderItem.SubTotal
+	supplyOrderItemToCreate.SubTotal = quantity * supplyOrderItemToCreate.UnitPrice
+	supplyOrderItemToCreate.SalesAmount = supplyOrderItemToCreate.SubTotal
 
-	newDocumentJson, _ := json.Marshal(*createSupplyOrderItem)
+	newDocumentJson, _ := json.Marshal(*supplyOrderItemToCreate)
 	loggingOutput, err := createSupplyOrderItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "SupplyOrderItem",
@@ -149,10 +123,10 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: createSupplyOrderItem.SubmittingAccount.ID,
+				ID: supplyOrderItemToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *createSupplyOrderItem.ProposalStatus,
+			ProposalStatus: *supplyOrderItemToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -163,15 +137,13 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		)
 	}
 
-	createSupplyOrderItem.ID = &generatedObjectID
-	createSupplyOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *createSupplyOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
-		createSupplyOrderItem.RecentApprovingAccount = &model.ObjectIDOnly{ID: createSupplyOrderItem.SubmittingAccount.ID}
+	supplyOrderItemToCreate.ID = generatedObjectID
+	supplyOrderItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *supplyOrderItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		supplyOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: supplyOrderItemToCreate.SubmittingAccount.ID}
 	}
 
-	supplyOrderItemToCreate := &model.DatabaseCreateSupplyOrderItem{}
-	jsonTemp, _ := json.Marshal(createSupplyOrderItem)
-	json.Unmarshal(jsonTemp, supplyOrderItemToCreate)
+	jsonTemp, _ = json.Marshal(supplyOrderItemToCreate)
 	json.Unmarshal(jsonTemp, &supplyOrderItemToCreate.ProposedChanges)
 
 	createdsupplyOrderItem, err := createSupplyOrderItemTrx.supplyOrderItemDataSource.GetMongoDataSource().Create(

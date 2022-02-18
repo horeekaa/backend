@@ -49,8 +49,12 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) PreTrans
 
 func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateMemberAccessRef *model.InternalUpdateMemberAccessRef,
+	input *model.InternalUpdateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
+	updateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateMemberAccessRef)
+
 	existingmemberAccessRef, err := approveProdTrx.memberAccessRefDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccessRef.ID,
 		session,
@@ -81,7 +85,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateMemberAccessRef.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -102,7 +106,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 
 	updateMemberAccessRef.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	fieldsToUpdateMemberAccessRef := &model.InternalUpdateMemberAccessRef{
+	fieldsToUpdateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{
 		ID: updateMemberAccessRef.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingmemberAccessRef.ProposedChanges)

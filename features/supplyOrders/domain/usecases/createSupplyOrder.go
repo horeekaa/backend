@@ -50,8 +50,6 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) validation(input supplyo
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateSupplyOrder.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -60,6 +58,9 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 	if err != nil {
 		return nil, err
 	}
+	supplyOrderToCreate := &model.InternalCreateSupplyOrder{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateSupplyOrder)
+	json.Unmarshal(jsonTemp, supplyOrderToCreate)
 
 	account, err := createSupplyOrderUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -97,16 +98,15 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 			err,
 		)
 	}
+
+	supplyOrderToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.SupplyOrderAccesses.SupplyOrderApproval != nil {
 		if *accMemberAccess.Access.SupplyOrderAccesses.SupplyOrderApproval {
-			validatedInput.CreateSupplyOrder.ProposalStatus =
+			supplyOrderToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	supplyOrderToCreate := &model.InternalCreateSupplyOrder{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateSupplyOrder)
-	json.Unmarshal(jsonTemp, supplyOrderToCreate)
 
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &supplyOrderToCreate.MemberAccess)

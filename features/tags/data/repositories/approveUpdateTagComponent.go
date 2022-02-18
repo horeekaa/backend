@@ -53,8 +53,12 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) PreTransaction(
 
 func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateTag *model.InternalUpdateTag,
+	input *model.InternalUpdateTag,
 ) (*model.Tag, error) {
+	updateTag := &model.DatabaseUpdateTag{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateTag)
+
 	existingTag, err := approveTagTrx.tagDataSource.GetMongoDataSource().FindByID(
 		updateTag.ID,
 		session,
@@ -85,7 +89,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateTag.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,

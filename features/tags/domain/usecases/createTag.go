@@ -50,8 +50,6 @@ func (createTagUcase *createTagUsecase) validation(input tagpresentationusecaset
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreateTag.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -60,6 +58,9 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 	if err != nil {
 		return nil, err
 	}
+	tagToCreate := &model.InternalCreateTag{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreateTag)
+	json.Unmarshal(jsonTemp, tagToCreate)
 
 	account, err := createTagUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -97,16 +98,15 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 			err,
 		)
 	}
+
+	tagToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.TagAccesses.TagApproval != nil {
 		if *accMemberAccess.Access.TagAccesses.TagApproval {
-			validatedInput.CreateTag.ProposalStatus =
+			tagToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	tagToCreate := &model.InternalCreateTag{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreateTag)
-	json.Unmarshal(jsonTemp, tagToCreate)
 
 	for i, descriptivePhoto := range validatedInput.CreateTag.Photos {
 		if descriptivePhoto.Photo != nil {

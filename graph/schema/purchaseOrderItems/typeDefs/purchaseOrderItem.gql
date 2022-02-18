@@ -11,27 +11,22 @@ input CreatePurchaseOrderItem {
   note: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly!
-  deliveryDetail: CreatePurchaseOrderItemDelivery
-  proposalStatus: EntityProposalStatus
+  deliveryDetail: CreatePurchaseOrderItemDelivery!
 }
 
 input InternalCreatePurchaseOrderItem {
   _id: ObjectID
   quantity: Int!
-  unitPrice: Int!
   subTotal: Int
-  salesAmount: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
-  productVariant: ProductVariantForPurchaseOrderItemInput!
-  deliveryDetail: InternalPurchaseOrderItemDelivery
+  productVariant: ObjectIDOnly!
+  deliveryDetail: InternalCreatePurchaseOrderItemDelivery!
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdatePurchaseOrderItem
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreatePurchaseOrderItem {
@@ -44,7 +39,7 @@ input DatabaseCreatePurchaseOrderItem {
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput!
-  deliveryDetail: DatabaseCreatePurchaseOrderItemDelivery
+  deliveryDetail: DatabasePurchaseOrderItemDelivery!
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean!
   purchaseOrder: ObjectIDOnly!
@@ -70,50 +65,33 @@ input UpdatePurchaseOrderItem {
   _id: ObjectID
   quantity: Int
   quantityFulfilled: Int
-  unitPrice: Int
-  subTotal: Int
   note: String
   mouItem: ObjectIDOnly
   productVariant: ObjectIDOnly
   deliveryDetail: UpdatePurchaseOrderItemDelivery
-  status: PurchaseOrderItemStatus
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
   purchaseOrderItemReturn: UpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdatePurchaseOrderItem {
   _id: ObjectID
   quantity: Int
   quantityFulfilled: Int
-  unitPrice: Int
   subTotal: Int
-  salesAmount: Int
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
-  productVariant: ProductVariantForPurchaseOrderItemInput
-  deliveryDetail: InternalPurchaseOrderItemDelivery
-  status: PurchaseOrderItemStatus
+  productVariant: ObjectIDOnly
+  deliveryDetail: InternalUpdatePurchaseOrderItemDelivery
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly
-  purchaseOrderToSupply: ObjectIDOnly
   purchaseOrderItemReturn: InternalPurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdatePurchaseOrderItem
 }
 
 input DatabaseUpdatePurchaseOrderItem {
@@ -126,7 +104,7 @@ input DatabaseUpdatePurchaseOrderItem {
   note: String
   mouItem: MouItemForPurchaseOrderItemInput
   productVariant: ProductVariantForPurchaseOrderItemInput
-  deliveryDetail: DatabaseUpdatePurchaseOrderItemDelivery
+  deliveryDetail: DatabasePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean
   purchaseOrder: ObjectIDOnly

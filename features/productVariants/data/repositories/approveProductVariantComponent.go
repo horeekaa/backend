@@ -42,10 +42,14 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) PreTra
 
 func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
-	updateProductVariant *model.InternalUpdateProductVariant,
+	input *model.InternalUpdateProductVariant,
 ) (*model.ProductVariant, error) {
+	updateProductVariant := &model.DatabaseUpdateProductVariant{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, updateProductVariant)
+
 	existingProductVariant, err := approveProdVarTrx.productVariantDataSource.GetMongoDataSource().FindByID(
-		*updateProductVariant.ID,
+		updateProductVariant.ID,
 		session,
 	)
 	if err != nil {
@@ -77,7 +81,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 		Activity:       previousLog.Activity,
 		ProposalStatus: *updateProductVariant.ProposalStatus,
 	}
-	jsonTemp, _ := json.Marshal(
+	jsonTemp, _ = json.Marshal(
 		map[string]interface{}{
 			"NewDocumentJSON": previousLog.NewDocumentJSON,
 			"OldDocumentJSON": previousLog.OldDocumentJSON,
@@ -99,7 +103,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
 	fieldsToUpdateProductVariant := &model.DatabaseUpdateProductVariant{
-		ID: *updateProductVariant.ID,
+		ID: updateProductVariant.ID,
 	}
 	jsonExisting, _ := json.Marshal(existingProductVariant.ProposedChanges)
 	json.Unmarshal(jsonExisting, &fieldsToUpdateProductVariant.ProposedChanges)

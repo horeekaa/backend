@@ -63,6 +63,9 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	if err != nil {
 		return nil, err
 	}
+	memberAccessRefToUpdate := &model.InternalUpdateMemberAccessRef{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateMemberAccessRef)
+	json.Unmarshal(jsonTemp, memberAccessRefToUpdate)
 
 	account, err := updateMmbAccessRefUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -98,12 +101,6 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 			err,
 		)
 	}
-
-	memberAccessRefToUpdate := &model.InternalUpdateMemberAccessRef{
-		ID: validatedInput.UpdateMemberAccessRef.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateMemberAccessRef)
-	json.Unmarshal(jsonTemp, memberAccessRefToUpdate)
 
 	// if user is only going to approve proposal
 	if memberAccessRefToUpdate.ProposalStatus != nil {

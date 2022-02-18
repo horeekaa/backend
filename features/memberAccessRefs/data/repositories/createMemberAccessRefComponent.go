@@ -47,7 +47,11 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalCreateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
-	newDocumentJson, _ := json.Marshal(*input)
+	memberAccessRefToCreate := &model.DatabaseCreateMemberAccessRef{}
+	jsonTemp, _ := json.Marshal(input)
+	json.Unmarshal(jsonTemp, memberAccessRefToCreate)
+
+	newDocumentJson, _ := json.Marshal(*memberAccessRefToCreate)
 	generatedObjectID := createMemberAccessRefTrx.memberAccessRefDataSource.GetMongoDataSource().GenerateObjectID()
 	loggingOutput, err := createMemberAccessRefTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
@@ -57,10 +61,10 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 			},
 			NewDocumentJSON: func(s string) *string { return &s }(string(newDocumentJson)),
 			CreatedByAccount: &model.ObjectIDOnly{
-				ID: input.SubmittingAccount.ID,
+				ID: memberAccessRefToCreate.SubmittingAccount.ID,
 			},
 			Activity:       model.LoggedActivityCreate,
-			ProposalStatus: *input.ProposalStatus,
+			ProposalStatus: *memberAccessRefToCreate.ProposalStatus,
 		},
 		session,
 	)
@@ -71,17 +75,17 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 		)
 	}
 
-	input.ID = generatedObjectID
-	input.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
-	if *input.ProposalStatus == model.EntityProposalStatusApproved {
-		input.RecentApprovingAccount = &model.ObjectIDOnly{ID: input.SubmittingAccount.ID}
+	memberAccessRefToCreate.ID = generatedObjectID
+	memberAccessRefToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+	if *memberAccessRefToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		memberAccessRefToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: memberAccessRefToCreate.SubmittingAccount.ID}
 	}
 
-	jsonTemp, _ := json.Marshal(input)
-	json.Unmarshal(jsonTemp, &input.ProposedChanges)
+	jsonTemp, _ = json.Marshal(memberAccessRefToCreate)
+	json.Unmarshal(jsonTemp, &memberAccessRefToCreate.ProposedChanges)
 
 	newMemberAccessRef, err := createMemberAccessRefTrx.memberAccessRefDataSource.GetMongoDataSource().Create(
-		input,
+		memberAccessRefToCreate,
 		session,
 	)
 	if err != nil {

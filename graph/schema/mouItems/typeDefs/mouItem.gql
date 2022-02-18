@@ -2,20 +2,17 @@ input CreateMouItem {
   product: ObjectIDOnly!
   agreedProduct: AgreedProductInput
   isActive: Boolean
-  proposalStatus: EntityProposalStatus
 }
 
 input InternalCreateMouItem {
   _id: ObjectID
   product: ObjectIDOnly!
-  agreedProduct: InternalAgreedProductInput
+  agreedProduct: AgreedProductInput
   isActive: Boolean
   mou: ObjectIDOnly!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: InternalUpdateMouItem
-  recentLog: ObjectIDOnly
 }
 
 input DatabaseCreateMouItem {
@@ -44,28 +41,18 @@ input UpdateMouItem {
   isActive: Boolean
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  submittingAccount: ObjectIDOnly
-  """
-  Leave the field empty, will be overriden by server.
-  """
-  recentApprovingAccount: ObjectIDOnly
 }
 
 input InternalUpdateMouItem {
   _id: ObjectID
   product: ObjectIDOnly
-  agreedProduct: InternalAgreedProductInput
+  agreedProduct: AgreedProductInput
   isActive: Boolean
   mou: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  recentLog: ObjectIDOnly
-  proposedChanges: InternalUpdateMouItem
 }
 
 input DatabaseUpdateMouItem {
@@ -85,10 +72,10 @@ input DatabaseUpdateMouItem {
 
 input MouItemFilterFields {
   _id: ObjectID
-  product: ObjectIDOnly
-  agreedProduct: AgreedProductInput
+  product: ObjectIDOnlyFilterField
+  agreedProduct: AgreedProductFilterFields
   isActive: Boolean
-  mou: ObjectIDOnly
+  mou: ObjectIDOnlyFilterField
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly

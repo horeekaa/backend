@@ -112,7 +112,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 		if accessible := funk.GetOrElse(
 			funk.Get(memberAccess, "Access.ManageMemberAccesses.MemberAccessReadOrganizationOwned"), false,
 		).(bool); accessible {
-			validatedInput.FilterFields.Organization = &model.AttachOrganizationInput{
+			validatedInput.FilterFields.Organization = &model.OrganizationForMemberAccessFilterFields{
 				ID: &memberAccess.Organization.ID,
 			}
 		} else {

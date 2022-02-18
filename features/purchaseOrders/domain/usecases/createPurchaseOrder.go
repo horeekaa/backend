@@ -50,8 +50,6 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) validation(input pur
 				nil,
 			)
 	}
-	proposedProposalStatus := model.EntityProposalStatusProposed
-	input.CreatePurchaseOrder.ProposalStatus = &proposedProposalStatus
 	return input, nil
 }
 
@@ -60,6 +58,9 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 	if err != nil {
 		return nil, err
 	}
+	purchaseOrderToCreate := &model.InternalCreatePurchaseOrder{}
+	jsonTemp, _ := json.Marshal(validatedInput.CreatePurchaseOrder)
+	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
 
 	account, err := createPurchaseOrderUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -97,16 +98,15 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 			err,
 		)
 	}
+
+	purchaseOrderToCreate.ProposalStatus =
+		func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusProposed)
 	if accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval != nil {
 		if *accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval {
-			validatedInput.CreatePurchaseOrder.ProposalStatus =
+			purchaseOrderToCreate.ProposalStatus =
 				func(i model.EntityProposalStatus) *model.EntityProposalStatus { return &i }(model.EntityProposalStatusApproved)
 		}
 	}
-
-	purchaseOrderToCreate := &model.InternalCreatePurchaseOrder{}
-	jsonTemp, _ := json.Marshal(validatedInput.CreatePurchaseOrder)
-	json.Unmarshal(jsonTemp, purchaseOrderToCreate)
 
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &purchaseOrderToCreate.MemberAccess)

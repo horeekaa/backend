@@ -68,6 +68,9 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	if err != nil {
 		return nil, err
 	}
+	memberAccessToUpdate := &model.InternalUpdateMemberAccess{}
+	jsonTemp, _ := json.Marshal(validatedInput.UpdateMemberAccess)
+	json.Unmarshal(jsonTemp, memberAccessToUpdate)
 
 	account, err := updateMmbAccessUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
@@ -92,7 +95,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	existingMemberAcc, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
-				ID: &validatedInput.UpdateMemberAccess.ID,
+				ID: &memberAccessToUpdate.ID,
 			},
 			QueryMode: true,
 		},
@@ -103,12 +106,6 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 			err,
 		)
 	}
-
-	memberAccessToUpdate := &model.InternalUpdateMemberAccess{
-		ID: validatedInput.UpdateMemberAccess.ID,
-	}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateMemberAccess)
-	json.Unmarshal(jsonTemp, memberAccessToUpdate)
 
 	if memberAccessToUpdate.InvitationAccepted != nil {
 		if existingMemberAcc.Account.ID.Hex() != account.ID.Hex() ||
