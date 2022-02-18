@@ -8,6 +8,8 @@ import (
 
 	container "github.com/golobby/container/v2"
 	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
+	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
+	purchaseordertosupplypresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -32,6 +34,18 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 		}
 	}
 	return purchaseOrderItems, nil
+}
+
+func (r *queryResolver) PurchaseOrdersToSupply(ctx context.Context, filterFields model.PurchaseOrderToSupplyFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.PurchaseOrderToSupply, error) {
+	var getPurchaseOrdersToSupplyUsecase purchaseordertosupplypresentationusecaseinterfaces.GetAllPurchaseOrderToSupplyUsecase
+	container.Make(&getPurchaseOrdersToSupplyUsecase)
+	return getPurchaseOrdersToSupplyUsecase.Execute(
+		purchaseordertosupplypresentationusecasetypes.GetAllPurchaseOrderToSupplyUsecaseInput{
+			Context:       ctx,
+			FilterFields:  &filterFields,
+			PaginationOps: paginationOpt,
+		},
+	)
 }
 
 // PurchaseOrderToSupply returns generated.PurchaseOrderToSupplyResolver implementation.
