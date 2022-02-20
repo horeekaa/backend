@@ -145,7 +145,9 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefault
 		input.PurchaseOrderItemReturn.UpdatedAt = &currentTime
 	}
 
-	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
@@ -161,6 +163,9 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefault
 	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
+	if input.ProposedChanges != nil {
+		input.ProposedChanges.UpdatedAt = &currentTime
+	}
 
 	return true, nil
 }
