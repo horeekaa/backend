@@ -99,6 +99,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		)
 	}
 
+	mouToCreate.ID = generatedObjectID
 	mouToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *mouToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		mouToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouToCreate.SubmittingAccount.ID}
