@@ -1,7 +1,7 @@
 input PersonForPartyInput {
   _id: ObjectID!
-  firstName: String!
-  lastName: String!
+  firstName: String
+  lastName: String
   phoneNumber: String
 }
 
