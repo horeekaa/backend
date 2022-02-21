@@ -84,12 +84,15 @@ func (supOrderItemLoader *supplyOrderItemLoader) TransactionBody(
 				errChan <- err
 				return
 			}
-			jsonTemp, _ := json.Marshal(loadedAddress)
-			json.Unmarshal(jsonTemp, &pickUp.Address)
-
-			*pickUp.Status = model.PickUpStatusAddressNoted
-			*pickUp.Courier = model.AccountForSupplyOrderItemInput{}
-			*pickUp.PublicID = ""
+			jsonTemp, _ := json.Marshal(
+				map[string]interface{}{
+					"Address":  loadedAddress,
+					"Status":   model.PickUpStatusAddressNoted,
+					"Courier":  model.AccountForSupplyOrderItemInput{},
+					"PublicID": "",
+				},
+			)
+			json.Unmarshal(jsonTemp, pickUp)
 
 			addressLoadedChan <- true
 		}()
