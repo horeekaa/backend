@@ -103,7 +103,7 @@ input DatabaseUpdatePurchaseOrder {
 input PurchaseOrderFilterFields {
   _id: ObjectID
   publicId: StringFilterField
-  items: [ObjectIDOnly]
+  items: PurchaseOrderItemFilterFields
   mou: MouFilterFields
   total: IntFilterField
   finalSalesAmount: IntFilterField
