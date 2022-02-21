@@ -88,7 +88,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	_, err = updateMouTrx.partyLoader.TransactionBody(
 		session,
 		input.FirstParty,
-		updateMou.ProposedChanges.FirstParty,
+		updateMou.FirstParty,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
@@ -99,7 +99,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	_, err = updateMouTrx.partyLoader.TransactionBody(
 		session,
 		input.SecondParty,
-		updateMou.ProposedChanges.SecondParty,
+		updateMou.SecondParty,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
