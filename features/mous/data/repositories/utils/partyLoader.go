@@ -101,9 +101,10 @@ func (partyLoader *partyLoader) TransactionBody(
 				signatureLoadedChan <- true
 				return
 			}
+			signatureId := partyLoader.organizationDataSource.GetMongoDataSource().GenerateObjectID()
 			output.Signature = &model.InternalSignatureInput{
-				ID:        partyLoader.organizationDataSource.GetMongoDataSource().GenerateObjectID(),
-				CreatedAt: time.Now(),
+				ID:        &signatureId,
+				CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
 			}
 
 			account, err := partyLoader.accountDataSource.GetMongoDataSource().FindByID(

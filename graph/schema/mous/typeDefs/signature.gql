@@ -8,9 +8,9 @@ input SignatureInput {
 }
 
 input InternalSignatureInput {
-  _id: ObjectID!
-  account: AccountForPartyInput!
-  createdAt: Time!
+  _id: ObjectID
+  account: AccountForPartyInput
+  createdAt: Time
 }
 
 input SignatureFilterFields {
