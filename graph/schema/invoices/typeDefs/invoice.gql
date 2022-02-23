@@ -66,6 +66,7 @@ input InternalUpdateInvoice {
   totalPayable: Int
   paymentDueDate: Time
   status: InvoiceStatus
+  payments: [ObjectIDOnly]
 }
 
 input DatabaseUpdateInvoice {
@@ -79,6 +80,7 @@ input DatabaseUpdateInvoice {
   totalPayable: Int
   paymentDueDate: Time
   status: InvoiceStatus
+  payments: [ObjectIDOnly]
   updatedAt: Time
 }
 
@@ -103,8 +105,8 @@ type Invoice {
   _id: ObjectID!
   publicId: String!
   purchaseOrders: [PurchaseOrder]
-  startInvoiceDate: Time!
-  endInvoiceDate: Time!
+  startInvoiceDate: Time
+  endInvoiceDate: Time
   totalValue: Int!
   discountInPercent: Int!
   totalDiscounted: Int!
@@ -113,6 +115,7 @@ type Invoice {
   organization: OrganizationForInvoice
   mou: MouForInvoice
   status: InvoiceStatus
+  payments: [Payment]
   createdAt: Time
   updatedAt: Time
 }
