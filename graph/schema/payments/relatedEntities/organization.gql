@@ -1,5 +1,5 @@
 input OrganizationForPaymentInput {
-  _id: ObjectID
+  _id: ObjectID!
   type: OrganizationType
 }
 
@@ -9,6 +9,6 @@ input OrganizationForPaymentFilterFields {
 }
 
 type OrganizationForPayment {
-  _id: ObjectID
+  _id: ObjectID!
   type: OrganizationType
 }
