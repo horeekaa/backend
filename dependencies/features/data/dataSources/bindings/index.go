@@ -14,6 +14,7 @@ import (
 	mongodbmoudatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/mous/databases/mongodb"
 	mongodbnotificationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/notifications/databases/mongodb"
 	mongodborganizationdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/organizations/databases/mongodb"
+	mongodbpaymentdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/payments/databases/mongodb"
 	mongodbproductvariantdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/productVariants/databases/mongodb"
 	mongodbproductdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/products/databases/mongodb"
 	mongodbpurchaseorderitemdatasourcedependencies "github.com/horeekaa/backend/dependencies/features/data/dataSources/purchaseOrderItems/databases/mongodb"
@@ -47,6 +48,7 @@ func (_ *DatasourcesDependency) Bind() {
 		&mongodbnotificationdatasourcedependencies.NotificationDataSourceDependency{},
 		&mongodbmoudatasourcedependencies.MouDataSourceDependency{},
 		&mongodbmouitemdatasourcedependencies.MouItemDataSourceDependency{},
+		&mongodbpaymentdatasourcedependencies.PaymentDataSourceDependency{},
 		&mongodbpurchaseorderdatasourcedependencies.PurchaseOrderDataSourceDependency{},
 		&mongodbpurchaseorderitemdatasourcedependencies.PurchaseOrderItemDataSourceDependency{},
 		&mongodbpurchaseordertosupplydatasourcedependencies.PurchaseOrderToSupplyDataSourceDependency{},
