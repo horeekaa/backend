@@ -1,0 +1,14 @@
+input InvoiceForPaymentInput {
+  _id: ObjectID!
+  publicId: String
+}
+
+input InvoiceForPaymentFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+}
+
+type InvoiceForPayment {
+  _id: ObjectID!
+  publicId: String
+}

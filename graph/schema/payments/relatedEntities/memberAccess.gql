@@ -1,0 +1,9 @@
+input MemberAccessForPaymentInput {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccessInput!
+}
+
+type MemberAccessForPayment {
+  _id: ObjectID!
+  organization: OrganizationForMemberAccess!
+}
