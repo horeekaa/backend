@@ -5,12 +5,14 @@ enum PaymentType {
 
 input CreatePayment {
   amount: Int!
+  note: String
   photo: CreateDescriptivePhoto!
   invoice: ObjectIDOnly!
 }
 
 input InternalCreatePayment {
   amount: Int!
+  note: String
   photo: InternalCreateDescriptivePhoto!
   invoice: ObjectIDOnly!
   memberAccess: MemberAccessForPaymentInput!
@@ -22,6 +24,7 @@ input InternalCreatePayment {
 input DatabaseCreatePayment {
   _id: ObjectID!
   amount: Int!
+  note: String
   type: PaymentType!
   photo: ObjectIDOnly!
   invoice: InvoiceForPaymentInput!
@@ -38,6 +41,7 @@ input DatabaseCreatePayment {
 input UpdatePayment {
   _id: ObjectID!
   amount: Int
+  note: String
   photo: UpdateDescriptivePhoto
   invoice: ObjectIDOnly
   proposalStatus: EntityProposalStatus
@@ -47,6 +51,7 @@ input UpdatePayment {
 input InternalUpdatePayment {
   _id: ObjectID!
   amount: Int
+  note: String
   photo: InternalUpdateDescriptivePhoto
   invoice: ObjectIDOnly
   memberAccess: MemberAccessForPaymentInput
@@ -59,6 +64,7 @@ input InternalUpdatePayment {
 input DatabaseUpdatePayment {
   _id: ObjectID!
   amount: Int
+  note: String
   type: PaymentType
   photo: ObjectIDOnly
   invoice: InvoiceForPaymentInput
@@ -75,6 +81,7 @@ input DatabaseUpdatePayment {
 input PaymentFilterFields {
   _id: ObjectID
   amount: IntFilterField
+  note: StringFilterField
   type: StringFilterField
   invoice: InvoiceForPaymentFilterFields
   organization: OrganizationForPaymentFilterFields
@@ -89,6 +96,7 @@ input PaymentFilterFields {
 type Payment {
   _id: ObjectID!
   amount: Int!
+  note: String
   type: PaymentType!
   photo: DescriptivePhoto!
   invoice: Invoice!
