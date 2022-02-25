@@ -29,12 +29,14 @@ func (_ *CreateInvoiceDependency) Bind() {
 
 	container.Transient(
 		func(
+			purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			trxComponent invoicedomainrepositoryinterfaces.CreateInvoiceTransactionComponent,
 			notificationTrx notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) invoicedomainrepositoryinterfaces.CreateInvoiceRepository {
 			createInvoiceRepo, _ := invoicedomainrepositories.NewCreateInvoiceRepository(
+				purchaseOrderDataSource,
 				memberAccessDataSource,
 				trxComponent,
 				notificationTrx,
