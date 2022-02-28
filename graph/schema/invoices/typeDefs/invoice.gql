@@ -35,7 +35,7 @@ input DatabaseCreateInvoice {
   discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
-  paidAmount: Int!
+  totalPaidAmount: Int!
   paymentDueDate: Time
   organization: OrganizationForInvoiceInput!
   mou: MouForInvoiceInput
@@ -78,6 +78,7 @@ input DatabaseUpdateInvoice {
   discountInPercent: Int
   totalDiscounted: Int
   totalPayable: Int
+  totalPaidAmount: Int
   paymentDueDate: Time
   status: InvoiceStatus
   payments: [ObjectIDOnly]
@@ -93,6 +94,7 @@ input InvoiceFilterFields {
   discountInPercent: IntFilterField
   totalDiscounted: IntFilterField
   totalPayable: IntFilterField
+  totalPaidAmount: IntFilterField
   paymentDueDate: TimeFilterField
   organization: OrganizationForInvoiceFilterFields
   mou: MouForInvoiceFilterFields
@@ -111,6 +113,7 @@ type Invoice {
   discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
+  totalPaidAmount: Int!
   paymentDueDate: Time!
   organization: OrganizationForInvoice
   mou: MouForInvoice
