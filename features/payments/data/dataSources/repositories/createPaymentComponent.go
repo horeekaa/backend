@@ -5,6 +5,7 @@ import (
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
@@ -14,21 +15,24 @@ import (
 )
 
 type createPaymentTransactionComponent struct {
-	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource
-	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
-	paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader
-	generatedObjectID *primitive.ObjectID
+	paymentDataSource         databasepaymentdatasourceinterfaces.PaymentDataSource
+	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
+	paymentDataLoader         paymentdomainrepositoryutilityinterfaces.PaymentLoader
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
+	generatedObjectID         *primitive.ObjectID
 }
 
 func NewCreatePaymentTransactionComponent(
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 ) (paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent, error) {
 	return &createPaymentTransactionComponent{
-		paymentDataSource: paymentDataSource,
-		loggingDataSource: loggingDataSource,
-		paymentDataLoader: paymentDataLoader,
+		paymentDataSource:         paymentDataSource,
+		loggingDataSource:         loggingDataSource,
+		paymentDataLoader:         paymentDataLoader,
+		updateInvoiceTrxComponent: updateInvoiceTrxComponent,
 	}, nil
 }
 
@@ -104,6 +108,16 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	paymentToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *paymentToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		paymentToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: paymentToCreate.SubmittingAccount.ID}
+
+		createPaymentTrx.updateInvoiceTrxComponent.TransactionBody(
+			session,
+			&model.InternalUpdateInvoice{
+				ID: paymentToCreate.Invoice.ID,
+				Payments: []*model.ObjectIDOnly{
+					{ID: &paymentToCreate.ID},
+				},
+			},
+		)
 	}
 
 	jsonTemp, _ = json.Marshal(paymentToCreate)

@@ -6,6 +6,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
@@ -13,20 +14,23 @@ import (
 )
 
 type approveUpdatePaymentTransactionComponent struct {
-	paymentDataSource   databasepaymentdatasourceinterfaces.PaymentDataSource
-	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
-	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	paymentDataSource         databasepaymentdatasourceinterfaces.PaymentDataSource
+	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
+	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewApproveUpdatePaymentTransactionComponent(
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent, error) {
 	return &approveUpdatePaymentTransactionComponent{
-		paymentDataSource:   paymentDataSource,
-		loggingDataSource:   loggingDataSource,
-		mapProcessorUtility: mapProcessorUtility,
+		paymentDataSource:         paymentDataSource,
+		loggingDataSource:         loggingDataSource,
+		updateInvoiceTrxComponent: updateInvoiceTrxComponent,
+		mapProcessorUtility:       mapProcessorUtility,
 	}, nil
 }
 
@@ -114,6 +118,16 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 		if *updatePayment.ProposalStatus == model.EntityProposalStatusApproved {
 			jsonUpdate, _ := json.Marshal(fieldsToUpdatePayment.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePayment)
+
+			updatePaymentTrx.updateInvoiceTrxComponent.TransactionBody(
+				session,
+				&model.InternalUpdateInvoice{
+					ID: existingPayment.Invoice.ID,
+					Payments: []*model.ObjectIDOnly{
+						{ID: &existingPayment.ID},
+					},
+				},
+			)
 		}
 	}
 
