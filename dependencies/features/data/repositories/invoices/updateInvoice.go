@@ -8,6 +8,7 @@ import (
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 )
 
@@ -18,10 +19,12 @@ func (_ *UpdateInvoiceDependency) Bind() {
 		func(
 			invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource,
 			purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
+			paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 		) invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent {
 			updateInvoiceComponent, _ := invoicedomainrepositories.NewUpdateInvoiceTransactionComponent(
 				invoiceDataSource,
 				purchaseOrderDataSource,
+				paymentDataSource,
 			)
 			return updateInvoiceComponent
 		},
