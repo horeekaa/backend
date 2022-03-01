@@ -8,6 +8,7 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseinvoicedatasourceinterfaces "github.com/horeekaa/backend/features/invoices/data/dataSources/databases/interfaces/sources"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
@@ -18,17 +19,20 @@ type updateInvoiceTransactionComponent struct {
 	invoiceDataSource       databaseinvoicedatasourceinterfaces.InvoiceDataSource
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	paymentDataSource       databasepaymentdatasourceinterfaces.PaymentDataSource
+	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 }
 
 func NewUpdateInvoiceTransactionComponent(
 	invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource,
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
+	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 ) (invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent, error) {
 	return &updateInvoiceTransactionComponent{
 		invoiceDataSource:       invoiceDataSource,
 		purchaseOrderDataSource: purchaseOrderDataSource,
 		paymentDataSource:       paymentDataSource,
+		mouDataSource:           mouDataSource,
 	}, nil
 }
 
@@ -259,6 +263,37 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		invoiceToUpdate.Status = func(m model.InvoiceStatus) *model.InvoiceStatus {
 			return &m
 		}(model.InvoiceStatusPaid)
+
+		if existingInvoice.Mou != nil {
+			existingMou, err := updateInvoiceTrx.mouDataSource.GetMongoDataSource().FindByID(
+				*existingInvoice.Mou.ID,
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateInvoice",
+					err,
+				)
+			}
+
+			_, err = updateInvoiceTrx.mouDataSource.GetMongoDataSource().Update(
+				map[string]interface{}{
+					"_id": existingMou.ID,
+				},
+				&model.DatabaseUpdateMou{
+					RemainingCreditLimit: func(i int) *int {
+						return &i
+					}(existingMou.RemainingCreditLimit + existingInvoice.TotalPayable),
+				},
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateInvoice",
+					err,
+				)
+			}
+		}
 	}
 	jsonInv, _ := json.Marshal(updatedInvoice)
 	json.Unmarshal(jsonInv, &updatePO.Invoice)
