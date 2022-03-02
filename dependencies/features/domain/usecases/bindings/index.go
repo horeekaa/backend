@@ -13,6 +13,7 @@ import (
 	moupresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/mous"
 	notificationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/notifications"
 	organizationpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/organizations"
+	paymentpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/payments"
 	productvariantpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/productVariants"
 	productpresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/products"
 	purchaseorderitempresentationusecasedependencies "github.com/horeekaa/backend/dependencies/features/domain/usecases/purchaseOrderItems"
@@ -92,6 +93,11 @@ func (_ *UsecasesDependency) Bind() {
 		&moupresentationusecasedependencies.UpdateMouUsecaseDependency{},
 
 		&mouitempresentationusecasedependencies.GetMouItemUsecaseDependency{},
+
+		&paymentpresentationusecasedependencies.CreatePaymentUsecaseDependency{},
+		&paymentpresentationusecasedependencies.GetAllPaymentUsecaseDependency{},
+		&paymentpresentationusecasedependencies.GetPaymentUsecaseDependency{},
+		&paymentpresentationusecasedependencies.UpdatePaymentUsecaseDependency{},
 
 		&purchaseorderpresentationusecasedependencies.CreatePurchaseOrderUsecaseDependency{},
 		&purchaseorderpresentationusecasedependencies.GetAllPurchaseOrderUsecaseDependency{},
