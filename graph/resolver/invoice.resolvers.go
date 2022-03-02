@@ -9,6 +9,7 @@ import (
 	container "github.com/golobby/container/v2"
 	invoicepresentationusecaseinterfaces "github.com/horeekaa/backend/features/invoices/presentation/usecases"
 	invoicepresentationusecasetypes "github.com/horeekaa/backend/features/invoices/presentation/usecases/types"
+	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	purchaseorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrders/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
@@ -34,6 +35,28 @@ func (r *invoiceResolver) PurchaseOrders(ctx context.Context, obj *model.Invoice
 		}
 	}
 	return purchaseOrders, nil
+}
+
+func (r *invoiceResolver) Payments(ctx context.Context, obj *model.Invoice) ([]*model.Payment, error) {
+	var getPaymentUsecase paymentpresentationusecaseinterfaces.GetPaymentUsecase
+	container.Make(&getPaymentUsecase)
+
+	payments := []*model.Payment{}
+	if obj.Payments != nil {
+		for _, pay := range obj.Payments {
+			payment, err := getPaymentUsecase.Execute(
+				&model.PaymentFilterFields{
+					ID: &pay.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			payments = append(payments, payment)
+		}
+	}
+	return payments, nil
 }
 
 func (r *mutationResolver) CreateInvoice(ctx context.Context, createInvoice model.CreateInvoice) ([]*model.Invoice, error) {

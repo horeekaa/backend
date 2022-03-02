@@ -1,0 +1,8 @@
+extend type Mutation {
+    createPayment(createPayment: CreatePayment!): Payment!
+    updatePayment(updatePayment: UpdatePayment!): Payment!
+}
+
+extend type Query {
+    payments(filterFields: PaymentFilterFields!, paginationOpt: PaginationOptionInput): [Payment]!
+}
