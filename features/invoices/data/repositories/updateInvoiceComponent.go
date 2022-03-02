@@ -195,7 +195,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 
 	totalPaidAmount := 0
 	if len(invoiceToUpdate.Payments) > 0 {
-		invoiceToUpdate.Payments = append(
+		duplicatedPaymentIDsToAttach := append(
 			funk.Map(
 				existingInvoice.Payments,
 				func(m *model.Payment) *model.ObjectIDOnly {
@@ -211,7 +211,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			map[string]interface{}{
 				"_id": map[string]interface{}{
 					"$in": funk.Map(
-						invoiceToUpdate.Payments,
+						duplicatedPaymentIDsToAttach,
 						func(pyt *model.ObjectIDOnly) interface{} {
 							return pyt.ID
 						},
@@ -235,6 +235,14 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			totalPaidAmount += payment.Amount
 		}
 		invoiceToUpdate.TotalPaidAmount = &totalPaidAmount
+		invoiceToUpdate.Payments = funk.Map(
+			payments,
+			func(m *model.Payment) *model.ObjectIDOnly {
+				return &model.ObjectIDOnly{
+					ID: &m.ID,
+				}
+			},
+		).([]*model.ObjectIDOnly)
 	}
 
 	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(
