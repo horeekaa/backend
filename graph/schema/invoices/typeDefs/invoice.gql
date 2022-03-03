@@ -46,7 +46,8 @@ input DatabaseCreateInvoice {
 
 input UpdateInvoice {
   _id: ObjectID!
-  purchaseOrders: [ObjectIDOnly]
+  purchaseOrdersToAdd: [ObjectIDOnly]
+  purchaseOrdersToRemove: [ObjectIDOnly]
   startInvoiceDate: Time
   endInvoiceDate: Time
   discountInPercent: Int
@@ -57,7 +58,8 @@ input UpdateInvoice {
 
 input InternalUpdateInvoice {
   _id: ObjectID!
-  purchaseOrders: [ObjectIDOnly]
+  purchaseOrdersToAdd: [ObjectIDOnly]
+  purchaseOrdersToRemove: [ObjectIDOnly]
   startInvoiceDate: Time
   endInvoiceDate: Time
   totalValue: Int

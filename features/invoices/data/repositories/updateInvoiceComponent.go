@@ -139,6 +139,53 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 	}
 
+	if len(updateInvoiceInput.PurchaseOrdersToAdd) > 0 || len(updateInvoiceInput.PurchaseOrdersToRemove) > 0 {
+		duplicatedPOIDsToAttach := append(
+			funk.Map(
+				existingInvoice.PurchaseOrders,
+				func(po *model.PurchaseOrder) *model.ObjectIDOnly {
+					return &model.ObjectIDOnly{
+						ID: &po.ID,
+					}
+				},
+			).([]*model.ObjectIDOnly),
+			updateInvoiceInput.PurchaseOrdersToAdd...,
+		)
+
+		duplicatedPOIDsToAttach = funk.Filter(
+			duplicatedPOIDsToAttach,
+			func(po *model.ObjectIDOnly) bool {
+				return !funk.Contains(
+					updateInvoiceInput.PurchaseOrdersToRemove,
+					func(poRemove *model.ObjectIDOnly) interface{} {
+						return po.ID.Hex() == poRemove.ID.Hex()
+					},
+				)
+			},
+		).([]*model.ObjectIDOnly)
+
+		purchaseOrders, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"_id": map[string]interface{}{
+					"$in": funk.Map(
+						duplicatedPOIDsToAttach,
+						func(po *model.ObjectIDOnly) interface{} {
+							return po.ID
+						},
+					),
+				},
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			session,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateInvoice",
+				err,
+			)
+		}
+	}
+
 	if len(purchaseOrders) > 0 {
 		_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
 			map[string]interface{}{
@@ -235,14 +282,11 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			totalPaidAmount += payment.Amount
 		}
 		invoiceToUpdate.TotalPaidAmount = &totalPaidAmount
-		invoiceToUpdate.Payments = funk.Map(
-			payments,
-			func(m *model.Payment) *model.ObjectIDOnly {
-				return &model.ObjectIDOnly{
-					ID: &m.ID,
-				}
-			},
-		).([]*model.ObjectIDOnly)
+
+		jsonTemp, _ = json.Marshal(map[string]interface{}{
+			"Payments": payments,
+		})
+		json.Unmarshal(jsonTemp, invoiceToUpdate)
 	}
 
 	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(

@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
@@ -45,6 +46,7 @@ func (_ *ProposeUpdatePurchaseOrderDependency) Bind() {
 			createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
 			proposeUpdatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
 			approvePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
+			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository {
 			proposeUpdatepurchaseOrderRepo, _ := purchaseorderdomainrepositories.NewProposeUpdatePurchaseOrderRepository(
@@ -53,6 +55,7 @@ func (_ *ProposeUpdatePurchaseOrderDependency) Bind() {
 				createPurchaseOrderItemComponent,
 				proposeUpdatePurchaseOrderItemComponent,
 				approvePurchaseOrderItemComponent,
+				updateInvoiceTrxComponent,
 				mongoDBTransaction,
 			)
 			return proposeUpdatepurchaseOrderRepo
