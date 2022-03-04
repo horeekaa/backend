@@ -118,6 +118,7 @@ func (_ *UsecasesDependency) Bind() {
 		&supplyorderpresentationusecasedependencies.UpdateSupplyOrderUsecaseDependency{},
 
 		&supplyorderitempresentationusecasedependencies.UpdateSupplyOrderItemPickUpUsecaseDependency{},
+		&supplyorderitempresentationusecasedependencies.GetAllSupplyOrderItemUsecaseDependency{},
 		&supplyorderitempresentationusecasedependencies.GetSupplyOrderItemUsecaseDependency{},
 	}
 

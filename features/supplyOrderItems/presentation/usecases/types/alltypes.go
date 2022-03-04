@@ -10,3 +10,9 @@ type UpdateSupplyOrderItemPickUpUsecaseInput struct {
 	Context                     context.Context
 	UpdateSupplyOrderItemPickUp *model.UpdateSupplyOrderItemPickUpOnly
 }
+
+type GetAllSupplyOrderItemUsecaseInput struct {
+	Context       context.Context
+	FilterFields  *model.SupplyOrderItemFilterFields
+	PaginationOps *model.PaginationOptionInput
+}
