@@ -35,7 +35,7 @@ input DatabaseCreateInvoice {
   discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
-  paidAmount: Int!
+  totalPaidAmount: Int!
   paymentDueDate: Time
   organization: OrganizationForInvoiceInput!
   mou: MouForInvoiceInput
@@ -46,7 +46,8 @@ input DatabaseCreateInvoice {
 
 input UpdateInvoice {
   _id: ObjectID!
-  purchaseOrders: [ObjectIDOnly]
+  purchaseOrdersToAdd: [ObjectIDOnly]
+  purchaseOrdersToRemove: [ObjectIDOnly]
   startInvoiceDate: Time
   endInvoiceDate: Time
   discountInPercent: Int
@@ -57,7 +58,8 @@ input UpdateInvoice {
 
 input InternalUpdateInvoice {
   _id: ObjectID!
-  purchaseOrders: [ObjectIDOnly]
+  purchaseOrdersToAdd: [ObjectIDOnly]
+  purchaseOrdersToRemove: [ObjectIDOnly]
   startInvoiceDate: Time
   endInvoiceDate: Time
   totalValue: Int
@@ -66,6 +68,7 @@ input InternalUpdateInvoice {
   totalPayable: Int
   paymentDueDate: Time
   status: InvoiceStatus
+  payments: [ObjectIDOnly]
 }
 
 input DatabaseUpdateInvoice {
@@ -77,8 +80,10 @@ input DatabaseUpdateInvoice {
   discountInPercent: Int
   totalDiscounted: Int
   totalPayable: Int
+  totalPaidAmount: Int
   paymentDueDate: Time
   status: InvoiceStatus
+  payments: [ObjectIDOnly]
   updatedAt: Time
 }
 
@@ -91,6 +96,7 @@ input InvoiceFilterFields {
   discountInPercent: IntFilterField
   totalDiscounted: IntFilterField
   totalPayable: IntFilterField
+  totalPaidAmount: IntFilterField
   paymentDueDate: TimeFilterField
   organization: OrganizationForInvoiceFilterFields
   mou: MouForInvoiceFilterFields
@@ -103,16 +109,18 @@ type Invoice {
   _id: ObjectID!
   publicId: String!
   purchaseOrders: [PurchaseOrder]
-  startInvoiceDate: Time!
-  endInvoiceDate: Time!
+  startInvoiceDate: Time
+  endInvoiceDate: Time
   totalValue: Int!
   discountInPercent: Int!
   totalDiscounted: Int!
   totalPayable: Int!
+  totalPaidAmount: Int!
   paymentDueDate: Time!
   organization: OrganizationForInvoice
   mou: MouForInvoice
   status: InvoiceStatus
+  payments: [Payment]
   createdAt: Time
   updatedAt: Time
 }

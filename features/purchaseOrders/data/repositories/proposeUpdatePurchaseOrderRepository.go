@@ -8,6 +8,7 @@ import (
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
@@ -21,6 +22,7 @@ type proposeUpdatePurchaseOrderRepository struct {
 	createPurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
 	updatePurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent
 	approvePurchaseOrderItemComponent              purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent
+	updateInvoiceTrxComponent                      invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -30,6 +32,7 @@ func NewProposeUpdatePurchaseOrderRepository(
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
 	updatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
 	approvePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository, error) {
 	proposeUpdatePurchaseOrderRepo := &proposeUpdatePurchaseOrderRepository{
@@ -38,6 +41,7 @@ func NewProposeUpdatePurchaseOrderRepository(
 		createPurchaseOrderItemComponent,
 		updatePurchaseOrderItemComponent,
 		approvePurchaseOrderItemComponent,
+		updateInvoiceTrxComponent,
 		mongoDBTransaction,
 	}
 
@@ -167,6 +171,47 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 			},
 		)
 		json.Unmarshal(jsonTemp, purchaseOrderToUpdate)
+	}
+
+	if purchaseOrderToUpdate.ProposalStatus != nil {
+		if *purchaseOrderToUpdate.ProposalStatus == model.EntityProposalStatusApproved {
+			if purchaseOrderToUpdate.Invoice != nil {
+				if funk.Get(existingPurchaseOrder, "Invoice.ID") != nil {
+					if existingPurchaseOrder.Invoice.ID.Hex() != purchaseOrderToUpdate.Invoice.ID.Hex() {
+						_, err := updatePurchaseOrderRepo.updateInvoiceTrxComponent.TransactionBody(
+							operationOption,
+							&model.InternalUpdateInvoice{
+								ID: *existingPurchaseOrder.Invoice.ID,
+								PurchaseOrdersToRemove: []*model.ObjectIDOnly{
+									{ID: &existingPurchaseOrder.ID},
+								},
+							},
+						)
+						if err != nil {
+							return nil, horeekaacoreexceptiontofailure.ConvertException(
+								"/proposeUpdatePurchaseOrderRepository",
+								err,
+							)
+						}
+					}
+				}
+				_, err := updatePurchaseOrderRepo.updateInvoiceTrxComponent.TransactionBody(
+					operationOption,
+					&model.InternalUpdateInvoice{
+						ID: *purchaseOrderToUpdate.Invoice.ID,
+						PurchaseOrdersToAdd: []*model.ObjectIDOnly{
+							{ID: &existingPurchaseOrder.ID},
+						},
+					},
+				)
+				if err != nil {
+					return nil, horeekaacoreexceptiontofailure.ConvertException(
+						"/proposeUpdatePurchaseOrderRepository",
+						err,
+					)
+				}
+			}
+		}
 	}
 
 	return updatePurchaseOrderRepo.proposeUpdatePurchaseOrderTransactionComponent.TransactionBody(

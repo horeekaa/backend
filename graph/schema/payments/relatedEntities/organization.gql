@@ -1,0 +1,14 @@
+input OrganizationForPaymentInput {
+  _id: ObjectID!
+  type: OrganizationType
+}
+
+input OrganizationForPaymentFilterFields {
+  _id: ObjectID
+  type: StringFilterField
+}
+
+type OrganizationForPayment {
+  _id: ObjectID!
+  type: OrganizationType
+}

@@ -1,0 +1,15 @@
+input PaymentAccessesInput {
+  paymentCreate: Boolean
+  paymentUpdate: Boolean
+  paymentReadAll: Boolean
+  paymentReadOwned: Boolean
+  paymentApproval: Boolean
+}
+
+type PaymentAccesses {
+  paymentCreate: Boolean
+  paymentUpdate: Boolean
+  paymentReadAll: Boolean
+  paymentReadOwned: Boolean
+  paymentApproval: Boolean
+}

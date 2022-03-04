@@ -18,6 +18,7 @@ input MemberAccessRefOptionsInput {
   supplyOrderAccesses: SupplyOrderAccessesInput
   supplyOrderItemPickUpAccesses: SupplyOrderItemPickUpAccessesInput
   invoiceAccesses: InvoiceAccessesInput
+  paymentAccesses: PaymentAccessesInput
 }
 
 type MemberAccessRefOptions {
@@ -35,6 +36,7 @@ type MemberAccessRefOptions {
   supplyOrderAccesses: SupplyOrderAccesses
   supplyOrderItemPickUpAccesses: SupplyOrderItemPickUpAccesses
   invoiceAccesses: InvoiceAccesses
+  paymentAccesses: PaymentAccesses
 }
 
 input CreateMemberAccessRef {

@@ -8,6 +8,8 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseinvoicedatasourceinterfaces "github.com/horeekaa/backend/features/invoices/data/dataSources/databases/interfaces/sources"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
+	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
+	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
@@ -16,15 +18,21 @@ import (
 type updateInvoiceTransactionComponent struct {
 	invoiceDataSource       databaseinvoicedatasourceinterfaces.InvoiceDataSource
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
+	paymentDataSource       databasepaymentdatasourceinterfaces.PaymentDataSource
+	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 }
 
 func NewUpdateInvoiceTransactionComponent(
 	invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource,
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
+	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
+	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 ) (invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent, error) {
 	return &updateInvoiceTransactionComponent{
 		invoiceDataSource:       invoiceDataSource,
 		purchaseOrderDataSource: purchaseOrderDataSource,
+		paymentDataSource:       paymentDataSource,
+		mouDataSource:           mouDataSource,
 	}, nil
 }
 
@@ -44,30 +52,6 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 
 	existingInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().FindByID(
 		invoiceToUpdate.ID,
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateInvoice",
-			err,
-		)
-	}
-	_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
-		map[string]interface{}{
-			"_id": map[string]interface{}{
-				"$in": funk.Map(
-					existingInvoice.PurchaseOrders,
-					func(po *model.PurchaseOrder) interface{} {
-						return po.ID
-					},
-				),
-			},
-		},
-		&model.DatabaseUpdatePurchaseOrder{
-			Status: func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
-				return &m
-			}(model.PurchaseOrderStatusWaitingForInvoice),
-		},
 		session,
 	)
 	if err != nil {
@@ -155,32 +139,155 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 	}
 
-	jsonTemp, _ = json.Marshal(map[string]interface{}{
-		"PurchaseOrders": purchaseOrders,
-	})
-	json.Unmarshal(jsonTemp, invoiceToUpdate)
+	if len(updateInvoiceInput.PurchaseOrdersToAdd) > 0 || len(updateInvoiceInput.PurchaseOrdersToRemove) > 0 {
+		duplicatedPOIDsToAttach := append(
+			funk.Map(
+				existingInvoice.PurchaseOrders,
+				func(po *model.PurchaseOrder) *model.ObjectIDOnly {
+					return &model.ObjectIDOnly{
+						ID: &po.ID,
+					}
+				},
+			).([]*model.ObjectIDOnly),
+			updateInvoiceInput.PurchaseOrdersToAdd...,
+		)
 
-	totalPrice := 0
-	for _, item := range purchaseOrders {
-		totalPrice += item.FinalSalesAmount
-	}
-	invoiceToUpdate.TotalValue = &totalPrice
+		duplicatedPOIDsToAttach = funk.Filter(
+			duplicatedPOIDsToAttach,
+			func(po *model.ObjectIDOnly) bool {
+				return !funk.Contains(
+					updateInvoiceInput.PurchaseOrdersToRemove,
+					func(poRemove *model.ObjectIDOnly) interface{} {
+						return po.ID.Hex() == poRemove.ID.Hex()
+					},
+				)
+			},
+		).([]*model.ObjectIDOnly)
 
-	totalDiscounted := existingInvoice.TotalDiscounted
-	if invoiceToUpdate.TotalDiscounted != nil {
-		totalDiscounted = *invoiceToUpdate.TotalDiscounted
+		purchaseOrders, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"_id": map[string]interface{}{
+					"$in": funk.Map(
+						duplicatedPOIDsToAttach,
+						func(po *model.ObjectIDOnly) interface{} {
+							return po.ID
+						},
+					),
+				},
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			session,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateInvoice",
+				err,
+			)
+		}
 	}
 
-	discountInPercent := existingInvoice.DiscountInPercent
-	if invoiceToUpdate.DiscountInPercent != nil {
-		discountInPercent = *invoiceToUpdate.DiscountInPercent
+	if len(purchaseOrders) > 0 {
+		_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
+			map[string]interface{}{
+				"_id": map[string]interface{}{
+					"$in": funk.Map(
+						existingInvoice.PurchaseOrders,
+						func(po *model.PurchaseOrder) interface{} {
+							return po.ID
+						},
+					),
+				},
+			},
+			&model.DatabaseUpdatePurchaseOrder{
+				Status: func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
+					return &m
+				}(model.PurchaseOrderStatusWaitingForInvoice),
+			},
+			session,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateInvoice",
+				err,
+			)
+		}
+
+		jsonTemp, _ = json.Marshal(map[string]interface{}{
+			"PurchaseOrders": purchaseOrders,
+		})
+		json.Unmarshal(jsonTemp, invoiceToUpdate)
+
+		totalPrice := 0
+		for _, item := range purchaseOrders {
+			totalPrice += item.FinalSalesAmount
+		}
+		invoiceToUpdate.TotalValue = &totalPrice
+
+		totalDiscounted := existingInvoice.TotalDiscounted
+		if invoiceToUpdate.TotalDiscounted != nil {
+			totalDiscounted = *invoiceToUpdate.TotalDiscounted
+		}
+
+		discountInPercent := existingInvoice.DiscountInPercent
+		if invoiceToUpdate.DiscountInPercent != nil {
+			discountInPercent = *invoiceToUpdate.DiscountInPercent
+		}
+
+		if discountInPercent > 0 {
+			totalDiscounted = (discountInPercent / 100.0) * totalPrice
+		}
+		invoiceToUpdate.TotalDiscounted = &totalDiscounted
+		invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 	}
 
-	if discountInPercent > 0 {
-		totalDiscounted = (discountInPercent / 100.0) * totalPrice
+	totalPaidAmount := 0
+	if len(invoiceToUpdate.Payments) > 0 {
+		duplicatedPaymentIDsToAttach := append(
+			funk.Map(
+				existingInvoice.Payments,
+				func(m *model.Payment) *model.ObjectIDOnly {
+					return &model.ObjectIDOnly{
+						ID: &m.ID,
+					}
+				},
+			).([]*model.ObjectIDOnly),
+			invoiceToUpdate.Payments...,
+		)
+
+		payments, err := updateInvoiceTrx.paymentDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"_id": map[string]interface{}{
+					"$in": funk.Map(
+						duplicatedPaymentIDsToAttach,
+						func(pyt *model.ObjectIDOnly) interface{} {
+							return pyt.ID
+						},
+					),
+				},
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			session,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/updateInvoice",
+				err,
+			)
+		}
+
+		for _, payment := range payments {
+			if payment.ProposalStatus != model.EntityProposalStatusApproved {
+				continue
+			}
+			totalPaidAmount += payment.Amount
+		}
+		invoiceToUpdate.TotalPaidAmount = &totalPaidAmount
+
+		jsonTemp, _ = json.Marshal(map[string]interface{}{
+			"Payments": payments,
+		})
+		json.Unmarshal(jsonTemp, invoiceToUpdate)
 	}
-	invoiceToUpdate.TotalDiscounted = &totalDiscounted
-	invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 
 	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
@@ -200,6 +307,45 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		Status: func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
 			return &m
 		}(model.PurchaseOrderStatusInvoiced),
+	}
+	if totalPaidAmount >= existingInvoice.TotalPayable {
+		updatePO.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
+			return &m
+		}(model.PurchaseOrderStatusPaid)
+		invoiceToUpdate.Status = func(m model.InvoiceStatus) *model.InvoiceStatus {
+			return &m
+		}(model.InvoiceStatusPaid)
+
+		if existingInvoice.Mou != nil {
+			existingMou, err := updateInvoiceTrx.mouDataSource.GetMongoDataSource().FindByID(
+				*existingInvoice.Mou.ID,
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateInvoice",
+					err,
+				)
+			}
+
+			_, err = updateInvoiceTrx.mouDataSource.GetMongoDataSource().Update(
+				map[string]interface{}{
+					"_id": existingMou.ID,
+				},
+				&model.DatabaseUpdateMou{
+					RemainingCreditLimit: func(i int) *int {
+						return &i
+					}(existingMou.RemainingCreditLimit + existingInvoice.TotalPayable),
+				},
+				session,
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/updateInvoice",
+					err,
+				)
+			}
+		}
 	}
 	jsonInv, _ := json.Marshal(updatedInvoice)
 	json.Unmarshal(jsonInv, &updatePO.Invoice)

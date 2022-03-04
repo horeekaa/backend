@@ -18,6 +18,8 @@ import (
 	notificationdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils"
 	notificationdomainrepositoryloaderutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils/payloadLoaders"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
+	paymentdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/payments"
+	paymentdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/payments/utils"
 	productvariantdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/productVariants"
 	productdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/products"
 	purchaseorderitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/purchaseOrderItems"
@@ -94,6 +96,13 @@ func (_ *RepositoriesDependency) Bind() {
 		&organizationdomainrepositorydependencies.GetOrganizationDependency{},
 		&organizationdomainrepositorydependencies.ProposeUpdateOrganizationDependency{},
 		&organizationdomainrepositorydependencies.ApproveUpdateOrganizationDependency{},
+
+		&paymentdomainrepositoryutilitydependencies.PaymentLoaderDependency{},
+		&paymentdomainrepositorydependencies.CreatePaymentDependency{},
+		&paymentdomainrepositorydependencies.GetAllPaymentDependency{},
+		&paymentdomainrepositorydependencies.GetPaymentDependency{},
+		&paymentdomainrepositorydependencies.ApproveUpdatePaymentDependency{},
+		&paymentdomainrepositorydependencies.ProposeUpdatePaymentDependency{},
 
 		&productvariantdomainrepositorydependencies.CreateProductVariantDependency{},
 		&productvariantdomainrepositorydependencies.ApproveUpdateProductVariantDependency{},

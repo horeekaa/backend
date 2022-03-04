@@ -1,0 +1,112 @@
+enum PaymentType {
+  CREDIT
+  DEBIT
+}
+
+input CreatePayment {
+  amount: Int!
+  note: String
+  photo: CreateDescriptivePhoto!
+  invoice: ObjectIDOnly!
+}
+
+input InternalCreatePayment {
+  amount: Int!
+  note: String
+  photo: InternalCreateDescriptivePhoto!
+  invoice: ObjectIDOnly!
+  memberAccess: MemberAccessForPaymentInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input DatabaseCreatePayment {
+  _id: ObjectID!
+  amount: Int!
+  note: String
+  type: PaymentType!
+  photo: ObjectIDOnly!
+  invoice: InvoiceForPaymentInput!
+  organization: OrganizationForPaymentInput!
+  proposalStatus: EntityProposalStatus
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePayment
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input UpdatePayment {
+  _id: ObjectID!
+  amount: Int
+  note: String
+  photo: UpdateDescriptivePhoto
+  invoice: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+}
+
+input InternalUpdatePayment {
+  _id: ObjectID!
+  amount: Int
+  note: String
+  photo: InternalUpdateDescriptivePhoto
+  invoice: ObjectIDOnly
+  memberAccess: MemberAccessForPaymentInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+}
+
+input DatabaseUpdatePayment {
+  _id: ObjectID!
+  amount: Int
+  note: String
+  type: PaymentType
+  photo: ObjectIDOnly
+  invoice: InvoiceForPaymentInput
+  organization: OrganizationForPaymentInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: DatabaseUpdatePayment
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+input PaymentFilterFields {
+  _id: ObjectID
+  amount: IntFilterField
+  note: StringFilterField
+  type: StringFilterField
+  invoice: InvoiceForPaymentFilterFields
+  organization: OrganizationForPaymentFilterFields
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: PaymentFilterFields
+  recentLog: ObjectIDOnly
+  updatedAt: Time
+}
+
+type Payment {
+  _id: ObjectID!
+  amount: Int!
+  note: String
+  type: PaymentType!
+  photo: DescriptivePhoto!
+  invoice: Invoice!
+  organization: Organization!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  proposedChanges: Payment
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
