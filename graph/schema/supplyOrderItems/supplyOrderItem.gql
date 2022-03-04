@@ -1,3 +1,7 @@
 extend type Mutation {
     updateSupplyOrderItemPickUp(updateSupplyOrderItemPickUp: UpdateSupplyOrderItemPickUpOnly): SupplyOrderItem!
 }
+
+extend type Query {
+    supplyOrderItems(filterFields: SupplyOrderItemFilterFields!, paginationOpt: PaginationOptionInput): [SupplyOrderItem]!
+}

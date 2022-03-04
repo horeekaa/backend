@@ -1,3 +1,7 @@
 extend type Mutation {
     updatePurchaseOrderItemDelivery(updatePurchaseOrderItemDelivery: UpdatePurchaseOrderItemDeliveryOnly): PurchaseOrderItem!
 }
+
+extend type Query {
+    purchaseOrderItems(filterFields: PurchaseOrderItemFilterFields!, paginationOpt: PaginationOptionInput): [PurchaseOrderItem]!
+}

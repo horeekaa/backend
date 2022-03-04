@@ -28,6 +28,18 @@ func (r *mutationResolver) UpdateSupplyOrderItemPickUp(ctx context.Context, upda
 	)
 }
 
+func (r *queryResolver) SupplyOrderItems(ctx context.Context, filterFields model.SupplyOrderItemFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.SupplyOrderItem, error) {
+	var getSupplyOrderItemsUsecase supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase
+	container.Make(&getSupplyOrderItemsUsecase)
+	return getSupplyOrderItemsUsecase.Execute(
+		supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
+			Context:       ctx,
+			FilterFields:  &filterFields,
+			PaginationOps: paginationOpt,
+		},
+	)
+}
+
 func (r *supplyOrderItemResolver) Photos(ctx context.Context, obj *model.SupplyOrderItem) ([]*model.DescriptivePhoto, error) {
 	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
 	container.Make(&getDescriptivePhotoUsecase)
