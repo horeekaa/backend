@@ -112,7 +112,7 @@ func (getAllPOItemUcase *getAllPurchaseOrderItemUsecase) Execute(
 		funk.Get(memberAccess, "Access.PurchaseOrderAccesses.PurchaseOrderReadAll"), false,
 	).(bool); !accessible {
 		if accessible := funk.GetOrElse(
-			funk.Get(memberAccess, "Access.PurchaseOrderAccesses.PurchaseOrderItemReadOwned"), false,
+			funk.Get(memberAccess, "Access.PurchaseOrderAccesses.PurchaseOrderReadOwned"), false,
 		).(bool); accessible {
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(

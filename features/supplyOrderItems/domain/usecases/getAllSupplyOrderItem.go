@@ -112,7 +112,7 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 		funk.Get(memberAccess, "Access.SupplyOrderAccesses.SupplyOrderReadAll"), false,
 	).(bool); !accessible {
 		if accessible := funk.GetOrElse(
-			funk.Get(memberAccess, "Access.SupplyOrderAccesses.SupplyOrderItemReadOwned"), false,
+			funk.Get(memberAccess, "Access.SupplyOrderAccesses.SupplyOrderReadOwned"), false,
 		).(bool); accessible {
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
