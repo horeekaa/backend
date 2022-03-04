@@ -71,7 +71,7 @@ input SupplyOrderFilterFields {
   totalReturn: IntFilterField
   finalSalesAmount: IntFilterField
   organization: OrganizationForSupplyOrderFilterFields
-  items: [ObjectIDOnly]
+  items: SupplyOrderItemFilterFields
   proposalStatus: StringFilterField
   proposalStatusReason: StringFilterField
   submittingAccount: ObjectIDOnly

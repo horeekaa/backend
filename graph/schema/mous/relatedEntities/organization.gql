@@ -1,8 +1,8 @@
 input OrganizationForPartyInput {
   _id: ObjectID!
-  name: String!
-  phoneNumber: String!
-  type: OrganizationType!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
 }
 
 input OrganizationForPartyFilterFields {
