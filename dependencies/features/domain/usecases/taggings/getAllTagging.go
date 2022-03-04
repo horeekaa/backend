@@ -15,12 +15,12 @@ func (_ GetAllTaggingUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllTaggingRepo taggingdomainrepositoryinterfaces.GetAllTaggingRepository,
 		) taggingpresentationusecaseinterfaces.GetAllTaggingUsecase {
 			getAllTaggingUcase, _ := taggingpresentationusecases.NewGetAllTaggingUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountRepo,
+				getAccountMemberAccessRepo,
 				getAllTaggingRepo,
 			)
 			return getAllTaggingUcase

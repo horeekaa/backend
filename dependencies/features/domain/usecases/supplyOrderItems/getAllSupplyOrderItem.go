@@ -15,12 +15,12 @@ func (_ GetAllSupplyOrderItemUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountMemberAccess memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllSupplyOrderItemRepo supplyorderitemdomainrepositoryinterfaces.GetAllSupplyOrderItemRepository,
 		) supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase {
 			getAllSupplyOrderItemUcase, _ := supplyorderitempresentationusecases.NewGetAllSupplyOrderItemUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountMemberAccess,
+				getAccountMemberAccessRepo,
 				getAllSupplyOrderItemRepo,
 			)
 			return getAllSupplyOrderItemUcase

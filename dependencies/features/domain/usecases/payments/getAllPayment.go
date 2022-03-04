@@ -15,12 +15,12 @@ func (_ GetAllPaymentUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountpaymentpo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllPaymentRepo paymentdomainrepositoryinterfaces.GetAllPaymentRepository,
 		) paymentpresentationusecaseinterfaces.GetAllPaymentUsecase {
 			getAllPaymentUcase, _ := paymentpresentationusecases.NewGetAllPaymentUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountpaymentpo,
+				getAccountMemberAccessRepo,
 				getAllPaymentRepo,
 			)
 			return getAllPaymentUcase

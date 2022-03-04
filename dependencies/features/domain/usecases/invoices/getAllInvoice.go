@@ -15,12 +15,12 @@ func (_ GetAllInvoiceUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountinvoicepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllInvoiceRepo invoicedomainrepositoryinterfaces.GetAllInvoiceRepository,
 		) invoicepresentationusecaseinterfaces.GetAllInvoiceUsecase {
 			getAllInvoiceUcase, _ := invoicepresentationusecases.NewGetAllInvoiceUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountinvoicepo,
+				getAccountMemberAccessRepo,
 				getAllInvoiceRepo,
 			)
 			return getAllInvoiceUcase
