@@ -15,12 +15,12 @@ func (_ GetAllNotificationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllNotificationRepo notificationdomainrepositoryinterfaces.GetAllNotificationRepository,
 		) notificationpresentationusecaseinterfaces.GetAllNotificationUsecase {
 			getAllNotificationUcase, _ := notificationpresentationusecases.NewGetAllNotificationUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountRepo,
+				getAccountMemberAccessRepo,
 				getAllNotificationRepo,
 			)
 			return getAllNotificationUcase

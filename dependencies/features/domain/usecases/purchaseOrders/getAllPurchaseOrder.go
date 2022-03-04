@@ -15,12 +15,12 @@ func (_ GetAllPurchaseOrderUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountpurchaseOrderpo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllPurchaseOrderRepo purchaseorderdomainrepositoryinterfaces.GetAllPurchaseOrderRepository,
 		) purchaseorderpresentationusecaseinterfaces.GetAllPurchaseOrderUsecase {
 			getAllPurchaseOrderUcase, _ := purchaseorderpresentationusecases.NewGetAllPurchaseOrderUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountpurchaseOrderpo,
+				getAccountMemberAccessRepo,
 				getAllPurchaseOrderRepo,
 			)
 			return getAllPurchaseOrderUcase

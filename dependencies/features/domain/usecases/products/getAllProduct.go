@@ -15,12 +15,12 @@ func (_ GetAllProductUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountproductpo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllProductRepo productdomainrepositoryinterfaces.GetAllProductRepository,
 		) productpresentationusecaseinterfaces.GetAllProductUsecase {
 			getAllProductUcase, _ := productpresentationusecases.NewGetAllProductUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountproductpo,
+				getAccountMemberAccessRepo,
 				getAllProductRepo,
 			)
 			return getAllProductUcase

@@ -15,12 +15,12 @@ func (_ GetAllMouUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountmoupo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllMouRepo moudomainrepositoryinterfaces.GetAllMouRepository,
 		) moupresentationusecaseinterfaces.GetAllMouUsecase {
 			getAllMouUcase, _ := moupresentationusecases.NewGetAllMouUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountmoupo,
+				getAccountMemberAccessRepo,
 				getAllMouRepo,
 			)
 			return getAllMouUcase

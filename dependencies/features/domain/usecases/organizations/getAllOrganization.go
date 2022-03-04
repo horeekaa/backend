@@ -15,12 +15,12 @@ func (_ GetAllOrganizationUsecaseDependency) Bind() {
 	container.Singleton(
 		func(
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
-			getAccountOrganizationpo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
+			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			getAllOrganizationRepo organizationdomainrepositoryinterfaces.GetAllOrganizationRepository,
 		) organizationpresentationusecaseinterfaces.GetAllOrganizationUsecase {
 			getAllOrganizationUcase, _ := organizationpresentationusecases.NewGetAllOrganizationUsecase(
 				getAccountFromAuthDataRepo,
-				getAccountOrganizationpo,
+				getAccountMemberAccessRepo,
 				getAllOrganizationRepo,
 			)
 			return getAllOrganizationUcase

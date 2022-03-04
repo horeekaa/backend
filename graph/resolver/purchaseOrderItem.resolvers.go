@@ -95,6 +95,18 @@ func (r *purchaseOrderItemResolver) RecentLog(ctx context.Context, obj *model.Pu
 	)
 }
 
+func (r *queryResolver) PurchaseOrderItems(ctx context.Context, filterFields model.PurchaseOrderItemFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.PurchaseOrderItem, error) {
+	var getPurchaseOrderItemsUsecase purchaseorderitempresentationusecaseinterfaces.GetAllPurchaseOrderItemUsecase
+	container.Make(&getPurchaseOrderItemsUsecase)
+	return getPurchaseOrderItemsUsecase.Execute(
+		purchaseorderitempresentationusecasetypes.GetAllPurchaseOrderItemUsecaseInput{
+			Context:       ctx,
+			FilterFields:  &filterFields,
+			PaginationOps: paginationOpt,
+		},
+	)
+}
+
 // PurchaseOrderItem returns generated.PurchaseOrderItemResolver implementation.
 func (r *Resolver) PurchaseOrderItem() generated.PurchaseOrderItemResolver {
 	return &purchaseOrderItemResolver{r}
