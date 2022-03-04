@@ -6,7 +6,6 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
-	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
@@ -15,26 +14,23 @@ import (
 )
 
 type proposeUpdatePaymentTransactionComponent struct {
-	paymentDataSource         databasepaymentdatasourceinterfaces.PaymentDataSource
-	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
-	paymentDataLoader         paymentdomainrepositoryutilityinterfaces.PaymentLoader
-	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
-	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
+	paymentDataSource   databasepaymentdatasourceinterfaces.PaymentDataSource
+	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
+	paymentDataLoader   paymentdomainrepositoryutilityinterfaces.PaymentLoader
+	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
 }
 
 func NewProposeUpdatePaymentTransactionComponent(
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 	paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader,
-	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent, error) {
 	return &proposeUpdatePaymentTransactionComponent{
-		paymentDataSource:         paymentDataSource,
-		loggingDataSource:         loggingDataSource,
-		paymentDataLoader:         paymentDataLoader,
-		updateInvoiceTrxComponent: updateInvoiceTrxComponent,
-		mapProcessorUtility:       mapProcessorUtility,
+		paymentDataSource:   paymentDataSource,
+		loggingDataSource:   loggingDataSource,
+		paymentDataLoader:   paymentDataLoader,
+		mapProcessorUtility: mapProcessorUtility,
 	}, nil
 }
 
@@ -122,16 +118,6 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 		}
 		if *updatePayment.ProposalStatus == model.EntityProposalStatusApproved {
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePayment)
-
-			updatePaymentTrx.updateInvoiceTrxComponent.TransactionBody(
-				session,
-				&model.InternalUpdateInvoice{
-					ID: existingPayment.Invoice.ID,
-					Payments: []*model.ObjectIDOnly{
-						{ID: &existingPayment.ID},
-					},
-				},
-			)
 		}
 	}
 

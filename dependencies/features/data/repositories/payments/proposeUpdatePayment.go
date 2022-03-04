@@ -21,14 +21,12 @@ func (_ *ProposeUpdatePaymentDependency) Bind() {
 			paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader,
-			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent {
 			proposeUpdatePaymentComponent, _ := paymentdomainrepositories.NewProposeUpdatePaymentTransactionComponent(
 				paymentDataSource,
 				loggingDataSource,
 				paymentDataLoader,
-				updateInvoiceTrxComponent,
 				mapProcessorUtility,
 			)
 			return proposeUpdatePaymentComponent
@@ -41,6 +39,7 @@ func (_ *ProposeUpdatePaymentDependency) Bind() {
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 			proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 			proposeUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent,
+			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) paymentdomainrepositoryinterfaces.ProposeUpdatePaymentRepository {
 			proposeUpdatePaymentRepo, _ := paymentdomainrepositories.NewProposeUpdatePaymentRepository(
@@ -48,6 +47,7 @@ func (_ *ProposeUpdatePaymentDependency) Bind() {
 				createDescriptivePhotoComponent,
 				proposeUpdateDescriptivePhotoComponent,
 				proposeUpdatePaymentTransactionComponent,
+				updateInvoiceTrxComponent,
 				mongoDBTransaction,
 			)
 			return proposeUpdatePaymentRepo

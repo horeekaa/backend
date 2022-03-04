@@ -19,13 +19,11 @@ func (_ *ApproveUpdatePaymentDependency) Bind() {
 		func(
 			paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent {
 			approveUpdatePaymentComponent, _ := paymentdomainrepositories.NewApproveUpdatePaymentTransactionComponent(
 				paymentDataSource,
 				loggingDataSource,
-				updateInvoiceTrxComponent,
 				mapProcessorUtility,
 			)
 			return approveUpdatePaymentComponent
@@ -37,12 +35,14 @@ func (_ *ApproveUpdatePaymentDependency) Bind() {
 			paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 			approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 			trxComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent,
+			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) paymentdomainrepositoryinterfaces.ApproveUpdatePaymentRepository {
 			approveUpdatePaymentRepo, _ := paymentdomainrepositories.NewApproveUpdatePaymentRepository(
 				paymentDataSource,
 				approveUpdateDescriptivePhotoComponent,
 				trxComponent,
+				updateInvoiceTrxComponent,
 				mongoDBTransaction,
 			)
 			return approveUpdatePaymentRepo

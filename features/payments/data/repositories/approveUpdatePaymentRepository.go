@@ -5,6 +5,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -14,6 +15,7 @@ type approveUpdatePaymentRepository struct {
 	paymentDataSource                        databasepaymentdatasourceinterfaces.PaymentDataSource
 	approveUpdateDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	approveUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent
+	updateInvoiceTrxComponent                invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -21,12 +23,14 @@ func NewApproveUpdatePaymentRepository(
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 	approveUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (paymentdomainrepositoryinterfaces.ApproveUpdatePaymentRepository, error) {
 	approveUpdatePaymentRepo := &approveUpdatePaymentRepository{
 		paymentDataSource,
 		approveUpdateDescriptivePhotoComponent,
 		approveUpdatePaymentTransactionComponent,
+		updateInvoiceTrxComponent,
 		mongoDBTransaction,
 	}
 
@@ -79,6 +83,26 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 				"/approveUpdatePaymentRepository",
 				err,
 			)
+		}
+	}
+
+	if paymentToApprove.ProposalStatus != nil {
+		if *paymentToApprove.ProposalStatus == model.EntityProposalStatusApproved {
+			_, err := approveUpdatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+				operationOption,
+				&model.InternalUpdateInvoice{
+					ID: existingPayment.Invoice.ID,
+					Payments: []*model.ObjectIDOnly{
+						{ID: &existingPayment.ID},
+					},
+				},
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/approveUpdatePaymentRepository",
+					err,
+				)
+			}
 		}
 	}
 

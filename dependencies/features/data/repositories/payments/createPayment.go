@@ -20,13 +20,11 @@ func (_ *CreatePaymentDependency) Bind() {
 			paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
 			paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader,
-			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 		) paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent {
 			createPaymentComponent, _ := paymentdomainrepositories.NewCreatePaymentTransactionComponent(
 				paymentDataSource,
 				loggingDataSource,
 				paymentDataLoader,
-				updateInvoiceTrxComponent,
 			)
 			return createPaymentComponent
 		},
@@ -36,11 +34,13 @@ func (_ *CreatePaymentDependency) Bind() {
 		func(
 			trxComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent,
 			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+			updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) paymentdomainrepositoryinterfaces.CreatePaymentRepository {
 			createPaymentRepo, _ := paymentdomainrepositories.NewCreatePaymentRepository(
 				trxComponent,
 				createDescriptivePhotoComponent,
+				updateInvoiceTrxComponent,
 				mongoDBTransaction,
 			)
 			return createPaymentRepo

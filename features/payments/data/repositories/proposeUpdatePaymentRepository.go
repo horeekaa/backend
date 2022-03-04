@@ -7,6 +7,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	"github.com/horeekaa/backend/model"
@@ -17,6 +18,7 @@ type proposeUpdatePaymentRepository struct {
 	createDescriptivePhotoComponent          descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	proposeUpdateDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	proposeUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent
+	updateInvoiceTrxComponent                invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
@@ -25,6 +27,7 @@ func NewProposeUpdatePaymentRepository(
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	proposeUpdatePaymentRepositoryTransactionComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (paymentdomainrepositoryinterfaces.ProposeUpdatePaymentRepository, error) {
 	proposeUpdatePaymentRepo := &proposeUpdatePaymentRepository{
@@ -32,6 +35,7 @@ func NewProposeUpdatePaymentRepository(
 		createDescriptivePhotoComponent,
 		proposeUpdateDescriptivePhotoComponent,
 		proposeUpdatePaymentRepositoryTransactionComponent,
+		updateInvoiceTrxComponent,
 		mongoDBTransaction,
 	}
 
@@ -117,6 +121,26 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 
 			jsonTemp, _ = json.Marshal(savedPhoto)
 			json.Unmarshal(jsonTemp, &paymentToUpdate.Photo)
+		}
+	}
+
+	if paymentToUpdate.ProposalStatus != nil {
+		if *paymentToUpdate.ProposalStatus == model.EntityProposalStatusApproved {
+			_, err := updatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+				operationOption,
+				&model.InternalUpdateInvoice{
+					ID: existingPayment.Invoice.ID,
+					Payments: []*model.ObjectIDOnly{
+						{ID: &existingPayment.ID},
+					},
+				},
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					"/proposeUpdatePaymentRepository",
+					err,
+				)
+			}
 		}
 	}
 

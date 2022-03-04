@@ -5,7 +5,9 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
+	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
@@ -13,17 +15,20 @@ import (
 type createPaymentRepository struct {
 	createPaymentTransactionComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent
 	createDescriptivePhotoComponent   descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	updateInvoiceTrxComponent         invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreatePaymentRepository(
 	createPaymentRepositoryTransactionComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent,
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (paymentdomainrepositoryinterfaces.CreatePaymentRepository, error) {
 	createPaymentRepo := &createPaymentRepository{
 		createPaymentRepositoryTransactionComponent,
 		createDescriptivePhotoComponent,
+		updateInvoiceTrxComponent,
 		mongoDBTransaction,
 	}
 
@@ -69,6 +74,24 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 		}
 		jsonTemp, _ := json.Marshal(createdPhotoOutput)
 		json.Unmarshal(jsonTemp, &paymentToCreate.Photo)
+	}
+
+	if *paymentToCreate.ProposalStatus == model.EntityProposalStatusApproved {
+		_, err := createPaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+			operationOption,
+			&model.InternalUpdateInvoice{
+				ID: *paymentToCreate.Invoice.ID,
+				Payments: []*model.ObjectIDOnly{
+					{ID: &generatedObjectID},
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				"/createPaymentRepository",
+				err,
+			)
+		}
 	}
 
 	return createPaymentRepo.createPaymentTransactionComponent.TransactionBody(
