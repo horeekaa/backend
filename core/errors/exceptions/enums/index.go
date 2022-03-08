@@ -22,7 +22,5 @@ const (
 
 	ReverseGeocodeFailed string = "REVERSE_GEOCODE_FAILED"
 
-	SendNotifMessageFailed string = "SEND_NOTIF_MESSAGE_FAILED"
-
 	ClientInitializationFailed string = "CLIENT_INITIALIZATION_FAILED"
 )

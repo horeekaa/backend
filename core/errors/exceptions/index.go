@@ -5,10 +5,10 @@ import (
 )
 
 // NewExceptionObject getter repo layer Exception Object
-func NewExceptionObject(message string, path string, err error) *horeekaacorebaseexception.Exception {
+func NewExceptionObject(code string, path string, err error) *horeekaacorebaseexception.Exception {
 	return &horeekaacorebaseexception.Exception{
-		Message: message,
-		Path:    path,
-		Err:     err,
+		Code: code,
+		Path: []string{path},
+		Err:  err,
 	}
 }

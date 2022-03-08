@@ -2,13 +2,16 @@ package horeekaacorebaseexception
 
 import "fmt"
 
-// Exception struct for shaping repo layer error
+// Exception struct for shaping datasource layer error
 type Exception struct {
-	Message string `json:"Message"`
-	Path    string `json:"Path"`
-	Err     error  `json:"Err"`
+	Code string   `json:"Code"`
+	Path []string `json:"Path"`
+	Err  error    `json:"Err"`
 }
 
 func (e *Exception) Error() string {
-	return fmt.Sprintf("Error: %s, at %s. Details: %v", e.Message, e.Path, e.Err)
+	if e.Err == nil {
+		return ""
+	}
+	return fmt.Sprintf("Upstream Details: %s", e.Err.Error())
 }

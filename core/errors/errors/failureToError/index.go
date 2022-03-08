@@ -1,10 +1,11 @@
 package horeekaacorefailuretoerror
 
 import (
-	"encoding/json"
+	"strings"
 
 	horeekaacoreerror "github.com/horeekaa/backend/core/errors/errors"
 	horeekaacorebaseerror "github.com/horeekaa/backend/core/errors/errors/base"
+	horeekaacoreerrorenums "github.com/horeekaa/backend/core/errors/errors/enums"
 	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 )
@@ -30,6 +31,7 @@ var conflictWithCurrentError = map[string]bool{
 var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.SendEmailTypeNotExist:               true,
 	horeekaacorefailureenums.AccountIDNeededToRetrievePersonData: true,
+	horeekaacorefailureenums.AcceptInvitationNotAllowed:          true,
 
 	horeekaacorefailureenums.MemberAccessRefNotExist:                                   true,
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
@@ -54,74 +56,61 @@ var badGatewayError = map[string]bool{
 }
 
 // ConvertFailure helps convert failures coming from the service layer to be an error in usecase layer
-func ConvertFailure(path string, errorObject interface{}) *horeekaacorebaseerror.Error {
-	var failure horeekaacorebasefailure.Failure
-	jsonTemp, _ := json.Marshal(errorObject)
-	json.Unmarshal(jsonTemp, &failure)
+func ConvertFailure(path string, err error) *horeekaacorebaseerror.Error {
+	if failure, ok := err.(*horeekaacorebasefailure.Failure); ok {
+		failureCode := strings.Split(failure.Code, ".")[0]
+		if authenticationError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AuthenticationError,
+				path,
+				failure,
+			)
+		}
 
-	errMsg := ""
-	if &failure.Message != nil {
-		errMsg = failure.Message
-	}
+		if forbiddenError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.ForbiddenError,
+				path,
+				failure,
+			)
+		}
 
-	if authenticationError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			401,
-			path,
-			&failure,
-		)
-	}
+		if resourceNotFoundError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.ResourceNotFoundError,
+				path,
+				failure,
+			)
+		}
 
-	if forbiddenError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			403,
-			path,
-			&failure,
-		)
-	}
+		if conflictWithCurrentError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.ConflictWithCurrentError,
+				path,
+				failure,
+			)
+		}
 
-	if resourceNotFoundError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			404,
-			path,
-			&failure,
-		)
-	}
+		if invalidInputError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.InvalidInputError,
+				path,
+				failure,
+			)
+		}
 
-	if conflictWithCurrentError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			409,
-			path,
-			&failure,
-		)
-	}
-
-	if invalidInputError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			422,
-			path,
-			&failure,
-		)
-	}
-
-	if badGatewayError[errMsg] {
-		return horeekaacoreerror.NewErrorObject(
-			failure.Message,
-			502,
-			path,
-			&failure,
-		)
+		if badGatewayError[failureCode] {
+			return horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.BadGatewayError,
+				path,
+				failure,
+			)
+		}
 	}
 
 	return horeekaacoreerror.NewErrorObject(
-		failure.Message,
-		500,
+		horeekaacoreerrorenums.GeneralError,
 		path,
-		&failure,
+		err,
 	)
 }
