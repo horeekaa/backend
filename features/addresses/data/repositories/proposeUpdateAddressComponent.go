@@ -19,6 +19,7 @@ type proposeUpdateAddressTransactionComponent struct {
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	addressLoader       addressdomainrepositoryutilityinterfaces.AddressLoader
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewProposeUpdateAddressTransactionComponent(
@@ -32,6 +33,7 @@ func NewProposeUpdateAddressTransactionComponent(
 		loggingDataSource:   loggingDataSource,
 		addressLoader:       addressLoader,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ProposeUpdateAddressComponent",
 	}, nil
 }
 
@@ -55,7 +57,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddress",
+			updateAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -74,7 +76,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/proposeUpdateAddressComponent",
+				updateAddrTrx.pathIdentity,
 				err,
 			)
 		}
@@ -100,7 +102,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateAddressComponent",
+			updateAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -139,7 +141,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRepository",
+			updateAddrTrx.pathIdentity,
 			err,
 		)
 	}

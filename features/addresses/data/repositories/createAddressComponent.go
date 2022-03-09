@@ -19,6 +19,7 @@ type createAddressTransactionComponent struct {
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
 	addressLoader     addressdomainrepositoryutilityinterfaces.AddressLoader
 	generatedObjectID *primitive.ObjectID
+	pathIdentity      string
 }
 
 func NewCreateAddressTransactionComponent(
@@ -30,6 +31,7 @@ func NewCreateAddressTransactionComponent(
 		addressDataSource: addressDataSource,
 		loggingDataSource: loggingDataSource,
 		addressLoader:     addressLoader,
+		pathIdentity:      "CreateAddressComponent",
 	}, nil
 }
 
@@ -73,7 +75,7 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAddressComponent",
+			createAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -97,7 +99,7 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAddressComponent",
+			createAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -117,7 +119,7 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAddressComponent",
+			createAddrTrx.pathIdentity,
 			err,
 		)
 	}

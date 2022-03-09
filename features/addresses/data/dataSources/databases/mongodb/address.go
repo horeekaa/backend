@@ -16,12 +16,14 @@ import (
 
 type addressDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewAddressDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaddressdatasourceinterfaces.AddressDataSourceMongo, error) {
 	basicOperation.SetCollection("addresses")
 	return &addressDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "AddressDataSource",
 	}, nil
 }
 
@@ -131,7 +133,7 @@ func (addrDataSourceMongo *addressDataSourceMongo) setDefaultValuesWhenUpdate(
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/addressDataSource/update",
+			addrDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}
