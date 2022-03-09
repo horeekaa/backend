@@ -67,14 +67,14 @@ func (bscOperation *basicOperation) FindByID(ID primitive.ObjectID, output inter
 	if err == mongo.ErrNoDocuments {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/findByID", bscOperation.collectionName),
+			fmt.Sprintf("%s.FindByID", bscOperation.collectionName),
 			nil,
 		)
 	}
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/findByID", bscOperation.collectionName),
+			fmt.Sprintf("%s.FindByID", bscOperation.collectionName),
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, output
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/findOne", bscOperation.collectionName),
+			fmt.Sprintf("%s.FindOne", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -119,7 +119,7 @@ func (bscOperation *basicOperation) FindOne(query map[string]interface{}, output
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/findOne", bscOperation.collectionName),
+			fmt.Sprintf("%s.FindOne", bscOperation.collectionName),
 			nil,
 		)
 	}
@@ -149,7 +149,7 @@ func (bscOperation *basicOperation) Find(
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			fmt.Sprintf("%s.Find", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -164,7 +164,7 @@ func (bscOperation *basicOperation) Find(
 		if err != nil {
 			return false, horeekaacoreexception.NewExceptionObject(
 				horeekaacoreexceptionenums.UpstreamException,
-				fmt.Sprintf("/%s/find", bscOperation.collectionName),
+				fmt.Sprintf("%s.Find", bscOperation.collectionName),
 				err,
 			)
 		}
@@ -188,7 +188,7 @@ func (bscOperation *basicOperation) Find(
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.QueryObjectFailed,
-			fmt.Sprintf("/%s/find", bscOperation.collectionName),
+			fmt.Sprintf("%s.Find", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -198,7 +198,7 @@ func (bscOperation *basicOperation) Find(
 		if err != nil {
 			return false, horeekaacoreexception.NewExceptionObject(
 				horeekaacoreexceptionenums.QueryObjectFailed,
-				fmt.Sprintf("/%s/find", bscOperation.collectionName),
+				fmt.Sprintf("%s.Find", bscOperation.collectionName),
 				err,
 			)
 		}
@@ -221,7 +221,7 @@ func (bscOperation *basicOperation) Create(input interface{}, output interface{}
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/create", bscOperation.collectionName),
+			fmt.Sprintf("%s.Create", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -240,7 +240,7 @@ func (bscOperation *basicOperation) Create(input interface{}, output interface{}
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.CreateObjectFailed,
-			fmt.Sprintf("/%s/create", bscOperation.collectionName),
+			fmt.Sprintf("%s.Create", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -266,7 +266,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			fmt.Sprintf("%s.Update", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -283,7 +283,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			fmt.Sprintf("%s.Update", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -300,7 +300,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			fmt.Sprintf("%s.Update", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -325,7 +325,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			fmt.Sprintf("%s.Update", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -334,7 +334,7 @@ func (bscOperation *basicOperation) Update(updateCriteria interface{}, updateDat
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/update", bscOperation.collectionName),
+			fmt.Sprintf("%s.Update", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -351,7 +351,7 @@ func (bscOperation *basicOperation) UpdateAll(updateCriteria interface{}, update
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			fmt.Sprintf("%s.UpdateAll", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -368,7 +368,7 @@ func (bscOperation *basicOperation) UpdateAll(updateCriteria interface{}, update
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			fmt.Sprintf("%s.UpdateAll", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -385,7 +385,7 @@ func (bscOperation *basicOperation) UpdateAll(updateCriteria interface{}, update
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			fmt.Sprintf("%s.UpdateAll", bscOperation.collectionName),
 			err,
 		)
 	}
@@ -410,7 +410,7 @@ func (bscOperation *basicOperation) UpdateAll(updateCriteria interface{}, update
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/updateAll", bscOperation.collectionName),
+			fmt.Sprintf("%s.UpdateAll", bscOperation.collectionName),
 			err,
 		)
 	}

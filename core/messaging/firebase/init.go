@@ -13,13 +13,14 @@ import (
 type firebaseMessagingClient struct {
 	firebaseServerlessClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient
 	client                   firebasemessagingcorewrapperinterfaces.FirebaseMsgClient
+	pathIdentity string
 }
 
 func (fbMsgClient *firebaseMessagingClient) GetServerlessClient() (firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient, error) {
 	if fbMsgClient.firebaseServerlessClient == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseMessaging",
+			fbMsgClient.pathIdentity,
 			nil,
 		)
 	}
@@ -30,7 +31,7 @@ func (fbMsgClient *firebaseMessagingClient) GetMessagingClient() (firebasemessag
 	if fbMsgClient.client == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseMessaging",
+			fbMsgClient.pathIdentity,
 			nil,
 		)
 	}
@@ -38,12 +39,15 @@ func (fbMsgClient *firebaseMessagingClient) GetMessagingClient() (firebasemessag
 }
 
 func (fbMsgClient *firebaseMessagingClient) InitializeClient(firebaseClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient) (bool, error) {
-	app, _ := firebaseClient.GetApp()
+	app, err := firebaseClient.GetApp()
+	if err != nil {
+		return false, err
+	}
 	client, err := app.Messaging(context.Background())
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"/newFirebaseMessaging",
+			fbMsgClient.pathIdentity,
 			err,
 		)
 	}
@@ -55,5 +59,7 @@ func (fbMsgClient *firebaseMessagingClient) InitializeClient(firebaseClient fire
 }
 
 func NewFirebaseMsgClient() (firebasemessagingcoreclientinterfaces.FirebaseMessagingClient, error) {
-	return &firebaseMessagingClient{}, nil
+	return &firebaseMessagingClient{
+		pathIdentity: "FirebaseMessagingClient",
+	}, nil
 }

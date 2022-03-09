@@ -21,11 +21,13 @@ type mongoRepoTransaction struct {
 	component        mongodbcoretransactioninterfaces.TransactionComponent
 	mongoClient      mongodbcoreclientinterfaces.MongoClient
 	transactionTitle string
+	pathIdentity     string
 }
 
 func NewMongoTransaction(mongoClient mongodbcoreclientinterfaces.MongoClient) (mongodbcoretransactioninterfaces.MongoRepoTransaction, error) {
 	return &mongoRepoTransaction{
-		mongoClient: mongoClient,
+		mongoClient:  mongoClient,
+		pathIdentity: "MongoDBTransaction",
 	}, nil
 }
 
@@ -51,7 +53,7 @@ func (mongoTrx *mongoRepoTransaction) RunTransaction(input interface{}) (interfa
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DBConnectionFailed,
-			"/mongoTransaction/createSession",
+			mongoTrx.pathIdentity,
 			err,
 		)
 	}
