@@ -16,12 +16,14 @@ import (
 
 type personDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewPersonDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.PersonDataSourceMongo, error) {
 	basicOperation.SetCollection("persons")
 	return &personDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "PersonDataSource",
 	}, nil
 }
 
@@ -128,7 +130,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/personDataSource/update",
+			prsnDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

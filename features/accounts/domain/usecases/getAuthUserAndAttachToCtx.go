@@ -13,6 +13,7 @@ import (
 
 type getAuthUserAndAttachToCtxUsecase struct {
 	getUserFromAuthHeaderRepo accountdomainrepositoryinterfaces.GetUserFromAuthHeaderRepository
+	pathIdentity              string
 }
 
 func NewGetAuthUserAndAttachToCtxUsecase(
@@ -20,6 +21,7 @@ func NewGetAuthUserAndAttachToCtxUsecase(
 ) (accountpresentationusecaseinterfaces.GetAuthUserAndAttachToCtxUsecase, error) {
 	return &getAuthUserAndAttachToCtxUsecase{
 		getUserFromAuthHeaderRepo,
+		"GetAuthUserAndAttachToctx",
 	}, nil
 }
 
@@ -34,7 +36,7 @@ func (getAuthUserAndAttachToCtx *getAuthUserAndAttachToCtxUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAuthUserAndAttachToCtx",
+			getAuthUserAndAttachToCtx.pathIdentity,
 			err,
 		)
 	}

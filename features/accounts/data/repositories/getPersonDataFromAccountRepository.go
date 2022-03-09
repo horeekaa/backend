@@ -14,6 +14,7 @@ import (
 type getPersonDataFromAccountRepository struct {
 	personDataSource                         databaseaccountdatasourceinterfaces.PersonDataSource
 	getPersonDataFromAccountUsecaseComponent accountdomainrepositoryinterfaces.GetPersonDataFromAccountUsecaseComponent
+	pathIdentity                             string
 }
 
 func NewGetPersonDataFromAccountRepository(
@@ -21,6 +22,7 @@ func NewGetPersonDataFromAccountRepository(
 ) (accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository, error) {
 	return &getPersonDataFromAccountRepository{
 		personDataSource: personDataSource,
+		pathIdentity:     "GetPersonDataFromAccount",
 	}, nil
 }
 
@@ -35,7 +37,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) preExecute(input *model.A
 	if &input.ID == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-			"/getPersonDataFromAccount",
+			getPrsnData.pathIdentity,
 			nil,
 		)
 	}
@@ -54,7 +56,7 @@ func (getPrsnData *getPersonDataFromAccountRepository) Execute(input *model.Acco
 	person, err := getPrsnData.personDataSource.GetMongoDataSource().FindByID(preExecuteOutput.Person.ID, &mongodbcoretypes.OperationOptions{})
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPersonDataFromAccount",
+			getPrsnData.pathIdentity,
 			err,
 		)
 	}

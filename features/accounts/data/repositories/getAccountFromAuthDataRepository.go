@@ -19,6 +19,7 @@ import (
 type getAccountFromAuthDataRepository struct {
 	accountDataSource  databaseaccountdatasourceinterfaces.AccountDataSource
 	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo
+	pathIdentity       string
 }
 
 func NewGetAccountFromAuthDataRepository(
@@ -28,6 +29,7 @@ func NewGetAccountFromAuthDataRepository(
 	return &getAccountFromAuthDataRepository{
 		accountDataSource,
 		firebaseDataSource,
+		"GetAccountFromAuthDataRepository",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
-			"/getAccountFromAuthDataRepository",
+			getAccFromAuthDataRepo.pathIdentity,
 			nil,
 		)
 	}
@@ -54,7 +56,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/getAccountFromAuthDataRepository",
+				getAccFromAuthDataRepo.pathIdentity,
 				err,
 			)
 		}
@@ -69,7 +71,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAccountFromAuthDataRepository",
+			getAccFromAuthDataRepo.pathIdentity,
 			err,
 		)
 	}
@@ -83,7 +85,7 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/getAccountFromAuthDataRepository",
+				getAccFromAuthDataRepo.pathIdentity,
 				err,
 			)
 		}

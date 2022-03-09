@@ -16,12 +16,14 @@ import (
 
 type accountDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewAccountDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaccountdatasourceinterfaces.AccountDataSourceMongo, error) {
 	basicOperation.SetCollection("accounts")
 	return &accountDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "AccountDataSource",
 	}, nil
 }
 
@@ -129,7 +131,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/accountDataSource/update",
+			accDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

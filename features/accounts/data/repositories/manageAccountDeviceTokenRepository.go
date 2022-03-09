@@ -13,6 +13,7 @@ import (
 type manageAccountDeviceTokenRepository struct {
 	accountDataSource                        databaseaccountdatasourceinterfaces.AccountDataSource
 	manageAccountDeviceTokenUsecaseComponent accountdomainrepositoryinterfaces.ManageAccountDeviceTokenUsecaseComponent
+	pathIdentity                             string
 }
 
 func NewManageAccountDeviceTokenRepository(
@@ -20,6 +21,7 @@ func NewManageAccountDeviceTokenRepository(
 ) (accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository, error) {
 	return &manageAccountDeviceTokenRepository{
 		accountDataSource: accountDataSource,
+		pathIdentity:      "ManageAccountDeviceTokenRepository",
 	}, nil
 }
 
@@ -67,7 +69,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/manageAccountDeviceTokenRepository",
+			mgsAccDevToken.pathIdentity,
 			err,
 		)
 	}

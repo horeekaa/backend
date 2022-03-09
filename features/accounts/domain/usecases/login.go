@@ -20,6 +20,7 @@ type loginUsecase struct {
 	getAccountMemberAccessRepository   memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
 	loginAccessIdentity                *model.MemberAccessRefOptionsInput
+	pathIdentity                       string
 }
 
 func NewLoginUsecase(
@@ -40,6 +41,7 @@ func NewLoginUsecase(
 				AccountLogin: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"LoginUsecase",
 	}, nil
 }
 
@@ -47,9 +49,8 @@ func (loginUsecase *loginUsecase) validation(input accountpresentationusecasetyp
 	if &input.Context == nil {
 		return &accountpresentationusecasetypes.LoginUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/loginUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				loginUsecase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,7 +70,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
+			loginUcase.pathIdentity,
 			err,
 		)
 	}
@@ -81,7 +82,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/loginUsecase",
+				loginUcase.pathIdentity,
 				err,
 			)
 		}
@@ -99,7 +100,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/loginUsecase",
+				loginUcase.pathIdentity,
 				err,
 			)
 		}
@@ -117,7 +118,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
+			loginUcase.pathIdentity,
 			err,
 		)
 	}
@@ -131,7 +132,7 @@ func (loginUcase *loginUsecase) Execute(input accountpresentationusecasetypes.Lo
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/loginUsecase",
+			loginUcase.pathIdentity,
 			err,
 		)
 	}

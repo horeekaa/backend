@@ -18,6 +18,7 @@ type getPersonDataFromAccountUsecase struct {
 	getAccountMemberAccessRepository       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getPersonDataFromAccountRepository     accountdomainrepositoryinterfaces.GetPersonDataFromAccountRepository
 	getPersonDataFromAccountAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                           string
 }
 
 func NewGetPersonDataFromAccountUsecase(
@@ -34,6 +35,7 @@ func NewGetPersonDataFromAccountUsecase(
 				AccountReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetPersonDataFromAccount",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) validati
 	if &input.Context == nil && input.ViewProfileMode {
 		return &accountpresentationusecasetypes.GetPersonDataFromAccountInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getPersonDataFromAccount",
+				horeekaacoreerrorenums.AuthenticationError,
+				getPersonDataFromAccountUsecase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getPersonDataFromAccount",
+				getPersonDataFromAccountUsecase.pathIdentity,
 				err,
 			)
 		}
 		if account == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getPersonDataFromAccount",
+				horeekaacoreerrorenums.AuthenticationError,
+				getPersonDataFromAccountUsecase.pathIdentity,
 				nil,
 			)
 		}
@@ -95,7 +95,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getPersonDataFromAccount",
+				getPersonDataFromAccountUsecase.pathIdentity,
 				err,
 			)
 		}
@@ -104,7 +104,7 @@ func (getPersonDataFromAccountUsecase *getPersonDataFromAccountUsecase) Execute(
 	person, err := getPersonDataFromAccountUsecase.getPersonDataFromAccountRepository.Execute(validatedInput.Account)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getPersonDataFromAccount",
+			getPersonDataFromAccountUsecase.pathIdentity,
 			err,
 		)
 	}
