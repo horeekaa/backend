@@ -9,6 +9,7 @@ import (
 
 type getAddressUsecase struct {
 	getAddressRepository addressdomainrepositoryinterfaces.GetAddressRepository
+	pathIdentity         string
 }
 
 func NewGetAddressUsecase(
@@ -16,6 +17,7 @@ func NewGetAddressUsecase(
 ) (addresspresentationusecaseinterfaces.GetAddressUsecase, error) {
 	return &getAddressUsecase{
 		getAddressRepository,
+		"GetAddressUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getAddrUsecase *getAddressUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAddress",
+			getAddrUsecase.pathIdentity,
 			err,
 		)
 	}

@@ -132,7 +132,7 @@ func (addrDataSourceMongo *addressDataSourceMongo) setDefaultValuesWhenUpdate(
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
 			addrDataSourceMongo.pathIdentity,
 			nil,
 		)
