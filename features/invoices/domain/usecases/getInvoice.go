@@ -9,6 +9,7 @@ import (
 
 type getInvoiceUsecase struct {
 	getInvoiceRepository invoicedomainrepositoryinterfaces.GetInvoiceRepository
+	pathIdentity         string
 }
 
 func NewGetInvoiceUsecase(
@@ -16,6 +17,7 @@ func NewGetInvoiceUsecase(
 ) (invoicepresentationusecaseinterfaces.GetInvoiceUsecase, error) {
 	return &getInvoiceUsecase{
 		getInvoiceRepository,
+		"GetInvoiceUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getInvoiceUcase *getInvoiceUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getInvoiceUsecase",
+			getInvoiceUcase.pathIdentity,
 			err,
 		)
 	}

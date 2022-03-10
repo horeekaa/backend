@@ -22,6 +22,7 @@ type createInvoiceRepository struct {
 	createInvoiceTransactionComponent invoicedomainrepositoryinterfaces.CreateInvoiceTransactionComponent
 	createNotificationComponent       notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                      string
 }
 
 func NewCreateInvoiceRepository(
@@ -37,6 +38,7 @@ func NewCreateInvoiceRepository(
 		createInvoiceRepositoryTransactionComponent,
 		createNotificationComponent,
 		mongoDBTransaction,
+		"CreateInvoiceRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -139,7 +141,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createInvoiceRepository",
+			createInvoiceRepo.pathIdentity,
 			err,
 		)
 	}

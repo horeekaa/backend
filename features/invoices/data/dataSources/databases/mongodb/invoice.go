@@ -16,12 +16,14 @@ import (
 
 type invoiceDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewInvoiceDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbinvoicedatasourceinterfaces.InvoiceDataSourceMongo, error) {
 	basicOperation.SetCollection("invoices")
 	return &invoiceDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "InvoiceDataSource",
 	}, nil
 }
 
@@ -129,8 +131,8 @@ func (invoiceDataSourceMongo *invoiceDataSourceMongo) setDefaultValuesWhenUpdate
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/invoiceDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			invoiceDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

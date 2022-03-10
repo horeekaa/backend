@@ -21,6 +21,7 @@ type createInvoiceUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createInvoiceRepo           invoicedomainrepositoryinterfaces.CreateInvoiceRepository
 	createInvoiceAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewCreateInvoiceUsecase(
@@ -37,6 +38,7 @@ func NewCreateInvoiceUsecase(
 				InvoiceCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateInvoiceUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createInvoiceUcase *createInvoiceUsecase) validation(input invoicepresenta
 	if &input.Context == nil {
 		return invoicepresentationusecasetypes.CreateInvoiceUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createInvoiceUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createInvoiceUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (createInvoiceUcase *createInvoiceUsecase) Execute(input invoicepresentatio
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/createInvoiceUsecase",
+				createInvoiceUcase.pathIdentity,
 				err,
 			)
 		}
 		if account == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createInvoiceUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createInvoiceUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -92,7 +92,7 @@ func (createInvoiceUcase *createInvoiceUsecase) Execute(input invoicepresentatio
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/createInvoiceUsecase",
+				createInvoiceUcase.pathIdentity,
 				err,
 			)
 		}
@@ -107,7 +107,7 @@ func (createInvoiceUcase *createInvoiceUsecase) Execute(input invoicepresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createInvoiceUsecase",
+			createInvoiceUcase.pathIdentity,
 			err,
 		)
 	}

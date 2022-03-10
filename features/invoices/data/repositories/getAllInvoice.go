@@ -13,6 +13,7 @@ import (
 type getAllInvoiceRepository struct {
 	invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity      string
 }
 
 func NewGetAllInvoiceRepository(
@@ -22,6 +23,7 @@ func NewGetAllInvoiceRepository(
 	return &getAllInvoiceRepository{
 		invoiceDataSource,
 		mongoQueryBuilder,
+		"GetAllInvoiceRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllInvoiceRepo *getAllInvoiceRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllInvoiceRepository",
+			getAllInvoiceRepo.pathIdentity,
 			err,
 		)
 	}

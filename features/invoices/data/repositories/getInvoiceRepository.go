@@ -11,6 +11,7 @@ import (
 
 type getInvoiceRepository struct {
 	invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource
+	pathIdentity      string
 }
 
 func NewGetInvoiceRepository(
@@ -18,6 +19,7 @@ func NewGetInvoiceRepository(
 ) (invoicedomainrepositoryinterfaces.GetInvoiceRepository, error) {
 	return &getInvoiceRepository{
 		invoiceDataSource,
+		"GetInvoiceRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getInvoiceRepo *getInvoiceRepository) Execute(filterFields *model.InvoiceF
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getInvoiceRepository",
+			getInvoiceRepo.pathIdentity,
 			err,
 		)
 	}
