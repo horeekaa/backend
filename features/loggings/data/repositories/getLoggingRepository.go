@@ -11,6 +11,7 @@ import (
 
 type getLoggingRepository struct {
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
+	pathIdentity      string
 }
 
 func NewGetLoggingRepository(
@@ -18,10 +19,11 @@ func NewGetLoggingRepository(
 ) (loggingdomainrepositoryinterfaces.GetLoggingRepository, error) {
 	return &getLoggingRepository{
 		loggingDataSource,
+		"GetLoggingRepository",
 	}, nil
 }
 
-func (getLoggingRefRepo *getLoggingRepository) Execute(filterFields *model.LoggingFilterFields) (*model.Logging, error) {
+func (getLoggingRepo *getLoggingRepository) Execute(filterFields *model.LoggingFilterFields) (*model.Logging, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getLoggingRefRepo *getLoggingRepository) Execute(filterFields *model.Loggi
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	logging, err := getLoggingRefRepo.loggingDataSource.GetMongoDataSource().FindOne(
+	logging, err := getLoggingRepo.loggingDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getLogging",
+			getLoggingRepo.pathIdentity,
 			err,
 		)
 	}

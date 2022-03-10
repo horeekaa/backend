@@ -16,6 +16,7 @@ import (
 
 type loggingDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewLoggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbloggingdatasourceinterfaces.LoggingDataSourceMongo, error) {
@@ -129,8 +130,8 @@ func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenUpdate(
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/loggingDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			logDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}
