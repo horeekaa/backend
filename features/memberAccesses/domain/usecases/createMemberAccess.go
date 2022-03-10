@@ -20,6 +20,7 @@ type createMemberAccessUsecase struct {
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	createMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                     string
 }
 
 func NewCreateMemberAccessUsecase(
@@ -36,6 +37,7 @@ func NewCreateMemberAccessUsecase(
 				MemberAccessCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateMemberAccessUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (createMmbAccessUcase *createMemberAccessUsecase) validation(input memberac
 	if &input.Context == nil {
 		return memberaccesspresentationusecasetypes.CreateMemberAccessUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createMemberAccessUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createMmbAccessUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -68,15 +69,14 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessUsecase",
+			createMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createMemberAccessUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createMmbAccessUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -93,7 +93,7 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessUsecase",
+			createMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
@@ -113,7 +113,7 @@ func (createMmbAccessUcase *createMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessUsecase",
+			createMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}

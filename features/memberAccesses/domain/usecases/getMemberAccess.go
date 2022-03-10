@@ -10,6 +10,7 @@ import (
 
 type getMemberAccessUsecase struct {
 	getMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
+	pathIdentity              string
 }
 
 func NewGetMemberAccessUsecase(
@@ -17,6 +18,7 @@ func NewGetMemberAccessUsecase(
 ) (memberaccesspresentationusecaseinterfaces.GetMemberAccessUsecase, error) {
 	return &getMemberAccessUsecase{
 		getMemberAccessRepository,
+		"GetMemberAccessUsecase",
 	}, nil
 }
 
@@ -42,7 +44,7 @@ func (getMmbAccUcase *getMemberAccessUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getMemberAccessUsecase",
+			getMmbAccUcase.pathIdentity,
 			err,
 		)
 	}

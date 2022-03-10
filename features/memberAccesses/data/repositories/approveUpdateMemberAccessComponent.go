@@ -17,6 +17,7 @@ type approveUpdateMemberAccessTransactionComponent struct {
 	loggingDataSource                         databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                       coreutilityinterfaces.MapProcessorUtility
 	approveUpdateMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessUsecaseComponent
+	pathIdentity                              string
 }
 
 func NewApproveUpdateMemberAccessTransactionComponent(
@@ -28,6 +29,7 @@ func NewApproveUpdateMemberAccessTransactionComponent(
 		memberAccessDataSource: memberAccessDataSource,
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
+		pathIdentity:           "ApproveUpdateMemberAccessComponent",
 	}, nil
 }
 
@@ -38,16 +40,16 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) SetValidati
 	return true, nil
 }
 
-func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) PreTransaction(
+func (approveUpdateMemberAccessTrx *approveUpdateMemberAccessTransactionComponent) PreTransaction(
 	input *model.InternalUpdateMemberAccess,
 ) (*model.InternalUpdateMemberAccess, error) {
-	if approveProdTrx.approveUpdateMemberAccessUsecaseComponent == nil {
+	if approveUpdateMemberAccessTrx.approveUpdateMemberAccessUsecaseComponent == nil {
 		return input, nil
 	}
-	return approveProdTrx.approveUpdateMemberAccessUsecaseComponent.Validation(input)
+	return approveUpdateMemberAccessTrx.approveUpdateMemberAccessUsecaseComponent.Validation(input)
 }
 
-func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) TransactionBody(
+func (approveUpdateMemberAccessTrx *approveUpdateMemberAccessTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalUpdateMemberAccess,
 ) (*model.MemberAccess, error) {
@@ -55,24 +57,24 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, updateMemberAccess)
 
-	existingMemberAccess, err := approveProdTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
+	existingMemberAccess, err := approveUpdateMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccess.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			approveUpdateMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
 
-	previousLog, err := approveProdTrx.loggingDataSource.GetMongoDataSource().FindByID(
+	previousLog, err := approveUpdateMemberAccessTrx.loggingDataSource.GetMongoDataSource().FindByID(
 		existingMemberAccess.RecentLog.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			approveUpdateMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
@@ -93,13 +95,13 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
 
-	createdLog, err := approveProdTrx.loggingDataSource.GetMongoDataSource().Create(
+	createdLog, err := approveUpdateMemberAccessTrx.loggingDataSource.GetMongoDataSource().Create(
 		logToCreate,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			approveUpdateMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
@@ -116,7 +118,7 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	jsonUpdate, _ := json.Marshal(updateMemberAccess)
 	json.Unmarshal(jsonUpdate, &updateMemberAccessMap)
 
-	approveProdTrx.mapProcessorUtility.RemoveNil(updateMemberAccessMap)
+	approveUpdateMemberAccessTrx.mapProcessorUtility.RemoveNil(updateMemberAccessMap)
 
 	jsonUpdate, _ = json.Marshal(updateMemberAccessMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccess.ProposedChanges)
@@ -128,7 +130,7 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 		}
 	}
 
-	updatedMemberAccess, err := approveProdTrx.memberAccessDataSource.GetMongoDataSource().Update(
+	updatedMemberAccess, err := approveUpdateMemberAccessTrx.memberAccessDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": fieldsToUpdateMemberAccess.ID,
 		},
@@ -137,7 +139,7 @@ func (approveProdTrx *approveUpdateMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			approveUpdateMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}

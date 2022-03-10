@@ -23,6 +23,7 @@ type proposeUpdateMemberAccessTransactionComponent struct {
 	memberAccessRefDataSource                 databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	mapProcessorUtility                       coreutilityinterfaces.MapProcessorUtility
 	proposeUpdateMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessUsecaseComponent
+	pathIdentity                              string
 }
 
 func NewProposeUpdateMemberAccessTransactionComponent(
@@ -38,6 +39,7 @@ func NewProposeUpdateMemberAccessTransactionComponent(
 		organizationDataSource:    organizationDataSource,
 		memberAccessRefDataSource: memberAccessRefDataSource,
 		mapProcessorUtility:       mapProcessorUtility,
+		pathIdentity:              "ProposeUpdateMemberAccessComponent",
 	}, nil
 }
 
@@ -71,9 +73,19 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			proposeUpdateMemberAccTrx.pathIdentity,
 			err,
 		)
+	}
+	if input.InvitationAccepted != nil {
+		if existingMemberAccess.Account.ID.Hex() != input.SubmittingAccount.ID.Hex() ||
+			existingMemberAccess.ProposalStatus != model.EntityProposalStatusApproved {
+			return nil, horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.AcceptInvitationNotAllowed,
+				proposeUpdateMemberAccTrx.pathIdentity,
+				nil,
+			)
+		}
 	}
 
 	queryMap := map[string]interface{}{
@@ -92,7 +104,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateMemberAccess",
+				proposeUpdateMemberAccTrx.pathIdentity,
 				err,
 			)
 		}
@@ -112,14 +124,14 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateMemberAccess",
+				proposeUpdateMemberAccTrx.pathIdentity,
 				err,
 			)
 		}
 		if memberAccessRef == nil {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.MemberAccessRefNotExist,
-				"/updateMemberAccess",
+				proposeUpdateMemberAccTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -151,7 +163,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			proposeUpdateMemberAccTrx.pathIdentity,
 			err,
 		)
 	}
@@ -190,7 +202,7 @@ func (proposeUpdateMemberAccTrx *proposeUpdateMemberAccessTransactionComponent) 
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccess",
+			proposeUpdateMemberAccTrx.pathIdentity,
 			err,
 		)
 	}

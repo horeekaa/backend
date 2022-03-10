@@ -17,6 +17,7 @@ type getAccountMemberAccessRepository struct {
 	memberAccessDataSource                 databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
 	getAccountMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessUsecaseComponent
+	pathIdentity                           string
 }
 
 func NewGetAccountMemberAccessRepository(
@@ -26,6 +27,7 @@ func NewGetAccountMemberAccessRepository(
 	return &getAccountMemberAccessRepository{
 		memberAccessDataSource: memberAccessDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
+		pathIdentity:           "GetAccountMemberAccessRepository",
 	}, nil
 }
 
@@ -43,7 +45,7 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) preExecute(
 		if &getAccMmbAccInput.MemberAccessFilterFields.Account == nil {
 			return memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{}, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-				"/getAccountMemberAccess",
+				getAccountMemberAccess.pathIdentity,
 				nil,
 			)
 		}
@@ -82,14 +84,14 @@ func (getAccountMemberAccess *getAccountMemberAccessRepository) Execute(getMmbAc
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAccountMemberAccess",
+			getAccountMemberAccess.pathIdentity,
 			err,
 		)
 	}
 	if memberAccess == nil && !validatedInput.QueryMode {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-			"/getAccountMemberAccess",
+			getAccountMemberAccess.pathIdentity,
 			nil,
 		)
 	}

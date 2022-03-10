@@ -23,6 +23,7 @@ type updateMemberAccessUsecase struct {
 	approveUpdateMemberAccessRepo        memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessRepository
 	updateMemberAccessIdentity           *model.MemberAccessRefOptionsInput
 	acceptInvitationMemberAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                         string
 }
 
 func NewUpdateMemberAccessUsecase(
@@ -46,6 +47,7 @@ func NewUpdateMemberAccessUsecase(
 				MemberAccessAcceptInvitation: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateMemberAccessUsecase",
 	}, nil
 }
 
@@ -53,9 +55,8 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) validation(input memberac
 	if &input.Context == nil {
 		return memberaccesspresentationusecasetypes.UpdateMemberAccessUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateMemberAccessUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateMmbAccessUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -79,15 +80,14 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
+			updateMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateMemberAccessUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateMmbAccessUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -102,21 +102,12 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
+			updateMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
 
 	if memberAccessToUpdate.InvitationAccepted != nil {
-		if existingMemberAcc.Account.ID.Hex() != account.ID.Hex() ||
-			existingMemberAcc.ProposalStatus != model.EntityProposalStatusApproved {
-			return nil, horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AcceptInvitationNotAllowed,
-				422,
-				"/updateMemberAccessUsecase",
-				nil,
-			)
-		}
 		memberAccessRefTypeAccountsBasics := model.MemberAccessRefTypeAccountsBasics
 		_, err := updateMmbAccessUcase.getAccountMemberAccessRepo.Execute(
 			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
@@ -129,7 +120,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessUsecase",
+				updateMmbAccessUcase.pathIdentity,
 				err,
 			)
 		}
@@ -143,7 +134,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessUsecase",
+				updateMmbAccessUcase.pathIdentity,
 				err,
 			)
 		}
@@ -162,7 +153,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
+			updateMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
@@ -172,16 +163,14 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		if accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMemberAccessUsecase",
+				updateMmbAccessUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.ManageMemberAccesses.MemberAccessApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMemberAccessUsecase",
+				updateMmbAccessUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -192,7 +181,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessUsecase",
+				updateMmbAccessUcase.pathIdentity,
 				err,
 			)
 		}
@@ -215,7 +204,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessUsecase",
+			updateMmbAccessUcase.pathIdentity,
 			err,
 		)
 	}
