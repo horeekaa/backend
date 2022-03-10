@@ -15,6 +15,7 @@ type createMemberAccessRefTransactionComponent struct {
 	memberAccessRefDataSource             databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	loggingDataSource                     databaseloggingdatasourceinterfaces.LoggingDataSource
 	createMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefUsecaseComponent
+	pathIdentity                          string
 }
 
 func NewCreateMemberAccessRefTransactionComponent(
@@ -24,6 +25,7 @@ func NewCreateMemberAccessRefTransactionComponent(
 	return &createMemberAccessRefTransactionComponent{
 		memberAccessRefDataSource: MemberAccessRefDataSource,
 		loggingDataSource:         loggingDataSource,
+		pathIdentity:              "CreateMemberAccessRefComponent",
 	}, nil
 }
 
@@ -70,7 +72,7 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccessRef",
+			createMemberAccessRefTrx.pathIdentity,
 			err,
 		)
 	}
@@ -90,7 +92,7 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccessRef",
+			createMemberAccessRefTrx.pathIdentity,
 			err,
 		)
 	}

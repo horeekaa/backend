@@ -13,6 +13,7 @@ import (
 type getAllMemberAccessRefRepository struct {
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
 	mongoQueryBuilder         mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity              string
 }
 
 func NewGetAllMemberAccessRefRepository(
@@ -22,6 +23,7 @@ func NewGetAllMemberAccessRefRepository(
 	return &getAllMemberAccessRefRepository{
 		memberAccessRefDataSource,
 		mongoQueryBuilder,
+		"GetAllMemberAccessRefRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllMmbAccRefRepo *getAllMemberAccessRefRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllMemberAccessRef",
+			getAllMmbAccRefRepo.pathIdentity,
 			err,
 		)
 	}

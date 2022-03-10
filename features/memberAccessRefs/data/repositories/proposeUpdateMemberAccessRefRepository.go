@@ -29,34 +29,34 @@ func NewProposeUpdateMemberAccessRefRepository(
 	return proposeUpdateMemberAccessRefRepo, nil
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRefRepository) SetValidation(
+func (updateMemberAccessRefRepo *proposeUpdateMemberAccessRefRepository) SetValidation(
 	usecaseComponent memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefUsecaseComponent,
 ) (bool, error) {
-	updateOrgRepo.proposeUpdateMemberAccessRefTransactionComponent.SetValidation(usecaseComponent)
+	updateMemberAccessRefRepo.proposeUpdateMemberAccessRefTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRefRepository) PreTransaction(
+func (updateMemberAccessRefRepo *proposeUpdateMemberAccessRefRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.proposeUpdateMemberAccessRefTransactionComponent.PreTransaction(
+	return updateMemberAccessRefRepo.proposeUpdateMemberAccessRefTransactionComponent.PreTransaction(
 		input.(*model.InternalUpdateMemberAccessRef),
 	)
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRefRepository) TransactionBody(
+func (updateMemberAccessRefRepo *proposeUpdateMemberAccessRefRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.proposeUpdateMemberAccessRefTransactionComponent.TransactionBody(
+	return updateMemberAccessRefRepo.proposeUpdateMemberAccessRefTransactionComponent.TransactionBody(
 		operationOption,
 		input.(*model.InternalUpdateMemberAccessRef),
 	)
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRefRepository) RunTransaction(
+func (updateMemberAccessRefRepo *proposeUpdateMemberAccessRefRepository) RunTransaction(
 	input *model.InternalUpdateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
-	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := updateMemberAccessRefRepo.mongoDBTransaction.RunTransaction(input)
 	return (output).(*model.MemberAccessRef), err
 }
