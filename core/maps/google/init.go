@@ -22,7 +22,11 @@ func (gMapClient *googleMapClient) Initialize() (bool, error) {
 		),
 	)
 	if err != nil {
-		return false, err
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.ClientInitializationFailed,
+			gMapClient.pathIdentity,
+			err,
+		)
 	}
 
 	wrappedClient, _ := googlemapcorewrappers.NewGoogleMapClientWrapper(mapClient)

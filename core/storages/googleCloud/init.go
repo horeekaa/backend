@@ -27,7 +27,7 @@ func (storageClient *googleCloudStorageClient) Initialize() (bool, error) {
 	client, err := storage.NewClient(context.Background())
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpstreamException,
+			horeekaacoreexceptionenums.ClientInitializationFailed,
 			storageClient.pathIdentity,
 			err,
 		)
