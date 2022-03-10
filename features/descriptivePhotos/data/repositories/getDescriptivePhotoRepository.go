@@ -11,6 +11,7 @@ import (
 
 type getDescriptivePhotoRepository struct {
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource
+	pathIdentity               string
 }
 
 func NewGetDescriptivePhotoRepository(
@@ -18,10 +19,11 @@ func NewGetDescriptivePhotoRepository(
 ) (descriptivephotodomainrepositoryinterfaces.GetDescriptivePhotoRepository, error) {
 	return &getDescriptivePhotoRepository{
 		descriptivePhotoDataSource,
+		"GetDescriptivePhotoRepository",
 	}, nil
 }
 
-func (getDescriptivePhotoRefRepo *getDescriptivePhotoRepository) Execute(filterFields *model.DescriptivePhotoFilterFields) (*model.DescriptivePhoto, error) {
+func (getDescriptivePhotoRepo *getDescriptivePhotoRepository) Execute(filterFields *model.DescriptivePhotoFilterFields) (*model.DescriptivePhoto, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getDescriptivePhotoRefRepo *getDescriptivePhotoRepository) Execute(filterF
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	descriptivePhoto, err := getDescriptivePhotoRefRepo.descriptivePhotoDataSource.GetMongoDataSource().FindOne(
+	descriptivePhoto, err := getDescriptivePhotoRepo.descriptivePhotoDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getDescriptivePhoto",
+			getDescriptivePhotoRepo.pathIdentity,
 			err,
 		)
 	}

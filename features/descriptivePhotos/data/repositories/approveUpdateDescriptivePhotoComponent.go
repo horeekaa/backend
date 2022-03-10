@@ -19,6 +19,7 @@ type approveUpdateDescriptivePhotoTransactionComponent struct {
 	loggingDataSource          databaseloggingdatasourceinterfaces.LoggingDataSource
 	gcsBasicImageStoring       googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation
 	mapProcessorUtility        coreutilityinterfaces.MapProcessorUtility
+	pathIdentity               string
 }
 
 func NewApproveUpdateDescriptivePhotoTransactionComponent(
@@ -32,6 +33,7 @@ func NewApproveUpdateDescriptivePhotoTransactionComponent(
 		loggingDataSource:          loggingDataSource,
 		gcsBasicImageStoring:       gcsBasicImageStoring,
 		mapProcessorUtility:        mapProcessorUtility,
+		pathIdentity:               "ApproveUpdateDescPhotoComponent",
 	}, nil
 }
 
@@ -55,7 +57,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateDescriptivePhoto",
+			approveDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}
@@ -69,7 +71,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateDescriptivePhoto",
+			approveDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}
@@ -96,7 +98,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateDescriptivePhoto",
+			approveDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}
@@ -145,7 +147,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateDescriptivePhoto",
+			approveDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}

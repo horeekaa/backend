@@ -20,6 +20,7 @@ type createDescriptivePhotoTransactionComponent struct {
 	loggingDataSource          databaseloggingdatasourceinterfaces.LoggingDataSource
 	gcsBasicImageStoring       googlecloudstoragecoreoperationinterfaces.GCSBasicImageStoringOperation
 	generatedObjectID          *primitive.ObjectID
+	pathIdentity               string
 }
 
 func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
@@ -45,6 +46,7 @@ func NewCreateDescriptivePhotoTransactionComponent(
 		descriptivePhotoDataSource: descriptivePhotoDataSource,
 		loggingDataSource:          loggingDataSource,
 		gcsBasicImageStoring:       gcsBasicImageStoring,
+		pathIdentity:               "CreateDescriptivePhotoComponent",
 	}, nil
 }
 
@@ -70,7 +72,7 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createDescriptionPhoto",
+				createDescPhotoTrx.pathIdentity,
 				err,
 			)
 		}
@@ -96,7 +98,7 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createDescriptivePhoto",
+			createDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}
@@ -115,7 +117,7 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createDescriptionPhoto",
+			createDescPhotoTrx.pathIdentity,
 			err,
 		)
 	}

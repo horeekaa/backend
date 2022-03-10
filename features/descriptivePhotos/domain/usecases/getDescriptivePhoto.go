@@ -9,6 +9,7 @@ import (
 
 type getDescriptivePhotoUsecase struct {
 	getDescriptivePhotoRepository descriptivephotodomainrepositoryinterfaces.GetDescriptivePhotoRepository
+	pathIdentity                  string
 }
 
 func NewGetDescriptivePhotoUsecase(
@@ -16,29 +17,30 @@ func NewGetDescriptivePhotoUsecase(
 ) (descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase, error) {
 	return &getDescriptivePhotoUsecase{
 		getDescriptivePhotoRepository,
+		"GetDescriptivePhotoUsecase",
 	}, nil
 }
 
-func (getLogUcase *getDescriptivePhotoUsecase) validation(
+func (getDescriptivePhotoUcase *getDescriptivePhotoUsecase) validation(
 	input *model.DescriptivePhotoFilterFields,
 ) (*model.DescriptivePhotoFilterFields, error) {
 	return input, nil
 }
 
-func (getLogUcase *getDescriptivePhotoUsecase) Execute(
+func (getDescriptivePhotoUcase *getDescriptivePhotoUsecase) Execute(
 	filterFields *model.DescriptivePhotoFilterFields,
 ) (*model.DescriptivePhoto, error) {
-	validatedFilterFields, err := getLogUcase.validation(filterFields)
+	validatedFilterFields, err := getDescriptivePhotoUcase.validation(filterFields)
 	if err != nil {
 		return nil, err
 	}
 
-	descriptivePhoto, err := getLogUcase.getDescriptivePhotoRepository.Execute(
+	descriptivePhoto, err := getDescriptivePhotoUcase.getDescriptivePhotoRepository.Execute(
 		validatedFilterFields,
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getDescriptivePhoto",
+			getDescriptivePhotoUcase.pathIdentity,
 			err,
 		)
 	}
