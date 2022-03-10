@@ -10,11 +10,14 @@ import (
 )
 
 type goLocalizeI18NClient struct {
-	localizer golocalizei18ncorewrapperinterfaces.GoLocalizeI18NLocalizer
+	localizer    golocalizei18ncorewrapperinterfaces.GoLocalizeI18NLocalizer
+	pathIdentity string
 }
 
 func NewGoLocalizeI18NClient() (golocalizei18ncoreclientinterfaces.GoLocalizeI18NClient, error) {
-	return &goLocalizeI18NClient{}, nil
+	return &goLocalizeI18NClient{
+		pathIdentity: "GoLocalizeClient",
+	}, nil
 }
 
 func (goLocalizeClient *goLocalizeI18NClient) Initialize(locale string, fallbackLocale string) (bool, error) {
@@ -30,7 +33,7 @@ func (goLocalizeI18NClient *goLocalizeI18NClient) GetLocalizer() (golocalizei18n
 	if goLocalizeI18NClient.localizer == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newGoLocalizeI18N",
+			goLocalizeI18NClient.pathIdentity,
 			nil,
 		)
 	}
