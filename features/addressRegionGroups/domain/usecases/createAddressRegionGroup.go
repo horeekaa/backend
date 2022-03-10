@@ -21,6 +21,7 @@ type createAddressRegionGroupUsecase struct {
 	getAccountMemberAccessRepo             memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createAddressRegionGroupRepo           addressregiongroupdomainrepositoryinterfaces.CreateAddressRegionGroupRepository
 	createAddressRegionGroupAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                           string
 }
 
 func NewCreateAddressRegionGroupUsecase(
@@ -37,6 +38,7 @@ func NewCreateAddressRegionGroupUsecase(
 				AddressRegionGroupCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateAddressRegionGroupUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) validation
 	if &input.Context == nil {
 		return addressregiongrouppresentationusecasetypes.CreateAddressRegionGroupUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createAddressRegionGroupUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createAddressRegionGroupUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createAddressRegionGroupUsecase",
+			createAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createAddressRegionGroupUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createAddressRegionGroupUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createAddressRegionGroupUsecase",
+			createAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
@@ -114,7 +114,7 @@ func (createAddressRegionGroupUcase *createAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createAddressRegionGroupUsecase",
+			createAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}

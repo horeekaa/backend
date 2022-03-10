@@ -16,6 +16,7 @@ type approveUpdateAddressRegionGroupTransactionComponent struct {
 	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
 	loggingDataSource            databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility          coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                 string
 }
 
 func NewApproveUpdateAddressRegionGroupTransactionComponent(
@@ -27,6 +28,7 @@ func NewApproveUpdateAddressRegionGroupTransactionComponent(
 		addressRegionGroupDataSource: addressRegionGroupDataSource,
 		loggingDataSource:            loggingDataSource,
 		mapProcessorUtility:          mapProcessorUtility,
+		pathIdentity:                 "ApproveUpdateAddressRegionGroupComponent",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			approveAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -61,7 +63,7 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			approveAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -88,7 +90,7 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			approveAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -126,7 +128,7 @@ func (approveAddressRegionGroupTrx *approveUpdateAddressRegionGroupTransactionCo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			approveAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}

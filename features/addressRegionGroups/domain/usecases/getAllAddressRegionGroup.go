@@ -20,6 +20,7 @@ type getAllAddressRegionGroupUsecase struct {
 	getAccountMemberAccessRepo             memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllAddressRegionGroupRepo           addressregiongroupdomainrepositoryinterfaces.GetAllAddressRegionGroupRepository
 	getAllAddressRegionGroupAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                           string
 }
 
 func NewGetAllAddressRegionGroupUsecase(
@@ -36,68 +37,67 @@ func NewGetAllAddressRegionGroupUsecase(
 				AddressRegionGroupReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllAddressRegionGroupUsecase",
 	}, nil
 }
 
-func (getAlladdressRegionGroupUcase *getAllAddressRegionGroupUsecase) validation(input addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput) (*addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput, error) {
+func (getAllAddressRegionGroupUcase *getAllAddressRegionGroupUsecase) validation(input addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput) (*addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput, error) {
 	if &input.Context == nil {
 		return &addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllAddressRegionGroupUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllAddressRegionGroupUcase.pathIdentity,
 				nil,
 			)
 	}
 	return &input, nil
 }
 
-func (getAlladdressRegionGroupUcase *getAllAddressRegionGroupUsecase) Execute(
+func (getAllAddressRegionGroupUcase *getAllAddressRegionGroupUsecase) Execute(
 	input addressregiongrouppresentationusecasetypes.GetAllAddressRegionGroupUsecaseInput,
 ) ([]*model.AddressRegionGroup, error) {
-	validatedInput, err := getAlladdressRegionGroupUcase.validation(input)
+	validatedInput, err := getAllAddressRegionGroupUcase.validation(input)
 	if err != nil {
 		return nil, err
 	}
 
-	account, err := getAlladdressRegionGroupUcase.getAccountFromAuthDataRepo.Execute(
+	account, err := getAllAddressRegionGroupUcase.getAccountFromAuthDataRepo.Execute(
 		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
 			Context: validatedInput.Context,
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllAddressRegionGroupUsecase",
+			getAllAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllAddressRegionGroupUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllAddressRegionGroupUcase.pathIdentity,
 			nil,
 		)
 	}
 
 	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
-	_, err = getAlladdressRegionGroupUcase.getAccountMemberAccessRepo.Execute(
+	_, err = getAllAddressRegionGroupUcase.getAccountMemberAccessRepo.Execute(
 		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
 			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
 				Account:             &model.ObjectIDOnly{ID: &account.ID},
 				MemberAccessRefType: &memberAccessRefTypeOrgBased,
-				Access:              getAlladdressRegionGroupUcase.getAllAddressRegionGroupAccessIdentity,
+				Access:              getAllAddressRegionGroupUcase.getAllAddressRegionGroupAccessIdentity,
 			},
 		},
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllAddressRegionGroupUsecase",
+			getAllAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
 
-	addressRegionGroups, err := getAlladdressRegionGroupUcase.getAllAddressRegionGroupRepo.Execute(
+	addressRegionGroups, err := getAllAddressRegionGroupUcase.getAllAddressRegionGroupRepo.Execute(
 		addressregiongroupdomainrepositorytypes.GetAllAddressRegionGroupInput{
 			FilterFields:  validatedInput.FilterFields,
 			PaginationOpt: validatedInput.PaginationOps,
@@ -105,7 +105,7 @@ func (getAlladdressRegionGroupUcase *getAllAddressRegionGroupUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllAddressRegionGroupUsecase",
+			getAllAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}

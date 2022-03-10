@@ -16,12 +16,14 @@ import (
 
 type addressRegionGroupDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewAddressRegionGroupDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSourceMongo, error) {
 	basicOperation.SetCollection("addressregiongroups")
 	return &addressRegionGroupDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "AddressRegionGroupDataSource",
 	}, nil
 }
 
@@ -130,8 +132,8 @@ func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) setDefaultVal
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/addressRegionGroupDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			addrGroupDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

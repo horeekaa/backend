@@ -13,6 +13,7 @@ import (
 type getAllAddressRegionGroupRepository struct {
 	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
 	mongoQueryBuilder            mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity                 string
 }
 
 func NewGetAllAddressRegionGroupRepository(
@@ -22,6 +23,7 @@ func NewGetAllAddressRegionGroupRepository(
 	return &getAllAddressRegionGroupRepository{
 		addressRegionGroupDataSource,
 		mongoQueryBuilder,
+		"GetAllAddressRegionGroupRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllAddressRegionGroupRepo *getAllAddressRegionGroupRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllAddressRegionGroup",
+			getAllAddressRegionGroupRepo.pathIdentity,
 			err,
 		)
 	}
