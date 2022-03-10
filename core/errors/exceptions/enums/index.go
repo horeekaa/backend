@@ -14,6 +14,7 @@ const (
 	DeleteObjectFailed              string = "DELETE_OBJECT_FAILED"
 	QueryObjectFailed               string = "QUERY_OBJECT_FAILED"
 	IDNotFound                      string = "ID_NOT_FOUND"
+	NoUpdatableObjectFound          string = "NO_UPDATABLE_OBJECT_FOUND"
 	DBConnectionFailed              string = "DB_CONNECTION_FAILED"
 
 	StoringImageFailed              string = "STORING_IMAGE_FAILED"

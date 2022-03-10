@@ -38,6 +38,8 @@ var authenticationFailure = map[string]bool{
 var objectNotFoundFailure = map[string]bool{
 	horeekaacoreexceptionenums.IDNotFound:        true,
 	horeekaacoreexceptionenums.GetAuthDataFailed: true,
+
+	horeekaacoreexceptionenums.NoUpdatableObjectFound: true,
 }
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
