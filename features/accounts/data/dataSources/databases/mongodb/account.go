@@ -130,7 +130,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
 			accDataSourceMongo.pathIdentity,
 			nil,
 		)

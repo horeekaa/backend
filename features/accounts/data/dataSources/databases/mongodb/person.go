@@ -129,7 +129,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
 			prsnDataSourceMongo.pathIdentity,
 			nil,
 		)
