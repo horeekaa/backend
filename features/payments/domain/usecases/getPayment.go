@@ -9,6 +9,7 @@ import (
 
 type getPaymentUsecase struct {
 	getPaymentRepository paymentdomainrepositoryinterfaces.GetPaymentRepository
+	pathIdentity         string
 }
 
 func NewGetPaymentUsecase(
@@ -16,6 +17,7 @@ func NewGetPaymentUsecase(
 ) (paymentpresentationusecaseinterfaces.GetPaymentUsecase, error) {
 	return &getPaymentUsecase{
 		getPaymentRepository,
+		"GetPaymentUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getPaymentUcase *getPaymentUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getPayment",
+			getPaymentUcase.pathIdentity,
 			err,
 		)
 	}

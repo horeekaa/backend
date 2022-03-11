@@ -23,6 +23,7 @@ type getAllPaymentUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllPaymentRepo           paymentdomainrepositoryinterfaces.GetAllPaymentRepository
 	getAllPaymentAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewGetAllPaymentUsecase(
@@ -39,6 +40,7 @@ func NewGetAllPaymentUsecase(
 				PaymentReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllPaymentUsecase",
 	}, nil
 }
 
@@ -46,9 +48,8 @@ func (getAllPaymentUcase *getAllPaymentUsecase) validation(input paymentpresenta
 	if &input.Context == nil {
 		return &paymentpresentationusecasetypes.GetAllPaymentUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllPaymentUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllPaymentUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -70,15 +71,14 @@ func (getAllPaymentUcase *getAllPaymentUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPaymentUsecase",
+			getAllPaymentUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllPaymentUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllPaymentUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -104,7 +104,7 @@ func (getAllPaymentUcase *getAllPaymentUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPaymentUsecase",
+			getAllPaymentUcase.pathIdentity,
 			err,
 		)
 	}
@@ -119,10 +119,10 @@ func (getAllPaymentUcase *getAllPaymentUsecase) Execute(
 			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllPaymentUsecase",
+				getAllPaymentUcase.pathIdentity,
 				horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					"/getAllPaymentUsecase",
+					getAllPaymentUcase.pathIdentity,
 					nil,
 				),
 			)
@@ -137,7 +137,7 @@ func (getAllPaymentUcase *getAllPaymentUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPaymentUsecase",
+			getAllPaymentUcase.pathIdentity,
 			err,
 		)
 	}

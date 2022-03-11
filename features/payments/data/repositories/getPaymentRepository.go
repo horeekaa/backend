@@ -11,6 +11,7 @@ import (
 
 type getPaymentRepository struct {
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource
+	pathIdentity      string
 }
 
 func NewGetPaymentRepository(
@@ -18,6 +19,7 @@ func NewGetPaymentRepository(
 ) (paymentdomainrepositoryinterfaces.GetPaymentRepository, error) {
 	return &getPaymentRepository{
 		paymentDataSource,
+		"GetPaymentRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getPaymentRepo *getPaymentRepository) Execute(filterFields *model.PaymentF
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPayment",
+			getPaymentRepo.pathIdentity,
 			err,
 		)
 	}

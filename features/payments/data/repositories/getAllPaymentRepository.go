@@ -13,6 +13,7 @@ import (
 type getAllPaymentRepository struct {
 	paymentDataSource databasepaymentdatasourceinterfaces.PaymentDataSource
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity      string
 }
 
 func NewGetAllPaymentRepository(
@@ -22,6 +23,7 @@ func NewGetAllPaymentRepository(
 	return &getAllPaymentRepository{
 		paymentDataSource,
 		mongoQueryBuilder,
+		"GetAllPaymentRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllPaymentRepo *getAllPaymentRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllPayment",
+			getAllPaymentRepo.pathIdentity,
 			err,
 		)
 	}

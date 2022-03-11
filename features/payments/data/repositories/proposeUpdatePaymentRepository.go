@@ -20,6 +20,7 @@ type proposeUpdatePaymentRepository struct {
 	proposeUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent
 	updateInvoiceTrxComponent                invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                             string
 }
 
 func NewProposeUpdatePaymentRepository(
@@ -37,6 +38,7 @@ func NewProposeUpdatePaymentRepository(
 		proposeUpdatePaymentRepositoryTransactionComponent,
 		updateInvoiceTrxComponent,
 		mongoDBTransaction,
+		"ProposeUpdatePaymentRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -66,7 +68,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePaymentRepository",
+			updatePaymentRepo.pathIdentity,
 			err,
 		)
 	}
@@ -85,10 +87,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 				paymentToUpdate.Photo,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePaymentRepository",
-					err,
-				)
+				return nil, err
 			}
 		} else {
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
@@ -113,10 +112,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePaymentRepository",
-					err,
-				)
+				return nil, err
 			}
 
 			jsonTemp, _ = json.Marshal(savedPhoto)
@@ -136,10 +132,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 				},
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePaymentRepository",
-					err,
-				)
+				return nil, err
 			}
 		}
 	}

@@ -16,6 +16,7 @@ type approveUpdatePaymentTransactionComponent struct {
 	paymentDataSource   databasepaymentdatasourceinterfaces.PaymentDataSource
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewApproveUpdatePaymentTransactionComponent(
@@ -27,6 +28,7 @@ func NewApproveUpdatePaymentTransactionComponent(
 		paymentDataSource:   paymentDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdatePaymentComponent",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -61,7 +63,7 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -88,7 +90,7 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -126,7 +128,7 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
