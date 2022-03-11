@@ -17,6 +17,7 @@ type createProductTransactionComponent struct {
 	loggingDataSource             databaseloggingdatasourceinterfaces.LoggingDataSource
 	createProductUsecaseComponent productdomainrepositoryinterfaces.CreateProductUsecaseComponent
 	generatedObjectID             *primitive.ObjectID
+	pathIdentity                  string
 }
 
 func NewCreateProductTransactionComponent(
@@ -26,6 +27,7 @@ func NewCreateProductTransactionComponent(
 	return &createProductTransactionComponent{
 		productDataSource: productDataSource,
 		loggingDataSource: loggingDataSource,
+		pathIdentity:      "CreateProductComponent",
 	}, nil
 }
 
@@ -86,7 +88,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createProduct",
+			createProductTrx.pathIdentity,
 			err,
 		)
 	}
@@ -106,7 +108,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createProduct",
+			createProductTrx.pathIdentity,
 			err,
 		)
 	}

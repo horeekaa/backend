@@ -22,6 +22,7 @@ type createProductUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createProductRepo           productdomainrepositoryinterfaces.CreateProductRepository
 	createproductAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewCreateProductUsecase(
@@ -38,6 +39,7 @@ func NewCreateProductUsecase(
 				ProductCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateProductUsecase",
 	}, nil
 }
 
@@ -45,9 +47,8 @@ func (createProductUcase *createProductUsecase) validation(input productpresenta
 	if &input.Context == nil {
 		return productpresentationusecasetypes.CreateProductUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createProductUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createProductUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -70,15 +71,14 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createProductUsecase",
+			createProductUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createProductUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createProductUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -95,7 +95,7 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createProductUsecase",
+			createProductUcase.pathIdentity,
 			err,
 		)
 	}
@@ -127,7 +127,7 @@ func (createProductUcase *createProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createProductUsecase",
+			createProductUcase.pathIdentity,
 			err,
 		)
 	}

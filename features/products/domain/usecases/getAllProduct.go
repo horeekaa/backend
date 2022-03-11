@@ -20,6 +20,7 @@ type getAllProductUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllProductRepo           productdomainrepositoryinterfaces.GetAllProductRepository
 	getAllProductAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewGetAllProductUsecase(
@@ -36,6 +37,7 @@ func NewGetAllProductUsecase(
 				ProductReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllProductUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getAllProdUcase *getAllProductUsecase) validation(input productpresentatio
 	if &input.Context == nil {
 		return &productpresentationusecasetypes.GetAllProductUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllProductUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllProdUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (getAllProdUcase *getAllProductUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllProductUsecase",
+			getAllProdUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllProductUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllProdUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (getAllProdUcase *getAllProductUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllProductUsecase",
+			getAllProdUcase.pathIdentity,
 			err,
 		)
 	}
@@ -105,7 +105,7 @@ func (getAllProdUcase *getAllProductUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllProductUsecase",
+			getAllProdUcase.pathIdentity,
 			err,
 		)
 	}

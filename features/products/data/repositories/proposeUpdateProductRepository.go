@@ -25,6 +25,7 @@ type proposeUpdateProductRepository struct {
 	bulkUpdateTaggingComponent               taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateProductTransactionComponent productdomainrepositoryinterfaces.ProposeUpdateProductTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                             string
 }
 
 func NewProposeUpdateProductRepository(
@@ -48,6 +49,7 @@ func NewProposeUpdateProductRepository(
 		bulkUpdateTaggingComponent,
 		proposeUpdateProductRepositoryTransactionComponent,
 		mongoDBTransaction,
+		"ProposeUpdateProductRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -84,7 +86,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateProductRepository",
+			updateProdRepo.pathIdentity,
 			err,
 		)
 	}
@@ -113,10 +115,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 					descPhotoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateProductRepository",
-						err,
-					)
+					return nil, err
 				}
 
 				if descPhotoToUpdate.IsActive != nil {
@@ -157,10 +156,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateProductRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
@@ -197,10 +193,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 					variantToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateProductRepository",
-						err,
-					)
+					return nil, err
 				}
 				if variantToUpdate.IsActive != nil {
 					if !*variantToUpdate.IsActive {
@@ -240,10 +233,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				variantToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateProductRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedVariants = append(savedVariants, savedVariant)
 		}
@@ -288,10 +278,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 					bulkUpdateTagging,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateProductRepository",
-						err,
-					)
+					return nil, err
 				}
 				if taggingToUpdate.IsActive != nil {
 					if !*taggingToUpdate.IsActive {
@@ -327,10 +314,7 @@ func (updateProdRepo *proposeUpdateProductRepository) TransactionBody(
 				taggingToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateProductRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedTaggings = append(savedTaggings, savedTagging...)
 		}

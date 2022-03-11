@@ -22,6 +22,7 @@ type approveUpdateProductRepository struct {
 	approveDescriptivePhotoComponent         descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	bulkApproveUpdateTaggingComponent        taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                             string
 }
 
 func NewApproveUpdateProductRepository(
@@ -39,6 +40,7 @@ func NewApproveUpdateProductRepository(
 		approveDescriptivePhotoComponent,
 		bulkApproveUpdateTaggingComponent,
 		mongoDBTransaction,
+		"ApproveUpdateProductRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -75,7 +77,7 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateProductRepository",
+			updateProdRepo.pathIdentity,
 			err,
 		)
 	}
@@ -98,10 +100,7 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 					updateDescriptivePhoto,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateProductRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
@@ -130,10 +129,7 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 				bulkUpdateTagging,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/approveUpdateProductRepository",
-					err,
-				)
+				return nil, err
 			}
 		}
 
@@ -154,10 +150,7 @@ func (updateProdRepo *approveUpdateProductRepository) TransactionBody(
 					updateVariant,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateProductRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
