@@ -9,6 +9,7 @@ import (
 
 type getMouItemUsecase struct {
 	getMouItemRepository mouitemdomainrepositoryinterfaces.GetMouItemRepository
+	pathIdentity         string
 }
 
 func NewGetMouItemUsecase(
@@ -16,6 +17,7 @@ func NewGetMouItemUsecase(
 ) (mouitempresentationusecaseinterfaces.GetMouItemUsecase, error) {
 	return &getMouItemUsecase{
 		getMouItemRepository,
+		"GetMouItemUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getMouItemUcase *getMouItemUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getMouItem",
+			getMouItemUcase.pathIdentity,
 			err,
 		)
 	}

@@ -11,6 +11,7 @@ import (
 
 type getMouItemRepository struct {
 	mouItemDataSource databasemouitemdatasourceinterfaces.MouItemDataSource
+	pathIdentity      string
 }
 
 func NewGetMouItemRepository(
@@ -18,10 +19,11 @@ func NewGetMouItemRepository(
 ) (mouitemdomainrepositoryinterfaces.GetMouItemRepository, error) {
 	return &getMouItemRepository{
 		mouItemDataSource,
+		"GetMouItemRepository",
 	}, nil
 }
 
-func (getMouItemRefRepo *getMouItemRepository) Execute(filterFields *model.MouItemFilterFields) (*model.MouItem, error) {
+func (getMouItemRepo *getMouItemRepository) Execute(filterFields *model.MouItemFilterFields) (*model.MouItem, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getMouItemRefRepo *getMouItemRepository) Execute(filterFields *model.MouIt
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	mouItem, err := getMouItemRefRepo.mouItemDataSource.GetMongoDataSource().FindOne(
+	mouItem, err := getMouItemRepo.mouItemDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getMouItem",
+			getMouItemRepo.pathIdentity,
 			err,
 		)
 	}

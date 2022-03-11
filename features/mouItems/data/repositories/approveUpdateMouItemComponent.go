@@ -16,6 +16,7 @@ type approveUpdateMouItemTransactionComponent struct {
 	mouItemDataSource   databasemouitemdatasourceinterfaces.MouItemDataSource
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewApproveUpdateMouItemTransactionComponent(
@@ -27,16 +28,17 @@ func NewApproveUpdateMouItemTransactionComponent(
 		mouItemDataSource:   mouItemDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdateMouItemComponent",
 	}, nil
 }
 
-func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) PreTransaction(
+func (approveUpdateMouItemTrx *approveUpdateMouItemTransactionComponent) PreTransaction(
 	input *model.InternalUpdateMouItem,
 ) (*model.InternalUpdateMouItem, error) {
 	return input, nil
 }
 
-func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBody(
+func (approveUpdateMouItemTrx *approveUpdateMouItemTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalUpdateMouItem,
 ) (*model.MouItem, error) {
@@ -44,13 +46,13 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, updateMouItem)
 
-	existingMouItem, err := approveProdVarTrx.mouItemDataSource.GetMongoDataSource().FindByID(
+	existingMouItem, err := approveUpdateMouItemTrx.mouItemDataSource.GetMongoDataSource().FindByID(
 		updateMouItem.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			approveUpdateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -58,13 +60,13 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 		return existingMouItem, nil
 	}
 
-	previousLog, err := approveProdVarTrx.loggingDataSource.GetMongoDataSource().FindByID(
+	previousLog, err := approveUpdateMouItemTrx.loggingDataSource.GetMongoDataSource().FindByID(
 		existingMouItem.RecentLog.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			approveUpdateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -85,13 +87,13 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
 
-	createdLog, err := approveProdVarTrx.loggingDataSource.GetMongoDataSource().Create(
+	createdLog, err := approveUpdateMouItemTrx.loggingDataSource.GetMongoDataSource().Create(
 		logToCreate,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			approveUpdateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -108,7 +110,7 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 	jsonUpdate, _ := json.Marshal(updateMouItem)
 	json.Unmarshal(jsonUpdate, &updateMouItemMap)
 
-	approveProdVarTrx.mapProcessorUtility.RemoveNil(updateMouItemMap)
+	approveUpdateMouItemTrx.mapProcessorUtility.RemoveNil(updateMouItemMap)
 
 	jsonUpdate, _ = json.Marshal(updateMouItemMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateMouItem.ProposedChanges)
@@ -120,7 +122,7 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 		}
 	}
 
-	updatedMouItem, err := approveProdVarTrx.mouItemDataSource.GetMongoDataSource().Update(
+	updatedMouItem, err := approveUpdateMouItemTrx.mouItemDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": fieldsToUpdateMouItem.ID,
 		},
@@ -129,7 +131,7 @@ func (approveProdVarTrx *approveUpdateMouItemTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			approveUpdateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
