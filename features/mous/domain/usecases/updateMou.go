@@ -23,6 +23,7 @@ type updateMouUsecase struct {
 	proposeUpdateMouRepo       moudomainrepositoryinterfaces.ProposeUpdateMouRepository
 	approveUpdateMouRepo       moudomainrepositoryinterfaces.ApproveUpdateMouRepository
 	updateMouAccessIdentity    *model.MemberAccessRefOptionsInput
+	pathIdentity               string
 }
 
 func NewUpdateMouUsecase(
@@ -41,6 +42,7 @@ func NewUpdateMouUsecase(
 				MouUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateMouUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateMouUcase *updateMouUsecase) validation(input moupresentationusecaset
 	if &input.Context == nil {
 		return moupresentationusecasetypes.UpdateMouUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateMouUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateMouUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMouUsecase",
+			updateMouUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateMouUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateMouUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMouUsecase",
+			updateMouUcase.pathIdentity,
 			err,
 		)
 	}
@@ -109,16 +109,14 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 		if accMemberAccess.Access.MouAccesses.MouApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMouUsecase",
+				updateMouUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.MouAccesses.MouApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMouUsecase",
+				updateMouUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -129,7 +127,7 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMouUsecase",
+				updateMouUcase.pathIdentity,
 				err,
 			)
 		}
@@ -152,7 +150,7 @@ func (updateMouUcase *updateMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMouUsecase",
+			updateMouUcase.pathIdentity,
 			err,
 		)
 	}

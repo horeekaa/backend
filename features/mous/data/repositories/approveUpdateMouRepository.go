@@ -15,6 +15,7 @@ type approveUpdateMouRepository struct {
 	mouDataSource                        databasemoudatasourceinterfaces.MouDataSource
 	approveUpdateMouItemComponent        mouitemdomainrepositoryinterfaces.ApproveUpdateMouItemTransactionComponent
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                         string
 }
 
 func NewApproveUpdateMouRepository(
@@ -28,6 +29,7 @@ func NewApproveUpdateMouRepository(
 		mouDataSource,
 		approveUpdateMouItemComponent,
 		mongoDBTransaction,
+		"ApproveUpdateMouRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -55,7 +57,7 @@ func (approveUpdateMouRepo *approveUpdateMouRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateMouRepository",
+			approveUpdateMouRepo.pathIdentity,
 			err,
 		)
 	}
@@ -77,10 +79,7 @@ func (approveUpdateMouRepo *approveUpdateMouRepository) TransactionBody(
 				updateItem,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/approveUpdateMouRepository",
-					err,
-				)
+				return nil, err
 			}
 		}
 	}

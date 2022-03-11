@@ -11,6 +11,7 @@ import (
 
 type getMouRepository struct {
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource
+	pathIdentity  string
 }
 
 func NewGetMouRepository(
@@ -18,10 +19,11 @@ func NewGetMouRepository(
 ) (moudomainrepositoryinterfaces.GetMouRepository, error) {
 	return &getMouRepository{
 		mouDataSource,
+		"GetMouRepository",
 	}, nil
 }
 
-func (getOrgRepo *getMouRepository) Execute(filterFields *model.MouFilterFields) (*model.Mou, error) {
+func (getMouRepo *getMouRepository) Execute(filterFields *model.MouFilterFields) (*model.Mou, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getOrgRepo *getMouRepository) Execute(filterFields *model.MouFilterFields)
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	mou, err := getOrgRepo.mouDataSource.GetMongoDataSource().FindOne(
+	mou, err := getMouRepo.mouDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getMou",
+			getMouRepo.pathIdentity,
 			err,
 		)
 	}

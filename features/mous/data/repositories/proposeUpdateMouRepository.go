@@ -19,6 +19,7 @@ type proposeUpdateMouRepository struct {
 	createMouItemComponent               mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent
 	proposeUpdateMouItemComponent        mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                         string
 }
 
 func NewProposeUpdateMouRepository(
@@ -34,6 +35,7 @@ func NewProposeUpdateMouRepository(
 		createMouItemComponent,
 		proposeUpdateMouItemComponent,
 		mongoDBTransaction,
+		"ProposeUpdateMouRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -63,7 +65,7 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateMouRepository",
+			updateMouRepo.pathIdentity,
 			err,
 		)
 	}
@@ -92,10 +94,7 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 					mouItemToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateMouRepository",
-						err,
-					)
+					return nil, err
 				}
 
 				if mouItemToUpdate.IsActive != nil {
@@ -132,10 +131,7 @@ func (updateMouRepo *proposeUpdateMouRepository) TransactionBody(
 				mouItemToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateMouRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedMouItems = append(savedMouItems, savedMouItem)
 		}

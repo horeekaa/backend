@@ -24,6 +24,7 @@ type getAllMouUsecase struct {
 	getAllmouRepo              moudomainrepositoryinterfaces.GetAllMouRepository
 
 	getOwnedmouIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity        string
 }
 
 func NewGetAllMouUsecase(
@@ -40,6 +41,7 @@ func NewGetAllMouUsecase(
 				MouReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllMouUsecase",
 	}, nil
 }
 
@@ -47,9 +49,8 @@ func (getAllMouUcase *getAllMouUsecase) validation(input moupresentationusecaset
 	if &input.Context == nil {
 		return &moupresentationusecasetypes.GetAllMouUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllMouUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllMouUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -71,15 +72,14 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMouUsecase",
+			getAllMouUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllMouUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllMouUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -105,7 +105,7 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMouUsecase",
+			getAllMouUcase.pathIdentity,
 			err,
 		)
 	}
@@ -122,10 +122,10 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllMouUsecase",
+				getAllMouUcase.pathIdentity,
 				horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					"/getAllMouUsecase",
+					getAllMouUcase.pathIdentity,
 					nil,
 				),
 			)
@@ -140,7 +140,7 @@ func (getAllMouUcase *getAllMouUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMouUsecase",
+			getAllMouUcase.pathIdentity,
 			err,
 		)
 	}
