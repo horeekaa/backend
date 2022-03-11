@@ -20,6 +20,7 @@ type proposeUpdateProductVariantTransactionComponent struct {
 	createDescriptivePhotoComponent        descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                           string
 }
 
 func NewProposeUpdateProductVariantTransactionComponent(
@@ -35,6 +36,7 @@ func NewProposeUpdateProductVariantTransactionComponent(
 		createDescriptivePhotoComponent:        createDescriptivePhotoComponent,
 		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
 		mapProcessorUtility:                    mapProcessorUtility,
+		pathIdentity:                           "ProposeUpdateProductVariantComponent",
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			updateProdVariantTrx.pathIdentity,
 			err,
 		)
 	}
@@ -76,10 +78,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 				input.Photo,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateProductVariant",
-					err,
-				)
+				return nil, err
 			}
 		} else {
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
@@ -103,10 +102,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateProductVariant",
-					err,
-				)
+				return nil, err
 			}
 
 			if existingProductVariant.Photo != nil {
@@ -124,10 +120,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 					},
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateProductVariant",
-						err,
-					)
+					return nil, err
 				}
 			}
 			updateProductVariant.Photo = &model.ObjectIDOnly{
@@ -156,7 +149,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			updateProdVariantTrx.pathIdentity,
 			err,
 		)
 	}
@@ -195,7 +188,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			updateProdVariantTrx.pathIdentity,
 			err,
 		)
 	}

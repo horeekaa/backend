@@ -18,6 +18,7 @@ type createProductVariantTransactionComponent struct {
 	loggingDataSource               databaseloggingdatasourceinterfaces.LoggingDataSource
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	generatedObjectID               *primitive.ObjectID
+	pathIdentity                    string
 }
 
 func (createProdVariantTrx *createProductVariantTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
@@ -43,6 +44,7 @@ func NewCreateProductVariantTransactionComponent(
 		productVariantDataSource:        productVariantDataSource,
 		loggingDataSource:               loggingDataSource,
 		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
+		pathIdentity:                    "CreateProductVariantComponent",
 	}, nil
 }
 
@@ -77,10 +79,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 			input.Photo,
 		)
 		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createProductVariant",
-				err,
-			)
+			return nil, err
 		}
 
 		productVariantToCreate.Photo = &model.ObjectIDOnly{
@@ -106,7 +105,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createProductVariant",
+			createProdVariantTrx.pathIdentity,
 			err,
 		)
 	}
@@ -126,7 +125,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createProductVariant",
+			createProdVariantTrx.pathIdentity,
 			err,
 		)
 	}

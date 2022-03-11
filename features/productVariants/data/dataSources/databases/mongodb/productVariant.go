@@ -16,12 +16,14 @@ import (
 
 type productVariantDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewProductVariantDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbproductvariantdatasourceinterfaces.ProductVariantDataSourceMongo, error) {
 	basicOperation.SetCollection("productvariants")
 	return &productVariantDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "ProductVariantDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (prodVarDataSourceMongo *productVariantDataSourceMongo) setDefaultValuesWhe
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/productVariantDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			prodVarDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}
