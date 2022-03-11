@@ -188,7 +188,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/creatememberAccesse",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
