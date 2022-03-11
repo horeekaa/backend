@@ -20,6 +20,7 @@ type getAllNotificationUsecase struct {
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllNotificationRepo           notificationdomainrepositoryinterfaces.GetAllNotificationRepository
 	getAllNotificationAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                     string
 }
 
 func NewGetAllNotificationUsecase(
@@ -36,6 +37,7 @@ func NewGetAllNotificationUsecase(
 				AccountReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllNotificationUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getAllNotificationUcase *getAllNotificationUsecase) validation(input notif
 	if &input.Context == nil {
 		return &notificationpresentationusecasetypes.GetAllNotificationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllNotificationUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllNotificationUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (getAllNotificationUcase *getAllNotificationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllNotificationUsecase",
+			getAllNotificationUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllNotificationUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllNotificationUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (getAllNotificationUcase *getAllNotificationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllNotificationUsecase",
+			getAllNotificationUcase.pathIdentity,
 			err,
 		)
 	}
@@ -105,7 +105,7 @@ func (getAllNotificationUcase *getAllNotificationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllNotificationUsecase",
+			getAllNotificationUcase.pathIdentity,
 			err,
 		)
 	}

@@ -16,12 +16,14 @@ import (
 
 type notificationDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewNotificationDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbnotificationdatasourceinterfaces.NotificationDataSourceMongo, error) {
 	basicOperation.SetCollection("notifications")
 	return &notificationDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "NotificationDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValues
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/notificationDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			notificationDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

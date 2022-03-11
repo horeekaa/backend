@@ -17,6 +17,7 @@ type getAllNotificationRepository struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
 	mongoQueryBuilder        mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity             string
 }
 
 func NewGetAllNotificationRepository(
@@ -28,6 +29,7 @@ func NewGetAllNotificationRepository(
 		notificationDataSource,
 		notifLocalizationBuilder,
 		mongoQueryBuilder,
+		"GetAllNotificationRepository",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (getAllNotificationRepo *getAllNotificationRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllNotification",
+			getAllNotificationRepo.pathIdentity,
 			err,
 		)
 	}

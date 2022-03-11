@@ -14,6 +14,7 @@ import (
 type bulkUpdateNotificationTransactionComponent struct {
 	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
+	pathIdentity             string
 }
 
 func NewBulkUpdateNotificationTransactionComponent(
@@ -23,6 +24,7 @@ func NewBulkUpdateNotificationTransactionComponent(
 	return &bulkUpdateNotificationTransactionComponent{
 		notificationDataSource:   notificationDataSource,
 		notifLocalizationBuilder: notifLocalizationBuilder,
+		pathIdentity:             "BulkUpdateNotificationComponent",
 	}, nil
 }
 
@@ -51,7 +53,7 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateNotification",
+				bulkUpdateNotificationComp.pathIdentity,
 				err,
 			)
 		}
