@@ -17,6 +17,7 @@ type createOrganizationTransactionComponent struct {
 	loggingDataSource                  databaseloggingdatasourceinterfaces.LoggingDataSource
 	createOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.CreateOrganizationUsecaseComponent
 	generatedObjectID                  *primitive.ObjectID
+	pathIdentity                       string
 }
 
 func NewCreateOrganizationTransactionComponent(
@@ -26,6 +27,7 @@ func NewCreateOrganizationTransactionComponent(
 	return &createOrganizationTransactionComponent{
 		organizationDataSource: organizationDataSource,
 		loggingDataSource:      loggingDataSource,
+		pathIdentity:           "CreateOrganizationComponent",
 	}, nil
 }
 
@@ -86,7 +88,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createOrganization",
+			createOrganizationTrx.pathIdentity,
 			err,
 		)
 	}
@@ -106,7 +108,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createOrganization",
+			createOrganizationTrx.pathIdentity,
 			err,
 		)
 	}

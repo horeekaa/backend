@@ -11,6 +11,7 @@ import (
 
 type getOrganizationRepository struct {
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource
+	pathIdentity           string
 }
 
 func NewGetOrganizationRepository(
@@ -18,6 +19,7 @@ func NewGetOrganizationRepository(
 ) (organizationdomainrepositoryinterfaces.GetOrganizationRepository, error) {
 	return &getOrganizationRepository{
 		organizationDataSource,
+		"GetOrganizationRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getOrgRepo *getOrganizationRepository) Execute(filterFields *model.Organiz
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getOrganization",
+			getOrgRepo.pathIdentity,
 			err,
 		)
 	}

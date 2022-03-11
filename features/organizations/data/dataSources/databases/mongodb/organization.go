@@ -16,12 +16,14 @@ import (
 
 type organizationDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewOrganizationDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodborganizationdatasourceinterfaces.OrganizationDataSourceMongo, error) {
 	basicOperation.SetCollection("organizations")
 	return &organizationDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "OrganizationDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenUpdat
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/organizationDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			orgDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

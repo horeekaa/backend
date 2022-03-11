@@ -25,6 +25,7 @@ type proposeUpdateOrganizationRepository struct {
 	bulkUpdateTaggingComponent                    taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingTransactionComponent
 	proposeUpdateOrganizationTransactionComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationTransactionComponent
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                  string
 }
 
 func NewProposeUpdateOrganizationRepository(
@@ -48,6 +49,7 @@ func NewProposeUpdateOrganizationRepository(
 		bulkUpdateTaggingComponent,
 		proposeUpdateOrganizationRepositoryTransactionComponent,
 		mongoDBTransaction,
+		"ProposeUpdateOrganizationRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -84,7 +86,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateOrganizationRepository",
+			updateOrgRepo.pathIdentity,
 			err,
 		)
 	}
@@ -114,10 +116,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 					descPhotoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateOrganizationRepository",
-						err,
-					)
+					return nil, err
 				}
 
 				if descPhotoToUpdate.IsActive != nil {
@@ -158,10 +157,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateOrganizationRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}
@@ -198,10 +194,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 					addressToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateOrganizationRepository",
-						err,
-					)
+					return nil, err
 				}
 
 				if addressToUpdate.IsActive != nil {
@@ -239,10 +232,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 				addressToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateOrganizationRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedAddresses = append(savedAddresses, savedAddress)
 		}
@@ -287,10 +277,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 					bulkUpdateTagging,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateOrganizationRepository",
-						err,
-					)
+					return nil, err
 				}
 
 				if taggingToUpdate.IsActive != nil {
@@ -327,10 +314,7 @@ func (updateOrgRepo *proposeUpdateOrganizationRepository) TransactionBody(
 				taggingToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateOrganizationRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedTaggings = append(savedTaggings, savedTagging...)
 		}

@@ -22,6 +22,7 @@ type approveUpdateOrganizationRepository struct {
 	approveAddressComponent                       addressdomainrepositoryinterfaces.ApproveUpdateAddressTransactionComponent
 	bulkApproveUpdateTaggingComponent             taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingTransactionComponent
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                  string
 }
 
 func NewApproveUpdateOrganizationRepository(
@@ -39,6 +40,7 @@ func NewApproveUpdateOrganizationRepository(
 		approveAddressComponent,
 		bulkApproveUpdateTaggingComponent,
 		mongoDBTransaction,
+		"ApproveUpdateOrganizationRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -75,7 +77,7 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateOrganizationRepository",
+			approveUpdateOrgRepo.pathIdentity,
 			err,
 		)
 	}
@@ -98,10 +100,7 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 					updateDescriptivePhoto,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateOrganizationRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
@@ -123,10 +122,7 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 					updateAddress,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateOrganizationRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
@@ -155,10 +151,7 @@ func (approveUpdateOrgRepo *approveUpdateOrganizationRepository) TransactionBody
 				bulkUpdateTagging,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/approveUpdateOrganizationRepository",
-					err,
-				)
+				return nil, err
 			}
 		}
 	}

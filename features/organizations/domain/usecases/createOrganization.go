@@ -22,6 +22,7 @@ type createOrganizationUsecase struct {
 	createOrganizationRepo           organizationdomainrepositoryinterfaces.CreateOrganizationRepository
 	createMemberAccessRepo           memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository
 	createOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                     string
 }
 
 func NewCreateOrganizationUsecase(
@@ -40,6 +41,7 @@ func NewCreateOrganizationUsecase(
 				OrganizationCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateOrganizationUsecase",
 	}, nil
 }
 
@@ -47,9 +49,8 @@ func (createOrganizationUcase *createOrganizationUsecase) validation(input organ
 	if &input.Context == nil {
 		return organizationpresentationusecasetypes.CreateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createOrganizationUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createOrganizationUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -72,15 +73,14 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
+			createOrganizationUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createOrganizationUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createOrganizationUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -107,7 +107,7 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
+			createOrganizationUcase.pathIdentity,
 			err,
 		)
 	}
@@ -125,7 +125,7 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/createOrganizationUsecase",
+				createOrganizationUcase.pathIdentity,
 				err,
 			)
 		}
@@ -146,7 +146,7 @@ func (createOrganizationUcase *createOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createOrganizationUsecase",
+			createOrganizationUcase.pathIdentity,
 			err,
 		)
 	}

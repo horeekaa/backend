@@ -13,6 +13,7 @@ import (
 type getAllOrganizationRepository struct {
 	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	mongoQueryBuilder      mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity           string
 }
 
 func NewGetAllOrganizationRepository(
@@ -22,14 +23,15 @@ func NewGetAllOrganizationRepository(
 	return &getAllOrganizationRepository{
 		organizationDataSource,
 		mongoQueryBuilder,
+		"GetAllOrganizationRepository",
 	}, nil
 }
 
-func (getAllMmbAccRefRepo *getAllOrganizationRepository) Execute(
+func (getAllOrgRepo *getAllOrganizationRepository) Execute(
 	input organizationdomainrepositorytypes.GetAllOrganizationInput,
 ) ([]*model.Organization, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+	getAllOrgRepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -37,14 +39,14 @@ func (getAllMmbAccRefRepo *getAllOrganizationRepository) Execute(
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
-	organizations, err := getAllMmbAccRefRepo.organizationDataSource.GetMongoDataSource().Find(
+	organizations, err := getAllOrgRepo.organizationDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllOrganization",
+			getAllOrgRepo.pathIdentity,
 			err,
 		)
 	}

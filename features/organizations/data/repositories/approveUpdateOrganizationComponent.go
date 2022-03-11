@@ -17,6 +17,7 @@ type approveUpdateOrganizationTransactionComponent struct {
 	loggingDataSource                         databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                       coreutilityinterfaces.MapProcessorUtility
 	approveUpdateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.ApproveUpdateOrganizationUsecaseComponent
+	pathIdentity                              string
 }
 
 func NewApproveUpdateOrganizationTransactionComponent(
@@ -28,6 +29,7 @@ func NewApproveUpdateOrganizationTransactionComponent(
 		organizationDataSource: organizationDataSource,
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
+		pathIdentity:           "ApproveUpdateOrganizationComponent",
 	}, nil
 }
 
@@ -61,7 +63,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -72,7 +74,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -99,7 +101,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -137,7 +139,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}

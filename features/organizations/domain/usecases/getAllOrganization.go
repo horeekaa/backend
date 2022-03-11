@@ -22,6 +22,7 @@ type getAllOrganizationUsecase struct {
 	getAllOrganizationRepo     organizationdomainrepositoryinterfaces.GetAllOrganizationRepository
 
 	getOwnedOrganizationIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                 string
 }
 
 func NewGetAllOrganizationUsecase(
@@ -38,6 +39,7 @@ func NewGetAllOrganizationUsecase(
 				OrganizationReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllOrganizationUsecase",
 	}, nil
 }
 
@@ -45,9 +47,8 @@ func (getAllOrgUcase *getAllOrganizationUsecase) validation(input organizationpr
 	if &input.Context == nil {
 		return &organizationpresentationusecasetypes.GetAllOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllOrganizationUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllOrgUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllOrganizationUsecase",
+			getAllOrgUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllOrganizationUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllOrgUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -103,7 +103,7 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllOrganizationUsecase",
+			getAllOrgUcase.pathIdentity,
 			err,
 		)
 	}
@@ -127,7 +127,7 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 			)
 			if err != nil {
 				return nil, horeekaacorefailuretoerror.ConvertFailure(
-					"/getAllOrganizationUsecase",
+					getAllOrgUcase.pathIdentity,
 					err,
 				)
 			}
@@ -145,7 +145,7 @@ func (getAllOrgUcase *getAllOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllOrganizationUsecase",
+			getAllOrgUcase.pathIdentity,
 			err,
 		)
 	}
