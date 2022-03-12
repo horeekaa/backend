@@ -15,6 +15,7 @@ type processPurchaseOrderToSupplyRepository struct {
 	processPOToSupplyComponent      purchaseordertosupplydomainrepositoryinterfaces.ProcessPurchaseOrderToSupplyTransactionComponent
 	createNotifComponent            notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction              mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                    string
 }
 
 func NewProcessPurchaseOrderToSupplyRepository(
@@ -28,6 +29,7 @@ func NewProcessPurchaseOrderToSupplyRepository(
 		processPOToSupplyComponent:      processPOToSupplyComponent,
 		createNotifComponent:            createNotifComponent,
 		mongoDBTransaction:              mongoDBTransaction,
+		pathIdentity:                    "ProcessPurchaseOrderToSupplyRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -81,7 +83,7 @@ func (processPOTSRepo *processPurchaseOrderToSupplyRepository) RunTransaction() 
 	)
 	if err != nil {
 		return false, horeekaacoreexceptiontofailure.ConvertException(
-			"/processPurchaseOrderToSupplyRepository",
+			processPOTSRepo.pathIdentity,
 			err,
 		)
 	}

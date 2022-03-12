@@ -20,6 +20,7 @@ type getAllPurchaseOrderToSupplyUsecase struct {
 	getAccountMemberAccessRepo        memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllPurchaseOrderToSupplyRepo   purchaseordertosupplydomainrepositoryinterfaces.GetAllPurchaseOrderToSupplyRepository
 	getAllPurchaseOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                      string
 }
 
 func NewGetAllPurchaseOrderToSupplyUsecase(
@@ -36,6 +37,7 @@ func NewGetAllPurchaseOrderToSupplyUsecase(
 				PurchaseOrderReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllPurchaseOrderToSupplyUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getAllPOToSupplyUcase *getAllPurchaseOrderToSupplyUsecase) validation(inpu
 	if &input.Context == nil {
 		return &purchaseordertosupplypresentationusecasetypes.GetAllPurchaseOrderToSupplyUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllPurchaseOrderToSupplyUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllPOToSupplyUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (getAllPOToSupplyUcase *getAllPurchaseOrderToSupplyUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderToSupplyUsecase",
+			getAllPOToSupplyUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllPurchaseOrderToSupplyUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllPOToSupplyUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (getAllPOToSupplyUcase *getAllPurchaseOrderToSupplyUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderToSupplyUsecase",
+			getAllPOToSupplyUcase.pathIdentity,
 			err,
 		)
 	}
@@ -105,7 +105,7 @@ func (getAllPOToSupplyUcase *getAllPurchaseOrderToSupplyUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderToSupplyUsecase",
+			getAllPOToSupplyUcase.pathIdentity,
 			err,
 		)
 	}

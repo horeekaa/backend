@@ -16,12 +16,14 @@ import (
 
 type purchaseOrderToSupplyDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewPurchaseOrderToSupplyDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbpurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSourceMongo, error) {
 	basicOperation.SetCollection("purchaseorderstosupply")
 	return &purchaseOrderToSupplyDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "PurchaseOrderToSupplyDataSource",
 	}, nil
 }
 
@@ -128,8 +130,8 @@ func (purcOrderSupplyDataSourceMongo *purchaseOrderToSupplyDataSourceMongo) setD
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/purchaseOrderToSupplyDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			purcOrderSupplyDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

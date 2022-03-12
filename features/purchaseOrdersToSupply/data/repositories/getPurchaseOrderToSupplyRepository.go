@@ -11,6 +11,7 @@ import (
 
 type getPurchaseOrderToSupplyRepository struct {
 	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
+	pathIdentity                    string
 }
 
 func NewGetPurchaseOrderToSupplyRepository(
@@ -18,6 +19,7 @@ func NewGetPurchaseOrderToSupplyRepository(
 ) (purchaseordertosupplydomainrepositoryinterfaces.GetPurchaseOrderToSupplyRepository, error) {
 	return &getPurchaseOrderToSupplyRepository{
 		purchaseOrderToSupplyDataSource,
+		"GetPurchaseOrderToSupplyRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getPOToSupplyRepo *getPurchaseOrderToSupplyRepository) Execute(filterField
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPurchaseOrderToSupply",
+			getPOToSupplyRepo.pathIdentity,
 			err,
 		)
 	}

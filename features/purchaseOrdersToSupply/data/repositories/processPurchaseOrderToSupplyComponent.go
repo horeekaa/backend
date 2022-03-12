@@ -21,6 +21,7 @@ type processPurchaseOrderToSupplyTransactionComponent struct {
 	taggingDataSource               databasetaggingdatasourceinterfaces.TaggingDataSource
 	memberAccessDataSource          databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
+	pathIdentity                    string
 }
 
 func NewProcessPurchaseOrderToSupplyTransactionComponent(
@@ -36,6 +37,7 @@ func NewProcessPurchaseOrderToSupplyTransactionComponent(
 		taggingDataSource:               taggingDataSource,
 		memberAccessDataSource:          memberAccessDataSource,
 		purchaseOrderToSupplyDataSource: purchaseOrderToSupplyDataSource,
+		pathIdentity:                    "ProcessPurchaseOrderToSupplyComponent",
 	}, nil
 }
 
@@ -67,7 +69,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/processPurchaseOrderToSupplyTransactionComponent",
+			processPOToSupplyTrx.pathIdentity,
 			err,
 		)
 	}
@@ -84,7 +86,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/processPurchaseOrderToSupplyTransactionComponent",
+				processPOToSupplyTrx.pathIdentity,
 				err,
 			)
 		}
@@ -111,7 +113,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 			)
 			if err != nil {
 				errChan <- horeekaacoreexceptiontofailure.ConvertException(
-					"/processPurchaseOrderToSupplyTransactionComponent",
+					processPOToSupplyTrx.pathIdentity,
 					err,
 				)
 				return
@@ -128,7 +130,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 			)
 			if err != nil {
 				errChan <- horeekaacoreexceptiontofailure.ConvertException(
-					"/processPurchaseOrderToSupplyTransactionComponent",
+					processPOToSupplyTrx.pathIdentity,
 					err,
 				)
 				return
@@ -184,7 +186,7 @@ func (processPOToSupplyTrx *processPurchaseOrderToSupplyTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/processPurchaseOrderToSupplyTransactionComponent",
+			processPOToSupplyTrx.pathIdentity,
 			err,
 		)
 	}
