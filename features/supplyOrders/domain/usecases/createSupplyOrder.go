@@ -21,6 +21,7 @@ type createSupplyOrderUsecase struct {
 	getAccountMemberAccessRepo      memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createSupplyOrderRepo           supplyorderdomainrepositoryinterfaces.CreateSupplyOrderRepository
 	createSupplyOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                    string
 }
 
 func NewCreateSupplyOrderUsecase(
@@ -37,6 +38,7 @@ func NewCreateSupplyOrderUsecase(
 				SupplyOrderCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateSupplyOrderUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) validation(input supplyo
 	if &input.Context == nil {
 		return supplyorderpresentationusecasetypes.CreateSupplyOrderUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createSupplyOrderUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createSupplyOrderUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createSupplyOrderUsecase",
+			createSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createSupplyOrderUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createSupplyOrderUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createSupplyOrderUsecase",
+			createSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}
@@ -123,7 +123,7 @@ func (createSupplyOrderUcase *createSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createSupplyOrderUsecase",
+			createSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}

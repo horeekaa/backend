@@ -16,22 +16,24 @@ import (
 
 type supplyOrderDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewSupplyOrderDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbsupplyorderdatasourceinterfaces.SupplyOrderDataSourceMongo, error) {
 	basicOperation.SetCollection("supplyorders")
 	return &supplyOrderDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "SupplyOrderDataSource",
 	}, nil
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) GenerateObjectID() primitive.ObjectID {
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) GenerateObjectID() primitive.ObjectID {
 	return primitive.NewObjectID()
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) FindByID(ID primitive.ObjectID, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
 	var output model.SupplyOrder
-	_, err := supOrderItemDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
+	_, err := supOrderDataSourceMongo.basicOperation.FindByID(ID, &output, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -39,9 +41,9 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) FindByID(ID primi
 	return &output, nil
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) FindOne(query map[string]interface{}, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
 	var output model.SupplyOrder
-	_, err := supOrderItemDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
+	_, err := supOrderDataSourceMongo.basicOperation.FindOne(query, &output, operationOptions)
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
 	}
@@ -52,7 +54,7 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) FindOne(query map
 	return &output, err
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Find(
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) Find(
 	query map[string]interface{},
 	paginationOpts *mongodbcoretypes.PaginationOptions,
 	operationOptions *mongodbcoretypes.OperationOptions,
@@ -66,7 +68,7 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Find(
 		supplyOrders = append(supplyOrders, &supplyOrder)
 		return nil
 	}
-	_, err := supOrderItemDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
+	_, err := supOrderDataSourceMongo.basicOperation.Find(query, paginationOpts, appendingFn, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -74,8 +76,8 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Find(
 	return supplyOrders, err
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Create(input *model.DatabaseCreateSupplyOrder, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
-	_, err := supOrderItemDataSourceMongo.setDefaultValuesWhenCreate(
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) Create(input *model.DatabaseCreateSupplyOrder, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrder, error) {
+	_, err := supOrderDataSourceMongo.setDefaultValuesWhenCreate(
 		input,
 	)
 	if err != nil {
@@ -83,7 +85,7 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Create(input *mod
 	}
 
 	var outputModel model.SupplyOrder
-	_, err = supOrderItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err = supOrderDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +93,12 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Create(input *mod
 	return &outputModel, err
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Update(
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) Update(
 	updateCriteria map[string]interface{},
 	updateData *model.DatabaseUpdateSupplyOrder,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.SupplyOrder, error) {
-	_, err := supOrderItemDataSourceMongo.setDefaultValuesWhenUpdate(
+	_, err := supOrderDataSourceMongo.setDefaultValuesWhenUpdate(
 		updateCriteria,
 		updateData,
 		operationOptions,
@@ -106,7 +108,7 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Update(
 	}
 
 	var output model.SupplyOrder
-	_, err = supOrderItemDataSourceMongo.basicOperation.Update(
+	_, err = supOrderDataSourceMongo.basicOperation.Update(
 		updateCriteria,
 		map[string]interface{}{
 			"$set": updateData,
@@ -121,20 +123,20 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) Update(
 	return &output, nil
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) setDefaultValuesWhenUpdate(
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
 	input *model.DatabaseUpdateSupplyOrder,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	currentTime := time.Now()
-	existingObject, err := supOrderItemDataSourceMongo.FindOne(inputCriteria, operationOptions)
+	existingObject, err := supOrderDataSourceMongo.FindOne(inputCriteria, operationOptions)
 	if err != nil {
 		return false, err
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/supplyOrderDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			supOrderDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}
@@ -146,7 +148,7 @@ func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) setDefaultValuesW
 	return true, nil
 }
 
-func (supOrderItemDataSourceMongo *supplyOrderDataSourceMongo) setDefaultValuesWhenCreate(
+func (supOrderDataSourceMongo *supplyOrderDataSourceMongo) setDefaultValuesWhenCreate(
 	input *model.DatabaseCreateSupplyOrder,
 ) (bool, error) {
 	currentTime := time.Now()

@@ -15,6 +15,7 @@ type approveUpdateSupplyOrderRepository struct {
 	approveUpdatesupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent
 	approveUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent
 	mongoDBTransaction                           mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                 string
 }
 
 func NewApproveUpdateSupplyOrderRepository(
@@ -28,6 +29,7 @@ func NewApproveUpdateSupplyOrderRepository(
 		approveUpdatesupplyOrderItemComponent,
 		approveUpdateSupplyOrderTransactionComponent,
 		mongoDBTransaction,
+		"ApproveUpdateSupplyOrderRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -55,7 +57,7 @@ func (approveUpdateSupplyOrderRepo *approveUpdateSupplyOrderRepository) Transact
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateSupplyOrderRepository",
+			approveUpdateSupplyOrderRepo.pathIdentity,
 			err,
 		)
 	}
@@ -77,10 +79,7 @@ func (approveUpdateSupplyOrderRepo *approveUpdateSupplyOrderRepository) Transact
 					updateSupplyOrderItem,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateSupplyOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}

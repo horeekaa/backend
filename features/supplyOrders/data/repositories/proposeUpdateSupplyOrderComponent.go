@@ -20,6 +20,7 @@ type proposeUpdateSupplyOrderTransactionComponent struct {
 	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility       coreutilityinterfaces.MapProcessorUtility
 	supplyOrderDataLoader     supplyorderdomainrepositoryutilityinterfaces.SupplyOrderLoader
+	pathIdentity              string
 }
 
 func NewProposeUpdateSupplyOrderTransactionComponent(
@@ -35,6 +36,7 @@ func NewProposeUpdateSupplyOrderTransactionComponent(
 		loggingDataSource:         loggingDataSource,
 		mapProcessorUtility:       mapProcessorUtility,
 		supplyOrderDataLoader:     supplyOrderDataLoader,
+		pathIdentity:              "ProposeUpdateSupplyOrderComponent",
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			updateSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -69,7 +71,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			updateSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -83,7 +85,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			updateSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -125,7 +127,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			updateSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -164,7 +166,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			updateSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}

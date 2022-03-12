@@ -20,6 +20,7 @@ type proposeUpdateSupplyOrderRepository struct {
 	proposeUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent
 	approveUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent
 	mongoDBTransaction                           mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                 string
 }
 
 func NewProposeUpdateSupplyOrderRepository(
@@ -37,6 +38,7 @@ func NewProposeUpdateSupplyOrderRepository(
 		proposeUpdateSupplyOrderItemComponent,
 		approveUpdateSupplyOrderItemComponent,
 		mongoDBTransaction,
+		"ProposeUpdateSupplyOrderRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -66,7 +68,7 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateSupplyOrderRepository",
+			updateSupplyOrderRepo.pathIdentity,
 			err,
 		)
 	}
@@ -93,10 +95,7 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 						supplyOrderItemToUpdate,
 					)
 					if err != nil {
-						return nil, horeekaacoreexceptiontofailure.ConvertException(
-							"/proposeUpdateSupplyOrderRepository",
-							err,
-						)
+						return nil, err
 					}
 					continue
 				}
@@ -115,10 +114,7 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 					supplyOrderItemToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateSupplyOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 				continue
 			}
@@ -147,10 +143,7 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 				supplyOrderItemToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateSupplyOrderRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedsupplyOrderItems = append(savedsupplyOrderItems, savedSupplyOrderItem)
 		}

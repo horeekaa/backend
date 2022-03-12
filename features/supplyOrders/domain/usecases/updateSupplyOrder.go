@@ -23,6 +23,7 @@ type updateSupplyOrderUsecase struct {
 	proposeUpdatesupplyOrderRepo    supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderRepository
 	approveUpdatesupplyOrderRepo    supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderRepository
 	updatesupplyOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                    string
 }
 
 func NewUpdateSupplyOrderUsecase(
@@ -41,6 +42,7 @@ func NewUpdateSupplyOrderUsecase(
 				SupplyOrderUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateSupplyOrderUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) validation(input supplyo
 	if &input.Context == nil {
 		return supplyorderpresentationusecasetypes.UpdateSupplyOrderUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateSupplyOrderUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateSupplyOrderUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderUsecase",
+			updateSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateSupplyOrderUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateSupplyOrderUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderUsecase",
+			updateSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}
@@ -124,16 +124,14 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		if accMemberAccess.Access.SupplyOrderAccesses.SupplyOrderApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateSupplyOrderUsecase",
+				updateSupplyOrderUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.SupplyOrderAccesses.SupplyOrderApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateSupplyOrderUsecase",
+				updateSupplyOrderUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -144,7 +142,7 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateSupplyOrderUsecase",
+				updateSupplyOrderUcase.pathIdentity,
 				err,
 			)
 		}
@@ -167,7 +165,7 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderUsecase",
+			updateSupplyOrderUcase.pathIdentity,
 			err,
 		)
 	}

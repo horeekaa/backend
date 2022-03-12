@@ -20,6 +20,7 @@ type createSupplyOrderTransactionComponent struct {
 	loggingDataSource     databaseloggingdatasourceinterfaces.LoggingDataSource
 	supplyOrderDataLoader supplyorderdomainrepositoryutilityinterfaces.SupplyOrderLoader
 	generatedObjectID     *primitive.ObjectID
+	pathIdentity          string
 }
 
 func NewCreateSupplyOrderTransactionComponent(
@@ -31,6 +32,7 @@ func NewCreateSupplyOrderTransactionComponent(
 		supplyOrderDataSource: supplyOrderDataSource,
 		loggingDataSource:     loggingDataSource,
 		supplyOrderDataLoader: supplyOrderDataLoader,
+		pathIdentity:          "CreateSupplyOrderComponent",
 	}, nil
 }
 
@@ -93,7 +95,7 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrder",
+			createSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -116,7 +118,7 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrder",
+			createSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -135,7 +137,7 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrder",
+			createSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
