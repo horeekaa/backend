@@ -21,6 +21,7 @@ type createPurchaseOrderUsecase struct {
 	getAccountMemberAccessRepo        memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createPurchaseOrderRepo           purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderRepository
 	createPurchaseOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                      string
 }
 
 func NewCreatePurchaseOrderUsecase(
@@ -37,6 +38,7 @@ func NewCreatePurchaseOrderUsecase(
 				PurchaseOrderCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreatePurchaseOrderUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) validation(input pur
 	if &input.Context == nil {
 		return purchaseorderpresentationusecasetypes.CreatePurchaseOrderUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createPurchaseOrderUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createPurchaseOrderUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPurchaseOrderUsecase",
+			createPurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createPurchaseOrderUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createPurchaseOrderUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPurchaseOrderUsecase",
+			createPurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}
@@ -117,7 +117,7 @@ func (createPurchaseOrderUcase *createPurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPurchaseOrderUsecase",
+			createPurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}

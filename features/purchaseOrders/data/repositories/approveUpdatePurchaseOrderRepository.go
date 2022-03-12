@@ -18,6 +18,7 @@ type approveUpdatePurchaseOrderRepository struct {
 	approveUpdatePurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderTransactionComponent
 	updateInvoiceTrxComponent                      invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                   string
 }
 
 func NewApproveUpdatePurchaseOrderRepository(
@@ -33,6 +34,7 @@ func NewApproveUpdatePurchaseOrderRepository(
 		approveUpdatepurchaseOrderTransactionComponent,
 		updateInvoiceTrxComponent,
 		mongoDBTransaction,
+		"ApproveUpdatePurchaseOrderRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -60,7 +62,7 @@ func (approveUpdatePurchaseOrderRepo *approveUpdatePurchaseOrderRepository) Tran
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdatePurchaseOrderRepository",
+			approveUpdatePurchaseOrderRepo.pathIdentity,
 			err,
 		)
 	}
@@ -82,10 +84,7 @@ func (approveUpdatePurchaseOrderRepo *approveUpdatePurchaseOrderRepository) Tran
 					updatePurchaseOrderItem,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdatePurchaseOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
@@ -106,10 +105,7 @@ func (approveUpdatePurchaseOrderRepo *approveUpdatePurchaseOrderRepository) Tran
 							},
 						)
 						if err != nil {
-							return nil, horeekaacoreexceptiontofailure.ConvertException(
-								"/approveUpdatePurchaseOrderRepository",
-								err,
-							)
+							return nil, err
 						}
 					}
 				}
@@ -123,10 +119,7 @@ func (approveUpdatePurchaseOrderRepo *approveUpdatePurchaseOrderRepository) Tran
 					},
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdatePurchaseOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}

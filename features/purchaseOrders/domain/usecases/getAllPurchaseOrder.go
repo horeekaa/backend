@@ -23,6 +23,7 @@ type getAllPurchaseOrderUsecase struct {
 	getAccountMemberAccessRepo        memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllpurchaseOrderRepo           purchaseorderdomainrepositoryinterfaces.GetAllPurchaseOrderRepository
 	getAllpurchaseOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                      string
 }
 
 func NewGetAllPurchaseOrderUsecase(
@@ -39,6 +40,7 @@ func NewGetAllPurchaseOrderUsecase(
 				PurchaseOrderReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllPurchaseOrderUsecase",
 	}, nil
 }
 
@@ -46,9 +48,8 @@ func (getAllPOUcase *getAllPurchaseOrderUsecase) validation(input purchaseorderp
 	if &input.Context == nil {
 		return &purchaseorderpresentationusecasetypes.GetAllPurchaseOrderUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllPurchaseOrderUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllPOUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -70,15 +71,14 @@ func (getAllPOUcase *getAllPurchaseOrderUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderUsecase",
+			getAllPOUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllPurchaseOrderUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllPOUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -104,7 +104,7 @@ func (getAllPOUcase *getAllPurchaseOrderUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderUsecase",
+			getAllPOUcase.pathIdentity,
 			err,
 		)
 	}
@@ -119,10 +119,10 @@ func (getAllPOUcase *getAllPurchaseOrderUsecase) Execute(
 			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllPurchaseOrderUsecase",
+				getAllPOUcase.pathIdentity,
 				horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					"/getAllPurchaseOrderUsecase",
+					getAllPOUcase.pathIdentity,
 					nil,
 				),
 			)
@@ -137,7 +137,7 @@ func (getAllPOUcase *getAllPurchaseOrderUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllPurchaseOrderUsecase",
+			getAllPOUcase.pathIdentity,
 			err,
 		)
 	}

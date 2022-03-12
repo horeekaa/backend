@@ -24,6 +24,7 @@ type proposeUpdatePurchaseOrderRepository struct {
 	approvePurchaseOrderItemComponent              purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent
 	updateInvoiceTrxComponent                      invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                   string
 }
 
 func NewProposeUpdatePurchaseOrderRepository(
@@ -43,6 +44,7 @@ func NewProposeUpdatePurchaseOrderRepository(
 		approvePurchaseOrderItemComponent,
 		updateInvoiceTrxComponent,
 		mongoDBTransaction,
+		"ProposeUpdatePurchaseOrderRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -72,7 +74,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePurchaseOrderRepository",
+			updatePurchaseOrderRepo.pathIdentity,
 			err,
 		)
 	}
@@ -99,10 +101,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 						purchaseOrderItemToUpdate,
 					)
 					if err != nil {
-						return nil, horeekaacoreexceptiontofailure.ConvertException(
-							"/proposeUpdatepurchaseOrderRepository",
-							err,
-						)
+						return nil, err
 					}
 					continue
 				}
@@ -122,17 +121,14 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 					purchaseOrderItemToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdatePurchaseOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 				continue
 			}
 			if existingPurchaseOrder.Mou != nil && purchaseOrderItemToUpdate.MouItem == nil {
 				return nil, horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.POItemMismatchWithPOType,
-					"/proposeUpdatePurchaseOrderRepository",
+					updatePurchaseOrderRepo.pathIdentity,
 					nil,
 				)
 			}
@@ -158,10 +154,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 				purchaseOrderItemToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePurchaseOrderRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedPurchaseOrderItems = append(savedPurchaseOrderItems, savedPurchaseOrderItem)
 		}
@@ -188,10 +181,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 							},
 						)
 						if err != nil {
-							return nil, horeekaacoreexceptiontofailure.ConvertException(
-								"/proposeUpdatePurchaseOrderRepository",
-								err,
-							)
+							return nil, err
 						}
 					}
 				}
@@ -205,10 +195,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 					},
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdatePurchaseOrderRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}

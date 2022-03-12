@@ -20,6 +20,7 @@ type approveUpdatePurchaseOrderTransactionComponent struct {
 	mapProcessorUtility     coreutilityinterfaces.MapProcessorUtility
 	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
+	pathIdentity            string
 }
 
 func NewApproveUpdatePurchaseOrderTransactionComponent(
@@ -35,6 +36,7 @@ func NewApproveUpdatePurchaseOrderTransactionComponent(
 		mapProcessorUtility:     mapProcessorUtility,
 		mouDataSource:           mouDataSource,
 		purchaseOrderDataLoader: purchaseOrderDataLoader,
+		pathIdentity:            "ApproveUpdatePurchaseOrderComponent",
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			approvePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -70,7 +72,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			approvePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -81,7 +83,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			approvePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -108,7 +110,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			approvePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -150,7 +152,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrder",
+						approvePurchaseOrderTrx.pathIdentity,
 						err,
 					)
 				}
@@ -166,7 +168,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrder",
+						approvePurchaseOrderTrx.pathIdentity,
 						err,
 					)
 				}
@@ -183,7 +185,7 @@ func (approvePurchaseOrderTrx *approveUpdatePurchaseOrderTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			approvePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}

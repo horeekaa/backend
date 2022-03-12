@@ -9,6 +9,7 @@ import (
 
 type getPurchaseOrderUsecase struct {
 	getPurchaseOrderRepository purchaseorderdomainrepositoryinterfaces.GetPurchaseOrderRepository
+	pathIdentity               string
 }
 
 func NewGetPurchaseOrderUsecase(
@@ -16,6 +17,7 @@ func NewGetPurchaseOrderUsecase(
 ) (purchaseorderpresentationusecaseinterfaces.GetPurchaseOrderUsecase, error) {
 	return &getPurchaseOrderUsecase{
 		getPurchaseOrderRepository,
+		"GetPurchaseOrderUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getPOUcase *getPurchaseOrderUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getPurchaseOrder",
+			getPOUcase.pathIdentity,
 			err,
 		)
 	}

@@ -13,6 +13,7 @@ import (
 type getAllPurchaseOrderRepository struct {
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	mongoQueryBuilder       mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity            string
 }
 
 func NewGetAllPurchaseOrderRepository(
@@ -22,6 +23,7 @@ func NewGetAllPurchaseOrderRepository(
 	return &getAllPurchaseOrderRepository{
 		purchaseOrderDataSource,
 		mongoQueryBuilder,
+		"GetAllPurchaseOrderRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllPORepo *getAllPurchaseOrderRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllPurchaseOrder",
+			getAllPORepo.pathIdentity,
 			err,
 		)
 	}

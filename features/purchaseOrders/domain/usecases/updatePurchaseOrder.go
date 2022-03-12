@@ -23,6 +23,7 @@ type updatePurchaseOrderUsecase struct {
 	proposeUpdatePurchaseOrderRepo    purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository
 	approveUpdatePurchaseOrderRepo    purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository
 	updatePurchaseOrderAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                      string
 }
 
 func NewUpdatePurchaseOrderUsecase(
@@ -41,6 +42,7 @@ func NewUpdatePurchaseOrderUsecase(
 				PurchaseOrderUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdatePurchaseOrderUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) validation(input pur
 	if &input.Context == nil {
 		return purchaseorderpresentationusecasetypes.UpdatePurchaseOrderUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updatePurchaseOrderUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updatePurchaseOrderUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderUsecase",
+			updatePurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updatePurchaseOrderUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updatePurchaseOrderUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderUsecase",
+			updatePurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}
@@ -120,16 +120,14 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 		if accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updatePurchaseOrderUsecase",
+				updatePurchaseOrderUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.PurchaseOrderAccesses.PurchaseOrderApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updatePurchaseOrderUsecase",
+				updatePurchaseOrderUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -140,7 +138,7 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updatePurchaseOrderUsecase",
+				updatePurchaseOrderUcase.pathIdentity,
 				err,
 			)
 		}
@@ -163,7 +161,7 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderUsecase",
+			updatePurchaseOrderUcase.pathIdentity,
 			err,
 		)
 	}
