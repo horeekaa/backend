@@ -19,6 +19,7 @@ type proposeUpdateTagTransactionComponent struct {
 	loggingDataSource                databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility              coreutilityinterfaces.MapProcessorUtility
 	proposeUpdateTagUsecaseComponent tagdomainrepositoryinterfaces.ProposeUpdateTagUsecaseComponent
+	pathIdentity                     string
 }
 
 func NewProposeUpdateTagTransactionComponent(
@@ -32,6 +33,7 @@ func NewProposeUpdateTagTransactionComponent(
 		taggingDataSource:   taggingDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ProposeUpdateTagComponent",
 	}, nil
 }
 
@@ -65,7 +67,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			updateTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -89,7 +91,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			updateTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -142,7 +144,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			updateTagTrx.pathIdentity,
 			err,
 		)
 	}

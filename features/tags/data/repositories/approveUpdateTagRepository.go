@@ -15,6 +15,7 @@ type approveUpdateTagRepository struct {
 	approveDescriptivePhotoComponent     descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	tagDataSource                        databasetagdatasourceinterfaces.TagDataSource
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                         string
 }
 
 func NewApproveUpdateTagRepository(
@@ -28,6 +29,7 @@ func NewApproveUpdateTagRepository(
 		approveDescriptivePhotoComponent,
 		tagDataSource,
 		mongoDBTransaction,
+		"ApproveUpdateTagRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -64,7 +66,7 @@ func (updateTagRepo *approveUpdateTagRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateTagRepository",
+			updateTagRepo.pathIdentity,
 			err,
 		)
 	}
@@ -87,10 +89,7 @@ func (updateTagRepo *approveUpdateTagRepository) TransactionBody(
 					updateDescriptivePhoto,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateTagRepository",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}

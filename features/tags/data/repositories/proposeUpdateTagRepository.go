@@ -19,6 +19,7 @@ type proposeUpdateTagRepository struct {
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	proposeUpdateTagTransactionComponent   tagdomainrepositoryinterfaces.ProposeUpdateTagTransactionComponent
 	mongoDBTransaction                     mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                           string
 }
 
 func NewProposeUpdateTagRepository(
@@ -34,6 +35,7 @@ func NewProposeUpdateTagRepository(
 		proposeUpdateDescriptivePhotoComponent,
 		proposeUpdateTagRepositoryTransactionComponent,
 		mongoDBTransaction,
+		"ProposeUpdateTagRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -70,7 +72,7 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateTagRepository",
+			updateTagRepo.pathIdentity,
 			err,
 		)
 	}
@@ -99,10 +101,7 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 					descPhotoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateTagRepository",
-						err,
-					)
+					return nil, err
 				}
 				if descPhotoToUpdate.IsActive != nil {
 					if !*descPhotoToUpdate.IsActive {
@@ -142,10 +141,7 @@ func (updateTagRepo *proposeUpdateTagRepository) TransactionBody(
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateTagRepository",
-					err,
-				)
+				return nil, err
 			}
 			savedPhotos = append(savedPhotos, savedPhoto)
 		}

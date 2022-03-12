@@ -19,6 +19,7 @@ type approveUpdateTagTransactionComponent struct {
 	loggingDataSource                databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility              coreutilityinterfaces.MapProcessorUtility
 	approveUpdateTagUsecaseComponent tagdomainrepositoryinterfaces.ApproveUpdateTagUsecaseComponent
+	pathIdentity                     string
 }
 
 func NewApproveUpdateTagTransactionComponent(
@@ -32,6 +33,7 @@ func NewApproveUpdateTagTransactionComponent(
 		taggingDataSource:   taggingDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdateTagComponent",
 	}, nil
 }
 
@@ -65,7 +67,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			approveTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -76,7 +78,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			approveTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -103,7 +105,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			approveTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -154,7 +156,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateTag",
+			approveTagTrx.pathIdentity,
 			err,
 		)
 	}
