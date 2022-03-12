@@ -11,6 +11,7 @@ import (
 
 type getPurchaseOrderItemRepository struct {
 	purchaseOrderItemDataSource databasepurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSource
+	pathIdentity                string
 }
 
 func NewGetPurchaseOrderItemRepository(
@@ -18,10 +19,11 @@ func NewGetPurchaseOrderItemRepository(
 ) (purchaseorderitemdomainrepositoryinterfaces.GetPurchaseOrderItemRepository, error) {
 	return &getPurchaseOrderItemRepository{
 		purchaseOrderItemDataSource,
+		"GetPurchaseOrderItemRepository",
 	}, nil
 }
 
-func (getPurchaseOrderItemRefRepo *getPurchaseOrderItemRepository) Execute(filterFields *model.PurchaseOrderItemFilterFields) (*model.PurchaseOrderItem, error) {
+func (getPurchaseOrderItemRepo *getPurchaseOrderItemRepository) Execute(filterFields *model.PurchaseOrderItemFilterFields) (*model.PurchaseOrderItem, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getPurchaseOrderItemRefRepo *getPurchaseOrderItemRepository) Execute(filte
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	purchaseOrderItem, err := getPurchaseOrderItemRefRepo.purchaseOrderItemDataSource.GetMongoDataSource().FindOne(
+	purchaseOrderItem, err := getPurchaseOrderItemRepo.purchaseOrderItemDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getPurchaseOrderItem",
+			getPurchaseOrderItemRepo.pathIdentity,
 			err,
 		)
 	}

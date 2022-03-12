@@ -21,6 +21,7 @@ type updatePurchaseOrderItemDeliveryUsecase struct {
 	getAccountMemberAccessRepo                    memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	proposeUpdatePurchaseOrderItemDeliveryRepo    purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemDeliveryRepository
 	updatePurchaseOrderItemDeliveryAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                                  string
 }
 
 func NewUpdatePurchaseOrderItemDeliveryUsecase(
@@ -37,6 +38,7 @@ func NewUpdatePurchaseOrderItemDeliveryUsecase(
 				PurchaseOrderItemDeliveryUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdatePurchaseOrderItemDeliveryUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (updatePurchaseOrderItemDeliveryUcase *updatePurchaseOrderItemDeliveryUseca
 	if &input.Context == nil {
 		return purchaseorderitempresentationusecasetypes.UpdatePurchaseOrderItemDeliveryUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updatePurchaseOrderItemDeliveryUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updatePurchaseOrderItemDeliveryUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (updatePurchaseOrderItemDeliveryUcase *updatePurchaseOrderItemDeliveryUseca
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderItemDeliveryUsecase",
+			updatePurchaseOrderItemDeliveryUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updatePurchaseOrderItemDeliveryUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updatePurchaseOrderItemDeliveryUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (updatePurchaseOrderItemDeliveryUcase *updatePurchaseOrderItemDeliveryUseca
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderItemDeliveryUsecase",
+			updatePurchaseOrderItemDeliveryUcase.pathIdentity,
 			err,
 		)
 	}
@@ -123,7 +123,7 @@ func (updatePurchaseOrderItemDeliveryUcase *updatePurchaseOrderItemDeliveryUseca
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePurchaseOrderItemDeliveryUsecase",
+			updatePurchaseOrderItemDeliveryUcase.pathIdentity,
 			err,
 		)
 	}

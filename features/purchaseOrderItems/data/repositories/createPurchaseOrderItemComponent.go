@@ -21,6 +21,7 @@ type createPurchaseOrderItemTransactionComponent struct {
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	purchaseOrderItemLoader         purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
 	generatedObjectID               *primitive.ObjectID
+	pathIdentity                    string
 }
 
 func NewCreatePurchaseOrderItemTransactionComponent(
@@ -34,6 +35,7 @@ func NewCreatePurchaseOrderItemTransactionComponent(
 		loggingDataSource:               loggingDataSource,
 		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
 		purchaseOrderItemLoader:         purchaseOrderItemLoader,
+		pathIdentity:                    "CreatePurchaseOrderItemComponent",
 	}, nil
 }
 
@@ -74,7 +76,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrderItemComponent",
+			createPurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -112,7 +114,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrderItemComponent",
+			createPurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -132,7 +134,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrderItem",
+			createPurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}

@@ -16,12 +16,14 @@ import (
 
 type purchaseOrderItemDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewPurchaseOrderItemDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbpurchaseorderitemdatasourceinterfaces.PurchaseOrderItemDataSourceMongo, error) {
 	basicOperation.SetCollection("purchaseorderitems")
 	return &purchaseOrderItemDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "PurchaseOrderItemDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefault
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/purchaseOrderItemDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			purcOrderItemDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}
