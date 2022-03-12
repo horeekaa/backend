@@ -9,6 +9,7 @@ import (
 
 type getSupplyOrderItemUsecase struct {
 	getSupplyOrderItemRepository supplyorderitemdomainrepositoryinterfaces.GetSupplyOrderItemRepository
+	pathIdentity                 string
 }
 
 func NewGetSupplyOrderItemUsecase(
@@ -16,6 +17,7 @@ func NewGetSupplyOrderItemUsecase(
 ) (supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase, error) {
 	return &getSupplyOrderItemUsecase{
 		getSupplyOrderItemRepository,
+		"GetSupplyOrderItemUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getSupplyOrderItemUcase *getSupplyOrderItemUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getSupplyOrderItem",
+			getSupplyOrderItemUcase.pathIdentity,
 			err,
 		)
 	}

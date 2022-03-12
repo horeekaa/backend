@@ -23,6 +23,7 @@ type getAllSupplyOrderItemUsecase struct {
 	getAccountMemberAccessRepo    memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	supplyOrderItemRepo           supplyorderitemdomainrepositoryinterfaces.GetAllSupplyOrderItemRepository
 	supplyOrderItemAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                  string
 }
 
 func NewGetAllSupplyOrderItemUsecase(
@@ -39,6 +40,7 @@ func NewGetAllSupplyOrderItemUsecase(
 				SupplyOrderReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllSupplyOrderItemUsecase",
 	}, nil
 }
 
@@ -46,9 +48,8 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) validation(input supplyor
 	if &input.Context == nil {
 		return &supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllSupplyOrderItemUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllSOItemUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -70,15 +71,14 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllSupplyOrderItemUsecase",
+			getAllSOItemUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllSupplyOrderItemUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllSOItemUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -104,7 +104,7 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllSupplyOrderItemUsecase",
+			getAllSOItemUcase.pathIdentity,
 			err,
 		)
 	}
@@ -116,10 +116,10 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 		).(bool); accessible {
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllSupplyOrderItemUsecase",
+				getAllSOItemUcase.pathIdentity,
 				horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					"/getAllSupplyOrderItemUsecase",
+					getAllSOItemUcase.pathIdentity,
 					nil,
 				),
 			)
@@ -134,7 +134,7 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllSupplyOrderItemUsecase",
+			getAllSOItemUcase.pathIdentity,
 			err,
 		)
 	}

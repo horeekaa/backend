@@ -20,6 +20,7 @@ type createSupplyOrderItemTransactionComponent struct {
 	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
 	supplyOrderItemLoader           supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
 	generatedObjectID               *primitive.ObjectID
+	pathIdentity                    string
 }
 
 func NewCreateSupplyOrderItemTransactionComponent(
@@ -33,6 +34,7 @@ func NewCreateSupplyOrderItemTransactionComponent(
 		loggingDataSource:               loggingDataSource,
 		createDescriptivePhotoComponent: createDescriptivePhotoComponent,
 		supplyOrderItemLoader:           supplyOrderItemLoader,
+		pathIdentity:                    "CreateSupplyOrderItemComponent",
 	}, nil
 }
 
@@ -86,10 +88,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 			photoToCreate,
 		)
 		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createSupplyOrderItemComponent",
-				err,
-			)
+			return nil, err
 		}
 
 		jsonTemp, _ = json.Marshal(descriptivePhoto)
@@ -102,7 +101,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrderItemComponent",
+			createSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -132,7 +131,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrderItemComponent",
+			createSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -152,7 +151,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createSupplyOrderItemComponent",
+			createSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
