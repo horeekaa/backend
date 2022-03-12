@@ -11,6 +11,7 @@ import (
 
 type getTaggingRepository struct {
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource
+	pathIdentity      string
 }
 
 func NewGetTaggingRepository(
@@ -18,6 +19,7 @@ func NewGetTaggingRepository(
 ) (taggingdomainrepositoryinterfaces.GetTaggingRepository, error) {
 	return &getTaggingRepository{
 		taggingDataSource,
+		"GetTaggingRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getTaggingRepo *getTaggingRepository) Execute(filterFields *model.TaggingF
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getTagging",
+			getTaggingRepo.pathIdentity,
 			err,
 		)
 	}

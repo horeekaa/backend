@@ -9,6 +9,7 @@ import (
 
 type getTaggingUsecase struct {
 	getTaggingRepository taggingdomainrepositoryinterfaces.GetTaggingRepository
+	pathIdentity         string
 }
 
 func NewGetTaggingUsecase(
@@ -16,6 +17,7 @@ func NewGetTaggingUsecase(
 ) (taggingpresentationusecaseinterfaces.GetTaggingUsecase, error) {
 	return &getTaggingUsecase{
 		getTaggingRepository,
+		"GetTaggingUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getTaggingUcase *getTaggingUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getTagging",
+			getTaggingUcase.pathIdentity,
 			err,
 		)
 	}

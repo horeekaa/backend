@@ -21,6 +21,7 @@ type bulkCreateTaggingUsecase struct {
 	getAccountMemberAccessRepo      memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	bulkCreateTaggingRepo           taggingdomainrepositoryinterfaces.BulkCreateTaggingRepository
 	bulkCreateTaggingAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                    string
 }
 
 func NewBulkCreateTaggingUsecase(
@@ -37,6 +38,7 @@ func NewBulkCreateTaggingUsecase(
 				BulkTaggingCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"BulkCreateTaggingUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (bulkCreateTaggingUcase *bulkCreateTaggingUsecase) validation(input tagging
 	if &input.Context == nil {
 		return taggingpresentationusecasetypes.BulkCreateTaggingUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/bulkCreateTaggingUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				bulkCreateTaggingUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (bulkCreateTaggingUcase *bulkCreateTaggingUsecase) Execute(input taggingpre
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkCreateTaggingUsecase",
+			bulkCreateTaggingUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/bulkCreateTaggingUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			bulkCreateTaggingUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (bulkCreateTaggingUcase *bulkCreateTaggingUsecase) Execute(input taggingpre
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkCreateTaggingUsecase",
+			bulkCreateTaggingUcase.pathIdentity,
 			err,
 		)
 	}
@@ -113,7 +113,7 @@ func (bulkCreateTaggingUcase *bulkCreateTaggingUsecase) Execute(input taggingpre
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkCreateTaggingUsecase",
+			bulkCreateTaggingUcase.pathIdentity,
 			err,
 		)
 	}

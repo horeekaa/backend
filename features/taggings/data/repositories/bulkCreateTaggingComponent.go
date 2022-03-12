@@ -25,6 +25,7 @@ type bulkCreateTaggingTransactionComponent struct {
 	createTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkCreateTaggingUsecaseComponent
 	taggingLoaderUtility          taggingdomainrepositoryutilityinterfaces.TaggingLoader
 	generatedObjectID             *primitive.ObjectID
+	pathIdentity                  string
 }
 
 func NewBulkCreateTaggingTransactionComponent(
@@ -42,6 +43,7 @@ func NewBulkCreateTaggingTransactionComponent(
 		organizationDataSource: organizationDataSource,
 		productDataSource:      productDataSource,
 		taggingLoaderUtility:   taggingLoaderUtility,
+		pathIdentity:           "BulkCreateTaggingComponent",
 	}, nil
 }
 
@@ -85,7 +87,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/bulkCreateTagging",
+			bulkCreateTaggingTrx.pathIdentity,
 			err,
 		)
 	}
@@ -103,7 +105,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/bulkCreateTagging",
+					bulkCreateTaggingTrx.pathIdentity,
 					err,
 				)
 			}
@@ -128,7 +130,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/bulkCreateTagging",
+					bulkCreateTaggingTrx.pathIdentity,
 					err,
 				)
 			}
@@ -153,7 +155,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			)
 			if err != nil && !input.IgnoreTaggedDocumentCheck {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/bulkCreateTagging",
+					bulkCreateTaggingTrx.pathIdentity,
 					err,
 				)
 			}
@@ -188,7 +190,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkCreateTagging",
+				bulkCreateTaggingTrx.pathIdentity,
 				err,
 			)
 		}
@@ -208,7 +210,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkCreateTagging",
+				bulkCreateTaggingTrx.pathIdentity,
 				err,
 			)
 		}
