@@ -10,7 +10,7 @@ import (
 // NewErrorObject getter usecaes layer Error Object
 func NewErrorObject(code string, path string, err error) *horeekaacorebaseerror.Error {
 	errPath := []string{path}
-	extendedCode := code
+	extendedCode := fmt.Sprintf("err.horeekaa.%s", code)
 
 	if failure, ok := err.(*horeekaacorebasefailure.Failure); ok {
 		errPath = append(errPath, failure.Path...)
