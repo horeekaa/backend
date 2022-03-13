@@ -140,10 +140,7 @@ func (mongodbtrxsuite *MongodbTransactionTestSuite) TestRunTransactionWithTransa
 
 	assert.Nil(mongodbtrxsuite.T(), result)
 	assert.Equal(mongodbtrxsuite.T(),
-		horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpstreamException,
-			"MongoDBTransaction",
-			errors.New("Some Upstream Error"),
-		), err,
+		errors.New("Some Upstream Error"),
+		err,
 	)
 }
