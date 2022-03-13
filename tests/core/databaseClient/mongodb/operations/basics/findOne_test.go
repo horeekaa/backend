@@ -153,7 +153,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindOneWithSessionU
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/findOne", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.FindOne", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)
@@ -280,7 +280,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindOneWithoutSessi
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			fmt.Sprintf("/%s/findOne", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.FindOne", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			nil,
 		), err)
 	assert.Zero(mongodbBscOpSuite.T(), account)

@@ -126,10 +126,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionFi
 	gotest_assert.DeepEqual(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			horeekaacoreexception.NewExceptionObject(
 				horeekaacoreexceptionenums.IDNotFound,
-				fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+				fmt.Sprintf("%s.FindByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 				nil,
 			),
 		), err,
@@ -174,7 +174,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionUp
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)
@@ -280,10 +280,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	gotest_assert.DeepEqual(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			horeekaacoreexception.NewExceptionObject(
 				horeekaacoreexceptionenums.IDNotFound,
-				fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+				fmt.Sprintf("%s.FindByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 				nil,
 			),
 		), err,
@@ -322,7 +322,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)

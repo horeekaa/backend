@@ -56,7 +56,7 @@ func (mongodbtrxsuite *MongodbTransactionTestSuite) TestRunTransactionPreTransac
 		On("PreTransaction", mock.Anything).
 		Return(nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.CreateObjectFailed,
-			fmt.Sprintf("/%s/create", "MyCollection"),
+			fmt.Sprintf("%s.Create", "MyCollection"),
 			errors.New("Some Upstream Error"),
 		)).
 		Once()
@@ -71,7 +71,7 @@ func (mongodbtrxsuite *MongodbTransactionTestSuite) TestRunTransactionPreTransac
 	assert.Equal(mongodbtrxsuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.CreateObjectFailed,
-			fmt.Sprintf("/%s/create", "MyCollection"),
+			fmt.Sprintf("%s.Create", "MyCollection"),
 			errors.New("Some Upstream Error"),
 		), err,
 	)
@@ -99,7 +99,7 @@ func (mongodbtrxsuite *MongodbTransactionTestSuite) TestRunTransactionCreateSess
 	assert.Equal(mongodbtrxsuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DBConnectionFailed,
-			"/mongoTransaction/createSession",
+			"MongoDBTransaction",
 			errors.New("Some Upstream Error"),
 		), err,
 	)
@@ -142,7 +142,7 @@ func (mongodbtrxsuite *MongodbTransactionTestSuite) TestRunTransactionWithTransa
 	assert.Equal(mongodbtrxsuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"/mongoTransaction/commitTransaction",
+			"MongoDBTransaction",
 			errors.New("Some Upstream Error"),
 		), err,
 	)

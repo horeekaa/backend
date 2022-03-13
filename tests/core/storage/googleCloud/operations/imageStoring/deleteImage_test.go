@@ -79,7 +79,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestDeleteIma
 		gcsOperationTestSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DeleteImageFailed,
-			"/gcsBasicOperation/deleteImage",
+			"GoogleCloudStorageBasicOperation",
 			errors.New("Some Upstream Error"),
 		),
 		err,

@@ -55,7 +55,7 @@ func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnError() 
 	assert.Equal(fbAuthSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"/newFirebaseAuthentication",
+			"FirebaseAuthenticationClient",
 			errors.New("Some Upstream Error"),
 		),
 		err,
@@ -65,7 +65,7 @@ func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnError() 
 	assert.Equal(fbAuthSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseAuthentication",
+			"FirebaseAuthenticationClient",
 			nil,
 		),
 		err,
@@ -76,7 +76,7 @@ func (fbAuthSuite *FirebaseAuthCoreClientTestSuite) TestInitializeReturnError() 
 	assert.Equal(fbAuthSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseAuthentication",
+			"FirebaseAuthenticationClient",
 			nil,
 		),
 		err,

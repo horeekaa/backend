@@ -164,7 +164,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionD
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
 	assert.Equal(mongodbBscOpSuite.T(), horeekaacoreexception.NewExceptionObject(
 		horeekaacoreexceptionenums.QueryObjectFailed,
-		fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+		fmt.Sprintf("%s.Find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 		errors.New("Some Upstream Error"),
 	), err)
 	assert.Equal(mongodbBscOpSuite.T(), accountFixtures, accounts)
@@ -221,7 +221,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithSessionU
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
 	assert.Equal(mongodbBscOpSuite.T(), horeekaacoreexception.NewExceptionObject(
 		horeekaacoreexceptionenums.QueryObjectFailed,
-		fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+		fmt.Sprintf("%s.Find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 		errors.New("Some Upstream Error"),
 	), err)
 	assert.Equal(mongodbBscOpSuite.T(), accountFixtures, accounts)
@@ -365,7 +365,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
 	assert.Equal(mongodbBscOpSuite.T(), horeekaacoreexception.NewExceptionObject(
 		horeekaacoreexceptionenums.QueryObjectFailed,
-		fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+		fmt.Sprintf("%s.Find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 		errors.New("Some Upstream Error"),
 	), err)
 	assert.Equal(mongodbBscOpSuite.T(), accountFixtures, accounts)
@@ -416,7 +416,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestFindAllWithoutSessi
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
 	assert.Equal(mongodbBscOpSuite.T(), horeekaacoreexception.NewExceptionObject(
 		horeekaacoreexceptionenums.QueryObjectFailed,
-		fmt.Sprintf("/%s/find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+		fmt.Sprintf("%s.Find", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 		errors.New("Some Upstream Error"),
 	), err)
 	assert.Equal(mongodbBscOpSuite.T(), accountFixtures, accounts)
