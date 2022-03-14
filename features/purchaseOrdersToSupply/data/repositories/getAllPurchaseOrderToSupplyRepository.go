@@ -13,6 +13,7 @@ import (
 type getAllPurchaseOrderToSupplyRepository struct {
 	purchaseOrderToSupplyDataSource databasepurchaseordertosupplydatasourceinterfaces.PurchaseOrderToSupplyDataSource
 	mongoQueryBuilder               mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity                    string
 }
 
 func NewGetAllPurchaseOrderToSupplyRepository(
@@ -22,14 +23,15 @@ func NewGetAllPurchaseOrderToSupplyRepository(
 	return &getAllPurchaseOrderToSupplyRepository{
 		purchaseOrderToSupplyDataSource,
 		mongoQueryBuilder,
+		"GetAllPurchaseOrderToSupplyRepository",
 	}, nil
 }
 
-func (getAllPORepo *getAllPurchaseOrderToSupplyRepository) Execute(
+func (getAllPoToSupplyRepo *getAllPurchaseOrderToSupplyRepository) Execute(
 	input purchaseordertosupplydomainrepositorytypes.GetAllPurchaseOrderToSupplyInput,
 ) ([]*model.PurchaseOrderToSupply, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllPORepo.mongoQueryBuilder.Execute(
+	getAllPoToSupplyRepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -37,14 +39,14 @@ func (getAllPORepo *getAllPurchaseOrderToSupplyRepository) Execute(
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
-	purchaseOrdersToSupply, err := getAllPORepo.purchaseOrderToSupplyDataSource.GetMongoDataSource().Find(
+	purchaseOrdersToSupply, err := getAllPoToSupplyRepo.purchaseOrderToSupplyDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllPurchaseOrderToSupply",
+			getAllPoToSupplyRepo.pathIdentity,
 			err,
 		)
 	}

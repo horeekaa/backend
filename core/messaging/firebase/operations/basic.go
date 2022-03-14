@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"firebase.google.com/go/v4/messaging"
-	horeekaacoreexception "github.com/horeekaa/backend/core/errors/exceptions"
-	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	firebasemessagingcoreclientinterfaces "github.com/horeekaa/backend/core/messaging/firebase/interfaces/init"
 	firebasemessagingcoreoperationinterfaces "github.com/horeekaa/backend/core/messaging/firebase/interfaces/operations"
 	firebasemessagingcoretypes "github.com/horeekaa/backend/core/messaging/firebase/types"
@@ -13,11 +11,13 @@ import (
 
 type firebaseMessagingBasicOperation struct {
 	firebaseMsgClient firebasemessagingcoreclientinterfaces.FirebaseMessagingClient
+	pathIdentity      string
 }
 
 func NewFirebaseMessagingBasicOperation(firebaseMsgClient firebasemessagingcoreclientinterfaces.FirebaseMessagingClient) (firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation, error) {
 	return &firebaseMessagingBasicOperation{
 		firebaseMsgClient,
+		"FirebaseMessagingBasicOperation",
 	}, nil
 }
 
@@ -25,14 +25,7 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMessage(ctx context.Co
 	client, _ := fbMsgBasicOps.firebaseMsgClient.GetMessagingClient()
 
 	nativeMessage := messaging.Message(*message)
-	res, err := client.Send(ctx, &nativeMessage)
-	if err != nil {
-		return "", horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.SendNotifMessageFailed,
-			"/fbMsgBasicOperation/SendMessage",
-			err,
-		)
-	}
+	res, _ := client.Send(ctx, &nativeMessage)
 
 	return res, nil
 }
@@ -42,13 +35,6 @@ func (fbMsgBasicOps *firebaseMessagingBasicOperation) SendMulticastMessage(ctx c
 
 	nativeMessage := messaging.MulticastMessage(*message)
 	_, _ = client.SendMulticast(ctx, &nativeMessage)
-	// if err != nil {
-	// 	return nil, horeekaacoreexception.NewExceptionObject(
-	// 		horeekaacoreexceptionenums.SendNotifMessageFailed,
-	// 		"/fbMsgBasicOperation/SendMulticastMessage",
-	// 		err,
-	// 	)
-	// }
 
 	batchResponse := firebasemessagingcoretypes.BatchMessageResponse{}
 	return &batchResponse, nil

@@ -16,12 +16,14 @@ import (
 
 type paymentDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewPaymentDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbpaymentdatasourceinterfaces.PaymentDataSourceMongo, error) {
 	basicOperation.SetCollection("payments")
 	return &paymentDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "PaymentDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (paymentDataSourceMongo *paymentDataSourceMongo) setDefaultValuesWhenUpdate
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/paymentDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			paymentDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

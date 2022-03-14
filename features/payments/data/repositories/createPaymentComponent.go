@@ -18,6 +18,7 @@ type createPaymentTransactionComponent struct {
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
 	paymentDataLoader paymentdomainrepositoryutilityinterfaces.PaymentLoader
 	generatedObjectID *primitive.ObjectID
+	pathIdentity      string
 }
 
 func NewCreatePaymentTransactionComponent(
@@ -29,6 +30,7 @@ func NewCreatePaymentTransactionComponent(
 		paymentDataSource: paymentDataSource,
 		loggingDataSource: loggingDataSource,
 		paymentDataLoader: paymentDataLoader,
+		pathIdentity:      "CreatePaymentComponent",
 	}, nil
 }
 
@@ -71,7 +73,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPayment",
+			createPaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -95,7 +97,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPayment",
+			createPaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -115,7 +117,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPayment",
+			createPaymentTrx.pathIdentity,
 			err,
 		)
 	}

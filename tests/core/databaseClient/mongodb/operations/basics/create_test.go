@@ -94,7 +94,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestCreateWithSessionUp
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.CreateObjectFailed,
-			fmt.Sprintf("/%s/create", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Create", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)
@@ -167,7 +167,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestCreateWithoutSessio
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.CreateObjectFailed,
-			fmt.Sprintf("/%s/create", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Create", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)

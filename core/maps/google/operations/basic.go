@@ -13,7 +13,8 @@ import (
 )
 
 type googleMapBasicOperation struct {
-	client googlemapcoreclientinterfaces.GoogleMapClient
+	client       googlemapcoreclientinterfaces.GoogleMapClient
+	pathIdentity string
 }
 
 func (gMapBasicOperation *googleMapBasicOperation) ReverseGeocode(
@@ -28,7 +29,7 @@ func (gMapBasicOperation *googleMapBasicOperation) ReverseGeocode(
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ReverseGeocodeFailed,
-			"/googleMapBasicOperation/reverseGeocode",
+			gMapBasicOperation.pathIdentity,
 			err,
 		)
 	}
@@ -40,5 +41,6 @@ func NewGoogleMapBasicOperation(
 ) (googlemapcoreoperationinterfaces.GoogleMapBasicOperation, error) {
 	return &googleMapBasicOperation{
 		client,
+		"GoogleMapBasicOperation",
 	}, nil
 }

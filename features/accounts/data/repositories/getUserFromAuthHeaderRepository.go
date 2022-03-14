@@ -12,6 +12,7 @@ import (
 
 type getUserFromAuthHeaderRepository struct {
 	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo
+	pathIdentity       string
 }
 
 func NewGetUserFromAuthHeaderRepository(
@@ -19,6 +20,7 @@ func NewGetUserFromAuthHeaderRepository(
 ) (accountdomainrepositoryinterfaces.GetUserFromAuthHeaderRepository, error) {
 	return &getUserFromAuthHeaderRepository{
 		firebaseDataSource,
+		"GetUserFromAuthHeader",
 	}, nil
 }
 
@@ -34,7 +36,7 @@ func (getUsrFromAuthHeaderRepo *getUserFromAuthHeaderRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getUserFromAuthHeader",
+			getUsrFromAuthHeaderRepo.pathIdentity,
 			err,
 		)
 	}
@@ -44,7 +46,7 @@ func (getUsrFromAuthHeaderRepo *getUserFromAuthHeaderRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getUserFromAuthHeader",
+			getUsrFromAuthHeaderRepo.pathIdentity,
 			err,
 		)
 	}

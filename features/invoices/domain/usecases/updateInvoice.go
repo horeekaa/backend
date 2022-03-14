@@ -21,6 +21,7 @@ type updateInvoiceUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	updateInvoiceRepo           invoicedomainrepositoryinterfaces.UpdateInvoiceRepository
 	updateInvoiceAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewUpdateInvoiceUsecase(
@@ -37,6 +38,7 @@ func NewUpdateInvoiceUsecase(
 				InvoiceUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateInvoiceUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (updateInvoiceUcase *updateInvoiceUsecase) validation(input invoicepresenta
 	if &input.Context == nil {
 		return invoicepresentationusecasetypes.UpdateInvoiceUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateInvoiceUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateInvoiceUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (updateInvoiceUcase *updateInvoiceUsecase) Execute(input invoicepresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateInvoiceUsecase",
+			updateInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateInvoiceUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateInvoiceUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (updateInvoiceUcase *updateInvoiceUsecase) Execute(input invoicepresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateInvoiceUsecase",
+			updateInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
@@ -106,7 +106,7 @@ func (updateInvoiceUcase *updateInvoiceUsecase) Execute(input invoicepresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateInvoiceUsecase",
+			updateInvoiceUcase.pathIdentity,
 			err,
 		)
 	}

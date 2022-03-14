@@ -18,6 +18,7 @@ type approveUpdateSupplyOrderTransactionComponent struct {
 	loggingDataSource     databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility   coreutilityinterfaces.MapProcessorUtility
 	supplyOrderDataLoader supplyorderdomainrepositoryutilityinterfaces.SupplyOrderLoader
+	pathIdentity          string
 }
 
 func NewApproveUpdateSupplyOrderTransactionComponent(
@@ -31,16 +32,17 @@ func NewApproveUpdateSupplyOrderTransactionComponent(
 		loggingDataSource:     loggingDataSource,
 		mapProcessorUtility:   mapProcessorUtility,
 		supplyOrderDataLoader: supplyOrderDataLoader,
+		pathIdentity:          "ApproveUpdateSupplyOrderComponent",
 	}, nil
 }
 
-func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) PreTransaction(
+func (approveSupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) PreTransaction(
 	input *model.InternalUpdateSupplyOrder,
 ) (*model.InternalUpdateSupplyOrder, error) {
 	return input, nil
 }
 
-func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) TransactionBody(
+func (approveSupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalUpdateSupplyOrder,
 ) (*model.SupplyOrder, error) {
@@ -48,35 +50,35 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, updateSupplyOrder)
 
-	existingSupplyOrder, err := approvesupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().FindByID(
+	existingSupplyOrder, err := approveSupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().FindByID(
 		updateSupplyOrder.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			approveSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
 
-	_, err = approvesupplyOrderTrx.supplyOrderDataLoader.TransactionBody(
+	_, err = approveSupplyOrderTrx.supplyOrderDataLoader.TransactionBody(
 		session,
 		updateSupplyOrder.Organization,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			approveSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
 
-	previousLog, err := approvesupplyOrderTrx.loggingDataSource.GetMongoDataSource().FindByID(
+	previousLog, err := approveSupplyOrderTrx.loggingDataSource.GetMongoDataSource().FindByID(
 		existingSupplyOrder.RecentLog.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			approveSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -97,13 +99,13 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 	)
 	json.Unmarshal(jsonTemp, logToCreate)
 
-	createdLog, err := approvesupplyOrderTrx.loggingDataSource.GetMongoDataSource().Create(
+	createdLog, err := approveSupplyOrderTrx.loggingDataSource.GetMongoDataSource().Create(
 		logToCreate,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			approveSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -120,7 +122,7 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 	jsonUpdate, _ := json.Marshal(updateSupplyOrder)
 	json.Unmarshal(jsonUpdate, &updatesupplyOrderMap)
 
-	approvesupplyOrderTrx.mapProcessorUtility.RemoveNil(updatesupplyOrderMap)
+	approveSupplyOrderTrx.mapProcessorUtility.RemoveNil(updatesupplyOrderMap)
 
 	jsonUpdate, _ = json.Marshal(updatesupplyOrderMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdatesupplyOrder.ProposedChanges)
@@ -132,7 +134,7 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 		}
 	}
 
-	updatedsupplyOrder, err := approvesupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().Update(
+	updatedsupplyOrder, err := approveSupplyOrderTrx.supplyOrderDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": fieldsToUpdatesupplyOrder.ID,
 		},
@@ -141,7 +143,7 @@ func (approvesupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateSupplyOrder",
+			approveSupplyOrderTrx.pathIdentity,
 			err,
 		)
 	}

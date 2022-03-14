@@ -13,6 +13,7 @@ import (
 type getAllSupplyOrderRepository struct {
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
 	mongoQueryBuilder     mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity          string
 }
 
 func NewGetAllSupplyOrderRepository(
@@ -22,14 +23,15 @@ func NewGetAllSupplyOrderRepository(
 	return &getAllSupplyOrderRepository{
 		supplyOrderDataSource,
 		mongoQueryBuilder,
+		"GetAllSupplyOrderRepository",
 	}, nil
 }
 
-func (getAllPORepo *getAllSupplyOrderRepository) Execute(
+func (getAllSORepo *getAllSupplyOrderRepository) Execute(
 	input supplyorderdomainrepositorytypes.GetAllSupplyOrderInput,
 ) ([]*model.SupplyOrder, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllPORepo.mongoQueryBuilder.Execute(
+	getAllSORepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -37,14 +39,14 @@ func (getAllPORepo *getAllSupplyOrderRepository) Execute(
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
-	supplyOrders, err := getAllPORepo.supplyOrderDataSource.GetMongoDataSource().Find(
+	supplyOrders, err := getAllSORepo.supplyOrderDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllSupplyOrder",
+			getAllSORepo.pathIdentity,
 			err,
 		)
 	}

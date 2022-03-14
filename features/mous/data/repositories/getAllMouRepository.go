@@ -13,6 +13,7 @@ import (
 type getAllMouRepository struct {
 	mouDataSource     databasemoudatasourceinterfaces.MouDataSource
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity      string
 }
 
 func NewGetAllMouRepository(
@@ -22,14 +23,15 @@ func NewGetAllMouRepository(
 	return &getAllMouRepository{
 		mouDataSource,
 		mongoQueryBuilder,
+		"GetAllMouRepository",
 	}, nil
 }
 
-func (getAllMmbAccRefRepo *getAllMouRepository) Execute(
+func (getAllMouRepo *getAllMouRepository) Execute(
 	input moudomainrepositorytypes.GetAllMouInput,
 ) ([]*model.Mou, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+	getAllMouRepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -37,14 +39,14 @@ func (getAllMmbAccRefRepo *getAllMouRepository) Execute(
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
-	mous, err := getAllMmbAccRefRepo.mouDataSource.GetMongoDataSource().Find(
+	mous, err := getAllMouRepo.mouDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllMou",
+			getAllMouRepo.pathIdentity,
 			err,
 		)
 	}

@@ -13,6 +13,7 @@ import (
 type getAllProductRepository struct {
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity      string
 }
 
 func NewGetAllProductRepository(
@@ -22,14 +23,15 @@ func NewGetAllProductRepository(
 	return &getAllProductRepository{
 		productDataSource,
 		mongoQueryBuilder,
+		"GetAllProductRepository",
 	}, nil
 }
 
-func (getAllMmbAccRefRepo *getAllProductRepository) Execute(
+func (getAllProductRepo *getAllProductRepository) Execute(
 	input productdomainrepositorytypes.GetAllProductInput,
 ) ([]*model.Product, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllMmbAccRefRepo.mongoQueryBuilder.Execute(
+	getAllProductRepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -37,14 +39,14 @@ func (getAllMmbAccRefRepo *getAllProductRepository) Execute(
 
 	mongoPagination := (mongodbcoretypes.PaginationOptions)(*input.PaginationOpt)
 
-	products, err := getAllMmbAccRefRepo.productDataSource.GetMongoDataSource().Find(
+	products, err := getAllProductRepo.productDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllproduct",
+			getAllProductRepo.pathIdentity,
 			err,
 		)
 	}

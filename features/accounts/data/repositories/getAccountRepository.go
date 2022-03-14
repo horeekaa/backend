@@ -11,6 +11,7 @@ import (
 
 type getAccountRepository struct {
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource
+	pathIdentity      string
 }
 
 func NewGetAccountRepository(
@@ -18,6 +19,7 @@ func NewGetAccountRepository(
 ) (accountdomainrepositoryinterfaces.GetAccountRepository, error) {
 	return &getAccountRepository{
 		accountDataSource,
+		"GetAccountFromAuthRepo",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getMmbAccessRefRepo *getAccountRepository) Execute(filterFields *model.Acc
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAccount",
+			getMmbAccessRefRepo.pathIdentity,
 			err,
 		)
 	}

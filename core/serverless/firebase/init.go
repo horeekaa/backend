@@ -12,7 +12,8 @@ import (
 )
 
 type firebaseServerlessClient struct {
-	app firebaseserverlesscorewrapperinterfaces.FirebaseApp
+	app          firebaseserverlesscorewrapperinterfaces.FirebaseApp
+	pathIdentity string
 }
 
 func (svlessClient *firebaseServerlessClient) Connect() (bool, error) {
@@ -20,7 +21,7 @@ func (svlessClient *firebaseServerlessClient) Connect() (bool, error) {
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"/newFirebaseAuthentication",
+			svlessClient.pathIdentity,
 			err,
 		)
 	}
@@ -34,7 +35,7 @@ func (svlessClient *firebaseServerlessClient) GetApp() (firebaseserverlesscorewr
 	if svlessClient.app == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newMongoClient",
+			svlessClient.pathIdentity,
 			nil,
 		)
 	}
@@ -42,5 +43,7 @@ func (svlessClient *firebaseServerlessClient) GetApp() (firebaseserverlesscorewr
 }
 
 func NewFirebaseServerlessClient() (firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient, error) {
-	return &firebaseServerlessClient{}, nil
+	return &firebaseServerlessClient{
+		pathIdentity: "FirebaseServerlessClient",
+	}, nil
 }

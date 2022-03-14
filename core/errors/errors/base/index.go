@@ -2,18 +2,19 @@ package horeekaacorebaseerror
 
 import (
 	"fmt"
-
-	horeekaacorebasefailure "github.com/horeekaa/backend/core/errors/failures/base"
+	"strings"
 )
 
 // Error struct for shaping usecase layer error
 type Error struct {
-	Message    string                           `json:"Message"`
-	StatusCode int                              `json:"StatusCode"`
-	Path       string                           `json:"Path"`
-	Err        *horeekaacorebasefailure.Failure `json:"Err"`
+	Code string   `json:"Code"`
+	Path []string `json:"Path"`
+	Err  error    `json:"Err"`
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("Error: %s, at %s. Details: %v", e.Message, e.Path, e.Err)
+	if e.Err == nil {
+		return e.Code
+	}
+	return fmt.Sprintf("%s, at %s, details: %s", e.Code, strings.Join(e.Path, "/"), e.Err.Error())
 }

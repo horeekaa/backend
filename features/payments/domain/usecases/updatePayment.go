@@ -23,6 +23,7 @@ type updatePaymentUsecase struct {
 	proposeUpdatePaymentRepo    paymentdomainrepositoryinterfaces.ProposeUpdatePaymentRepository
 	approveUpdatePaymentRepo    paymentdomainrepositoryinterfaces.ApproveUpdatePaymentRepository
 	updatePaymentAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewUpdatePaymentUsecase(
@@ -41,6 +42,7 @@ func NewUpdatePaymentUsecase(
 				PaymentUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdatePaymentUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updatePaymentUcase *updatePaymentUsecase) validation(input paymentpresenta
 	if &input.Context == nil {
 		return paymentpresentationusecasetypes.UpdatePaymentUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updatePaymentUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updatePaymentUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePaymentUsecase",
+			updatePaymentUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updatePaymentUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updatePaymentUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePaymentUsecase",
+			updatePaymentUcase.pathIdentity,
 			err,
 		)
 	}
@@ -116,16 +116,14 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 		if accMemberAccess.Access.PaymentAccesses.PaymentApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updatePaymentUsecase",
+				updatePaymentUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.PaymentAccesses.PaymentApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updatePaymentUsecase",
+				updatePaymentUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -136,7 +134,7 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updatePaymentUsecase",
+				updatePaymentUcase.pathIdentity,
 				err,
 			)
 		}
@@ -159,7 +157,7 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updatePaymentUsecase",
+			updatePaymentUcase.pathIdentity,
 			err,
 		)
 	}

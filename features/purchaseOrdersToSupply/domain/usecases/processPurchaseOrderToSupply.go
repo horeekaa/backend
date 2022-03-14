@@ -8,6 +8,7 @@ import (
 
 type processPurchaseOrderToSupplyUsecase struct {
 	processPurchaseOrderToSupplyRepo purchaseordertosupplydomainrepositoryinterfaces.ProcessPurchaseOrderToSupplyRepository
+	pathIdentity                     string
 }
 
 func NewProcessPurchaseOrderToSupplyUsecase(
@@ -15,6 +16,7 @@ func NewProcessPurchaseOrderToSupplyUsecase(
 ) (purchaseordertosupplypresentationusecaseinterfaces.ProcessPurchaseOrderToSupplyUsecase, error) {
 	return &processPurchaseOrderToSupplyUsecase{
 		processPurchaseOrderToSupplyRepo: processPurchaseOrderToSupplyRepo,
+		pathIdentity:                     "ProcessPurchaseOrderToSupplyUsecase",
 	}, nil
 }
 
@@ -22,7 +24,7 @@ func (processPurchaseOrderToSupplyUcase *processPurchaseOrderToSupplyUsecase) Ex
 	ok, err := processPurchaseOrderToSupplyUcase.processPurchaseOrderToSupplyRepo.RunTransaction()
 	if err != nil {
 		return false, horeekaacorefailuretoerror.ConvertFailure(
-			"/processPurchaseOrderToSupplyUsecase",
+			processPurchaseOrderToSupplyUcase.pathIdentity,
 			err,
 		)
 	}

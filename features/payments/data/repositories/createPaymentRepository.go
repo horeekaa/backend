@@ -5,7 +5,6 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
-	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
@@ -87,10 +86,7 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 			},
 		)
 		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createPaymentRepository",
-				err,
-			)
+			return nil, err
 		}
 	}
 

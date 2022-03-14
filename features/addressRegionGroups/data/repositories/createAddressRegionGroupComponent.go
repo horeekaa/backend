@@ -18,6 +18,7 @@ type createAddressRegionGroupTransactionComponent struct {
 	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
 	loggingDataSource            databaseloggingdatasourceinterfaces.LoggingDataSource
 	generatedObjectID            *primitive.ObjectID
+	pathIdentity                 string
 }
 
 func NewCreateAddressRegionGroupTransactionComponent(
@@ -27,6 +28,7 @@ func NewCreateAddressRegionGroupTransactionComponent(
 	return &createAddressRegionGroupTransactionComponent{
 		addressRegionGroupDataSource: addressRegionGroupDataSource,
 		loggingDataSource:            loggingDataSource,
+		pathIdentity:                 "CreateAddressRegionGroupComponent",
 	}, nil
 }
 
@@ -89,7 +91,7 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAddressRegionGroup",
+			createAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -109,7 +111,7 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAddressRegionGroup",
+			createAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}

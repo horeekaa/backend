@@ -18,6 +18,7 @@ type proposeUpdateMouItemTransactionComponent struct {
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewProposeUpdateMouItemTransactionComponent(
@@ -31,6 +32,7 @@ func NewProposeUpdateMouItemTransactionComponent(
 		loggingDataSource:   loggingDataSource,
 		agreedProductLoader: agreedProductLoader,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ProposeUpdateMouItemComponent",
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			updateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -87,7 +89,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			updateMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -126,7 +128,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMouItem",
+			updateMouItemTrx.pathIdentity,
 			err,
 		)
 	}

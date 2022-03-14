@@ -16,12 +16,14 @@ import (
 
 type supplyOrderItemDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewSupplyOrderItemDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbsupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSourceMongo, error) {
 	basicOperation.SetCollection("supplyorderitems")
 	return &supplyOrderItemDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "SupplyOrderItemDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) setDefaultVal
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/supplyOrderItemDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			supOrderItemDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

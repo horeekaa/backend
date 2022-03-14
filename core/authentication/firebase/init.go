@@ -13,13 +13,14 @@ import (
 type firebaseAuthenticationClient struct {
 	firebaseServerlessClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient
 	client                   firebaseauthcorewrapperinterfaces.FirebaseAuthClient
+	pathIdentity             string
 }
 
 func (fbAuthClient *firebaseAuthenticationClient) GetServerlessClient() (firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient, error) {
 	if fbAuthClient.firebaseServerlessClient == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseAuthentication",
+			fbAuthClient.pathIdentity,
 			nil,
 		)
 	}
@@ -30,7 +31,7 @@ func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (firebaseauthc
 	if fbAuthClient.client == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newFirebaseAuthentication",
+			fbAuthClient.pathIdentity,
 			nil,
 		)
 	}
@@ -38,12 +39,16 @@ func (fbAuthClient *firebaseAuthenticationClient) GetAuthClient() (firebaseauthc
 }
 
 func (fbAuthClient *firebaseAuthenticationClient) InitializeClient(firebaseClient firebaseserverlesscoreclientinterfaces.FirebaseServerlessClient) (bool, error) {
-	app, _ := firebaseClient.GetApp()
+	app, err := firebaseClient.GetApp()
+	if err != nil {
+		return false, err
+	}
+
 	client, err := app.Auth(context.Background())
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"/newFirebaseAuthentication",
+			fbAuthClient.pathIdentity,
 			err,
 		)
 	}
@@ -54,5 +59,7 @@ func (fbAuthClient *firebaseAuthenticationClient) InitializeClient(firebaseClien
 }
 
 func NewFirebaseAuthClient() (firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient, error) {
-	return &firebaseAuthenticationClient{}, nil
+	return &firebaseAuthenticationClient{
+		pathIdentity: "FirebaseAuthClient",
+	}, nil
 }

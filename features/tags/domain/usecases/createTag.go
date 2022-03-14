@@ -21,6 +21,7 @@ type createTagUsecase struct {
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createTagRepo              tagdomainrepositoryinterfaces.CreateTagRepository
 	createTagAccessIdentity    *model.MemberAccessRefOptionsInput
+	pathIdentity               string
 }
 
 func NewCreateTagUsecase(
@@ -37,6 +38,7 @@ func NewCreateTagUsecase(
 				TagCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateTagUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createTagUcase *createTagUsecase) validation(input tagpresentationusecaset
 	if &input.Context == nil {
 		return tagpresentationusecasetypes.CreateTagUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createTagUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createTagUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createTagUsecase",
+			createTagUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createTagUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createTagUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createTagUsecase",
+			createTagUcase.pathIdentity,
 			err,
 		)
 	}
@@ -120,7 +120,7 @@ func (createTagUcase *createTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createTagUsecase",
+			createTagUcase.pathIdentity,
 			err,
 		)
 	}

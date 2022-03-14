@@ -24,6 +24,7 @@ type updateProductUsecase struct {
 	proposeUpdateProductRepo    productdomainrepositoryinterfaces.ProposeUpdateProductRepository
 	approveUpdateProductRepo    productdomainrepositoryinterfaces.ApproveUpdateProductRepository
 	updateproductAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewUpdateProductUsecase(
@@ -42,6 +43,7 @@ func NewUpdateProductUsecase(
 				ProductUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateProductUsecase",
 	}, nil
 }
 
@@ -49,9 +51,8 @@ func (updateProductUcase *updateProductUsecase) validation(input productpresenta
 	if &input.Context == nil {
 		return productpresentationusecasetypes.UpdateProductUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateProductUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateProductUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -75,15 +76,14 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateProductUsecase",
+			updateProductUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateProductUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateProductUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -100,7 +100,7 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateProductUsecase",
+			updateProductUcase.pathIdentity,
 			err,
 		)
 	}
@@ -122,16 +122,14 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 		if accMemberAccess.Access.ProductAccesses.ProductApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateProductUsecase",
+				updateProductUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.ProductAccesses.ProductApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateProductUsecase",
+				updateProductUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -142,7 +140,7 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateProductUsecase",
+				updateProductUcase.pathIdentity,
 				err,
 			)
 		}
@@ -165,7 +163,7 @@ func (updateProductUcase *updateProductUsecase) Execute(input productpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateProductUsecase",
+			updateProductUcase.pathIdentity,
 			err,
 		)
 	}

@@ -16,6 +16,7 @@ type approveUpdateAddressTransactionComponent struct {
 	addressDataSource   databaseaddressdatasourceinterfaces.AddressDataSource
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewApproveUpdateAddressTransactionComponent(
@@ -27,6 +28,7 @@ func NewApproveUpdateAddressTransactionComponent(
 		addressDataSource:   AddressDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdateAddressComponent",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateAddress",
+			approveAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -64,7 +66,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateAddress",
+			approveAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -91,7 +93,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateAddress",
+			approveAddrTrx.pathIdentity,
 			err,
 		)
 	}
@@ -129,7 +131,7 @@ func (approveAddrTrx *approveUpdateAddressTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateAddress",
+			approveAddrTrx.pathIdentity,
 			err,
 		)
 	}

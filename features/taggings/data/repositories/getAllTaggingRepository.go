@@ -13,6 +13,7 @@ import (
 type getAllTaggingRepository struct {
 	taggingDataSource databasetaggingdatasourceinterfaces.TaggingDataSource
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity      string
 }
 
 func NewGetAllTaggingRepository(
@@ -22,6 +23,7 @@ func NewGetAllTaggingRepository(
 	return &getAllTaggingRepository{
 		taggingDataSource,
 		mongoQueryBuilder,
+		"GetAllTaggingRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllTaggingRepo *getAllTaggingRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllTagging",
+			getAllTaggingRepo.pathIdentity,
 			err,
 		)
 	}

@@ -20,6 +20,7 @@ type createInvoiceTransactionComponent struct {
 	invoiceDataSource       databaseinvoicedatasourceinterfaces.InvoiceDataSource
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	generatedObjectID       *primitive.ObjectID
+	pathIdentity            string
 }
 
 func NewCreateInvoiceTransactionComponent(
@@ -29,6 +30,7 @@ func NewCreateInvoiceTransactionComponent(
 	return &createInvoiceTransactionComponent{
 		invoiceDataSource:       invoiceDataSource,
 		purchaseOrderDataSource: purchaseOrderDataSource,
+		pathIdentity:            "CreateInvoiceComponent",
 	}, nil
 }
 
@@ -108,7 +110,7 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createInvoice",
+			createInvoiceTrx.pathIdentity,
 			err,
 		)
 	}
@@ -136,7 +138,7 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createInvoice",
+			createInvoiceTrx.pathIdentity,
 			err,
 		)
 	}

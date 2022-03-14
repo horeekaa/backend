@@ -23,6 +23,7 @@ type updateMemberAccessRefUsecase struct {
 	proposeUpdateMemberAccessRefRepo    memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefRepository
 	approveUpdateMemberAccessRefRepo    memberaccessrefdomainrepositoryinterfaces.ApproveUpdateMemberAccessRefRepository
 	updateMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                        string
 }
 
 func NewUpdateMemberAccessRefUsecase(
@@ -41,6 +42,7 @@ func NewUpdateMemberAccessRefUsecase(
 				MemberAccessRefUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateMemberAccessRefUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) validation(input me
 	if &input.Context == nil {
 		return memberaccessrefpresentationusecasetypes.UpdateMemberAccessRefUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateMemberAccessRefUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateMmbAccessRefUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessRefUsecase",
+			updateMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateMemberAccessRefUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateMmbAccessRefUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -97,7 +97,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessRefUsecase",
+			updateMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}
@@ -107,16 +107,14 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		if accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMemberAccessRefUsecase",
+				updateMmbAccessRefUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.MemberAccessRefAccesses.MemberAccessRefApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateMemberAccessRefUsecase",
+				updateMmbAccessRefUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -127,7 +125,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateMemberAccessRefUsecase",
+				updateMmbAccessRefUcase.pathIdentity,
 				err,
 			)
 		}
@@ -150,7 +148,7 @@ func (updateMmbAccessRefUcase *updateMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateMemberAccessRefUsecase",
+			updateMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}

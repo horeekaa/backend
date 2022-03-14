@@ -14,6 +14,7 @@ import (
 type logoutUsecase struct {
 	getAccountFromAuthDataRepo         accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	manageAccountDeviceTokenRepository accountdomainrepositoryinterfaces.ManageAccountDeviceTokenRepository
+	pathIdentity                       string
 }
 
 func NewLogoutUsecase(
@@ -23,6 +24,7 @@ func NewLogoutUsecase(
 	return &logoutUsecase{
 		getAccountFromAuthDataRepo,
 		manageAccountDeviceTokenRepository,
+		"LogoutUsecase",
 	}, nil
 }
 
@@ -30,9 +32,8 @@ func (logoutUcase *logoutUsecase) validation(input accountpresentationusecasetyp
 	if &input.Context == nil {
 		return &accountpresentationusecasetypes.LogoutUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/logoutUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				logoutUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -54,15 +55,14 @@ func (logoutUcase *logoutUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/logoutUsecase",
+			logoutUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/logoutUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			logoutUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -76,7 +76,7 @@ func (logoutUcase *logoutUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/logoutUsecase",
+			logoutUcase.pathIdentity,
 			err,
 		)
 	}

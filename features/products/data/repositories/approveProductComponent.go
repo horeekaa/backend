@@ -17,6 +17,7 @@ type approveUpdateProductTransactionComponent struct {
 	loggingDataSource                    databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                  coreutilityinterfaces.MapProcessorUtility
 	approveUpdateProductUsecaseComponent productdomainrepositoryinterfaces.ApproveUpdateProductUsecaseComponent
+	pathIdentity                         string
 }
 
 func NewApproveUpdateProductTransactionComponent(
@@ -28,6 +29,7 @@ func NewApproveUpdateProductTransactionComponent(
 		productDataSource:   productDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdateProductComponent",
 	}, nil
 }
 
@@ -61,7 +63,7 @@ func (approveProdTrx *approveUpdateProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProduct",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -72,7 +74,7 @@ func (approveProdTrx *approveUpdateProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProduct",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -99,7 +101,7 @@ func (approveProdTrx *approveUpdateProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProduct",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -137,7 +139,7 @@ func (approveProdTrx *approveUpdateProductTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProduct",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}

@@ -16,12 +16,14 @@ import (
 
 type memberAccessRefDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewMemberAccessRefDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbmemberaccessrefdatasourceinterfaces.MemberAccessRefDataSourceMongo, error) {
 	basicOperation.SetCollection("memberaccessrefs")
 	return &memberAccessRefDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "MemberAccessRefDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValues
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/memberAccessRefDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			mmbAccRefDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

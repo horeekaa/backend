@@ -11,6 +11,7 @@ import (
 
 type getSupplyOrderItemRepository struct {
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
+	pathIdentity              string
 }
 
 func NewGetSupplyOrderItemRepository(
@@ -18,6 +19,7 @@ func NewGetSupplyOrderItemRepository(
 ) (supplyorderitemdomainrepositoryinterfaces.GetSupplyOrderItemRepository, error) {
 	return &getSupplyOrderItemRepository{
 		supplyOrderItemDataSource,
+		"GetSupplyOrderItemRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getSupplyOrderItemRepo *getSupplyOrderItemRepository) Execute(filterFields
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getSupplyOrderItem",
+			getSupplyOrderItemRepo.pathIdentity,
 			err,
 		)
 	}

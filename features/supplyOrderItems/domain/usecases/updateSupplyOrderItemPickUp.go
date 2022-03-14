@@ -21,6 +21,7 @@ type updateSupplyOrderItemPickUpUsecase struct {
 	getAccountMemberAccessRepo                memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	proposeUpdatesupplyOrderItemPickUpRepo    supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemPickUpRepository
 	updatesupplyOrderItemPickUpAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                              string
 }
 
 func NewUpdateSupplyOrderItemPickUpUsecase(
@@ -37,6 +38,7 @@ func NewUpdateSupplyOrderItemPickUpUsecase(
 				SupplyOrderItemPickUpUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateSupplyOrderItemPickUpUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (updateSupplyOrderItemPickUpUcase *updateSupplyOrderItemPickUpUsecase) vali
 	if &input.Context == nil {
 		return supplyorderitempresentationusecasetypes.UpdateSupplyOrderItemPickUpUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateSupplyOrderItemPickUpUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateSupplyOrderItemPickUpUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (updateSupplyOrderItemPickUpUcase *updateSupplyOrderItemPickUpUsecase) Exec
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderItemPickUpUsecase",
+			updateSupplyOrderItemPickUpUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateSupplyOrderItemPickUpUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateSupplyOrderItemPickUpUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (updateSupplyOrderItemPickUpUcase *updateSupplyOrderItemPickUpUsecase) Exec
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderItemPickUpUsecase",
+			updateSupplyOrderItemPickUpUcase.pathIdentity,
 			err,
 		)
 	}
@@ -118,7 +118,7 @@ func (updateSupplyOrderItemPickUpUcase *updateSupplyOrderItemPickUpUsecase) Exec
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateSupplyOrderItemPickUpUsecase",
+			updateSupplyOrderItemPickUpUcase.pathIdentity,
 			err,
 		)
 	}

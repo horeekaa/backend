@@ -16,12 +16,14 @@ import (
 
 type descriptivePhotoDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewDescriptivePhotoDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbdescriptivephotodatasourceinterfaces.DescriptivePhotoDataSourceMongo, error) {
 	basicOperation.SetCollection("descriptivephotos")
 	return &descriptivePhotoDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "DescriptivePhotoDataSource",
 	}, nil
 }
 
@@ -129,8 +131,8 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValue
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/descriptivePhotoDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			descPhotoDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

@@ -20,6 +20,7 @@ type approveUpdateSupplyOrderItemTransactionComponent struct {
 	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                           string
 }
 
 func NewApproveUpdateSupplyOrderItemTransactionComponent(
@@ -35,6 +36,7 @@ func NewApproveUpdateSupplyOrderItemTransactionComponent(
 		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
 		loggingDataSource:                      loggingDataSource,
 		mapProcessorUtility:                    mapProcessorUtility,
+		pathIdentity:                           "ApproveUpdateSupplyOrderItemComponent",
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateSupplyOrderItem",
+			approveSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -72,7 +74,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateSupplyOrderItem",
+			approveSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -99,7 +101,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateSupplyOrderItem",
+			approveSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -134,7 +136,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					)
 					if err != nil {
 						return nil, horeekaacoreexceptiontofailure.ConvertException(
-							"/approveUpdateSupplyOrderItem",
+							approveSupplyOrderItemTrx.pathIdentity,
 							err,
 						)
 					}
@@ -158,7 +160,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					)
 					if err != nil {
 						return nil, horeekaacoreexceptiontofailure.ConvertException(
-							"/approveUpdateSupplyOrderItem",
+							approveSupplyOrderItemTrx.pathIdentity,
 							err,
 						)
 					}
@@ -183,10 +185,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					updateDescriptivePhoto,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/approveUpdateSupplyOrderItem",
-						err,
-					)
+					return nil, err
 				}
 			}
 		}
@@ -206,10 +205,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 				updateDescriptivePhoto,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/approveUpdateSupplyOrderItem",
-					err,
-				)
+				return nil, err
 			}
 		}
 	}
@@ -223,7 +219,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdateSupplyOrderItem",
+			approveSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}

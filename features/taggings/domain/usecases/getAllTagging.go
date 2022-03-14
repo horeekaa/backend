@@ -21,6 +21,7 @@ type getAllTaggingUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllTaggingRepo           taggingdomainrepositoryinterfaces.GetAllTaggingRepository
 	getAllTaggingAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewGetAllTaggingUsecase(
@@ -37,6 +38,7 @@ func NewGetAllTaggingUsecase(
 				BulkTaggingReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllTaggingUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (getAllTaggingUcase *getAllTaggingUsecase) validation(input taggingpresenta
 	if &input.Context == nil {
 		return &taggingpresentationusecasetypes.GetAllTaggingUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllTaggingUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllTaggingUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -68,15 +69,14 @@ func (getAllTaggingUcase *getAllTaggingUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllTaggingUsecase",
+			getAllTaggingUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllTaggingUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllTaggingUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -93,7 +93,7 @@ func (getAllTaggingUcase *getAllTaggingUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllTaggingUsecase",
+			getAllTaggingUcase.pathIdentity,
 			err,
 		)
 	}
@@ -106,7 +106,7 @@ func (getAllTaggingUcase *getAllTaggingUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllTaggingUsecase",
+			getAllTaggingUcase.pathIdentity,
 			err,
 		)
 	}

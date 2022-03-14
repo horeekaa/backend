@@ -28,6 +28,7 @@ type proposeUpdateSupplyOrderItemTransactionComponent struct {
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	supplyOrderItemLoader                  supplyorderitemdomainrepositoryutilityinterfaces.SupplyOrderItemLoader
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                           string
 }
 
 func NewProposeUpdateSupplyOrderItemTransactionComponent(
@@ -47,6 +48,7 @@ func NewProposeUpdateSupplyOrderItemTransactionComponent(
 		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
 		supplyOrderItemLoader:                  supplyOrderItemLoader,
 		mapProcessorUtility:                    mapProcessorUtility,
+		pathIdentity:                           "ProposeUpdateSupplyOrderItemComponent",
 	}, nil
 }
 
@@ -70,7 +72,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateSupplyOrderItemComponent",
+			updateSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -99,10 +101,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateSupplyOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -141,10 +140,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateSupplyOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotosReturn = append(savedPhotosReturn, createdReturnPhoto)
@@ -183,10 +179,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateSupplyOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -225,10 +218,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateSupplyOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
@@ -265,10 +255,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updateSupplyOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -307,10 +294,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateSupplyOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
@@ -376,7 +360,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateSupplyOrderItemComponent",
+			updateSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -410,7 +394,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 		if subTotalReturn > subTotal {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.SOReturnAmountExceedFulfilledAmount,
-				"/updateSupplyOrderItem",
+				updateSupplyOrderItemTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -427,7 +411,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdateSupplyOrderItem",
+					updateSupplyOrderItemTrx.pathIdentity,
 					err,
 				)
 			}
@@ -466,7 +450,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdateSupplyOrderItem",
+						updateSupplyOrderItemTrx.pathIdentity,
 						err,
 					)
 				}
@@ -512,7 +496,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateSupplyOrderItemComponent",
+			updateSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -551,7 +535,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdateSupplyOrderItemComponent",
+			updateSupplyOrderItemTrx.pathIdentity,
 			err,
 		)
 	}

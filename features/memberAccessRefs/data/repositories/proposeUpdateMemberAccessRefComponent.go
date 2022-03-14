@@ -17,6 +17,7 @@ type proposeUpdateMemberAccessRefTransactionComponent struct {
 	loggingDataSource                            databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                          coreutilityinterfaces.MapProcessorUtility
 	proposeUpdateMemberAccessRefUsecaseComponent memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefUsecaseComponent
+	pathIdentity                                 string
 }
 
 func NewProposeUpdateMemberAccessRefTransactionComponent(
@@ -28,26 +29,27 @@ func NewProposeUpdateMemberAccessRefTransactionComponent(
 		memberAccessRefDataSource: MemberAccessRefDataSource,
 		loggingDataSource:         loggingDataSource,
 		mapProcessorUtility:       mapProcessorUtility,
+		pathIdentity:              "ProposeUpdateMemberAccessRefComponent",
 	}, nil
 }
 
-func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) SetValidation(
+func (updateMemberAccessRefTrx *proposeUpdateMemberAccessRefTransactionComponent) SetValidation(
 	usecaseComponent memberaccessrefdomainrepositoryinterfaces.ProposeUpdateMemberAccessRefUsecaseComponent,
 ) (bool, error) {
-	updateProdTrx.proposeUpdateMemberAccessRefUsecaseComponent = usecaseComponent
+	updateMemberAccessRefTrx.proposeUpdateMemberAccessRefUsecaseComponent = usecaseComponent
 	return true, nil
 }
 
-func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) PreTransaction(
+func (updateMemberAccessRefTrx *proposeUpdateMemberAccessRefTransactionComponent) PreTransaction(
 	input *model.InternalUpdateMemberAccessRef,
 ) (*model.InternalUpdateMemberAccessRef, error) {
-	if updateProdTrx.proposeUpdateMemberAccessRefUsecaseComponent == nil {
+	if updateMemberAccessRefTrx.proposeUpdateMemberAccessRefUsecaseComponent == nil {
 		return input, nil
 	}
-	return updateProdTrx.proposeUpdateMemberAccessRefUsecaseComponent.Validation(input)
+	return updateMemberAccessRefTrx.proposeUpdateMemberAccessRefUsecaseComponent.Validation(input)
 }
 
-func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) TransactionBody(
+func (updateMemberAccessRefTrx *proposeUpdateMemberAccessRefTransactionComponent) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	input *model.InternalUpdateMemberAccessRef,
 ) (*model.MemberAccessRef, error) {
@@ -55,20 +57,20 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	jsonTemp, _ := json.Marshal(input)
 	json.Unmarshal(jsonTemp, updateMemberAccessRef)
 
-	existingMemberAccessRef, err := updateProdTrx.memberAccessRefDataSource.GetMongoDataSource().FindByID(
+	existingMemberAccessRef, err := updateMemberAccessRefTrx.memberAccessRefDataSource.GetMongoDataSource().FindByID(
 		updateMemberAccessRef.ID,
 		session,
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			updateMemberAccessRefTrx.pathIdentity,
 			err,
 		)
 	}
 
 	newDocumentJson, _ := json.Marshal(*updateMemberAccessRef)
 	oldDocumentJson, _ := json.Marshal(*existingMemberAccessRef)
-	loggingOutput, err := updateProdTrx.loggingDataSource.GetMongoDataSource().Create(
+	loggingOutput, err := updateMemberAccessRefTrx.loggingDataSource.GetMongoDataSource().Create(
 		&model.CreateLogging{
 			Collection: "MemberAccessRef",
 			Document: &model.ObjectIDOnly{
@@ -86,7 +88,7 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			updateMemberAccessRefTrx.pathIdentity,
 			err,
 		)
 	}
@@ -102,7 +104,7 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	jsonUpdate, _ := json.Marshal(updateMemberAccessRef)
 	json.Unmarshal(jsonUpdate, &updateMemberAccessRefMap)
 
-	updateProdTrx.mapProcessorUtility.RemoveNil(updateMemberAccessRefMap)
+	updateMemberAccessRefTrx.mapProcessorUtility.RemoveNil(updateMemberAccessRefMap)
 
 	jsonUpdate, _ = json.Marshal(updateMemberAccessRefMap)
 	json.Unmarshal(jsonUpdate, &fieldsToUpdateMemberAccessRef.ProposedChanges)
@@ -116,7 +118,7 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 		}
 	}
 
-	updatedMemberAccessRef, err := updateProdTrx.memberAccessRefDataSource.GetMongoDataSource().Update(
+	updatedMemberAccessRef, err := updateMemberAccessRefTrx.memberAccessRefDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": fieldsToUpdateMemberAccessRef.ID,
 		},
@@ -125,7 +127,7 @@ func (updateProdTrx *proposeUpdateMemberAccessRefTransactionComponent) Transacti
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			updateMemberAccessRefTrx.pathIdentity,
 			err,
 		)
 	}

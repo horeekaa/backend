@@ -2,7 +2,12 @@ package horeekaacoreerrorenums
 
 // string enums for usecase error
 const (
-	AuthenticationTokenNotExist string = "AUTHENTICATION_TOKEN_NOT_EXIST"
+	AuthenticationError      string = "AUTHENTICATION_ERROR"
+	ForbiddenError           string = "FORBIDDEN_ERROR"
+	ResourceNotFoundError    string = "RESOURCE_NOT_FOUND_ERROR"
+	ConflictWithCurrentError string = "CONFLICT_WITH_CURRENT_ERROR"
+	InvalidInputError        string = "INVALID_INPUT_ERROR"
 
-	AcceptInvitationNotAllowed string = "ACCEPT_INVITATION_NOT_ALLOWED"
+	GeneralError    string = "GENERAL_ERROR"
+	BadGatewayError string = "BAD_GATEWAY_ERROR"
 )

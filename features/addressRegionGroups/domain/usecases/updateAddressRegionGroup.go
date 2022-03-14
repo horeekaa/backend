@@ -23,6 +23,7 @@ type updateAddressRegionGroupUsecase struct {
 	proposeUpdateAddressRegionGroupRepo    addressregiongroupdomainrepositoryinterfaces.ProposeUpdateAddressRegionGroupRepository
 	approveUpdateAddressRegionGroupRepo    addressregiongroupdomainrepositoryinterfaces.ApproveUpdateAddressRegionGroupRepository
 	updateAddressRegionGroupAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                           string
 }
 
 func NewUpdateAddressRegionGroupUsecase(
@@ -41,6 +42,7 @@ func NewUpdateAddressRegionGroupUsecase(
 				AddressRegionGroupUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateAddressRegionGroupUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) validation
 	if &input.Context == nil {
 		return addressregiongrouppresentationusecasetypes.UpdateAddressRegionGroupUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateAddressRegionGroupUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateAddressRegionGroupUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateAddressRegionGroupUsecase",
+			updateAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateAddressRegionGroupUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateAddressRegionGroupUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateAddressRegionGroupUsecase",
+			updateAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}
@@ -109,16 +109,14 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 		if accMemberAccess.Access.AddressRegionGroupAccesses.AddressRegionGroupApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateAddressRegionGroupUsecase",
+				updateAddressRegionGroupUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.AddressRegionGroupAccesses.AddressRegionGroupApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateAddressRegionGroupUsecase",
+				updateAddressRegionGroupUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -129,7 +127,7 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateAddressRegionGroupUsecase",
+				updateAddressRegionGroupUcase.pathIdentity,
 				err,
 			)
 		}
@@ -152,7 +150,7 @@ func (updateAddressRegionGroupUcase *updateAddressRegionGroupUsecase) Execute(in
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateAddressRegionGroupUsecase",
+			updateAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}

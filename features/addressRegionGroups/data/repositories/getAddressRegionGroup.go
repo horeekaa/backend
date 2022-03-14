@@ -11,6 +11,7 @@ import (
 
 type getAddressRegionGroupRepository struct {
 	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
+	pathIdentity                 string
 }
 
 func NewGetAddressRegionGroupRepository(
@@ -18,6 +19,7 @@ func NewGetAddressRegionGroupRepository(
 ) (addressregiongroupdomainrepositoryinterfaces.GetAddressRegionGroupRepository, error) {
 	return &getAddressRegionGroupRepository{
 		AddressRegionGroupDataSource,
+		"GetAddressRegionGroupRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getAddressRegionGroupRepo *getAddressRegionGroupRepository) Execute(filter
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAddressRegionGroup",
+			getAddressRegionGroupRepo.pathIdentity,
 			err,
 		)
 	}

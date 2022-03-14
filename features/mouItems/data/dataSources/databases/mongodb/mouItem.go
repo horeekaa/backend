@@ -16,12 +16,14 @@ import (
 
 type mouItemDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewMouItemDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbmouitemdatasourceinterfaces.MouItemDataSourceMongo, error) {
 	basicOperation.SetCollection("mouitems")
 	return &mouItemDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "MouItemDataSource",
 	}, nil
 }
 
@@ -133,8 +135,8 @@ func (mouItemDataSourceMongo *mouItemDataSourceMongo) setDefaultValuesWhenUpdate
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/mouItemDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			mouItemDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

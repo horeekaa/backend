@@ -20,6 +20,7 @@ type createNotificationTransactionComponent struct {
 	firebaseMessaging        firebasemessagingcoreoperationinterfaces.FirebaseMessagingBasicOperation
 	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
 	masterPayloadLoader      notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader
+	pathIdentity             string
 }
 
 func NewCreateNotificationTransactionComponent(
@@ -33,6 +34,7 @@ func NewCreateNotificationTransactionComponent(
 		firebaseMessaging:        firebaseMessaging,
 		notifLocalizationBuilder: notifLocalizationBuilder,
 		masterPayloadLoader:      masterPayloadLoader,
+		pathIdentity:             "CreateNotificationComponent",
 	}, nil
 }
 
@@ -56,7 +58,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createNotification",
+			createNotifTrx.pathIdentity,
 			err,
 		)
 	}
@@ -67,7 +69,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createNotification",
+			createNotifTrx.pathIdentity,
 			err,
 		)
 	}
@@ -93,7 +95,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createNotification",
+			createNotifTrx.pathIdentity,
 			err,
 		)
 	}

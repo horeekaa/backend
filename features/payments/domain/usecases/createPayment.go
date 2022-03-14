@@ -21,6 +21,7 @@ type createPaymentUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createPaymentRepo           paymentdomainrepositoryinterfaces.CreatePaymentRepository
 	createPaymentAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewCreatePaymentUsecase(
@@ -37,6 +38,7 @@ func NewCreatePaymentUsecase(
 				PaymentCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreatePaymentUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createPaymentUcase *createPaymentUsecase) validation(input paymentpresenta
 	if &input.Context == nil {
 		return paymentpresentationusecasetypes.CreatePaymentUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createPaymentUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createPaymentUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createPaymentUcase *createPaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPaymentUsecase",
+			createPaymentUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createPaymentUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createPaymentUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createPaymentUcase *createPaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPaymentUsecase",
+			createPaymentUcase.pathIdentity,
 			err,
 		)
 	}
@@ -121,7 +121,7 @@ func (createPaymentUcase *createPaymentUsecase) Execute(input paymentpresentatio
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createPaymentUsecase",
+			createPaymentUcase.pathIdentity,
 			err,
 		)
 	}

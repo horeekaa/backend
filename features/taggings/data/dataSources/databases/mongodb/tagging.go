@@ -16,12 +16,14 @@ import (
 
 type taggingDataSourceMongo struct {
 	basicOperation mongodbcoreoperationinterfaces.BasicOperation
+	pathIdentity   string
 }
 
 func NewTaggingDataSourceMongo(basicOperation mongodbcoreoperationinterfaces.BasicOperation) (mongodbtaggingdatasourceinterfaces.TaggingDataSourceMongo, error) {
 	basicOperation.SetCollection("taggings")
 	return &taggingDataSourceMongo{
 		basicOperation: basicOperation,
+		pathIdentity:   "TaggingDataSource",
 	}, nil
 }
 
@@ -136,8 +138,8 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValuesWhenUpdate
 	}
 	if existingObject == nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.QueryObjectFailed,
-			"/taggingDataSource/update",
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			taggingDataSourceMongo.pathIdentity,
 			nil,
 		)
 	}

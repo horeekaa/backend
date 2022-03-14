@@ -27,6 +27,7 @@ type updateOrganizationUsecase struct {
 	getOrganizationRepo           organizationdomainrepositoryinterfaces.GetOrganizationRepository
 
 	updateOwnedOrganizationAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                          string
 }
 
 func NewUpdateOrganizationUsecase(
@@ -49,6 +50,7 @@ func NewUpdateOrganizationUsecase(
 				OrganizationUpdateOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateOrganizationUsecase",
 	}, nil
 }
 
@@ -56,9 +58,8 @@ func (updateOrganizationUcase *updateOrganizationUsecase) validation(input organ
 	if &input.Context == nil {
 		return organizationpresentationusecasetypes.UpdateOrganizationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateOrganizationUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateOrganizationUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -82,15 +83,14 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateOrganizationUsecase",
+			updateOrganizationUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateOrganizationUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateOrganizationUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -116,7 +116,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateOrganizationUsecase",
+			updateOrganizationUcase.pathIdentity,
 			err,
 		)
 	}
@@ -128,7 +128,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateOrganizationUsecase",
+			updateOrganizationUcase.pathIdentity,
 			err,
 		)
 	}
@@ -142,8 +142,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			if accMemberAccess.Organization.ID != organizationToUpdate.ID {
 				return nil, horeekaacoreerror.NewErrorObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					403,
-					"/updateOrganizationUsecase",
+					updateOrganizationUcase.pathIdentity,
 					nil,
 				)
 			}
@@ -160,7 +159,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			)
 			if err != nil {
 				return nil, horeekaacorefailuretoerror.ConvertFailure(
-					"/updateOrganizationUsecase",
+					updateOrganizationUcase.pathIdentity,
 					err,
 				)
 			}
@@ -172,16 +171,14 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		if accMemberAccess.Access.OrganizationAccesses.OrganizationApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateOrganizationUsecase",
+				updateOrganizationUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.OrganizationAccesses.OrganizationApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateOrganizationUsecase",
+				updateOrganizationUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -192,7 +189,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateOrganizationUsecase",
+				updateOrganizationUcase.pathIdentity,
 				err,
 			)
 		}
@@ -224,7 +221,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 			)
 			if err != nil {
 				return nil, horeekaacorefailuretoerror.ConvertFailure(
-					"/updateOrganizationUsecase",
+					updateOrganizationUcase.pathIdentity,
 					err,
 				)
 			}
@@ -248,7 +245,7 @@ func (updateOrganizationUcase *updateOrganizationUsecase) Execute(input organiza
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateOrganizationUsecase",
+			updateOrganizationUcase.pathIdentity,
 			err,
 		)
 	}

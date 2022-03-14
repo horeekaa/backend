@@ -20,6 +20,7 @@ type createMouTransactionComponent struct {
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
 	partyLoader       moudomainrepositoryutilityinterfaces.PartyLoader
 	generatedObjectID *primitive.ObjectID
+	pathIdentity      string
 }
 
 func NewCreateMouTransactionComponent(
@@ -31,6 +32,7 @@ func NewCreateMouTransactionComponent(
 		mouDataSource:     mouDataSource,
 		loggingDataSource: loggingDataSource,
 		partyLoader:       partyLoader,
+		pathIdentity:      "CreateMouComponent",
 	}, nil
 }
 
@@ -94,7 +96,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMou",
+			createMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -112,7 +114,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMou",
+			createMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -123,7 +125,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMou",
+			createMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -137,7 +139,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMou",
+			createMouTrx.pathIdentity,
 			err,
 		)
 	}

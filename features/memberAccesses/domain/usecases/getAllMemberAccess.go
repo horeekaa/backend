@@ -20,6 +20,7 @@ type getAllMemberAccessUsecase struct {
 	getAllMemberAccessRepo     memberaccessdomainrepositoryinterfaces.GetAllMemberAccessRepository
 
 	getOwnedMemberAccessAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                       string
 }
 
 func NewGetAllMemberAccessUsecase(
@@ -36,6 +37,7 @@ func NewGetAllMemberAccessUsecase(
 				MemberAccessReadOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllMemberAccessUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) validation(input memberacces
 	if &input.Context == nil {
 		return &memberaccesspresentationusecasetypes.GetAllMemberAccessUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllMemberAccessUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllMmbAccUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessUsecase",
+			getAllMmbAccUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllMemberAccessUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllMmbAccUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -101,7 +101,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessUsecase",
+			getAllMmbAccUcase.pathIdentity,
 			err,
 		)
 	}
@@ -128,7 +128,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 			)
 			if err != nil {
 				return nil, horeekaacorefailuretoerror.ConvertFailure(
-					"/getAllMemberAccessUsecase",
+					getAllMmbAccUcase.pathIdentity,
 					err,
 				)
 			}
@@ -147,7 +147,7 @@ func (getAllMmbAccUcase *getAllMemberAccessUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessUsecase",
+			getAllMmbAccUcase.pathIdentity,
 			err,
 		)
 	}

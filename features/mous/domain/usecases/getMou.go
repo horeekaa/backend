@@ -9,6 +9,7 @@ import (
 
 type getMouUsecase struct {
 	getMouRepository moudomainrepositoryinterfaces.GetMouRepository
+	pathIdentity     string
 }
 
 func NewGetMouUsecase(
@@ -16,29 +17,30 @@ func NewGetMouUsecase(
 ) (moupresentationusecaseinterfaces.GetMouUsecase, error) {
 	return &getMouUsecase{
 		getMouRepository,
+		"GetMouUsecase",
 	}, nil
 }
 
-func (getOrgUcase *getMouUsecase) validation(
+func (getMouUcase *getMouUsecase) validation(
 	input *model.MouFilterFields,
 ) (*model.MouFilterFields, error) {
 	return input, nil
 }
 
-func (getOrgUcase *getMouUsecase) Execute(
+func (getMouUcase *getMouUsecase) Execute(
 	filterFields *model.MouFilterFields,
 ) (*model.Mou, error) {
-	validatedFilterFields, err := getOrgUcase.validation(filterFields)
+	validatedFilterFields, err := getMouUcase.validation(filterFields)
 	if err != nil {
 		return nil, err
 	}
 
-	mou, err := getOrgUcase.getMouRepository.Execute(
+	mou, err := getMouUcase.getMouRepository.Execute(
 		validatedFilterFields,
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getMou",
+			getMouUcase.pathIdentity,
 			err,
 		)
 	}

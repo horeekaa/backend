@@ -27,7 +27,16 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionOK
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
 		Return(true, nil).
-		Once()
+		Times(3)
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(true, nil).
+		Twice()
 
 	mockedSingleResult.
 		On("Decode", mock.Anything).
@@ -57,8 +66,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionOK
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{
 			Session: mockedMongoSession,
@@ -84,7 +95,16 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionFi
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
 		Return(true, nil).
-		Once()
+		Times(3)
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(true, nil).
+		Twice()
 
 	mockedSingleResult.
 		On("Decode", mock.Anything).
@@ -110,8 +130,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionFi
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{
 			Session: mockedMongoSession,
@@ -123,15 +145,11 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionFi
 	mongodbBscOpSuite.mockedMongoCollectionRef.AssertExpectations(mongodbBscOpSuite.T())
 
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
-	gotest_assert.DeepEqual(mongodbBscOpSuite.T(),
+	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
-			horeekaacoreexception.NewExceptionObject(
-				horeekaacoreexceptionenums.IDNotFound,
-				fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
-				nil,
-			),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			mongo.ErrNoDocuments,
 		), err,
 	)
 
@@ -146,6 +164,15 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionUp
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
 		Return(true, nil).
+		Twice()
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(true, nil).
 		Once()
 
 	mongodbBscOpSuite.mockedMongoCollectionRef.On(
@@ -159,8 +186,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionUp
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{
 			Session: mockedMongoSession,
@@ -174,7 +203,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithSessionUp
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)
@@ -188,7 +217,16 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
 		Return(true, nil).
-		Once()
+		Times(3)
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(true, nil).
+		Twice()
 
 	mockedSingleResult.
 		On("Decode", mock.Anything).
@@ -218,8 +256,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{},
 	)
@@ -240,7 +280,16 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
 		Return(true, nil).
-		Once()
+		Times(3)
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(true, nil).
+		Twice()
 
 	mockedSingleResult.
 		On("Decode", mock.Anything).
@@ -266,8 +315,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{},
 	)
@@ -277,15 +328,11 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	mongodbBscOpSuite.mockedMongoCollectionRef.AssertExpectations(mongodbBscOpSuite.T())
 
 	assert.Equal(mongodbBscOpSuite.T(), false, out)
-	gotest_assert.DeepEqual(mongodbBscOpSuite.T(),
+	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.IDNotFound,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
-			horeekaacoreexception.NewExceptionObject(
-				horeekaacoreexceptionenums.IDNotFound,
-				fmt.Sprintf("/%s/findByID", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
-				nil,
-			),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			mongo.ErrNoDocuments,
 		), err,
 	)
 
@@ -295,6 +342,15 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessionUpstreamError() {
 	mongodbBscOpSuite.mockedMapProcessorUtility.
 		On("RemoveNil", mock.Anything).
+		Return(true, nil).
+		Twice()
+
+	mongodbBscOpSuite.mockedMapProcessorUtility.
+		On("FlattenMap",
+			mock.AnythingOfType("string"),
+			mock.Anything,
+			mock.Anything,
+		).
 		Return(true, nil).
 		Once()
 
@@ -309,8 +365,10 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 
 	var account model.Account
 	out, err := mongodbBscOpSuite.basicOperationUnderTest.Update(
-		map[string]interface{}{},
-		map[string]interface{}{},
+		map[string]interface{}{"_id": "test"},
+		map[string]interface{}{
+			"$set": map[string]interface{}{"name": "test"},
+		},
 		&account,
 		&mongodbcoretypes.OperationOptions{},
 	)
@@ -322,7 +380,7 @@ func (mongodbBscOpSuite *MongodbBasicOperationTestSuite) TestUpdateWithoutSessio
 	assert.Equal(mongodbBscOpSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			fmt.Sprintf("/%s/update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
+			fmt.Sprintf("%s.Update", mongodbBscOpSuite.basicOperationUnderTest.GetCollectionName()),
 			errors.New("Some Upstream Error"),
 		), err,
 	)

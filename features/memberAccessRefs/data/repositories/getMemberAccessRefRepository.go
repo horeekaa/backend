@@ -11,6 +11,7 @@ import (
 
 type getMemberAccessRefRepository struct {
 	memberAccessRefDataSource databasememberaccessrefdatasourceinterfaces.MemberAccessRefDataSource
+	pathIdentity              string
 }
 
 func NewGetMemberAccessRefRepository(
@@ -18,6 +19,7 @@ func NewGetMemberAccessRefRepository(
 ) (memberaccessrefdomainrepositoryinterfaces.GetMemberAccessRefRepository, error) {
 	return &getMemberAccessRefRepository{
 		memberAccessRefDataSource,
+		"GetMemberAccessRefRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getMmbAccessRefRepo *getMemberAccessRefRepository) Execute(filterFields *m
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getMemberAccessRef",
+			getMmbAccessRefRepo.pathIdentity,
 			err,
 		)
 	}

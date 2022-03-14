@@ -25,6 +25,7 @@ type bulkProposeUpdateTaggingTransactionComponent struct {
 	mapProcessorUtility           coreutilityinterfaces.MapProcessorUtility
 	taggingLoaderUtility          taggingdomainrepositoryutilityinterfaces.TaggingLoader
 	updateTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingUsecaseComponent
+	pathIdentity                  string
 }
 
 func NewBulkProposeUpdateTaggingTransactionComponent(
@@ -44,6 +45,7 @@ func NewBulkProposeUpdateTaggingTransactionComponent(
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
 		taggingLoaderUtility:   taggingLoaderUtility,
+		pathIdentity:           "BulkProposeUpdateTaggingComponent",
 	}, nil
 }
 
@@ -73,7 +75,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/bulkProposeUpdateTagging",
+			bulkProposeUpdateTaggingComp.pathIdentity,
 			err,
 		)
 	}
@@ -85,7 +87,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -101,7 +103,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -117,7 +119,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -138,7 +140,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -163,7 +165,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -200,7 +202,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkProposeUpdateTagging",
+				bulkProposeUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}

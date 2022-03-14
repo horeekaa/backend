@@ -17,6 +17,7 @@ type createTagTransactionComponent struct {
 	loggingDataSource         databaseloggingdatasourceinterfaces.LoggingDataSource
 	createTagUsecaseComponent tagdomainrepositoryinterfaces.CreateTagUsecaseComponent
 	generatedObjectID         *primitive.ObjectID
+	pathIdentity              string
 }
 
 func NewCreateTagTransactionComponent(
@@ -26,6 +27,7 @@ func NewCreateTagTransactionComponent(
 	return &createTagTransactionComponent{
 		tagDataSource:     tagDataSource,
 		loggingDataSource: loggingDataSource,
+		pathIdentity:      "CreateTagComponent",
 	}, nil
 }
 
@@ -86,7 +88,7 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createTag",
+			createTagTrx.pathIdentity,
 			err,
 		)
 	}
@@ -106,7 +108,7 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createTag",
+			createTagTrx.pathIdentity,
 			err,
 		)
 	}

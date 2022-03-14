@@ -9,6 +9,7 @@ import (
 
 type getAddressRegionGroupUsecase struct {
 	getAddressRegionGroupRepository addressregiongroupdomainrepositoryinterfaces.GetAddressRegionGroupRepository
+	pathIdentity                    string
 }
 
 func NewGetAddressRegionGroupUsecase(
@@ -16,6 +17,7 @@ func NewGetAddressRegionGroupUsecase(
 ) (addressregiongrouppresentationusecaseinterfaces.GetAddressRegionGroupUsecase, error) {
 	return &getAddressRegionGroupUsecase{
 		getAddressRegionGroupRepository,
+		"GetAddressRegionGroupUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getAddressRegionGroupUcase *getAddressRegionGroupUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAddressRegionGroup",
+			getAddressRegionGroupUcase.pathIdentity,
 			err,
 		)
 	}

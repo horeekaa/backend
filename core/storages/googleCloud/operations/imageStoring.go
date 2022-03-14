@@ -16,8 +16,9 @@ import (
 )
 
 type gcsBasicImageStoringOperation struct {
-	gcsClient  googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient
-	bucketName string
+	gcsClient    googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient
+	bucketName   string
+	pathIdentity string
 }
 
 func NewGCSBasicImageStoringOperation(
@@ -27,6 +28,7 @@ func NewGCSBasicImageStoringOperation(
 	return &gcsBasicImageStoringOperation{
 		gcsClient,
 		bucketName,
+		"GoogleCloudStorageBasicOperation",
 	}, nil
 }
 
@@ -49,7 +51,7 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) UploadImage(
 	if _, err := gcsBscImageStoringOps.gcsClient.CopyWrite(wc, file.File); err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.StoringImageFailed,
-			"/gcsBasicOperation/uploadImage",
+			gcsBscImageStoringOps.pathIdentity,
 			err,
 		)
 	}
@@ -57,7 +59,7 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) UploadImage(
 	if err := wc.Close(); err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClosingImageStoringWriterFailed,
-			"/gcsBasicOperation/uploadImage",
+			gcsBscImageStoringOps.pathIdentity,
 			err,
 		)
 	}
@@ -87,7 +89,7 @@ func (gcsBscImageStoringOps *gcsBasicImageStoringOperation) DeleteImage(
 	if err := o.Delete(ctx); err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DeleteImageFailed,
-			"/gcsBasicOperation/deleteImage",
+			gcsBscImageStoringOps.pathIdentity,
 			err,
 		)
 	}

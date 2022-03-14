@@ -23,9 +23,10 @@ type mongoClient struct {
 	client       *mongo.Client
 	databaseName string
 	timeout      time.Duration
+	pathIdentity string
 }
 
-func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
+func (mongoClient *mongoClient) newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(mongoTimeout)*time.Second)
 	defer cancel()
 
@@ -33,7 +34,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	if err != nil {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			err,
 		)
 	}
@@ -42,7 +43,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.DBConnectionFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			err,
 		)
 	}
@@ -52,7 +53,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 
 func (mongoClient *mongoClient) Connect() (bool, error) {
 	timeout, err := strconv.Atoi(coreconfigs.GetEnvVariable(coreconfigs.DbConfigTimeout))
-	client, err := newMongoClient(
+	client, err := mongoClient.newMongoClient(
 		coreconfigs.GetEnvVariable(coreconfigs.DbConfigURL),
 		timeout,
 	)
@@ -71,7 +72,7 @@ func (mongoClient *mongoClient) GetDatabaseName() (string, error) {
 	if &mongoClient.databaseName == nil {
 		return "", horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			nil,
 		)
 	}
@@ -82,7 +83,7 @@ func (mongoClient *mongoClient) GetDatabaseTimeout() (time.Duration, error) {
 	if &mongoClient.timeout == nil {
 		return time.Duration(0), horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			nil,
 		)
 	}
@@ -93,7 +94,7 @@ func (mongoClient *mongoClient) GetCollectionRef(collectionName string) (mongodb
 	if mongoClient.client == nil {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			nil,
 		)
 	}
@@ -105,7 +106,7 @@ func (mongoClient *mongoClient) CreateNewSession() (mongodbcorewrapperinterfaces
 	if mongoClient.client == nil {
 		return nil, horeekaaexceptioncore.NewExceptionObject(
 			horeekaaexceptioncoreenums.ClientInitializationFailed,
-			"/newMongoClient",
+			mongoClient.pathIdentity,
 			nil,
 		)
 	}
@@ -118,5 +119,7 @@ func (mongoClient *mongoClient) CreateNewSession() (mongodbcorewrapperinterfaces
 
 // NewMongoClientRef is getter for the mongodb database reference currently used
 func NewMongoClient() (mongodbcoreclientinterfaces.MongoClient, error) {
-	return &mongoClient{}, nil
+	return &mongoClient{
+		pathIdentity: "MongoDBClient",
+	}, nil
 }

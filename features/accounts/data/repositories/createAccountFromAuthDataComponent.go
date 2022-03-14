@@ -18,6 +18,7 @@ import (
 type createAccountFromAuthDataTransactionComponent struct {
 	personDataSource  databaseaccountdatasourceinterfaces.PersonDataSource
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource
+	pathIdentity      string
 }
 
 func NewCreateAccountFromAuthDataTransactionComponent(
@@ -27,6 +28,7 @@ func NewCreateAccountFromAuthDataTransactionComponent(
 	return &createAccountFromAuthDataTransactionComponent{
 		personDataSource:  personDataSource,
 		accountDataSource: accountDataSource,
+		pathIdentity:      "CreateAccountFromAuthDataComponent",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	if user == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AuthenticationTokenFailed,
-			"/createAccountFromAuthDataTransactionComponent",
+			createAccFromAuthDataCom.pathIdentity,
 			nil,
 		)
 	}
@@ -71,7 +73,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAccountFromAuthDataTransactionComponent",
+			createAccFromAuthDataCom.pathIdentity,
 			err,
 		)
 	}
@@ -88,7 +90,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createAccountFromAuthDataTransactionComponent",
+			createAccFromAuthDataCom.pathIdentity,
 			err,
 		)
 	}

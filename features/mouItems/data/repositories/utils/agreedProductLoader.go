@@ -19,6 +19,7 @@ type agreedProductLoader struct {
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource
 	mapProcessorUtility        coreutilityinterfaces.MapProcessorUtility
+	pathIdentity               string
 }
 
 func NewAgreedProductLoader(
@@ -32,6 +33,7 @@ func NewAgreedProductLoader(
 		productDataSource:          productDataSource,
 		descriptivePhotoDataSource: descriptivePhotoDataSource,
 		mapProcessorUtility:        mapProcessorUtility,
+		pathIdentity:               "ProductForMOULoader",
 	}, nil
 }
 
@@ -47,7 +49,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 	)
 	if err != nil {
 		return false, horeekaacoreexceptiontofailure.ConvertException(
-			"/agreedProductLoader",
+			agreedProdLoader.pathIdentity,
 			err,
 		)
 	}
@@ -79,7 +81,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 			)
 			if err != nil {
 				errChan <- horeekaacoreexceptiontofailure.ConvertException(
-					"/agreedProductLoader",
+					agreedProdLoader.pathIdentity,
 					err,
 				)
 			}
@@ -98,7 +100,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 			)
 			if err != nil {
 				errChan <- horeekaacoreexceptiontofailure.ConvertException(
-					"/agreedProductLoader",
+					agreedProdLoader.pathIdentity,
 					err,
 				)
 			}
@@ -110,7 +112,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 				)
 				if err != nil {
 					errChan <- horeekaacoreexceptiontofailure.ConvertException(
-						"/agreedProductLoader",
+						agreedProdLoader.pathIdentity,
 						err,
 					)
 				}

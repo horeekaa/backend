@@ -11,7 +11,8 @@ import (
 )
 
 type googleMapClient struct {
-	client googlemapcorewrapperinterfaces.GoogleMapClientWrapper
+	client       googlemapcorewrapperinterfaces.GoogleMapClientWrapper
+	pathIdentity string
 }
 
 func (gMapClient *googleMapClient) Initialize() (bool, error) {
@@ -21,7 +22,11 @@ func (gMapClient *googleMapClient) Initialize() (bool, error) {
 		),
 	)
 	if err != nil {
-		return false, err
+		return false, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.ClientInitializationFailed,
+			gMapClient.pathIdentity,
+			err,
+		)
 	}
 
 	wrappedClient, _ := googlemapcorewrappers.NewGoogleMapClientWrapper(mapClient)
@@ -34,7 +39,7 @@ func (gMapClient *googleMapClient) GetGoogleMapClient() (googlemapcorewrapperint
 	if gMapClient.client == nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClientInitializationFailed,
-			"/newGoogleMapClient/init",
+			gMapClient.pathIdentity,
 			nil,
 		)
 	}
@@ -42,5 +47,7 @@ func (gMapClient *googleMapClient) GetGoogleMapClient() (googlemapcorewrapperint
 }
 
 func NewGoogleMapClient() (googlemapcoreclientinterfaces.GoogleMapClient, error) {
-	return &googleMapClient{}, nil
+	return &googleMapClient{
+		pathIdentity: "GoogleMapClient",
+	}, nil
 }

@@ -16,6 +16,7 @@ type approveUpdateMouTransactionComponent struct {
 	mouDataSource       databasemoudatasourceinterfaces.MouDataSource
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewApproveUpdateMouTransactionComponent(
@@ -27,6 +28,7 @@ func NewApproveUpdateMouTransactionComponent(
 		mouDataSource:       mouDataSource,
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ApproveUpdateMouComponent",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			approveMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -61,7 +63,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			approveMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -88,7 +90,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			approveMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -126,7 +128,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			approveMouTrx.pathIdentity,
 			err,
 		)
 	}

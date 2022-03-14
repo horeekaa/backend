@@ -21,6 +21,7 @@ type createMemberAccessRefUsecase struct {
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.CreateMemberAccessRefRepository
 	createMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                        string
 }
 
 func NewCreateMemberAccessRefUsecase(
@@ -37,6 +38,7 @@ func NewCreateMemberAccessRefUsecase(
 				MemberAccessRefCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateMemberAccessRefUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) validation(input me
 	if &input.Context == nil {
 		return memberaccessrefpresentationusecasetypes.CreateMemberAccessRefUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createMemberAccessRefUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createMmbAccessRefUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
+			createMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createMemberAccessRefUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createMmbAccessRefUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
+			createMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}
@@ -112,7 +112,7 @@ func (createMmbAccessRefUcase *createMemberAccessRefUsecase) Execute(input membe
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMemberAccessRefUsecase",
+			createMmbAccessRefUcase.pathIdentity,
 			err,
 		)
 	}

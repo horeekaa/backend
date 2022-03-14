@@ -23,6 +23,7 @@ type getAllInvoiceUsecase struct {
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllInvoiceRepo           invoicedomainrepositoryinterfaces.GetAllInvoiceRepository
 	getAllInvoiceAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                string
 }
 
 func NewGetAllInvoiceUsecase(
@@ -39,6 +40,7 @@ func NewGetAllInvoiceUsecase(
 				InvoiceReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllInvoiceUsecase",
 	}, nil
 }
 
@@ -46,9 +48,8 @@ func (getAllInvoiceUcase *getAllInvoiceUsecase) validation(input invoicepresenta
 	if &input.Context == nil {
 		return &invoicepresentationusecasetypes.GetAllInvoiceUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllInvoiceUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllInvoiceUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -70,15 +71,14 @@ func (getAllInvoiceUcase *getAllInvoiceUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllInvoiceUsecase",
+			getAllInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllInvoiceUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllInvoiceUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -104,7 +104,7 @@ func (getAllInvoiceUcase *getAllInvoiceUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllInvoiceUsecase",
+			getAllInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
@@ -119,10 +119,10 @@ func (getAllInvoiceUcase *getAllInvoiceUsecase) Execute(
 			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAllInvoiceUsecase",
+				getAllInvoiceUcase.pathIdentity,
 				horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-					"/getAllInvoiceUsecase",
+					getAllInvoiceUcase.pathIdentity,
 					nil,
 				),
 			)
@@ -137,7 +137,7 @@ func (getAllInvoiceUcase *getAllInvoiceUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllInvoiceUsecase",
+			getAllInvoiceUcase.pathIdentity,
 			err,
 		)
 	}

@@ -11,6 +11,7 @@ import (
 
 type getAddressRepository struct {
 	addressDataSource databaseaddressdatasourceinterfaces.AddressDataSource
+	pathIdentity      string
 }
 
 func NewGetAddressRepository(
@@ -18,6 +19,7 @@ func NewGetAddressRepository(
 ) (addressdomainrepositoryinterfaces.GetAddressRepository, error) {
 	return &getAddressRepository{
 		addressDataSource,
+		"GetAddressRepository",
 	}, nil
 }
 
@@ -36,7 +38,7 @@ func (getAddressRefRepo *getAddressRepository) Execute(filterFields *model.Addre
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAddress",
+			getAddressRefRepo.pathIdentity,
 			err,
 		)
 	}

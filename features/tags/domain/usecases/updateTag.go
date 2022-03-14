@@ -23,6 +23,7 @@ type updateTagUsecase struct {
 	proposeUpdateTagRepo       tagdomainrepositoryinterfaces.ProposeUpdateTagRepository
 	approveUpdateTagRepo       tagdomainrepositoryinterfaces.ApproveUpdateTagRepository
 	updateTagAccessIdentity    *model.MemberAccessRefOptionsInput
+	pathIdentity               string
 }
 
 func NewUpdateTagUsecase(
@@ -41,6 +42,7 @@ func NewUpdateTagUsecase(
 				TagUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"UpdateTagUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateTagUcase *updateTagUsecase) validation(input tagpresentationusecaset
 	if &input.Context == nil {
 		return tagpresentationusecasetypes.UpdateTagUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/updateTagUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateTagUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -74,15 +75,14 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateTagUsecase",
+			updateTagUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/updateTagUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateTagUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -99,7 +99,7 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateTagUsecase",
+			updateTagUcase.pathIdentity,
 			err,
 		)
 	}
@@ -115,16 +115,14 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 		if accMemberAccess.Access.TagAccesses.TagApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateTagUsecase",
+				updateTagUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.TagAccesses.TagApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/updateTagUsecase",
+				updateTagUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -135,7 +133,7 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/updateTagUsecase",
+				updateTagUcase.pathIdentity,
 				err,
 			)
 		}
@@ -158,7 +156,7 @@ func (updateTagUcase *updateTagUsecase) Execute(input tagpresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/updateTagUsecase",
+			updateTagUcase.pathIdentity,
 			err,
 		)
 	}

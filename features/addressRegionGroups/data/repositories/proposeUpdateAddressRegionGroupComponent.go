@@ -16,6 +16,7 @@ type proposeUpdateAddressRegionGroupTransactionComponent struct {
 	addressRegionGroupDataSource databaseaddressregiongroupdatasourceinterfaces.AddressRegionGroupDataSource
 	loggingDataSource            databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility          coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                 string
 }
 
 func NewProposeUpdateAddressRegionGroupTransactionComponent(
@@ -27,6 +28,7 @@ func NewProposeUpdateAddressRegionGroupTransactionComponent(
 		addressRegionGroupDataSource: addressRegionGroupDataSource,
 		loggingDataSource:            loggingDataSource,
 		mapProcessorUtility:          mapProcessorUtility,
+		pathIdentity:                 "ProposeUpdateAddressRegionGroupComponent",
 	}, nil
 }
 
@@ -50,7 +52,7 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			updateAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -74,7 +76,7 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			updateAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}
@@ -113,7 +115,7 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateAddressRegionGroup",
+			updateAddressRegionGroupTrx.pathIdentity,
 			err,
 		)
 	}

@@ -23,6 +23,7 @@ type bulkUpdateTaggingUsecase struct {
 	proposeBulkUpdateTaggingRepo taggingdomainrepositoryinterfaces.BulkProposeUpdateTaggingRepository
 	approveBulkUpdateTaggingRepo taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingRepository
 	updateTaggingAccessIdentity  *model.MemberAccessRefOptionsInput
+	pathIdentity                 string
 }
 
 func NewBulkUpdateTaggingUsecase(
@@ -41,6 +42,7 @@ func NewBulkUpdateTaggingUsecase(
 				BulkTaggingUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"BulkUpdateTaggingUsecase",
 	}, nil
 }
 
@@ -48,9 +50,8 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) validation(input taggingpres
 	if &input.Context == nil {
 		return taggingpresentationusecasetypes.BulkUpdateTaggingUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/bulkUpdateTaggingUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateTaggingUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -71,15 +72,14 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) Execute(input taggingpresent
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateTaggingUsecase",
+			updateTaggingUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/bulkUpdateTaggingUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateTaggingUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -96,7 +96,7 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) Execute(input taggingpresent
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateTaggingUsecase",
+			updateTaggingUcase.pathIdentity,
 			err,
 		)
 	}
@@ -112,16 +112,14 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) Execute(input taggingpresent
 		if accMemberAccess.Access.BulkTaggingAccesses.BulkTaggingApproval == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/bulkUpdateTaggingUsecase",
+				updateTaggingUcase.pathIdentity,
 				nil,
 			)
 		}
 		if !*accMemberAccess.Access.BulkTaggingAccesses.BulkTaggingApproval {
 			return nil, horeekaacoreerror.NewErrorObject(
 				horeekaacorefailureenums.FeatureNotAccessibleByAccount,
-				403,
-				"/bulkUpdateTaggingUsecase",
+				updateTaggingUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -132,7 +130,7 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) Execute(input taggingpresent
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/bulkUpdateTaggingUsecase",
+				updateTaggingUcase.pathIdentity,
 				err,
 			)
 		}
@@ -155,7 +153,7 @@ func (updateTaggingUcase *bulkUpdateTaggingUsecase) Execute(input taggingpresent
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateTaggingUsecase",
+			updateTaggingUcase.pathIdentity,
 			err,
 		)
 	}

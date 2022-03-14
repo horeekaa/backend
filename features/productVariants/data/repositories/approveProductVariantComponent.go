@@ -18,6 +18,7 @@ type approveUpdateProductVariantTransactionComponent struct {
 	loggingDataSource                      databaseloggingdatasourceinterfaces.LoggingDataSource
 	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                           string
 }
 
 func NewApproveUpdateProductVariantTransactionComponent(
@@ -31,6 +32,7 @@ func NewApproveUpdateProductVariantTransactionComponent(
 		loggingDataSource:                      loggingDataSource,
 		approveUpdateDescriptivePhotoComponent: approveUpdateDescriptivePhotoComponent,
 		mapProcessorUtility:                    mapProcessorUtility,
+		pathIdentity:                           "ApproveUpdateProductVariantComponent",
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			approveProdVarTrx.pathIdentity,
 			err,
 		)
 	}
@@ -68,7 +70,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			approveProdVarTrx.pathIdentity,
 			err,
 		)
 	}
@@ -95,7 +97,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			approveProdVarTrx.pathIdentity,
 			err,
 		)
 	}
@@ -140,7 +142,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateProductVariant",
+					approveProdVarTrx.pathIdentity,
 					err,
 				)
 			}
@@ -156,7 +158,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateProductVariant",
+			approveProdVarTrx.pathIdentity,
 			err,
 		)
 	}

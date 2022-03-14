@@ -14,6 +14,7 @@ import (
 type getAllMemberAccessRepository struct {
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	mongoQueryBuilder      mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity           string
 }
 
 func NewGetAllMemberAccessRepository(
@@ -23,14 +24,15 @@ func NewGetAllMemberAccessRepository(
 	return &getAllMemberAccessRepository{
 		memberAccessDataSource,
 		mongoQueryBuilder,
+		"GetAllMemberAccessRepository",
 	}, nil
 }
 
-func (getAllmmbAccRepo *getAllMemberAccessRepository) Execute(
+func (getAllMemberAccessRepo *getAllMemberAccessRepository) Execute(
 	input memberaccessdomainrepositorytypes.GetAllMemberAccessInput,
 ) ([]*model.MemberAccess, error) {
 	filterFieldsMap := map[string]interface{}{}
-	getAllmmbAccRepo.mongoQueryBuilder.Execute(
+	getAllMemberAccessRepo.mongoQueryBuilder.Execute(
 		"",
 		input.FilterFields,
 		&filterFieldsMap,
@@ -40,14 +42,14 @@ func (getAllmmbAccRepo *getAllMemberAccessRepository) Execute(
 	data, _ := bson.Marshal(input.PaginationOpt)
 	bson.Unmarshal(data, &mongoPagination)
 
-	memberAccesses, err := getAllmmbAccRepo.memberAccessDataSource.GetMongoDataSource().Find(
+	memberAccesses, err := getAllMemberAccessRepo.memberAccessDataSource.GetMongoDataSource().Find(
 		filterFieldsMap,
 		&mongoPagination,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllmemberAccess",
+			getAllMemberAccessRepo.pathIdentity,
 			err,
 		)
 	}

@@ -21,6 +21,7 @@ type bulkUpdateNotificationUsecase struct {
 	getAccountMemberAccessRepo       memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	bulkUpdateNotificationRepo       notificationdomainrepositoryinterfaces.BulkUpdateNotificationRepository
 	updateNotificationAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                     string
 }
 
 func NewBulkUpdateNotificationUsecase(
@@ -37,6 +38,7 @@ func NewBulkUpdateNotificationUsecase(
 				AccountUpdate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"BulkUpdateNotificationUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) validation(input n
 	if &input.Context == nil {
 		return notificationpresentationusecasetypes.BulkUpdateNotificationUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/bulkUpdateNotificationUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				updateNotificationUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) Execute(input noti
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateNotificationUsecase",
+			updateNotificationUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/bulkUpdateNotificationUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			updateNotificationUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -92,7 +92,7 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) Execute(input noti
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateNotificationUsecase",
+			updateNotificationUcase.pathIdentity,
 			err,
 		)
 	}
@@ -108,7 +108,7 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) Execute(input noti
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/bulkUpdateNotificationUsecase",
+			updateNotificationUcase.pathIdentity,
 			err,
 		)
 	}

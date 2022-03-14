@@ -20,6 +20,7 @@ type getAccountUsecase struct {
 	getAccountMemberAccessRepository memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 
 	getAccountAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity             string
 }
 
 func NewGetAccountUsecase(
@@ -36,6 +37,7 @@ func NewGetAccountUsecase(
 				AccountRead: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAccountUsecase",
 	}, nil
 }
 
@@ -61,15 +63,14 @@ func (getAccUcase *getAccountUsecase) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAccountUsecase",
+				getAccUcase.pathIdentity,
 				err,
 			)
 		}
 		if account == nil {
 			return nil, horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAccountUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAccUcase.pathIdentity,
 				nil,
 			)
 		}
@@ -86,7 +87,7 @@ func (getAccUcase *getAccountUsecase) Execute(
 		)
 		if err != nil {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
-				"/getAccountUsecase",
+				getAccUcase.pathIdentity,
 				err,
 			)
 		}
@@ -97,7 +98,7 @@ func (getAccUcase *getAccountUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAccountUsecase",
+			getAccUcase.pathIdentity,
 			err,
 		)
 	}

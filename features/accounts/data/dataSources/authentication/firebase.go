@@ -17,11 +17,13 @@ import (
 
 type firebaseAuthRepo struct {
 	firebaseClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient
+	pathIdentity   string
 }
 
 func NewFirebaseAuthRepo(firebaseClient firebaseauthcoreclientinterfaces.FirebaseAuthenticationClient) (firebaseauthdatasourceinterfaces.FirebaseAuthRepo, error) {
 	return &firebaseAuthRepo{
 		firebaseClient,
+		"FirebaseAuthenticationOperation",
 	}, nil
 }
 
@@ -32,7 +34,7 @@ func (fbAuthRepo *firebaseAuthRepo) VerifyAndDecodeToken(context context.Context
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.DecodingAuthTokenFailed,
-			"/authentication/verifyAndDecodeToken",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -46,7 +48,7 @@ func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataByEmail(context context.Conte
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.GetAuthDataFailed,
-			"/authentication/getAuthUserDataByEmail",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -60,7 +62,7 @@ func (fbAuthRepo *firebaseAuthRepo) GetAuthUserDataById(context context.Context,
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.GetAuthDataFailed,
-			"/authentication/getAuthUserDataById",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -77,7 +79,7 @@ func (fbAuthRepo *firebaseAuthRepo) SetRoleInAuthUserData(context context.Contex
 	if err := client.SetCustomUserClaims(context, uid, claims); err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.SetAuthDataFailed,
-			"/authentication/setRoleInAuthUserData",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -114,7 +116,7 @@ func (fbAuthRepo *firebaseAuthRepo) UpdateAuthUserData(context context.Context, 
 	if err != nil {
 		return nil, horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpdateObjectFailed,
-			"/authentication/updateAuthUserData",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -132,7 +134,7 @@ func (fbAuthRepo *firebaseAuthRepo) GenerateEmailVerificationLink(context contex
 	if err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"firebase/generateEmailVerificationLink",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}
@@ -150,7 +152,7 @@ func (fbAuthRepo *firebaseAuthRepo) GeneratePasswordResetLink(context context.Co
 	if err != nil {
 		return "", horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.UpstreamException,
-			"firebase/passwordResetLinkWithSettings",
+			fbAuthRepo.pathIdentity,
 			err,
 		)
 	}

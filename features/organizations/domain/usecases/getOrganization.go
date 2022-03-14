@@ -9,6 +9,7 @@ import (
 
 type getOrganizationUsecase struct {
 	getOrganizationRepository organizationdomainrepositoryinterfaces.GetOrganizationRepository
+	pathIdentity              string
 }
 
 func NewGetOrganizationUsecase(
@@ -16,6 +17,7 @@ func NewGetOrganizationUsecase(
 ) (organizationpresentationusecaseinterfaces.GetOrganizationUsecase, error) {
 	return &getOrganizationUsecase{
 		getOrganizationRepository,
+		"GetOrganizationUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getOrgUcase *getOrganizationUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getOrganization",
+			getOrgUcase.pathIdentity,
 			err,
 		)
 	}

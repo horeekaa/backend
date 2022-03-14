@@ -23,6 +23,7 @@ type createMemberAccessTransactionComponent struct {
 	memberAccessDataSource             databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	loggingDataSource                  databaseloggingdatasourceinterfaces.LoggingDataSource
 	createMemberAccessUsecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessUsecaseComponent
+	pathIdentity                       string
 }
 
 func NewCreateMemberAccessTransactionComponent(
@@ -38,6 +39,7 @@ func NewCreateMemberAccessTransactionComponent(
 		memberAccessRefDataSource: memberAccessRefDataSource,
 		memberAccessDataSource:    memberAccessDataSource,
 		loggingDataSource:         loggingDataSource,
+		pathIdentity:              "CreateMemberAccessComponent",
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) PreTransact
 	if input.Account.ID == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.AccountIDNeededToRetrievePersonData,
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			nil,
 		)
 	}
@@ -63,7 +65,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) PreTransact
 		if input.Organization == nil {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess,
-				"/createMemberAccess",
+				createMemberAccessTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -89,7 +91,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
@@ -105,14 +107,14 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
 	if duplicateMemberAccess != nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.DuplicateObjectExist,
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			nil,
 		)
 	}
@@ -128,7 +130,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createMemberAccess",
+				createMemberAccessTrx.pathIdentity,
 				err,
 			)
 		}
@@ -147,14 +149,14 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
 	if memberAccessRef == nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.MemberAccessRefNotExist,
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			nil,
 		)
 	}
@@ -186,7 +188,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/creatememberAccesse",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}
@@ -206,7 +208,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMemberAccess",
+			createMemberAccessTrx.pathIdentity,
 			err,
 		)
 	}

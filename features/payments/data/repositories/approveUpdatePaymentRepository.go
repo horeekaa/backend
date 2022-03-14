@@ -17,6 +17,7 @@ type approveUpdatePaymentRepository struct {
 	approveUpdatePaymentTransactionComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent
 	updateInvoiceTrxComponent                invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                             string
 }
 
 func NewApproveUpdatePaymentRepository(
@@ -32,6 +33,7 @@ func NewApproveUpdatePaymentRepository(
 		approveUpdatePaymentTransactionComponent,
 		updateInvoiceTrxComponent,
 		mongoDBTransaction,
+		"ApproveUpdatePaymentRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -59,7 +61,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/approveUpdatePaymentRepository",
+			approveUpdatePaymentRepo.pathIdentity,
 			err,
 		)
 	}
@@ -79,10 +81,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 			updateDescriptivePhoto,
 		)
 		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/approveUpdatePaymentRepository",
-				err,
-			)
+			return nil, err
 		}
 	}
 
@@ -98,10 +97,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 				},
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/approveUpdatePaymentRepository",
-					err,
-				)
+				return nil, err
 			}
 		}
 	}

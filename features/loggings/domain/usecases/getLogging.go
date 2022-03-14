@@ -9,6 +9,7 @@ import (
 
 type getLoggingUsecase struct {
 	getLoggingRepository loggingdomainrepositoryinterfaces.GetLoggingRepository
+	pathIdentity         string
 }
 
 func NewGetLoggingUsecase(
@@ -16,6 +17,7 @@ func NewGetLoggingUsecase(
 ) (loggingpresentationusecaseinterfaces.GetLoggingUsecase, error) {
 	return &getLoggingUsecase{
 		getLoggingRepository,
+		"GetLoggingUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getLogUcase *getLoggingUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getLogging",
+			getLogUcase.pathIdentity,
 			err,
 		)
 	}

@@ -17,6 +17,7 @@ type approveUpdateMemberAccessRefTransactionComponent struct {
 	loggingDataSource                            databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                          coreutilityinterfaces.MapProcessorUtility
 	approveUpdateMemberAccessRefUsecaseComponent memberAccessRefdomainrepositoryinterfaces.ApproveUpdateMemberAccessRefUsecaseComponent
+	pathIdentity                                 string
 }
 
 func NewApproveUpdateMemberAccessRefTransactionComponent(
@@ -28,6 +29,7 @@ func NewApproveUpdateMemberAccessRefTransactionComponent(
 		memberAccessRefDataSource: memberAccessRefDataSource,
 		loggingDataSource:         loggingDataSource,
 		mapProcessorUtility:       mapProcessorUtility,
+		pathIdentity:              "ApproveUpdateMemberAccessRefComponent",
 	}, nil
 }
 
@@ -61,7 +63,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -72,7 +74,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -99,7 +101,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}
@@ -137,7 +139,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMemberAccessRef",
+			approveProdTrx.pathIdentity,
 			err,
 		)
 	}

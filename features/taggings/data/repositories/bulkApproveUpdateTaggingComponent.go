@@ -25,6 +25,7 @@ type bulkApproveUpdateTaggingTransactionComponent struct {
 	mapProcessorUtility           coreutilityinterfaces.MapProcessorUtility
 	taggingLoaderUtility          taggingdomainrepositoryutilityinterfaces.TaggingLoader
 	updateTaggingUsecaseComponent taggingdomainrepositoryinterfaces.BulkApproveUpdateTaggingUsecaseComponent
+	pathIdentity                  string
 }
 
 func NewBulkApproveUpdateTaggingTransactionComponent(
@@ -44,6 +45,7 @@ func NewBulkApproveUpdateTaggingTransactionComponent(
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
 		taggingLoaderUtility:   taggingLoaderUtility,
+		pathIdentity:           "BulkApproveUpdateTaggingComponent",
 	}, nil
 }
 
@@ -73,7 +75,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/bulkApproveUpdateTagging",
+			bulkApproveUpdateTaggingComp.pathIdentity,
 			err,
 		)
 	}
@@ -85,7 +87,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -98,7 +100,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -111,7 +113,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -129,7 +131,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -144,7 +146,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -171,7 +173,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}
@@ -207,7 +209,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/bulkApproveUpdateTagging",
+				bulkApproveUpdateTaggingComp.pathIdentity,
 				err,
 			)
 		}

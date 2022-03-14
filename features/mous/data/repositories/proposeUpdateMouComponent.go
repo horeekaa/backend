@@ -18,6 +18,7 @@ type proposeUpdateMouTransactionComponent struct {
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
 	partyLoader         moudomainrepositoryutilityinterfaces.PartyLoader
+	pathIdentity        string
 }
 
 func NewProposeUpdateMouTransactionComponent(
@@ -31,6 +32,7 @@ func NewProposeUpdateMouTransactionComponent(
 		loggingDataSource:   loggingDataSource,
 		mapProcessorUtility: mapProcessorUtility,
 		partyLoader:         partyLoader,
+		pathIdentity:        "ProposeUpdateMouComponent",
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			updateMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -79,7 +81,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			updateMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -92,7 +94,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			updateMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -103,7 +105,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			updateMouTrx.pathIdentity,
 			err,
 		)
 	}
@@ -141,7 +143,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateMou",
+			updateMouTrx.pathIdentity,
 			err,
 		)
 	}

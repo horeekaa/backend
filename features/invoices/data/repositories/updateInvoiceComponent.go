@@ -20,6 +20,7 @@ type updateInvoiceTransactionComponent struct {
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
 	paymentDataSource       databasepaymentdatasourceinterfaces.PaymentDataSource
 	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
+	pathIdentity            string
 }
 
 func NewUpdateInvoiceTransactionComponent(
@@ -33,6 +34,7 @@ func NewUpdateInvoiceTransactionComponent(
 		purchaseOrderDataSource: purchaseOrderDataSource,
 		paymentDataSource:       paymentDataSource,
 		mouDataSource:           mouDataSource,
+		pathIdentity:            "UpdateInvoiceComponent",
 	}, nil
 }
 
@@ -56,7 +58,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateInvoice",
+			updateInvoiceTrx.pathIdentity,
 			err,
 		)
 	}
@@ -83,7 +85,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateInvoice",
+				updateInvoiceTrx.pathIdentity,
 				err,
 			)
 		}
@@ -133,7 +135,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateInvoice",
+				updateInvoiceTrx.pathIdentity,
 				err,
 			)
 		}
@@ -180,7 +182,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateInvoice",
+				updateInvoiceTrx.pathIdentity,
 				err,
 			)
 		}
@@ -207,7 +209,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateInvoice",
+				updateInvoiceTrx.pathIdentity,
 				err,
 			)
 		}
@@ -270,7 +272,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updateInvoice",
+				updateInvoiceTrx.pathIdentity,
 				err,
 			)
 		}
@@ -298,7 +300,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateInvoice",
+			updateInvoiceTrx.pathIdentity,
 			err,
 		)
 	}
@@ -323,7 +325,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateInvoice",
+					updateInvoiceTrx.pathIdentity,
 					err,
 				)
 			}
@@ -341,7 +343,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updateInvoice",
+					updateInvoiceTrx.pathIdentity,
 					err,
 				)
 			}
@@ -365,7 +367,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateInvoice",
+			updateInvoiceTrx.pathIdentity,
 			err,
 		)
 	}

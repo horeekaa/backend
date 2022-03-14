@@ -25,6 +25,7 @@ type proposeUpdatePurchaseOrderTransactionComponent struct {
 	mouDataSource               databasemoudatasourceinterfaces.MouDataSource
 	mapProcessorUtility         coreutilityinterfaces.MapProcessorUtility
 	purchaseOrderDataLoader     purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
+	pathIdentity                string
 }
 
 func NewProposeUpdatePurchaseOrderTransactionComponent(
@@ -42,6 +43,7 @@ func NewProposeUpdatePurchaseOrderTransactionComponent(
 		mouDataSource:               mouDataSource,
 		mapProcessorUtility:         mapProcessorUtility,
 		purchaseOrderDataLoader:     purchaseOrderDataLoader,
+		pathIdentity:                "ProposeUpdatePurchaseOrderComponent",
 	}, nil
 }
 
@@ -65,7 +67,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			updatePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -77,7 +79,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			updatePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -91,7 +93,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			updatePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -124,7 +126,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updatePurchaseOrder",
+				updatePurchaseOrderTrx.pathIdentity,
 				err,
 			)
 		}
@@ -132,7 +134,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		if *updatePurchaseOrder.Total < *existingMou.MinimumOrderValueBeforeDelivery {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
-				"/updatePurchaseOrder",
+				updatePurchaseOrderTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -141,7 +143,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		if existingMou.RemainingCreditLimit < 0 {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
-				"/updatePurchaseOrder",
+				updatePurchaseOrderTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -157,7 +159,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/updatePurchaseOrder",
+				updatePurchaseOrderTrx.pathIdentity,
 				err,
 			)
 		}
@@ -179,7 +181,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrder",
+						updatePurchaseOrderTrx.pathIdentity,
 						err,
 					)
 				}
@@ -230,7 +232,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			updatePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -269,7 +271,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePurchaseOrder",
+			updatePurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}

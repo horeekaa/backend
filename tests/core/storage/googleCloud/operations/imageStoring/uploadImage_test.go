@@ -105,7 +105,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 		gcsOperationTestSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.StoringImageFailed,
-			"/gcsBasicOperation/uploadImage",
+			"GoogleCloudStorageBasicOperation",
 			errors.New("Some Upstream Error"),
 		),
 		err,
@@ -158,7 +158,7 @@ func (gcsOperationTestSuite *GoogleCloudStorageOperationTestSuite) TestUploadIma
 		gcsOperationTestSuite.T(),
 		horeekaacoreexception.NewExceptionObject(
 			horeekaacoreexceptionenums.ClosingImageStoringWriterFailed,
-			"/gcsBasicOperation/uploadImage",
+			"GoogleCloudStorageBasicOperation",
 			errors.New("Some Upstream Error"),
 		),
 		err,

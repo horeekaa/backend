@@ -28,6 +28,7 @@ type proposeUpdatePurchaseOrderItemTransactionComponent struct {
 	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	purchaseOrderItemLoader                purchaseorderitemdomainrepositoryutilityinterfaces.PurchaseOrderItemLoader
 	mapProcessorUtility                    coreutilityinterfaces.MapProcessorUtility
+	pathIdentity                           string
 }
 
 func NewProposeUpdatePurchaseOrderItemTransactionComponent(
@@ -47,6 +48,7 @@ func NewProposeUpdatePurchaseOrderItemTransactionComponent(
 		proposeUpdateDescriptivePhotoComponent: proposeUpdateDescriptivePhotoComponent,
 		purchaseOrderItemLoader:                purchaseOrderItemLoader,
 		mapProcessorUtility:                    mapProcessorUtility,
+		pathIdentity:                           "ProposeUpdatePurchaseOrderItemComponent",
 	}, nil
 }
 
@@ -70,7 +72,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePurchaseOrderItemComponent",
+			updatePurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -98,10 +100,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -140,10 +139,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updatePurchaseOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotosReturn = append(savedPhotosReturn, createdReturnPhoto)
@@ -182,10 +178,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -224,10 +217,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updatePurchaseOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotosAfterReceived = append(savedPhotosAfterReceived, createdAfterReceivedPhoto)
@@ -264,10 +254,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					photoToUpdate,
 				)
 				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/updatePurchaseOrderItem",
-						err,
-					)
+					return nil, err
 				}
 
 				if photoToUpdate.IsActive != nil {
@@ -306,10 +293,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				photoToCreate,
 			)
 			if err != nil {
-				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/updatePurchaseOrderItem",
-					err,
-				)
+				return nil, err
 			}
 
 			savedPhotos = append(savedPhotos, createdDescriptivePhoto)
@@ -376,7 +360,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePurchaseOrderItemComponent",
+			updatePurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -424,7 +408,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		if subTotalReturn > subTotal {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POReturnAmountExceedFulfilledAmount,
-				"/updatePurchaseOrderItem",
+				updatePurchaseOrderItemTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -447,14 +431,14 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
-					"/proposeUpdatePurchaseOrderItem",
+					updatePurchaseOrderItemTrx.pathIdentity,
 					err,
 				)
 			}
 			if existingPurchaseOrderToSupply == nil {
 				return nil, horeekaacorefailure.NewFailureObject(
 					horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
-					"/proposeUpdatePurchaseOrderItem",
+					updatePurchaseOrderItemTrx.pathIdentity,
 					nil,
 				)
 			}
@@ -493,7 +477,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 				)
 				if err != nil {
 					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						"/proposeUpdatePurchaseOrderItem",
+						updatePurchaseOrderItemTrx.pathIdentity,
 						err,
 					)
 				}
@@ -539,7 +523,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePurchaseOrderItemComponent",
+			updatePurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -578,7 +562,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/proposeUpdatePurchaseOrderItemComponent",
+			updatePurchaseOrderItemTrx.pathIdentity,
 			err,
 		)
 	}

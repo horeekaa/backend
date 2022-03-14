@@ -13,6 +13,7 @@ import (
 type getAllSupplyOrderItemRepository struct {
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	mongoQueryBuilder         mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity              string
 }
 
 func NewGetAllSupplyOrderItemRepository(
@@ -22,6 +23,7 @@ func NewGetAllSupplyOrderItemRepository(
 	return &getAllSupplyOrderItemRepository{
 		supplyOrderItemDataSource,
 		mongoQueryBuilder,
+		"GetAllSupplyOrderItemRepository",
 	}, nil
 }
 
@@ -44,7 +46,7 @@ func (getAllSOItemRepo *getAllSupplyOrderItemRepository) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getAllSupplyOrderItem",
+			getAllSOItemRepo.pathIdentity,
 			err,
 		)
 	}

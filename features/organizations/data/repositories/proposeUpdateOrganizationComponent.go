@@ -17,6 +17,7 @@ type proposeUpdateOrganizationTransactionComponent struct {
 	loggingDataSource                         databaseloggingdatasourceinterfaces.LoggingDataSource
 	mapProcessorUtility                       coreutilityinterfaces.MapProcessorUtility
 	proposeUpdateOrganizationUsecaseComponent organizationdomainrepositoryinterfaces.ProposeUpdateOrganizationUsecaseComponent
+	pathIdentity                              string
 }
 
 func NewProposeUpdateOrganizationTransactionComponent(
@@ -28,6 +29,7 @@ func NewProposeUpdateOrganizationTransactionComponent(
 		organizationDataSource: organizationDataSource,
 		loggingDataSource:      loggingDataSource,
 		mapProcessorUtility:    mapProcessorUtility,
+		pathIdentity:           "ProposeUpdateOrganizationComponent",
 	}, nil
 }
 
@@ -61,7 +63,7 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			updateOrgTrx.pathIdentity,
 			err,
 		)
 	}
@@ -86,7 +88,7 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			updateOrgTrx.pathIdentity,
 			err,
 		)
 	}
@@ -125,7 +127,7 @@ func (updateOrgTrx *proposeUpdateOrganizationTransactionComponent) TransactionBo
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updateOrganization",
+			updateOrgTrx.pathIdentity,
 			err,
 		)
 	}

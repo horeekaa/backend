@@ -13,19 +13,22 @@ import (
 )
 
 type googleCloudStorageClient struct {
-	client *storage.Client
+	client       *storage.Client
+	pathIdentity string
 }
 
 func NewGoogleCloudStorageClient() (googlecloudstoragecoreclientinterfaces.GoogleCloudStorageClient, error) {
-	return &googleCloudStorageClient{}, nil
+	return &googleCloudStorageClient{
+		pathIdentity: "GoogleCloudStorageClient",
+	}, nil
 }
 
 func (storageClient *googleCloudStorageClient) Initialize() (bool, error) {
 	client, err := storage.NewClient(context.Background())
 	if err != nil {
 		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.UpstreamException,
-			"/newGoogleCloudStorage/init",
+			horeekaacoreexceptionenums.ClientInitializationFailed,
+			storageClient.pathIdentity,
 			err,
 		)
 	}

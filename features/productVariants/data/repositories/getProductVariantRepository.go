@@ -11,6 +11,7 @@ import (
 
 type getProductVariantRepository struct {
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
+	pathIdentity             string
 }
 
 func NewGetProductVariantRepository(
@@ -18,10 +19,11 @@ func NewGetProductVariantRepository(
 ) (productvariantdomainrepositoryinterfaces.GetProductVariantRepository, error) {
 	return &getProductVariantRepository{
 		productVariantDataSource,
+		"GetProductVariantRepository",
 	}, nil
 }
 
-func (getProductVariantRefRepo *getProductVariantRepository) Execute(filterFields *model.ProductVariantFilterFields) (*model.ProductVariant, error) {
+func (getProductVariantRepo *getProductVariantRepository) Execute(filterFields *model.ProductVariantFilterFields) (*model.ProductVariant, error) {
 	if filterFields == nil {
 		return nil, nil
 	}
@@ -30,13 +32,13 @@ func (getProductVariantRefRepo *getProductVariantRepository) Execute(filterField
 	data, _ := bson.Marshal(filterFields)
 	bson.Unmarshal(data, &filterFieldsMap)
 
-	productVariant, err := getProductVariantRefRepo.productVariantDataSource.GetMongoDataSource().FindOne(
+	productVariant, err := getProductVariantRepo.productVariantDataSource.GetMongoDataSource().FindOne(
 		filterFieldsMap,
 		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/getProductVariant",
+			getProductVariantRepo.pathIdentity,
 			err,
 		)
 	}

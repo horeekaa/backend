@@ -18,6 +18,7 @@ type createMouItemTransactionComponent struct {
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	agreedProductLoader mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader
 	generatedObjectID   *primitive.ObjectID
+	pathIdentity        string
 }
 
 func (createMouItemTrx *createMouItemTransactionComponent) GenerateNewObjectID() primitive.ObjectID {
@@ -43,6 +44,7 @@ func NewCreateMouItemTransactionComponent(
 		mouItemDataSource:   mouItemDataSource,
 		loggingDataSource:   loggingDataSource,
 		agreedProductLoader: agreedProductLoader,
+		pathIdentity:        "CreateMouItemComponent",
 	}, nil
 }
 
@@ -85,7 +87,7 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMouItem",
+			createMouItemTrx.pathIdentity,
 			err,
 		)
 	}
@@ -105,7 +107,7 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createMouItem",
+			createMouItemTrx.pathIdentity,
 			err,
 		)
 	}

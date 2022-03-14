@@ -1,8 +1,6 @@
 package horeekaacoreexceptiontofailure
 
 import (
-	"encoding/json"
-
 	horeekaacorebaseexception "github.com/horeekaa/backend/core/errors/exceptions/base"
 	horeekaacoreexceptionenums "github.com/horeekaa/backend/core/errors/exceptions/enums"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
@@ -26,8 +24,6 @@ var upstreamFailure = map[string]bool{
 	horeekaacoreexceptionenums.DeleteImageFailed:               true,
 
 	horeekaacoreexceptionenums.ReverseGeocodeFailed: true,
-
-	horeekaacoreexceptionenums.SendNotifMessageFailed: true,
 }
 
 var upstreamDuplicateFailure = map[string]bool{
@@ -42,54 +38,49 @@ var authenticationFailure = map[string]bool{
 var objectNotFoundFailure = map[string]bool{
 	horeekaacoreexceptionenums.IDNotFound:        true,
 	horeekaacoreexceptionenums.GetAuthDataFailed: true,
+
+	horeekaacoreexceptionenums.NoUpdatableObjectFound: true,
 }
 
 // ConvertException helps convert exceptions coming from the repo layer to be a failure in service layer
-func ConvertException(path string, errorObject interface{}) *horeekaacorebasefailure.Failure {
-	var exception horeekaacorebaseexception.Exception
-	jsonTemp, _ := json.Marshal(errorObject)
-	json.Unmarshal(jsonTemp, &exception)
+func ConvertException(path string, err error) *horeekaacorebasefailure.Failure {
+	if exception, ok := err.(*horeekaacorebaseexception.Exception); ok {
+		if authenticationFailure[exception.Code] {
+			return horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.AuthenticationTokenFailed,
+				path,
+				exception,
+			)
+		}
 
-	errMsg := ""
-	if &exception.Message != nil {
-		errMsg = exception.Message
-	}
+		if upstreamDuplicateFailure[exception.Code] {
+			return horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.DuplicateObjectExist,
+				path,
+				exception,
+			)
+		}
 
-	if authenticationFailure[errMsg] {
-		return horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.AuthenticationTokenFailed,
-			path,
-			&exception,
-		)
-	}
+		if objectNotFoundFailure[exception.Code] {
+			return horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.ObjectNotFound,
+				path,
+				exception,
+			)
+		}
 
-	if upstreamDuplicateFailure[errMsg] {
-		return horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.DuplicateObjectExist,
-			path,
-			&exception,
-		)
-	}
-
-	if objectNotFoundFailure[errMsg] {
-		return horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.ObjectNotFound,
-			path,
-			&exception,
-		)
-	}
-
-	if upstreamFailure[errMsg] {
-		return horeekaacorefailure.NewFailureObject(
-			horeekaacorefailureenums.UpstreamFailures,
-			path,
-			&exception,
-		)
+		if upstreamFailure[exception.Code] {
+			return horeekaacorefailure.NewFailureObject(
+				horeekaacorefailureenums.UpstreamFailures,
+				path,
+				exception,
+			)
+		}
 	}
 
 	return horeekaacorefailure.NewFailureObject(
 		horeekaacorefailureenums.UnknownFailures,
 		path,
-		&exception,
+		err,
 	)
 }

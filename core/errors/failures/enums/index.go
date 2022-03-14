@@ -8,6 +8,7 @@ const (
 	AccountIDNeededToRetrievePersonData string = "ACCOUNT_ID_NEEDED_TO_RETRIEVE_PERSON_DATA"
 	FeatureNotAccessibleByAccount       string = "FEATURE_NOT_ACCESSIBLE_BY_ACCOUNT"
 	SendEmailTypeNotExist               string = "SEND_EMAIL_TYPE_NOT_EXIST"
+	AcceptInvitationNotAllowed          string = "ACCEPT_INVITATION_NOT_ALLOWED"
 
 	MemberAccessRefNotExist                                   string = "MEMBER_ACCESS_REF_NOT_EXIST"
 	OrganizationIDNeededToCreateOrganizationBasedMemberAccess string = "ORGANIZATION_ID_NEEDED_TO_CREATE_ORGANIZATION_BASED_MEMBER_ACCESS"

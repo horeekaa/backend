@@ -18,6 +18,7 @@ type proposeUpdatePaymentTransactionComponent struct {
 	loggingDataSource   databaseloggingdatasourceinterfaces.LoggingDataSource
 	paymentDataLoader   paymentdomainrepositoryutilityinterfaces.PaymentLoader
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility
+	pathIdentity        string
 }
 
 func NewProposeUpdatePaymentTransactionComponent(
@@ -31,6 +32,7 @@ func NewProposeUpdatePaymentTransactionComponent(
 		loggingDataSource:   loggingDataSource,
 		paymentDataLoader:   paymentDataLoader,
 		mapProcessorUtility: mapProcessorUtility,
+		pathIdentity:        "ProposeUpdatePaymentComponent",
 	}, nil
 }
 
@@ -54,7 +56,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -66,7 +68,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -91,7 +93,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}
@@ -130,7 +132,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/updatePayment",
+			updatePaymentTrx.pathIdentity,
 			err,
 		)
 	}

@@ -24,6 +24,7 @@ type createPurchaseOrderTransactionComponent struct {
 	mouDataSource           databasemoudatasourceinterfaces.MouDataSource
 	purchaseOrderDataLoader purchaseorderdomainrepositoryutilityinterfaces.PurchaseOrderLoader
 	generatedObjectID       *primitive.ObjectID
+	pathIdentity            string
 }
 
 func NewCreatePurchaseOrderTransactionComponent(
@@ -37,6 +38,7 @@ func NewCreatePurchaseOrderTransactionComponent(
 		loggingDataSource:       loggingDataSource,
 		mouDataSource:           mouDataSource,
 		purchaseOrderDataLoader: purchaseOrderDataLoader,
+		pathIdentity:            "CreatePurchaseOrderComponent",
 	}, nil
 }
 
@@ -74,14 +76,14 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) PreTransa
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrder",
+			createPurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
 	if purchaseOrder != nil {
 		return nil, horeekaacorefailure.NewFailureObject(
 			horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
-			"/createPurchaseOrder",
+			createPurchaseOrderTrx.pathIdentity,
 			nil,
 		)
 	}
@@ -128,7 +130,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrder",
+			createPurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -136,7 +138,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		if purchaseOrderToCreate.Total < *purchaseOrderToCreate.Mou.MinimumOrderValueBeforeDelivery {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POMinimumOrderValueHasNotMet,
-				"/createPurchaseOrder",
+				createPurchaseOrderTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -145,7 +147,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		if *purchaseOrderToCreate.Mou.RemainingCreditLimit < 0 {
 			return nil, horeekaacorefailure.NewFailureObject(
 				horeekaacorefailureenums.POSalesAmountExceedCreditLimit,
-				"/createPurchaseOrder",
+				createPurchaseOrderTrx.pathIdentity,
 				nil,
 			)
 		}
@@ -161,7 +163,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		)
 		if err != nil {
 			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				"/createPurchaseOrder",
+				createPurchaseOrderTrx.pathIdentity,
 				err,
 			)
 		}
@@ -185,7 +187,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrder",
+			createPurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}
@@ -204,7 +206,7 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			"/createPurchaseOrder",
+			createPurchaseOrderTrx.pathIdentity,
 			err,
 		)
 	}

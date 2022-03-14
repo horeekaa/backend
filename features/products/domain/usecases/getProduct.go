@@ -9,6 +9,7 @@ import (
 
 type getProductUsecase struct {
 	getProductRepository productdomainrepositoryinterfaces.GetProductRepository
+	pathIdentity         string
 }
 
 func NewGetProductUsecase(
@@ -16,6 +17,7 @@ func NewGetProductUsecase(
 ) (productpresentationusecaseinterfaces.GetProductUsecase, error) {
 	return &getProductUsecase{
 		getProductRepository,
+		"GetProductUsecase",
 	}, nil
 }
 
@@ -38,7 +40,7 @@ func (getProdUcase *getProductUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getProduct",
+			getProdUcase.pathIdentity,
 			err,
 		)
 	}

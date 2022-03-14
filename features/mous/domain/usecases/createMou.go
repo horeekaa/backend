@@ -21,6 +21,7 @@ type createMouUsecase struct {
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	createMouRepo              moudomainrepositoryinterfaces.CreateMouRepository
 	createMouAccessIdentity    *model.MemberAccessRefOptionsInput
+	pathIdentity               string
 }
 
 func NewCreateMouUsecase(
@@ -37,6 +38,7 @@ func NewCreateMouUsecase(
 				MouCreate: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"CreateMouUsecase",
 	}, nil
 }
 
@@ -44,9 +46,8 @@ func (createMouUcase *createMouUsecase) validation(input moupresentationusecaset
 	if &input.Context == nil {
 		return moupresentationusecasetypes.CreateMouUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/createMouUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				createMouUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -69,15 +70,14 @@ func (createMouUcase *createMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMouUsecase",
+			createMouUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/createMouUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			createMouUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -94,7 +94,7 @@ func (createMouUcase *createMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMouUsecase",
+			createMouUcase.pathIdentity,
 			err,
 		)
 	}
@@ -114,7 +114,7 @@ func (createMouUcase *createMouUsecase) Execute(input moupresentationusecasetype
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/createMouUsecase",
+			createMouUcase.pathIdentity,
 			err,
 		)
 	}

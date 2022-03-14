@@ -20,6 +20,7 @@ type getAllMemberAccessRefUsecase struct {
 	getAccountMemberAccessRepo          memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	getAllMemberAccessRefRepo           memberaccessrefdomainrepositoryinterfaces.GetAllMemberAccessRefRepository
 	getAllMemberAccessRefAccessIdentity *model.MemberAccessRefOptionsInput
+	pathIdentity                        string
 }
 
 func NewGetAllMemberAccessRefUsecase(
@@ -36,6 +37,7 @@ func NewGetAllMemberAccessRefUsecase(
 				MemberAccessRefReadAll: func(b bool) *bool { return &b }(true),
 			},
 		},
+		"GetAllMemberAccessRefUsecase",
 	}, nil
 }
 
@@ -43,9 +45,8 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) validation(input membe
 	if &input.Context == nil {
 		return &memberaccessrefpresentationusecasetypes.GetAllMemberAccessRefUsecaseInput{},
 			horeekaacoreerror.NewErrorObject(
-				horeekaacoreerrorenums.AuthenticationTokenNotExist,
-				401,
-				"/getAllMemberAccessRefUsecase",
+				horeekaacoreerrorenums.AuthenticationError,
+				getAllMmbAccRefUcase.pathIdentity,
 				nil,
 			)
 	}
@@ -67,15 +68,14 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessRefUsecase",
+			getAllMmbAccRefUcase.pathIdentity,
 			err,
 		)
 	}
 	if account == nil {
 		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationTokenNotExist,
-			401,
-			"/getAllMemberAccessRefUsecase",
+			horeekaacoreerrorenums.AuthenticationError,
+			getAllMmbAccRefUcase.pathIdentity,
 			nil,
 		)
 	}
@@ -90,7 +90,7 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessRefUsecase",
+			getAllMmbAccRefUcase.pathIdentity,
 			err,
 		)
 	}
@@ -103,7 +103,7 @@ func (getAllMmbAccRefUcase *getAllMemberAccessRefUsecase) Execute(
 	)
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			"/getAllMemberAccessRefUsecase",
+			getAllMmbAccRefUcase.pathIdentity,
 			err,
 		)
 	}
