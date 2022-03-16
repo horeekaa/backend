@@ -143,6 +143,12 @@ func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenUpdate(
 
 	if input.ProposedChanges != nil {
 		input.ProposedChanges.UpdatedAt = &currentTime
+		input.ProposedChanges.RemainingCreditLimit = func(i int) *int {
+			return &i
+		}(
+			*input.ProposedChanges.RemainingCreditLimit +
+				(*input.ProposedChanges.CreditLimit - existingObject.CreditLimit),
+		)
 	}
 
 	return true, nil
@@ -154,6 +160,8 @@ func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenCreate(
 	currentTime := time.Now()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	defaultIsActive := true
+
+	input.RemainingCreditLimit = input.CreditLimit
 
 	if input.ProposalStatus == nil {
 		input.ProposalStatus = &defaultProposalStatus
