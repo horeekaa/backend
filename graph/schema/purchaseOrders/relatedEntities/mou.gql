@@ -1,6 +1,7 @@
 input MouForPurchaseOrderInput {
   _id: ObjectID!
   title: String!
+  publicId: String!
   description: String
   startDate: Time!
   endDate: Time!
@@ -19,6 +20,7 @@ input MouForPurchaseOrderInput {
 type MouForPurchaseOrder {
   _id: ObjectID
   title: String
+  publicId: String
   description: String
   startDate: Time
   endDate: Time
