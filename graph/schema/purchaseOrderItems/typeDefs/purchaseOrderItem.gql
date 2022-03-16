@@ -168,6 +168,6 @@ type PurchaseOrderItem {
   recentApprovingAccount: Account
   proposedChanges: PurchaseOrderItem
   recentLog: Logging!
-  createdAt: Time!
+  createdAt: Time
   updatedAt: Time!
 }

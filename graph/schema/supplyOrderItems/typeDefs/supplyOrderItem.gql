@@ -165,6 +165,6 @@ type SupplyOrderItem {
   recentApprovingAccount: Account
   proposedChanges: SupplyOrderItem
   recentLog: Logging!
-  createdAt: Time!
+  createdAt: Time
   updatedAt: Time!
 }

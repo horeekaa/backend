@@ -144,6 +144,6 @@ type PurchaseOrder {
   recentApprovingAccount: Account
   proposedChanges: PurchaseOrder
   recentLog: Logging!
-  createdAt: Time!
+  createdAt: Time
   updatedAt: Time!
 }

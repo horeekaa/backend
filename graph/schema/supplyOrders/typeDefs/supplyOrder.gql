@@ -97,6 +97,6 @@ type SupplyOrder {
   recentApprovingAccount: Account
   proposedChanges: SupplyOrder
   recentLog: Logging!
-  createdAt: Time!
+  createdAt: Time
   updatedAt: Time!
 }
