@@ -54,7 +54,7 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 	if len(purchaseOrderToCreate.MouItems) > 0 {
 		generatedObjectID := createPurchaseOrderRepo.createPurchaseOrderTransactionComponent.GenerateNewObjectID()
 		savedPurchaseOrderItems := map[string][]*model.InternalCreatePurchaseOrderItem{}
-		mouForPurchaseOrders := map[string]*model.ObjectIDOnly{}
+		mouForPurchaseOrders := map[string]*model.ObjectIDOnlyOutput{}
 		for _, purchaseOrderItem := range purchaseOrderToCreate.MouItems {
 			if purchaseOrderItem.MouItem == nil {
 				continue
@@ -71,7 +71,7 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			purchaseOrderItem.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*purchaseOrderToCreate.SubmittingAccount)
-			createdPurchaseOrderOutput, err := createPurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
+			createdPurchaseOrderItemOutput, err := createPurchaseOrderRepo.createPurchaseOrderItemComponent.TransactionBody(
 				operationOption,
 				purchaseOrderItem,
 			)
@@ -79,11 +79,11 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 				return nil, err
 			}
 			savedPurchaseOrderItem := &model.InternalCreatePurchaseOrderItem{}
-			jsonTemp, _ := json.Marshal(createdPurchaseOrderOutput)
+			jsonTemp, _ := json.Marshal(createdPurchaseOrderItemOutput)
 			json.Unmarshal(jsonTemp, savedPurchaseOrderItem)
 
-			mouStringID := purchaseOrderItem.MouItem.Mou.ID.Hex()
-			mouForPurchaseOrders[mouStringID] = purchaseOrderItem.MouItem.Mou
+			mouStringID := createdPurchaseOrderItemOutput.MouItem.Mou.ID.Hex()
+			mouForPurchaseOrders[mouStringID] = createdPurchaseOrderItemOutput.MouItem.Mou
 
 			if savedPurchaseOrderItems[mouStringID] == nil {
 				savedPurchaseOrderItems[mouStringID] = []*model.InternalCreatePurchaseOrderItem{}

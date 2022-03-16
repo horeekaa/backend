@@ -7,4 +7,5 @@ input MouItemForPurchaseOrderItemInput {
 type MouItemForPurchaseOrderItem {
   _id: ObjectID!
   agreedProduct: AgreedProduct!
+  mou: ObjectIDOnlyOutput!
 }
