@@ -1,0 +1,56 @@
+input MemberAccessProposedInput {
+  _id: ObjectID!
+  account: ObjectIDOnly
+  invitationAccepted: Boolean
+  organization: OrganizationForMemberAccessInput
+  organizationMembershipRole: OrganizationMembershipRole
+  memberAccessRefType: MemberAccessRefType
+  defaultAccessLatestUpdate: ObjectIDOnly
+  access: MemberAccessRefOptionsInput
+  status: MemberAccessStatus
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input MemberAccessProposedFilterFields {
+  _id: ObjectID
+  invitationAccepted: BooleanFilterField
+  account: ObjectIDOnly
+  organization: OrganizationForMemberAccessFilterFields
+  organizationMembershipRole: StringFilterField
+  memberAccessRefType: StringFilterField
+  access: MemberAccessRefOptionsInput
+  defaultAccessLatestUpdate: ObjectIDOnlyFilterField
+  status: StringFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  proposedChanges: MemberAccessFilterFields
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type MemberAccessProposed {
+  _id: ObjectID!
+  invitationAccepted: Boolean!
+  account: Account!
+  organization: Organization
+  organizationMembershipRole: OrganizationMembershipRole
+  memberAccessRefType: MemberAccessRefType!
+  access: MemberAccessRefOptions!
+  defaultAccessLatestUpdate: MemberAccessRef!
+  status: MemberAccessStatus!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

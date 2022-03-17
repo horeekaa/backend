@@ -40,7 +40,7 @@ input DatabaseCreateMemberAccess {
   access: MemberAccessRefOptionsInput!
   defaultAccessLatestUpdate: ObjectIDOnly!
   status: MemberAccessStatus!
-  proposedChanges: DatabaseUpdateMemberAccess
+  proposedChanges: MemberAccessProposedInput
   recentLog: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -84,7 +84,7 @@ input DatabaseUpdateMemberAccess {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMemberAccess
+  proposedChanges: MemberAccessProposedInput
   updatedAt: Time
 }
 
@@ -101,7 +101,7 @@ input MemberAccessFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: MemberAccessFilterFields
+  proposedChanges: MemberAccessProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -136,7 +136,7 @@ type MemberAccess {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: MemberAccess
+  proposedChanges: MemberAccessProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
