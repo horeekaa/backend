@@ -87,6 +87,14 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  DescriptivePhotoProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   MemberAccess:
     fields:
       defaultAccessLatestUpdate:
