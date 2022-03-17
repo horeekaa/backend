@@ -17,7 +17,7 @@ input DatabaseCreateAddressRegionGroup {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateAddressRegionGroup
+  proposedChanges: AddressRegionGroupProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -47,7 +47,7 @@ input DatabaseUpdateAddressRegionGroup {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateAddressRegionGroup
+  proposedChanges: AddressRegionGroupProposedInput
   updatedAt: Time
 }
 
@@ -58,7 +58,7 @@ input AddressRegionGroupFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: AddressRegionGroupFilterFields
+  proposedChanges: AddressRegionGroupProposedFilterFields
   recentLog: ObjectIDOnly
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
@@ -72,7 +72,7 @@ type AddressRegionGroup {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: AddressRegionGroup
+  proposedChanges: AddressRegionGroupProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!

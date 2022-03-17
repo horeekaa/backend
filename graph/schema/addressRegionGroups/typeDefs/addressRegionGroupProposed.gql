@@ -1,0 +1,37 @@
+input AddressRegionGroupProposedInput {
+  _id: ObjectID!
+  publicId: String
+  cities: [City]
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input AddressRegionGroupProposedFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+  cities: StringFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type AddressRegionGroupProposed {
+  _id: ObjectID!
+  publicId: String!
+  cities: [City]
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
