@@ -63,7 +63,7 @@ input DatabaseCreateDescriptivePhoto {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateDescriptivePhoto
+  proposedChanges: DescriptivePhotoProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -115,7 +115,7 @@ input DatabaseUpdateDescriptivePhoto {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateDescriptivePhoto
+  proposedChanges: DescriptivePhotoProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -130,7 +130,7 @@ input DescriptivePhotoFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DescriptivePhotoFilterFields
+  proposedChanges: DescriptivePhotoProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -141,12 +141,12 @@ type DescriptivePhoto {
   description: String
   type: DescriptivePhotoType!
   object: ObjectIDOnlyOutput!
-  isActive: Boolean
+  isActive: Boolean!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: DescriptivePhoto
+  proposedChanges: DescriptivePhotoProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
