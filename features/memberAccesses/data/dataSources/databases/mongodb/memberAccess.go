@@ -1,8 +1,6 @@
 package mongodbmemberaccessdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Find(
 }
 
 func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Create(input *model.DatabaseCreateMemberAccess, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccess, error) {
-	_, err := memberAccDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.MemberAccess
-	_, err = memberAccDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := memberAccDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateMemberAccess,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.MemberAccess, error) {
-	_, err := memberAccDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := memberAccDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			memberAccDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.MemberAccess
@@ -121,46 +115,4 @@ func (memberAccDataSourceMongo *memberAccessDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateMemberAccess,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	var currentTime = time.Now()
-	existingObject, err := memberAccDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			memberAccDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (memberAccDataSourceMongo *memberAccessDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateMemberAccess,
-) (bool, error) {
-	var currentTime = time.Now()
-	if input.InvitationAccepted == nil {
-		input.InvitationAccepted = func(b bool) *bool { return &b }(false)
-	}
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
