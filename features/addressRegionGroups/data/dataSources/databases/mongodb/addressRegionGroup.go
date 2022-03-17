@@ -1,8 +1,6 @@
 package mongodbaddressregiongroupdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) Find(
 }
 
 func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) Create(input *model.DatabaseCreateAddressRegionGroup, operationOptions *mongodbcoretypes.OperationOptions) (*model.AddressRegionGroup, error) {
-	_, err := addrGroupDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.AddressRegionGroup
-	_, err = addrGroupDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := addrGroupDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +85,16 @@ func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) Create(input 
 }
 
 func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateAddressRegionGroup, operationOptions *mongodbcoretypes.OperationOptions) (*model.AddressRegionGroup, error) {
-	_, err := addrGroupDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := addrGroupDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			addrGroupDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.AddressRegionGroup
@@ -117,38 +111,4 @@ func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) Update(update
 	}
 
 	return &output, nil
-}
-
-func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateAddressRegionGroup,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-
-	existingObject, err := addrGroupDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			addrGroupDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (addrGroupDataSourceMongo *addressRegionGroupDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateAddressRegionGroup,
-) (bool, error) {
-	currentTime := time.Now()
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-
-	return true, nil
 }

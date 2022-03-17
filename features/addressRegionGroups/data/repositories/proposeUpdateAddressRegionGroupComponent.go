@@ -2,6 +2,7 @@ package addressregiongroupdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -81,6 +82,9 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 		)
 	}
 	updateAddressRegionGroup.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateAddressRegionGroup.UpdatedAt = &currentTime
 
 	fieldsToUpdateAddressRegionGroup := &model.DatabaseUpdateAddressRegionGroup{
 		ID: updateAddressRegionGroup.ID,
