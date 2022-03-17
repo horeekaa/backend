@@ -1,8 +1,6 @@
 package mongodbmemberaccessrefdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Find(
 }
 
 func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Create(input *model.DatabaseCreateMemberAccessRef, operationOptions *mongodbcoretypes.OperationOptions) (*model.MemberAccessRef, error) {
-	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.MemberAccessRef
-	_, err = mmbAccRefDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := mmbAccRefDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateMemberAccessRef,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.MemberAccessRef, error) {
-	_, err := mmbAccRefDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := mmbAccRefDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			mmbAccRefDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.MemberAccessRef
@@ -121,47 +115,4 @@ func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateMemberAccessRef,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	var currentTime = time.Now()
-	existingObject, err := mmbAccRefDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			mmbAccRefDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (mmbAccRefDataSourceMongo *memberAccessRefDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateMemberAccessRef,
-) (bool, error) {
-	var currentTime = time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
