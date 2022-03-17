@@ -3,6 +3,7 @@ package notificationdomainrepositories
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"firebase.google.com/go/v4/messaging"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -62,6 +63,9 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 			err,
 		)
 	}
+	currentTime := time.Now()
+	notificationToCreate.CreatedAt = &currentTime
+	notificationToCreate.UpdatedAt = &currentTime
 
 	createdNotification, err := createNotifTrx.notificationDataSource.GetMongoDataSource().Create(
 		notificationToCreate,

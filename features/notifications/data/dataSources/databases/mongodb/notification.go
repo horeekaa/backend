@@ -1,8 +1,6 @@
 package mongodbnotificationdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Find(
 }
 
 func (notificationDataSourceMongo *notificationDataSourceMongo) Create(input *model.DatabaseCreateNotification, operationOptions *mongodbcoretypes.OperationOptions) (*model.DatabaseNotification, error) {
-	_, err := notificationDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.DatabaseNotification
-	_, err = notificationDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := notificationDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateNotification,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.DatabaseNotification, error) {
-	_, err := notificationDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := notificationDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			notificationDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.DatabaseNotification
@@ -121,38 +115,4 @@ func (notificationDataSourceMongo *notificationDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateNotification,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := notificationDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			notificationDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (notificationDataSourceMongo *notificationDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateNotification,
-) (bool, error) {
-	currentTime := time.Now()
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-
-	return true, nil
 }
