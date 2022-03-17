@@ -2,6 +2,7 @@ package moudomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -96,6 +97,15 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 	}
 
 	updateMou.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updateMou.UpdatedAt = &currentTime
+	updateMou.RemainingCreditLimit = func(i int) *int {
+		return &i
+	}(
+		existingMou.RemainingCreditLimit +
+			existingMou.ProposedChanges.CreditLimit - existingMou.CreditLimit,
+	)
 
 	fieldsToUpdateMou := &model.DatabaseUpdateMou{
 		ID: updateMou.ID,

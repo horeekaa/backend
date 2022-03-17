@@ -1,8 +1,6 @@
 package mongodbmoudatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (mouDataSourceMongo *mouDataSourceMongo) Find(
 }
 
 func (mouDataSourceMongo *mouDataSourceMongo) Create(input *model.DatabaseCreateMou, operationOptions *mongodbcoretypes.OperationOptions) (*model.Mou, error) {
-	_, err := mouDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Mou
-	_, err = mouDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := mouDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (mouDataSourceMongo *mouDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateMou,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Mou, error) {
-	_, err := mouDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := mouDataSourceMongo.FindOne(nil, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			mouDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Mou
@@ -121,59 +115,4 @@ func (mouDataSourceMongo *mouDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateMou,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := mouDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			mouDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-		input.ProposedChanges.RemainingCreditLimit = func(i int) *int {
-			return &i
-		}(
-			*input.ProposedChanges.RemainingCreditLimit +
-				(*input.ProposedChanges.CreditLimit - existingObject.CreditLimit),
-		)
-	}
-
-	return true, nil
-}
-
-func (mouDataSourceMongo *mouDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateMou,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultIsActive := true
-
-	input.RemainingCreditLimit = input.CreditLimit
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.IsActive == nil {
-		input.IsActive = &defaultIsActive
-	}
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }

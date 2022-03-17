@@ -107,6 +107,21 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		mouToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouToCreate.SubmittingAccount.ID}
 	}
 
+	currentTime := time.Now()
+	mouToCreate.CreatedAt = &currentTime
+	mouToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if mouToCreate.ProposalStatus == nil {
+		mouToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultIsActive := true
+	if mouToCreate.IsActive == nil {
+		mouToCreate.IsActive = &defaultIsActive
+	}
+	mouToCreate.RemainingCreditLimit = mouToCreate.CreditLimit
+
 	_, err = createMouTrx.partyLoader.TransactionBody(
 		session,
 		input.FirstParty,
