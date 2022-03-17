@@ -104,6 +104,14 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 	invoiceToCreate.TotalPayable = totalPrice - totalDiscounted
 	invoiceToCreate.PaymentDueDate = input.PurchaseOrdersToInvoice[0].PaymentDueDate
 
+	currentTime := time.Now()
+	defaultStatus := model.InvoiceStatusAvailable
+	if invoiceToCreate.Status == nil {
+		invoiceToCreate.Status = &defaultStatus
+	}
+	invoiceToCreate.CreatedAt = &currentTime
+	invoiceToCreate.UpdatedAt = &currentTime
+
 	newInvoice, err := createInvoiceTrx.invoiceDataSource.GetMongoDataSource().Create(
 		invoiceToCreate,
 		session,
