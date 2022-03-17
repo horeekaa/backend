@@ -171,6 +171,18 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  MouItemProposed:
+    fields:
+      product:
+        resolver: true
+      mou:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Organization:
     fields:
       profilePhotos:
