@@ -2,6 +2,7 @@ package addressdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -109,6 +110,9 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	if *addressToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		addressToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: addressToCreate.SubmittingAccount.ID}
 	}
+	currentTime := time.Now()
+	addressToCreate.CreatedAt = currentTime
+	addressToCreate.UpdatedAt = currentTime
 
 	jsonTemp, _ = json.Marshal(addressToCreate)
 	json.Unmarshal(jsonTemp, &addressToCreate.ProposedChanges)

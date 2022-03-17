@@ -1,8 +1,6 @@
 package mongodbaddressdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (addrDataSourceMongo *addressDataSourceMongo) Find(
 }
 
 func (addrDataSourceMongo *addressDataSourceMongo) Create(input *model.DatabaseCreateAddress, operationOptions *mongodbcoretypes.OperationOptions) (*model.Address, error) {
-	_, err := addrDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Address
-	_, err = addrDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := addrDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +85,16 @@ func (addrDataSourceMongo *addressDataSourceMongo) Create(input *model.DatabaseC
 }
 
 func (addrDataSourceMongo *addressDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateAddress, operationOptions *mongodbcoretypes.OperationOptions) (*model.Address, error) {
-	_, err := addrDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := addrDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			addrDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Address
@@ -117,38 +111,4 @@ func (addrDataSourceMongo *addressDataSourceMongo) Update(updateCriteria map[str
 	}
 
 	return &output, nil
-}
-
-func (addrDataSourceMongo *addressDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateAddress,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-
-	existingObject, err := addrDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			addrDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (addrDataSourceMongo *addressDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateAddress,
-) (bool, error) {
-	currentTime := time.Now()
-
-	input.CreatedAt = currentTime
-	input.UpdatedAt = currentTime
-
-	return true, nil
 }
