@@ -3,6 +3,7 @@ package descriptivephotodomainrepositories
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -103,10 +104,14 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 		)
 	}
 	descPhotoToCreate.ID = &generatedObjectID
+	descPhotoToCreate.IsActive = true
 	descPhotoToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *descPhotoToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		descPhotoToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: descPhotoToCreate.SubmittingAccount.ID}
 	}
+	currentTime := time.Now()
+	descPhotoToCreate.CreatedAt = &currentTime
+	descPhotoToCreate.UpdatedAt = &currentTime
 
 	jsonTemp, _ = json.Marshal(descPhotoToCreate)
 	json.Unmarshal(jsonTemp, &descPhotoToCreate.ProposedChanges)
