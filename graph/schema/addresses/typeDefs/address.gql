@@ -43,7 +43,7 @@ input DatabaseCreateAddress {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateAddress
+  proposedChanges: AddressProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time!
   updatedAt: Time!
@@ -103,7 +103,7 @@ input DatabaseUpdateAddress {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateAddress
+  proposedChanges: AddressProposedInput
   updatedAt: Time
 }
 
@@ -124,7 +124,7 @@ input AddressFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: AddressFilterFields
+  proposedChanges: AddressProposedFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -146,7 +146,7 @@ type Address {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Address
+  proposedChanges: AddressProposed!
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
