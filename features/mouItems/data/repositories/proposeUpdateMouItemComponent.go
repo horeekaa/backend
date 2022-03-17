@@ -2,6 +2,7 @@ package mouitemdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -94,6 +95,9 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 		)
 	}
 	updateMouItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateMouItem.UpdatedAt = &currentTime
 
 	fieldsToUpdateMouItem := &model.DatabaseUpdateMouItem{
 		ID: updateMouItem.ID,
