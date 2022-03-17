@@ -109,6 +109,20 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  MemberAccessProposed:
+    fields:
+      defaultAccessLatestUpdate:
+        resolver: true
+      organization:
+        resolver: true
+      account:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Invoice:
     fields:
       purchaseOrders:
