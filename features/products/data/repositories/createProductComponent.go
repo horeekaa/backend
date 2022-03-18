@@ -2,6 +2,7 @@ package productdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -97,6 +98,29 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 	productToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *productToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		productToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	productToCreate.CreatedAt = &currentTime
+	productToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if productToCreate.ProposalStatus == nil {
+		productToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultIsActive := true
+	if productToCreate.IsActive == nil {
+		productToCreate.IsActive = &defaultIsActive
+	}
+	if productToCreate.Photos == nil {
+		productToCreate.Photos = []*model.ObjectIDOnly{}
+	}
+	if productToCreate.Variants == nil {
+		productToCreate.Variants = []*model.ObjectIDOnly{}
+	}
+	if productToCreate.Taggings == nil {
+		productToCreate.Taggings = []*model.ObjectIDOnly{}
 	}
 
 	jsonTemp, _ = json.Marshal(productToCreate)
