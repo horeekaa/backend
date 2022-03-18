@@ -2,6 +2,7 @@ package productvariantdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -114,6 +115,20 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 	productVariantToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *productVariantToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		productVariantToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productVariantToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	productVariantToCreate.CreatedAt = &currentTime
+	productVariantToCreate.UpdatedAt = &currentTime
+
+	defaultIsActive := true
+	if productVariantToCreate.IsActive == nil {
+		productVariantToCreate.IsActive = &defaultIsActive
+	}
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if productVariantToCreate.ProposalStatus == nil {
+		productVariantToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
 	jsonTemp, _ = json.Marshal(productVariantToCreate)

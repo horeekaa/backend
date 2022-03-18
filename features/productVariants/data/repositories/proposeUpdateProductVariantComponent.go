@@ -2,6 +2,7 @@ package productvariantdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -154,6 +155,9 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 		)
 	}
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateProductVariant.UpdatedAt = &currentTime
 
 	fieldsToUpdateProductVariant := &model.DatabaseUpdateProductVariant{
 		ID: updateProductVariant.ID,
