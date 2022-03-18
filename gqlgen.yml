@@ -231,6 +231,16 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  PaymentProposed:
+    fields:
+      invoice:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Product:
     fields:
       submittingAccount:
