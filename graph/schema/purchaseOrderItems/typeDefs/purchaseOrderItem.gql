@@ -46,7 +46,7 @@ input DatabaseCreatePurchaseOrderItem {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePurchaseOrderItem
+  proposedChanges: PurchaseOrderItemProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -115,7 +115,7 @@ input DatabaseUpdatePurchaseOrderItem {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePurchaseOrderItem
+  proposedChanges: PurchaseOrderItemProposedInput
   updatedAt: Time
 }
 
@@ -141,7 +141,7 @@ input PurchaseOrderItemFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: PurchaseOrderItemFilterFields
+  proposedChanges: PurchaseOrderItemProposedFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -166,7 +166,7 @@ type PurchaseOrderItem {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: PurchaseOrderItem
+  proposedChanges: PurchaseOrderItemProposed
   recentLog: Logging!
   createdAt: Time
   updatedAt: Time!
