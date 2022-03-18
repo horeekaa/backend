@@ -32,7 +32,7 @@ input DatabaseCreatePayment {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePayment
+  proposedChanges: PaymentProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -73,7 +73,7 @@ input DatabaseUpdatePayment {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdatePayment
+  proposedChanges: PaymentProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -88,7 +88,7 @@ input PaymentFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: PaymentFilterFields
+  proposedChanges: PaymentProposedFilterFields
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -105,7 +105,7 @@ type Payment {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Payment
+  proposedChanges: PaymentProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!

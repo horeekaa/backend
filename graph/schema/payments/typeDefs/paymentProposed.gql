@@ -1,0 +1,48 @@
+input PaymentProposedInput {
+  _id: ObjectID!
+  amount: Int
+  note: String
+  type: PaymentType
+  photo: ObjectIDOnly
+  invoice: InvoiceForPaymentInput
+  organization: OrganizationForPaymentInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input PaymentProposedFilterFields {
+  _id: ObjectID
+  amount: IntFilterField
+  note: StringFilterField
+  type: StringFilterField
+  invoice: InvoiceForPaymentFilterFields
+  organization: OrganizationForPaymentFilterFields
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type PaymentProposed {
+  _id: ObjectID!
+  amount: Int!
+  note: String
+  type: PaymentType!
+  photo: DescriptivePhoto!
+  invoice: Invoice!
+  organization: Organization!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}
