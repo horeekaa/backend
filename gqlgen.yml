@@ -255,6 +255,20 @@ models:
         resolver: true
       taggings:
         resolver: true
+  ProductProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+      photos:
+        resolver: true
+      variants:
+        resolver: true
+      taggings:
+        resolver: true
   ProductVariant:
     fields:
       photo:
