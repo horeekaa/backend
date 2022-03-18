@@ -1,8 +1,6 @@
 package mongodbpurchaseorderItemdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) Find(
 }
 
 func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) Create(input *model.DatabaseCreatePurchaseOrderItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.PurchaseOrderItem, error) {
-	_, err := purcOrderItemDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.PurchaseOrderItem
-	_, err = purcOrderItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := purcOrderItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) Update(
 	updateData *model.DatabaseUpdatePurchaseOrderItem,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.PurchaseOrderItem, error) {
-	_, err := purcOrderItemDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := purcOrderItemDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			purcOrderItemDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.PurchaseOrderItem
@@ -121,53 +115,4 @@ func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdatePurchaseOrderItem,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := purcOrderItemDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			purcOrderItemDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	if input.PurchaseOrderItemReturn != nil {
-		if existingObject.PurchaseOrderItemReturn == nil {
-			input.PurchaseOrderItemReturn.CreatedAt = &currentTime
-		}
-		input.PurchaseOrderItemReturn.UpdatedAt = &currentTime
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (purcOrderItemDataSourceMongo *purchaseOrderItemDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreatePurchaseOrderItem,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultStatus := model.PurchaseOrderItemStatusPendingConfirmation
-
-	if input.Status == nil {
-		input.Status = &defaultStatus
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
