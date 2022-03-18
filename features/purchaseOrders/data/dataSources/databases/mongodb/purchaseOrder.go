@@ -77,15 +77,8 @@ func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) Find(
 }
 
 func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) Create(input *model.DatabaseCreatePurchaseOrder, operationOptions *mongodbcoretypes.OperationOptions) (*model.PurchaseOrder, error) {
-	_, err := purcOrderDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.PurchaseOrder
-	_, err = purcOrderDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := purcOrderDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +91,16 @@ func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) Update(
 	updateData *model.DatabaseUpdatePurchaseOrder,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.PurchaseOrder, error) {
-	_, err := purcOrderDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := purcOrderDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			purcOrderDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.PurchaseOrder
@@ -140,53 +136,6 @@ func (purchaseOrderDataSourceMongo *purchaseOrderDataSourceMongo) UpdateAll(
 	)
 	if err != nil {
 		return false, err
-	}
-
-	return true, nil
-}
-
-func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdatePurchaseOrder,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := purcOrderDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			purcOrderDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (purcOrderDataSourceMongo *purchaseOrderDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreatePurchaseOrder,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultStatus := model.PurchaseOrderStatusOpen
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	if input.Status == nil {
-		input.Status = &defaultStatus
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
 	}
 
 	return true, nil

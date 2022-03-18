@@ -197,6 +197,20 @@ func (createPurchaseOrderTrx *createPurchaseOrderTransactionComponent) Transacti
 		purchaseOrderToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: purchaseOrderToCreate.SubmittingAccount.ID}
 	}
 
+	currentTime := time.Now()
+	purchaseOrderToCreate.CreatedAt = &currentTime
+	purchaseOrderToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if purchaseOrderToCreate.ProposalStatus == nil {
+		purchaseOrderToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultStatus := model.PurchaseOrderStatusOpen
+	if purchaseOrderToCreate.Status == nil {
+		purchaseOrderToCreate.Status = &defaultStatus
+	}
+
 	jsonTemp, _ = json.Marshal(purchaseOrderToCreate)
 	json.Unmarshal(jsonTemp, &purchaseOrderToCreate.ProposedChanges)
 
