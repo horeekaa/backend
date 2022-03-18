@@ -281,6 +281,18 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  ProductVariantProposed:
+    fields:
+      photo:
+        resolver: true
+      product:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   PurchaseOrder:
     fields:
       items:
