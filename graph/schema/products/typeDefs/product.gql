@@ -32,7 +32,7 @@ input DatabaseCreateProduct {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateProduct
+  proposedChanges: ProductProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -83,7 +83,7 @@ input DatabaseUpdateProduct {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateProduct
+  proposedChanges: ProductProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -98,7 +98,7 @@ input ProductFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ProductFilterFields
+  proposedChanges: ProductProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -115,7 +115,7 @@ type Product {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Product
+  proposedChanges: ProductProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
