@@ -1,8 +1,6 @@
 package mongodbpaymentdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (paymentDataSourceMongo *paymentDataSourceMongo) Find(
 }
 
 func (paymentDataSourceMongo *paymentDataSourceMongo) Create(input *model.DatabaseCreatePayment, operationOptions *mongodbcoretypes.OperationOptions) (*model.Payment, error) {
-	_, err := paymentDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Payment
-	_, err = paymentDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := paymentDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (paymentDataSourceMongo *paymentDataSourceMongo) Update(
 	updateData *model.DatabaseUpdatePayment,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Payment, error) {
-	_, err := paymentDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := paymentDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			paymentDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Payment
@@ -121,48 +115,4 @@ func (paymentDataSourceMongo *paymentDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (paymentDataSourceMongo *paymentDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdatePayment,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := paymentDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			paymentDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (paymentDataSourceMongo *paymentDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreatePayment,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
