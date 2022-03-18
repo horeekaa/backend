@@ -1,8 +1,6 @@
 package mongodborganizationdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Find(
 }
 
 func (orgDataSourceMongo *organizationDataSourceMongo) Create(input *model.DatabaseCreateOrganization, operationOptions *mongodbcoretypes.OperationOptions) (*model.Organization, error) {
-	_, err := orgDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Organization
-	_, err = orgDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := orgDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateOrganization,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Organization, error) {
-	_, err := orgDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := orgDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			orgDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Organization
@@ -121,56 +115,4 @@ func (orgDataSourceMongo *organizationDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateOrganization,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := orgDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			orgDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (orgDataSourceMongo *organizationDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateOrganization,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultPoint := 0
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	if input.ProfilePhotos == nil {
-		input.ProfilePhotos = []*model.ObjectIDOnly{}
-	}
-	if input.Taggings == nil {
-		input.Taggings = []*model.ObjectIDOnly{}
-	}
-	input.Point = &defaultPoint
-	input.UnfinalizedPoint = &defaultPoint
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
