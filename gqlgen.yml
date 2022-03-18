@@ -207,6 +207,20 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  OrganizationProposed:
+    fields:
+      profilePhotos:
+        resolver: true
+      taggings:
+        resolver: true
+      addresses:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Payment:
     fields:
       invoice:
