@@ -417,6 +417,22 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  TaggingProposed:
+    fields:
+      tag:
+        resolver: true
+      correlatedTag:
+        resolver: true
+      product:
+        resolver: true
+      organization:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
 
   ID:
     model:
