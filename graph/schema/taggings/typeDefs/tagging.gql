@@ -61,7 +61,7 @@ input DatabaseCreateTagging {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateTagging
+  proposedChanges: TaggingProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -146,7 +146,7 @@ input DatabaseUpdateTagging {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateTagging
+  proposedChanges: TaggingProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
@@ -162,7 +162,7 @@ input TaggingFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: TaggingFilterFields
+  proposedChanges: TaggingProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -178,7 +178,7 @@ type Tagging {
   proposalStatusReason: String
   submittingAccount: Account
   recentApprovingAccount: Account
-  proposedChanges: Tagging
+  proposedChanges: TaggingProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
