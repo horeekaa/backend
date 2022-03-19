@@ -357,6 +357,16 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  SupplyOrderProposed:
+    fields:
+      items:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   SupplyOrderItem:
     fields:
       photos:
