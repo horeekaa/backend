@@ -22,7 +22,7 @@ input DatabaseCreateSupplyOrder {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateSupplyOrder
+  proposedChanges: SupplyOrderProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time!
   updatedAt: Time!
@@ -59,7 +59,7 @@ input DatabaseUpdateSupplyOrder {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateSupplyOrder
+  proposedChanges: SupplyOrderProposedInput
   updatedAt: Time
 }
 
@@ -77,7 +77,7 @@ input SupplyOrderFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: SupplyOrderFilterFields
+  proposedChanges: SupplyOrderProposedFilterFields
   createdAt: TimeFilterField
   updatedAt: TimeFilterField
 }
@@ -95,7 +95,7 @@ type SupplyOrder {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: SupplyOrder
+  proposedChanges: SupplyOrderProposed
   recentLog: Logging!
   createdAt: Time
   updatedAt: Time!
