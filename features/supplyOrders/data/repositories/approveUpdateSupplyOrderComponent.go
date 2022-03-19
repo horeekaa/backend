@@ -2,6 +2,7 @@ package supplyorderdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -111,6 +112,9 @@ func (approveSupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 	}
 
 	updateSupplyOrder.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updateSupplyOrder.UpdatedAt = &currentTime
 
 	fieldsToUpdatesupplyOrder := &model.DatabaseUpdateSupplyOrder{
 		ID: updateSupplyOrder.ID,
