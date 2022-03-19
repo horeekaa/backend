@@ -1,8 +1,6 @@
 package mongodbtagdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (tagDataSourceMongo *tagDataSourceMongo) Find(
 }
 
 func (tagDataSourceMongo *tagDataSourceMongo) Create(input *model.DatabaseCreateTag, operationOptions *mongodbcoretypes.OperationOptions) (*model.Tag, error) {
-	_, err := tagDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Tag
-	_, err = tagDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := tagDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (tagDataSourceMongo *tagDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateTag,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Tag, error) {
-	_, err := tagDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := tagDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			tagDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Tag
@@ -121,54 +115,4 @@ func (tagDataSourceMongo *tagDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateTag,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := tagDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			tagDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (tagDataSourceMongo *tagDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateTag,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultIsActive := true
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	if input.IsActive == nil {
-		input.IsActive = &defaultIsActive
-	}
-	if input.Photos == nil {
-		input.Photos = []*model.ObjectIDOnly{}
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }

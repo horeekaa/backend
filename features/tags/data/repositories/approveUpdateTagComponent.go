@@ -2,6 +2,7 @@ package tagdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -111,6 +112,9 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 	}
 
 	updateTag.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updateTag.UpdatedAt = &currentTime
 
 	fieldsToUpdateTag := &model.DatabaseUpdateTag{
 		ID: updateTag.ID,
