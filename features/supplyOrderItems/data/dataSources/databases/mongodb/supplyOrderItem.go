@@ -1,8 +1,6 @@
 package mongodbsupplyorderitemdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) Find(
 }
 
 func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) Create(input *model.DatabaseCreateSupplyOrderItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.SupplyOrderItem, error) {
-	_, err := supOrderItemDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.SupplyOrderItem
-	_, err = supOrderItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := supOrderItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateSupplyOrderItem,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.SupplyOrderItem, error) {
-	_, err := supOrderItemDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := supOrderItemDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			supOrderItemDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.SupplyOrderItem
@@ -121,58 +115,4 @@ func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateSupplyOrderItem,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := supOrderItemDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			supOrderItemDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.SupplyOrderItemReturn != nil {
-		if existingObject.SupplyOrderItemReturn == nil {
-			input.SupplyOrderItemReturn.CreatedAt = &currentTime
-		}
-		input.SupplyOrderItemReturn.UpdatedAt = &currentTime
-	}
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (supOrderItemDataSourceMongo *supplyOrderItemDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateSupplyOrderItem,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultSupplyOrderItemStatus := model.SupplyOrderItemStatusAwaitingAcceptance
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	if input.Status == nil {
-		input.Status = &defaultSupplyOrderItemStatus
-	}
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }

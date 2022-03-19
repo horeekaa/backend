@@ -2,6 +2,7 @@ package supplyorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -140,6 +141,20 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 	supplyOrderItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *supplyOrderItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		supplyOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: supplyOrderItemToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	supplyOrderItemToCreate.CreatedAt = &currentTime
+	supplyOrderItemToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if supplyOrderItemToCreate.ProposalStatus == nil {
+		supplyOrderItemToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultSupplyOrderItemStatus := model.SupplyOrderItemStatusAwaitingAcceptance
+	if supplyOrderItemToCreate.Status == nil {
+		supplyOrderItemToCreate.Status = &defaultSupplyOrderItemStatus
 	}
 
 	jsonTemp, _ = json.Marshal(supplyOrderItemToCreate)
