@@ -207,6 +207,11 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	memberAccessToCreate.CreatedAt = &currentTime
 	memberAccessToCreate.UpdatedAt = &currentTime
 
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if memberAccessToCreate.ProposalStatus == nil {
+		memberAccessToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(memberAccessToCreate)
 	json.Unmarshal(jsonTemp, &memberAccessToCreate.ProposedChanges)
 

@@ -108,6 +108,11 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	mouItemToCreate.CreatedAt = &currentTime
 	mouItemToCreate.UpdatedAt = &currentTime
 
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if mouItemToCreate.ProposalStatus == nil {
+		mouItemToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(mouItemToCreate)
 	json.Unmarshal(jsonTemp, &mouItemToCreate.ProposedChanges)
 

@@ -105,6 +105,11 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 	addressRegionGroupToCreate.CreatedAt = &currentTime
 	addressRegionGroupToCreate.UpdatedAt = &currentTime
 
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if addressRegionGroupToCreate.ProposalStatus == nil {
+		addressRegionGroupToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(addressRegionGroupToCreate)
 	json.Unmarshal(jsonTemp, &addressRegionGroupToCreate.ProposedChanges)
 

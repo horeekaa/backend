@@ -211,6 +211,11 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 			taggingToCreate.IsActive = &defaultIsActive
 		}
 
+		defaultProposalStatus := model.EntityProposalStatusProposed
+		if taggingToCreate.ProposalStatus == nil {
+			taggingToCreate.ProposalStatus = &defaultProposalStatus
+		}
+
 		jsonTemp, _ := json.Marshal(taggingToCreate)
 		json.Unmarshal(jsonTemp, &taggingToCreate.ProposedChanges)
 

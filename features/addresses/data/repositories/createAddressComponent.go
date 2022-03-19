@@ -114,6 +114,11 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	addressToCreate.CreatedAt = currentTime
 	addressToCreate.UpdatedAt = currentTime
 
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if addressToCreate.ProposalStatus == nil {
+		addressToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(addressToCreate)
 	json.Unmarshal(jsonTemp, &addressToCreate.ProposedChanges)
 

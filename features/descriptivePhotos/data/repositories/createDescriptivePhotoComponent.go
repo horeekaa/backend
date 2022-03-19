@@ -113,6 +113,11 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 	descPhotoToCreate.CreatedAt = &currentTime
 	descPhotoToCreate.UpdatedAt = &currentTime
 
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if descPhotoToCreate.ProposalStatus == nil {
+		descPhotoToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(descPhotoToCreate)
 	json.Unmarshal(jsonTemp, &descPhotoToCreate.ProposedChanges)
 
