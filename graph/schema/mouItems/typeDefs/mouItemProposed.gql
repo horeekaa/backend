@@ -1,0 +1,43 @@
+input MouItemProposedInput {
+  _id: ObjectID!
+  product: ObjectIDOnly
+  agreedProduct: InternalAgreedProductInput
+  isActive: Boolean
+  mou: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input MouItemProposedFilterFields {
+  _id: ObjectID
+  product: ObjectIDOnlyFilterField
+  agreedProduct: AgreedProductFilterFields
+  isActive: Boolean
+  mou: ObjectIDOnlyFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type MouItemProposed {
+  _id: ObjectID!
+  product: Product!
+  agreedProduct: AgreedProduct
+  isActive: Boolean!
+  mou: Mou!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

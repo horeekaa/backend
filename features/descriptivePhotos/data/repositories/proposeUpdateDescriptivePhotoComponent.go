@@ -3,6 +3,7 @@ package descriptivephotodomainrepositories
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -109,6 +110,9 @@ func (updateDescPhotoTrx *proposeUpdateDescriptivePhotoTransactionComponent) Tra
 		)
 	}
 	updateDescriptivePhoto.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateDescriptivePhoto.UpdatedAt = &currentTime
 
 	fieldsToUpdateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{
 		ID: updateDescriptivePhoto.ID,

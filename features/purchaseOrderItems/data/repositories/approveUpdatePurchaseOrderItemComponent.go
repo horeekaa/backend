@@ -2,6 +2,7 @@ package purchaseorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -108,6 +109,15 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 	}
 
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updatePurchaseOrderItem.UpdatedAt = &currentTime
+	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		if existingPurchaseOrderItem.PurchaseOrderItemReturn == nil {
+			updatePurchaseOrderItem.PurchaseOrderItemReturn.CreatedAt = &currentTime
+		}
+		updatePurchaseOrderItem.PurchaseOrderItemReturn.UpdatedAt = &currentTime
+	}
 
 	fieldsToUpdatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{
 		ID: updatePurchaseOrderItem.ID,

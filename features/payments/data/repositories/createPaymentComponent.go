@@ -2,6 +2,7 @@ package paymentdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -106,6 +107,15 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	paymentToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *paymentToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		paymentToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: paymentToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	paymentToCreate.CreatedAt = &currentTime
+	paymentToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if paymentToCreate.ProposalStatus == nil {
+		paymentToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
 	jsonTemp, _ = json.Marshal(paymentToCreate)

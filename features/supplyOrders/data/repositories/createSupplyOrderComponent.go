@@ -128,6 +128,15 @@ func (createSupplyOrderTrx *createSupplyOrderTransactionComponent) TransactionBo
 		supplyOrderToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: supplyOrderToCreate.SubmittingAccount.ID}
 	}
 
+	currentTime := time.Now()
+	supplyOrderToCreate.CreatedAt = currentTime
+	supplyOrderToCreate.UpdatedAt = currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if supplyOrderToCreate.ProposalStatus == nil {
+		supplyOrderToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
 	jsonTemp, _ = json.Marshal(supplyOrderToCreate)
 	json.Unmarshal(jsonTemp, &supplyOrderToCreate.ProposedChanges)
 

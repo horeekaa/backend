@@ -1,0 +1,64 @@
+input AddressProposedInput {
+  _id: ObjectID!
+  title: String
+  latitude: Float
+  longitude: Float
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean
+  isActive: Boolean
+  resolvedGeocoding: ResolvedGeocodingInput
+  addressRegionGroup: AddressRegionGroupForAddressInput
+  type: AddressType
+  object: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input AddressProposedFilterFields {
+  _id: ObjectID
+  title: StringFilterField
+  latitude: FloatFilterField
+  longitude: FloatFilterField
+  addressNote: StringFilterField
+  phoneNumber: StringFilterField
+  isDefault: BooleanFilterField
+  isActive: BooleanFilterField
+  resolvedGeocoding: ResolvedGeocodingFilterFields
+  addressRegionGroup: AddressRegionGroupForAddressFilterFields
+  type: StringFilterField
+  object: ObjectIDOnly
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type AddressProposed {
+  _id: ObjectID!
+  title: String!
+  latitude: Float!
+  longitude: Float!
+  addressNote: String
+  phoneNumber: String
+  isDefault: Boolean!
+  isActive: Boolean!
+  resolvedGeocoding: ResolvedGeocoding
+  addressRegionGroup: AddressRegionGroupForAddress
+  type: AddressType!
+  object: ObjectIDOnlyOutput!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

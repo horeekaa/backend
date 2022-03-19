@@ -2,6 +2,7 @@ package productdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -93,6 +94,9 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 		)
 	}
 	updateProduct.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateProduct.UpdatedAt = &currentTime
 
 	fieldsToUpdateProduct := &model.DatabaseUpdateProduct{
 		ID: updateProduct.ID,

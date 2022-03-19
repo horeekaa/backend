@@ -55,7 +55,23 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  AddressProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   AddressRegionGroup:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  AddressRegionGroupProposed:
     fields:
       submittingAccount:
         resolver: true
@@ -71,7 +87,29 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  DescriptivePhotoProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   MemberAccess:
+    fields:
+      defaultAccessLatestUpdate:
+        resolver: true
+      organization:
+        resolver: true
+      account:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  MemberAccessProposed:
     fields:
       defaultAccessLatestUpdate:
         resolver: true
@@ -103,6 +141,14 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  MemberAccessRefProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Mou:
     fields:
       submittingAccount:
@@ -113,7 +159,29 @@ models:
         resolver: true
       items:
         resolver: true
+  MouProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+      items:
+        resolver: true
   MouItem:
+    fields:
+      product:
+        resolver: true
+      mou:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  MouItemProposed:
     fields:
       product:
         resolver: true
@@ -139,6 +207,20 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  OrganizationProposed:
+    fields:
+      profilePhotos:
+        resolver: true
+      taggings:
+        resolver: true
+      addresses:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Payment:
     fields:
       invoice:
@@ -149,7 +231,31 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  PaymentProposed:
+    fields:
+      invoice:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   Product:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+      photos:
+        resolver: true
+      variants:
+        resolver: true
+      taggings:
+        resolver: true
+  ProductProposed:
     fields:
       submittingAccount:
         resolver: true
@@ -175,6 +281,18 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  ProductVariantProposed:
+    fields:
+      photo:
+        resolver: true
+      product:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   PurchaseOrder:
     fields:
       items:
@@ -185,7 +303,29 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  PurchaseOrderProposed:
+    fields:
+      items:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   PurchaseOrderItem:
+    fields:
+      purchaseOrder:
+        resolver: true
+      purchaseOrderToSupply:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  PurchaseOrderItemProposed:
     fields:
       purchaseOrder:
         resolver: true
@@ -217,7 +357,27 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  SupplyOrderProposed:
+    fields:
+      items:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
   SupplyOrderItem:
+    fields:
+      photos:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  SupplyOrderItemProposed:
     fields:
       photos:
         resolver: true
@@ -241,7 +401,33 @@ models:
         resolver: true
       photos:
         resolver: true
+  TagProposed:
+    fields:
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+      photos:
+        resolver: true
   Tagging:
+    fields:
+      tag:
+        resolver: true
+      correlatedTag:
+        resolver: true
+      product:
+        resolver: true
+      organization:
+        resolver: true
+      submittingAccount:
+        resolver: true
+      recentApprovingAccount:
+        resolver: true
+      recentLog:
+        resolver: true
+  TaggingProposed:
     fields:
       tag:
         resolver: true

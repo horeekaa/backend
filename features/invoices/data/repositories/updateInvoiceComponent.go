@@ -291,6 +291,9 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		json.Unmarshal(jsonTemp, invoiceToUpdate)
 	}
 
+	currentTime := time.Now()
+	invoiceToUpdate.UpdatedAt = &currentTime
+
 	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(
 		map[string]interface{}{
 			"_id": invoiceToUpdate.ID,

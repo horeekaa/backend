@@ -2,6 +2,7 @@ package memberaccessdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -107,6 +108,9 @@ func (approveUpdateMemberAccessTrx *approveUpdateMemberAccessTransactionComponen
 	}
 
 	updateMemberAccess.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	var currentTime = time.Now()
+	updateMemberAccess.UpdatedAt = &currentTime
 
 	fieldsToUpdateMemberAccess := &model.DatabaseUpdateMemberAccess{
 		ID: updateMemberAccess.ID,

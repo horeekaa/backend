@@ -2,6 +2,7 @@ package addressdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -107,6 +108,9 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 		)
 	}
 	updateAddress.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+
+	currentTime := time.Now()
+	updateAddress.UpdatedAt = &currentTime
 
 	fieldsToUpdateAddress := &model.DatabaseUpdateAddress{
 		ID: updateAddress.ID,

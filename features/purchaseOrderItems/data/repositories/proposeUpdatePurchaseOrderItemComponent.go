@@ -529,6 +529,15 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	}
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
+	currentTime := time.Now()
+	updatePurchaseOrderItem.UpdatedAt = &currentTime
+	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
+		if existingPurchaseOrderItem.PurchaseOrderItemReturn == nil {
+			updatePurchaseOrderItem.PurchaseOrderItemReturn.CreatedAt = &currentTime
+		}
+		updatePurchaseOrderItem.PurchaseOrderItemReturn.UpdatedAt = &currentTime
+	}
+
 	fieldsToUpdatePurchaseOrderItem := &model.DatabaseUpdatePurchaseOrderItem{
 		ID: updatePurchaseOrderItem.ID,
 	}

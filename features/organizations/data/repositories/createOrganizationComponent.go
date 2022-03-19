@@ -2,6 +2,7 @@ package organizationdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -97,6 +98,25 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	organizationToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *organizationToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		organizationToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: organizationToCreate.SubmittingAccount.ID}
+	}
+	currentTime := time.Now()
+	organizationToCreate.CreatedAt = &currentTime
+	organizationToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if organizationToCreate.ProposalStatus == nil {
+		organizationToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultPoint := 0
+	organizationToCreate.Point = &defaultPoint
+	organizationToCreate.UnfinalizedPoint = &defaultPoint
+
+	if organizationToCreate.ProfilePhotos == nil {
+		organizationToCreate.ProfilePhotos = []*model.ObjectIDOnly{}
+	}
+	if organizationToCreate.Taggings == nil {
+		organizationToCreate.Taggings = []*model.ObjectIDOnly{}
 	}
 
 	jsonTemp, _ = json.Marshal(organizationToCreate)

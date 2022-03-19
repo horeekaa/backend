@@ -137,7 +137,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 	purchaseOrders, err := createInvoiceRepo.purchaseOrderDataSource.GetMongoDataSource().Find(
 		query,
 		&mongodbcoretypes.PaginationOptions{},
-		nil,
+		&mongodbcoretypes.OperationOptions{},
 	)
 	if err != nil {
 		return nil, horeekaacoreexceptiontofailure.ConvertException(

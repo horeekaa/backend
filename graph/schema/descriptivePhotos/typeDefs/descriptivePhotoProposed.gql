@@ -1,0 +1,48 @@
+input DescriptivePhotoProposedInput {
+  _id: ObjectID!
+  photoUrl: String
+  category: String
+  description: String
+  type: DescriptivePhotoType
+  object: ObjectIDOnly
+  isActive: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input DescriptivePhotoProposedFilterFields {
+  _id: ObjectID
+  photoUrl: StringFilterField
+  category: StringFilterField
+  type: StringFilterField
+  object: ObjectIDOnlyFilterField
+  isActive: BooleanFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type DescriptivePhotoProposed {
+  _id: ObjectID!
+  photoUrl: String!
+  category: DescriptivePhotoCategory!
+  description: String
+  type: DescriptivePhotoType!
+  object: ObjectIDOnlyOutput!
+  isActive: Boolean
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

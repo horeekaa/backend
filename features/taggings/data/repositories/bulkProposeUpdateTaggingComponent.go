@@ -2,6 +2,7 @@ package taggingdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -128,6 +129,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 		}(model.TaggingTypeOrganization)
 	}
 
+	currentTime := time.Now()
 	jsonTemp, _ := json.Marshal(input)
 	for _, id := range input.IDs {
 		taggingToUpdate := &model.DatabaseUpdateTagging{
@@ -170,6 +172,7 @@ func (bulkProposeUpdateTaggingComp *bulkProposeUpdateTaggingTransactionComponent
 			)
 		}
 		taggingToUpdate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
+		taggingToUpdate.UpdatedAt = &currentTime
 
 		fieldsToUpdateTagging := &model.DatabaseUpdateTagging{}
 		jsonExisting, _ := json.Marshal(existingTagging)

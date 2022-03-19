@@ -42,7 +42,7 @@ input DatabaseCreateOrganization {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateOrganization
+  proposedChanges: OrganizationProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -53,7 +53,6 @@ input UpdateOrganization {
   name: String
   phoneNumber: String
   type: OrganizationType
-  creditAllowance: Int
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
@@ -70,7 +69,6 @@ input InternalUpdateOrganization {
   name: String
   phoneNumber: String
   type: OrganizationType
-  creditAllowance: Int
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
@@ -89,7 +87,6 @@ input DatabaseUpdateOrganization {
   name: String
   phoneNumber: String
   type: OrganizationType
-  creditAllowance: Int
   rating: Float
   ratingDescription: String
   unfinalizedPoint: Int
@@ -102,7 +99,7 @@ input DatabaseUpdateOrganization {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateOrganization
+  proposedChanges: OrganizationProposedInput
   updatedAt: Time
 }
 
@@ -113,13 +110,12 @@ input OrganizationFilterFields {
   type: StringFilterField
   taggings: ObjectIDOnly
   addresses: ObjectIDOnly
-  creditAllowance: IntFilterField
   rating: Float
   ratingDescription: StringFilterField
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: OrganizationFilterFields
+  proposedChanges: OrganizationProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -128,7 +124,6 @@ type Organization {
   name: String!
   phoneNumber: String!
   type: OrganizationType!
-  creditAllowance: Int
   rating: Float
   ratingDescription: String
   point: Int!
@@ -141,7 +136,7 @@ type Organization {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Organization
+  proposedChanges: OrganizationProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!

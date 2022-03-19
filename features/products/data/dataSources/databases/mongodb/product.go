@@ -1,8 +1,6 @@
 package mongodbproductdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (prodDataSourceMongo *productDataSourceMongo) Find(
 }
 
 func (prodDataSourceMongo *productDataSourceMongo) Create(input *model.DatabaseCreateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
-	_, err := prodDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Product
-	_, err = prodDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := prodDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +85,16 @@ func (prodDataSourceMongo *productDataSourceMongo) Create(input *model.DatabaseC
 }
 
 func (prodDataSourceMongo *productDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateProduct, operationOptions *mongodbcoretypes.OperationOptions) (*model.Product, error) {
-	_, err := prodDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := prodDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			prodDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Product
@@ -117,60 +111,4 @@ func (prodDataSourceMongo *productDataSourceMongo) Update(updateCriteria map[str
 	}
 
 	return &output, nil
-}
-
-func (prodDataSourceMongo *productDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateProduct,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := prodDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			prodDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (prodDataSourceMongo *productDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateProduct,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultProposalStatus := model.EntityProposalStatusProposed
-	defaultIsActive := true
-
-	if input.ProposalStatus == nil {
-		input.ProposalStatus = &defaultProposalStatus
-	}
-	if input.IsActive == nil {
-		input.IsActive = &defaultIsActive
-	}
-	if input.Photos == nil {
-		input.Photos = []*model.ObjectIDOnly{}
-	}
-	if input.Variants == nil {
-		input.Variants = []*model.ObjectIDOnly{}
-	}
-	if input.Taggings == nil {
-		input.Taggings = []*model.ObjectIDOnly{}
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }

@@ -2,6 +2,7 @@ package paymentdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -96,6 +97,9 @@ func (updatePaymentTrx *approveUpdatePaymentTransactionComponent) TransactionBod
 	}
 
 	updatePayment.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updatePayment.UpdatedAt = &currentTime
 
 	fieldsToUpdatePayment := &model.DatabaseUpdatePayment{
 		ID: updatePayment.ID,

@@ -62,7 +62,7 @@ input DatabaseCreateProductVariant {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateProductVariant
+  proposedChanges: ProductVariantProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -122,14 +122,14 @@ input DatabaseUpdateProductVariant {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateProductVariant
+  proposedChanges: ProductVariantProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
 input ProductVariantFilterFields {
   _id: ObjectID
-  name: String
+  name: StringFilterField
   description: StringFilterField
   retailPrice: IntFilterField
   targetUnitCost: IntFilterField
@@ -142,7 +142,7 @@ input ProductVariantFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: ProductVariantFilterFields
+  proposedChanges: ProductVariantProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -163,7 +163,7 @@ type ProductVariant {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: ProductVariant
+  proposedChanges: ProductVariantProposed
   recentLog: Logging!
   createdAt: Time
   updatedAt: Time

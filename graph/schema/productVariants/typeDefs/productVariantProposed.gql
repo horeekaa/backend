@@ -1,0 +1,63 @@
+input ProductVariantProposedInput {
+  _id: ObjectID!
+  name: String
+  description: String
+  retailPrice: Int
+  targetUnitCost: Int
+  estimatedUnitWeightInGrams: Int
+  isDefault: Boolean
+  dimension: UpdateProductDimension
+  soldInUnit: SellingUnitType
+  isActive: Boolean
+  photo: ObjectIDOnly
+  product: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input ProductVariantProposedFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  description: StringFilterField
+  retailPrice: IntFilterField
+  targetUnitCost: IntFilterField
+  estimatedUnitWeightInGrams: IntFilterField
+  isDefault: BooleanFilterField
+  dimension: ProductDimensionFilterFields
+  soldInUnit: StringFilterField
+  isActive: BooleanFilterField
+  product: ObjectIDOnly
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type ProductVariantProposed {
+  _id: ObjectID!
+  name: String!
+  description: String
+  retailPrice: Int!
+  targetUnitCost: Int!
+  estimatedUnitWeightInGrams: Int!
+  isDefault: Boolean!
+  dimension: ProductDimension
+  soldInUnit: SellingUnitType!
+  isActive: Boolean!
+  photo: DescriptivePhoto
+  product: Product
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

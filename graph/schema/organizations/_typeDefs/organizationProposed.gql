@@ -1,0 +1,56 @@
+input OrganizationProposedInput {
+  _id: ObjectID!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+  rating: Float
+  ratingDescription: String
+  profilePhotos: [ObjectIDOnly]
+  taggings: [ObjectIDOnly]
+  addresses: [ObjectIDOnly]
+  taxIdentification: UpdateIDCard
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input OrganizationProposedFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
+  taggings: ObjectIDOnly
+  addresses: ObjectIDOnly
+  rating: Float
+  ratingDescription: StringFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type OrganizationProposed {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+  rating: Float
+  ratingDescription: String
+  profilePhotos: [DescriptivePhoto]
+  taggings: [Tagging]
+  addresses: [Address]
+  taxIdentification: IDCard
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

@@ -2,6 +2,7 @@ package notificationdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -43,6 +44,9 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 	for _, id := range input.IDs {
 		notificationToUpdate := &model.DatabaseUpdateNotification{}
 		json.Unmarshal(jsonTemp, notificationToUpdate)
+
+		currentTime := time.Now()
+		notificationToUpdate.UpdatedAt = &currentTime
 
 		databaseNotification, err := bulkUpdateNotificationComp.notificationDataSource.GetMongoDataSource().Update(
 			map[string]interface{}{

@@ -24,7 +24,7 @@ input DatabaseCreateMouItem {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMouItem
+  proposedChanges: MouItemProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -66,7 +66,7 @@ input DatabaseUpdateMouItem {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMouItem
+  proposedChanges: MouItemProposedInput
   updatedAt: Time
 }
 
@@ -80,7 +80,7 @@ input MouItemFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: MouItemFilterFields
+  proposedChanges: MouItemProposedFilterFields
 }
 
 type MouItem {
@@ -93,7 +93,7 @@ type MouItem {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: MouItem
+  proposedChanges: MouItemProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!

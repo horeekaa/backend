@@ -1,8 +1,6 @@
 package mongodbmouitemdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (mouItemDataSourceMongo *mouItemDataSourceMongo) Find(
 }
 
 func (mouItemDataSourceMongo *mouItemDataSourceMongo) Create(input *model.DatabaseCreateMouItem, operationOptions *mongodbcoretypes.OperationOptions) (*model.MouItem, error) {
-	_, err := mouItemDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.MouItem
-	_, err = mouItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := mouItemDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +89,16 @@ func (mouItemDataSourceMongo *mouItemDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateMouItem,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.MouItem, error) {
-	_, err := mouItemDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := mouItemDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			mouItemDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.MouItem
@@ -121,41 +115,4 @@ func (mouItemDataSourceMongo *mouItemDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (mouItemDataSourceMongo *mouItemDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateMouItem,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := mouItemDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			mouItemDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (mouItemDataSourceMongo *mouItemDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateMouItem,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultIsActive := true
-
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.IsActive == nil {
-		input.IsActive = &defaultIsActive
-	}
-
-	return true, nil
 }

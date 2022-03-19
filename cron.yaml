@@ -1,0 +1,9 @@
+cron:
+- description: "process-po-to-supply"
+  url: /scheduledJob/v1/processPOToSupply
+  schedule: every day 21:45
+  timezone: Asia/Jakarta
+- description: "create-invoice"
+  url: /scheduledJob/v1/createInvoice
+  schedule: every day 06:00
+  timezone: Asia/Jakarta

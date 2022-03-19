@@ -2,6 +2,7 @@ package tagdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -97,6 +98,24 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 	tagToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *tagToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		tagToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: tagToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	tagToCreate.CreatedAt = &currentTime
+	tagToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if tagToCreate.ProposalStatus == nil {
+		tagToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	defaultIsActive := true
+	if tagToCreate.IsActive == nil {
+		tagToCreate.IsActive = &defaultIsActive
+	}
+
+	if tagToCreate.Photos == nil {
+		tagToCreate.Photos = []*model.ObjectIDOnly{}
 	}
 
 	jsonTemp, _ = json.Marshal(tagToCreate)

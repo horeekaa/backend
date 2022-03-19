@@ -52,7 +52,7 @@ input DatabaseCreateMou {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMou
+  proposedChanges: MouProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -117,7 +117,7 @@ input DatabaseUpdateMou {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: DatabaseUpdateMou
+  proposedChanges: MouProposedInput
   updatedAt: Time
 }
 
@@ -139,7 +139,7 @@ input MouFilterFields {
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
   recentLog: ObjectIDOnly
-  proposedChanges: MouFilterFields
+  proposedChanges: MouProposedFilterFields
 }
 
 type Mou {
@@ -162,7 +162,7 @@ type Mou {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Mou
+  proposedChanges: MouProposed
   recentLog: Logging!
   createdAt: Time
   updatedAt: Time

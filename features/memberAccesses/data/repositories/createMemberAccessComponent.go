@@ -2,6 +2,7 @@ package memberaccessdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacorefailure "github.com/horeekaa/backend/core/errors/failures"
@@ -197,6 +198,18 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 	memberAccessToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *memberAccessToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		memberAccessToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: memberAccessToCreate.SubmittingAccount.ID}
+	}
+	if memberAccessToCreate.InvitationAccepted == nil {
+		memberAccessToCreate.InvitationAccepted = func(b bool) *bool { return &b }(false)
+	}
+
+	var currentTime = time.Now()
+	memberAccessToCreate.CreatedAt = &currentTime
+	memberAccessToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if memberAccessToCreate.ProposalStatus == nil {
+		memberAccessToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
 	jsonTemp, _ = json.Marshal(memberAccessToCreate)

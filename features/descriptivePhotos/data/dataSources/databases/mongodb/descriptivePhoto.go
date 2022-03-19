@@ -1,8 +1,6 @@
 package mongodbdescriptivePhotodatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Find(
 }
 
 func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Create(input *model.DatabaseCreateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
-	_, err := descPhotoDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.DescriptivePhoto
-	_, err = descPhotoDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := descPhotoDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +85,16 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Create(input *m
 }
 
 func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateDescriptivePhoto, operationOptions *mongodbcoretypes.OperationOptions) (*model.DescriptivePhoto, error) {
-	_, err := descPhotoDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := descPhotoDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			descPhotoDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.DescriptivePhoto
@@ -117,44 +111,4 @@ func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) Update(updateCr
 	}
 
 	return &output, nil
-}
-
-func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateDescriptivePhoto,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := descPhotoDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			descPhotoDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (descPhotoDataSourceMongo *descriptivePhotoDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateDescriptivePhoto,
-) (bool, error) {
-	currentTime := time.Now()
-
-	input.IsActive = true
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-
-	return true, nil
 }

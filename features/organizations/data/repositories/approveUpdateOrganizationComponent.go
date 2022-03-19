@@ -2,6 +2,7 @@ package organizationdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -107,6 +108,9 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 	}
 
 	updateOrganization.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
+
+	currentTime := time.Now()
+	updateOrganization.UpdatedAt = &currentTime
 
 	fieldsToUpdateOrganization := &model.DatabaseUpdateOrganization{
 		ID: updateOrganization.ID,

@@ -1,0 +1,50 @@
+input ProductProposedInput {
+  _id: ObjectID!
+  name: String
+  description: String
+  isActive: Boolean
+  photos: [ObjectIDOnly]
+  variants: [ObjectIDOnly]
+  taggings: [ObjectIDOnly]
+  syncedWithES: Boolean
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: Time
+  updatedAt: Time
+}
+
+input ProductProposedFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  description: StringFilterField
+  isActive: BooleanFilterField
+  taggings: ObjectIDOnly
+  syncedWithES: BooleanFilterField
+  proposalStatus: StringFilterField
+  submittingAccount: ObjectIDOnly
+  recentApprovingAccount: ObjectIDOnly
+  recentLog: ObjectIDOnly
+  createdAt: TimeFilterField
+  updatedAt: TimeFilterField
+}
+
+type ProductProposed {
+  _id: ObjectID!
+  name: String!
+  description: String
+  isActive: Boolean!
+  photos: [DescriptivePhoto]
+  variants: [ProductVariant]
+  taggings: [Tagging]
+  syncedWithES: Boolean!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  submittingAccount: Account!
+  recentApprovingAccount: Account
+  recentLog: Logging!
+  createdAt: Time!
+  updatedAt: Time!
+}

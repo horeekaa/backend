@@ -2,6 +2,7 @@ package purchaseorderitemdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -123,6 +124,20 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 	purchaseOrderItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *purchaseOrderItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		purchaseOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: purchaseOrderItemToCreate.SubmittingAccount.ID}
+	}
+
+	currentTime := time.Now()
+	purchaseOrderItemToCreate.CreatedAt = &currentTime
+	purchaseOrderItemToCreate.UpdatedAt = &currentTime
+
+	defaultStatus := model.PurchaseOrderItemStatusPendingConfirmation
+	if purchaseOrderItemToCreate.Status == nil {
+		purchaseOrderItemToCreate.Status = &defaultStatus
+	}
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if purchaseOrderItemToCreate.ProposalStatus == nil {
+		purchaseOrderItemToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
 	jsonTemp, _ = json.Marshal(purchaseOrderItemToCreate)

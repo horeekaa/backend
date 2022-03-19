@@ -1,8 +1,6 @@
 package mongodbinvoicedatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -77,15 +75,8 @@ func (invoiceDataSourceMongo *invoiceDataSourceMongo) Find(
 }
 
 func (invoiceDataSourceMongo *invoiceDataSourceMongo) Create(input *model.DatabaseCreateInvoice, operationOptions *mongodbcoretypes.OperationOptions) (*model.Invoice, error) {
-	_, err := invoiceDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Invoice
-	_, err = invoiceDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := invoiceDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +85,16 @@ func (invoiceDataSourceMongo *invoiceDataSourceMongo) Create(input *model.Databa
 }
 
 func (invoiceDataSourceMongo *invoiceDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateInvoice, operationOptions *mongodbcoretypes.OperationOptions) (*model.Invoice, error) {
-	_, err := invoiceDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := invoiceDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			invoiceDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Invoice
@@ -117,41 +111,4 @@ func (invoiceDataSourceMongo *invoiceDataSourceMongo) Update(updateCriteria map[
 	}
 
 	return &output, nil
-}
-
-func (invoiceDataSourceMongo *invoiceDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateInvoice,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := invoiceDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			invoiceDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-	input.UpdatedAt = &currentTime
-
-	return true, nil
-}
-
-func (invoiceDataSourceMongo *invoiceDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateInvoice,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultStatus := model.InvoiceStatusAvailable
-
-	if input.Status == nil {
-		input.Status = &defaultStatus
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-
-	return true, nil
 }

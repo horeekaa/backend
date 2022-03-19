@@ -2,6 +2,7 @@ package mouitemdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -96,6 +97,20 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 	mouItemToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 	if *mouItemToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		mouItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouItemToCreate.SubmittingAccount.ID}
+	}
+
+	defaultIsActive := true
+	if mouItemToCreate.IsActive == nil {
+		mouItemToCreate.IsActive = &defaultIsActive
+	}
+
+	currentTime := time.Now()
+	mouItemToCreate.CreatedAt = &currentTime
+	mouItemToCreate.UpdatedAt = &currentTime
+
+	defaultProposalStatus := model.EntityProposalStatusProposed
+	if mouItemToCreate.ProposalStatus == nil {
+		mouItemToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
 	jsonTemp, _ = json.Marshal(mouItemToCreate)
