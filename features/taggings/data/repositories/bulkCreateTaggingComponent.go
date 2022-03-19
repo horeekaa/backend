@@ -2,6 +2,7 @@ package taggingdomainrepositories
 
 import (
 	"encoding/json"
+	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
@@ -170,6 +171,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		}
 	}
 
+	currentTime := time.Now()
 	for _, taggingToCreate := range taggingsToCreate {
 		newDocumentJson, _ := json.Marshal(*taggingToCreate)
 		generatedObjectID := bulkCreateTaggingTrx.GetCurrentObjectID()
@@ -199,6 +201,14 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		taggingToCreate.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 		if *taggingToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 			taggingToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: taggingToCreate.SubmittingAccount.ID}
+		}
+
+		taggingToCreate.CreatedAt = &currentTime
+		taggingToCreate.UpdatedAt = &currentTime
+
+		defaultIsActive := true
+		if taggingToCreate.IsActive == nil {
+			taggingToCreate.IsActive = &defaultIsActive
 		}
 
 		jsonTemp, _ := json.Marshal(taggingToCreate)

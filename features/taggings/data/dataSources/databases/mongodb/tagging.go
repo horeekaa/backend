@@ -1,8 +1,6 @@
 package mongodbtaggingdatasources
 
 import (
-	"time"
-
 	mongodbcoreoperationinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/operations"
 	mongodbcorewrapperinterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/wrappers"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -80,15 +78,8 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Create(
 	input *model.DatabaseCreateTagging,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Tagging, error) {
-	_, err := taggingDataSourceMongo.setDefaultValuesWhenCreate(
-		input,
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	var outputModel model.Tagging
-	_, err = taggingDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
+	_, err := taggingDataSourceMongo.basicOperation.Create(input, &outputModel, operationOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -101,13 +92,16 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Update(
 	updateData *model.DatabaseUpdateTagging,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (*model.Tagging, error) {
-	_, err := taggingDataSourceMongo.setDefaultValuesWhenUpdate(
-		updateCriteria,
-		updateData,
-		operationOptions,
-	)
+	existingObject, err := taggingDataSourceMongo.FindOne(updateCriteria, operationOptions)
 	if err != nil {
 		return nil, err
+	}
+	if existingObject == nil {
+		return nil, horeekaacoreexception.NewExceptionObject(
+			horeekaacoreexceptionenums.NoUpdatableObjectFound,
+			taggingDataSourceMongo.pathIdentity,
+			nil,
+		)
 	}
 
 	var output model.Tagging
@@ -124,47 +118,4 @@ func (taggingDataSourceMongo *taggingDataSourceMongo) Update(
 	}
 
 	return &output, nil
-}
-
-func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValuesWhenUpdate(
-	inputCriteria map[string]interface{},
-	input *model.DatabaseUpdateTagging,
-	operationOptions *mongodbcoretypes.OperationOptions,
-) (bool, error) {
-	currentTime := time.Now()
-	existingObject, err := taggingDataSourceMongo.FindOne(inputCriteria, operationOptions)
-	if err != nil {
-		return false, err
-	}
-	if existingObject == nil {
-		return false, horeekaacoreexception.NewExceptionObject(
-			horeekaacoreexceptionenums.NoUpdatableObjectFound,
-			taggingDataSourceMongo.pathIdentity,
-			nil,
-		)
-	}
-
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
-}
-
-func (taggingDataSourceMongo *taggingDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.DatabaseCreateTagging,
-) (bool, error) {
-	currentTime := time.Now()
-	defaultIsActive := true
-
-	if input.IsActive == nil {
-		input.IsActive = &defaultIsActive
-	}
-	input.CreatedAt = &currentTime
-	input.UpdatedAt = &currentTime
-	if input.ProposedChanges != nil {
-		input.ProposedChanges.UpdatedAt = &currentTime
-	}
-
-	return true, nil
 }
