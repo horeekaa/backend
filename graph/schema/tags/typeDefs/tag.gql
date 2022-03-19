@@ -31,7 +31,7 @@ input DatabaseCreateTag {
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateTag
+  proposedChanges: TagProposedInput
   recentLog: ObjectIDOnly
   createdAt: Time
   updatedAt: Time
@@ -81,19 +81,13 @@ input DatabaseUpdateTag {
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: DatabaseUpdateTag
+  proposedChanges: TagProposedInput
   recentLog: ObjectIDOnly
   updatedAt: Time
 }
 
 input TagFilterFields {
   _id: ObjectID
-  """
-  Querying tag using this field will be done using
-  pattern matching in the database; which means
-  any tags with name containing phrases from
-  the queried string will come as the results.
-  """
   name: StringFilterField
   startActivePeriod: TimeFilterField
   endActivePeriod: TimeFilterField
@@ -102,7 +96,7 @@ input TagFilterFields {
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
-  proposedChanges: TagFilterFields
+  proposedChanges: TagProposedFilterFields
   recentLog: ObjectIDOnly
 }
 
@@ -118,7 +112,7 @@ type Tag {
   proposalStatusReason: String
   submittingAccount: Account!
   recentApprovingAccount: Account
-  proposedChanges: Tag
+  proposedChanges: TagProposed
   recentLog: Logging!
   createdAt: Time!
   updatedAt: Time!
