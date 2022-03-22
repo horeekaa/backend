@@ -1,0 +1,20 @@
+input OrganizationForMouItemInput {
+  _id: ObjectID!
+  name: String
+  phoneNumber: String
+  type: OrganizationType
+}
+
+input OrganizationForMouItemFilterFields {
+  _id: ObjectID
+  name: StringFilterField
+  phoneNumber: StringFilterField
+  type: StringFilterField
+}
+
+type OrganizationForMouItem {
+  _id: ObjectID!
+  name: String!
+  phoneNumber: String!
+  type: OrganizationType!
+}
