@@ -56,6 +56,9 @@ func (createMouRepo *createMouRepository) TransactionBody(
 			mouItem.Mou = &model.ObjectIDOnly{
 				ID: &generatedObjectID,
 			}
+			mouItem.Organization = &model.OrganizationForMouItemInput{
+				ID: *mouToCreate.SecondParty.Organization.ID,
+			}
 			mouItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
 			}(*mouToCreate.ProposalStatus)
