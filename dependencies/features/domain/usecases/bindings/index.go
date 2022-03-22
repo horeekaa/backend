@@ -93,6 +93,7 @@ func (_ *UsecasesDependency) Bind() {
 		&moupresentationusecasedependencies.UpdateMouUsecaseDependency{},
 
 		&mouitempresentationusecasedependencies.GetMouItemUsecaseDependency{},
+		&mouitempresentationusecasedependencies.GetAllMouItemUsecaseDependency{},
 
 		&paymentpresentationusecasedependencies.CreatePaymentUsecaseDependency{},
 		&paymentpresentationusecasedependencies.GetAllPaymentUsecaseDependency{},
