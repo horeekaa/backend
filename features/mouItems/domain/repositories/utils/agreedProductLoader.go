@@ -10,5 +10,6 @@ type AgreedProductLoader interface {
 		session *mongodbcoretypes.OperationOptions,
 		product *model.ObjectIDOnly,
 		agreedProduct *model.InternalAgreedProductInput,
+		organization *model.OrganizationForMouItemInput,
 	) (bool, error)
 }
