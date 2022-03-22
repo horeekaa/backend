@@ -8,6 +8,7 @@ import (
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	mouitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories/utils"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
@@ -17,6 +18,7 @@ import (
 type agreedProductLoader struct {
 	productVariantDataSource   databaseproductvariantdatasourceinterfaces.ProductVariantDataSource
 	productDataSource          databaseproductdatasourceinterfaces.ProductDataSource
+	organizationDataSource     databaseorganizationdatasourceinterfaces.OrganizationDataSource
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource
 	mapProcessorUtility        coreutilityinterfaces.MapProcessorUtility
 	pathIdentity               string
@@ -25,12 +27,14 @@ type agreedProductLoader struct {
 func NewAgreedProductLoader(
 	productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 	productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+	organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 	descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 	mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 ) (mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader, error) {
 	return &agreedProductLoader{
 		productVariantDataSource:   productVariantDataSource,
 		productDataSource:          productDataSource,
+		organizationDataSource:     organizationDataSource,
 		descriptivePhotoDataSource: descriptivePhotoDataSource,
 		mapProcessorUtility:        mapProcessorUtility,
 		pathIdentity:               "ProductForMOULoader",
@@ -41,6 +45,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 	session *mongodbcoretypes.OperationOptions,
 	product *model.ObjectIDOnly,
 	agreedProduct *model.InternalAgreedProductInput,
+	organization *model.OrganizationForMouItemInput,
 ) (bool, error) {
 	agreedProductOutput := model.InternalAgreedProductInput{}
 	existingProduct, err := agreedProdLoader.productDataSource.GetMongoDataSource().FindByID(
@@ -71,6 +76,7 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 
 	descriptivePhotoLoadedChan := make(chan bool)
 	variantsLoadedChan := make(chan bool)
+	organizationLoadedChan := make(chan bool)
 	errChan := make(chan error)
 
 	go func() {
@@ -151,13 +157,36 @@ func (agreedProdLoader *agreedProductLoader) TransactionBody(
 		variantsLoadedChan <- true
 	}()
 
-	for i := 0; i < 2; {
+	go func() {
+		if organization == nil {
+			organizationLoadedChan <- true
+			return
+		}
+
+		loadedOrganization, err := agreedProdLoader.organizationDataSource.GetMongoDataSource().FindByID(
+			organization.ID,
+			session,
+		)
+		if err != nil {
+			errChan <- err
+			return
+		}
+
+		orgJson, _ := json.Marshal(loadedOrganization)
+		json.Unmarshal(orgJson, organization)
+
+		organizationLoadedChan <- true
+	}()
+
+	for i := 0; i < 3; {
 		select {
 		case err := <-errChan:
 			return false, err
 		case _ = <-variantsLoadedChan:
 			i++
 		case _ = <-descriptivePhotoLoadedChan:
+			i++
+		case _ = <-organizationLoadedChan:
 			i++
 		}
 	}

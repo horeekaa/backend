@@ -67,6 +67,7 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 		session,
 		mouItemToCreate.Product,
 		mouItemToCreate.AgreedProduct,
+		mouItemToCreate.Organization,
 	)
 
 	newDocumentJson, _ := json.Marshal(*mouItemToCreate)

@@ -10,6 +10,8 @@ import (
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	mouitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/mouItems/presentation/usecases"
+	mouitempresentationusecasetypes "github.com/horeekaa/backend/features/mouItems/presentation/usecases/types"
 	moupresentationusecaseinterfaces "github.com/horeekaa/backend/features/mous/presentation/usecases"
 	productpresentationusecaseinterfaces "github.com/horeekaa/backend/features/products/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
@@ -75,6 +77,18 @@ func (r *mouItemResolver) RecentLog(ctx context.Context, obj *model.MouItem) (*m
 	}
 	return getLoggingUsecase.Execute(
 		filterFields,
+	)
+}
+
+func (r *queryResolver) MouItems(ctx context.Context, filterFields model.MouItemFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.MouItem, error) {
+	var getMouItemsUsecase mouitempresentationusecaseinterfaces.GetAllMouItemUsecase
+	container.Make(&getMouItemsUsecase)
+	return getMouItemsUsecase.Execute(
+		mouitempresentationusecasetypes.GetAllMouItemUsecaseInput{
+			Context:       ctx,
+			FilterFields:  &filterFields,
+			PaginationOps: paginationOpt,
+		},
 	)
 }
 

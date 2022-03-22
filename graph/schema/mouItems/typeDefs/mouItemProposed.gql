@@ -4,6 +4,7 @@ input MouItemProposedInput {
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
   mou: ObjectIDOnly
+  organization: OrganizationForMouItemInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -19,6 +20,7 @@ input MouItemProposedFilterFields {
   agreedProduct: AgreedProductFilterFields
   isActive: Boolean
   mou: ObjectIDOnlyFilterField
+  organization: OrganizationForMouItemFilterFields
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -33,6 +35,7 @@ type MouItemProposed {
   agreedProduct: AgreedProduct
   isActive: Boolean!
   mou: Mou!
+  organization: OrganizationForMouItem!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

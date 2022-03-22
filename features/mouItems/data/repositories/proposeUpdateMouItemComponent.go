@@ -67,6 +67,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 			session,
 			updateMouItem.Product,
 			updateMouItem.AgreedProduct,
+			nil,
 		)
 	}
 

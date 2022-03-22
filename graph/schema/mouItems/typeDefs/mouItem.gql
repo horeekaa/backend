@@ -10,6 +10,7 @@ input InternalCreateMouItem {
   agreedProduct: AgreedProductInput
   isActive: Boolean
   mou: ObjectIDOnly!
+  organization: OrganizationForMouItemInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -21,6 +22,7 @@ input DatabaseCreateMouItem {
   agreedProduct: InternalAgreedProductInput
   isActive: Boolean
   mou: ObjectIDOnly!
+  organization: OrganizationForMouItemInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -48,7 +50,6 @@ input InternalUpdateMouItem {
   product: ObjectIDOnly
   agreedProduct: AgreedProductInput
   isActive: Boolean
-  mou: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -76,6 +77,7 @@ input MouItemFilterFields {
   agreedProduct: AgreedProductFilterFields
   isActive: Boolean
   mou: ObjectIDOnlyFilterField
+  organization: OrganizationForMouItemFilterFields
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -89,6 +91,7 @@ type MouItem {
   agreedProduct: AgreedProduct
   isActive: Boolean!
   mou: Mou!
+  organization: OrganizationForMouItem!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

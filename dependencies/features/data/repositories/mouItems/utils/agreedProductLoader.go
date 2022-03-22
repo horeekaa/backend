@@ -6,6 +6,7 @@ import (
 	databasedescriptivephotodatasourceinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/data/dataSources/databases/interfaces/sources"
 	mouitemdomainrepositoryutilities "github.com/horeekaa/backend/features/mouItems/data/repositories/utils"
 	mouitemdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories/utils"
+	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 	databaseproductvariantdatasourceinterfaces "github.com/horeekaa/backend/features/productVariants/data/dataSources/databases/interfaces/sources"
 	databaseproductdatasourceinterfaces "github.com/horeekaa/backend/features/products/data/dataSources/databases/interfaces/sources"
 )
@@ -17,12 +18,14 @@ func (_ *AgreedProductLoaderDependency) Bind() {
 		func(
 			productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 			productDataSource databaseproductdatasourceinterfaces.ProductDataSource,
+			organizationDataSource databaseorganizationdatasourceinterfaces.OrganizationDataSource,
 			descriptivePhotoDataSource databasedescriptivephotodatasourceinterfaces.DescriptivePhotoDataSource,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) mouitemdomainrepositoryutilityinterfaces.AgreedProductLoader {
 			agreedProductLoader, _ := mouitemdomainrepositoryutilities.NewAgreedProductLoader(
 				productVariantDataSource,
 				productDataSource,
+				organizationDataSource,
 				descriptivePhotoDataSource,
 				mapProcessorUtility,
 			)

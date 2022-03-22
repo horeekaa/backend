@@ -152,6 +152,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&mouitemdomainrepositorydependencies.ApproveUpdateMouItemDependency{},
 		&mouitemdomainrepositorydependencies.ProposeUpdateMouItemDependency{},
 		&mouitemdomainrepositorydependencies.GetMouItemDependency{},
+		&mouitemdomainrepositorydependencies.GetAllMouItemDependency{},
 
 		&moudomainrepositoryutilitydependencies.PartyLoaderDependency{},
 		&moudomainrepositorydependencies.CreateMouDependency{},

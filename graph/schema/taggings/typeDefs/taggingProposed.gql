@@ -41,7 +41,7 @@ type TaggingProposed {
   taggingType: TaggingType
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
-  submittingAccount: Account
+  submittingAccount: Account!
   recentApprovingAccount: Account
   recentLog: Logging!
   createdAt: Time!
