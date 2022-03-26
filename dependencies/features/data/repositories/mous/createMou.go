@@ -9,6 +9,7 @@ import (
 	moudomainrepositories "github.com/horeekaa/backend/features/mous/data/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
 	moudomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories/utils"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 )
 
 type CreateMouDependency struct{}
@@ -33,11 +34,13 @@ func (_ *CreateMouDependency) Bind() {
 		func(
 			trxComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent,
 			createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
+			createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) moudomainrepositoryinterfaces.CreateMouRepository {
 			createMouRepo, _ := moudomainrepositories.NewCreateMouRepository(
 				trxComponent,
 				createMouItemComponent,
+				createNotifComponent,
 				mongoDBTransaction,
 			)
 			return createMouRepo

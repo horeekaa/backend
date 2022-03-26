@@ -1,0 +1,11 @@
+input MouForNotifPayloadInput {
+  _id: ObjectID!
+  publicId: String
+  title: String
+}
+
+type MouForNotifPayload {
+  _id: ObjectID!
+  publicId: String
+  title: String
+}

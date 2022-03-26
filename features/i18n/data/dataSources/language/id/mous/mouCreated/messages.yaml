@@ -1,0 +1,2 @@
+mou_created_notification_title: "MoU baru {{.mouPublicId}} telah dibuat"
+mou_created_notification_body: "Klik disini untuk melihat detail MoU tersebut"

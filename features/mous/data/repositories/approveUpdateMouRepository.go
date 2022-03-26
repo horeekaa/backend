@@ -1,12 +1,15 @@
 package moudomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -14,6 +17,7 @@ type approveUpdateMouRepository struct {
 	approveUpdateMouTransactionComponent moudomainrepositoryinterfaces.ApproveUpdateMouTransactionComponent
 	mouDataSource                        databasemoudatasourceinterfaces.MouDataSource
 	approveUpdateMouItemComponent        mouitemdomainrepositoryinterfaces.ApproveUpdateMouItemTransactionComponent
+	createNotificationComponent          notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                         string
 }
@@ -22,12 +26,14 @@ func NewApproveUpdateMouRepository(
 	approveUpdateMouTransactionComponent moudomainrepositoryinterfaces.ApproveUpdateMouTransactionComponent,
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	approveUpdateMouItemComponent mouitemdomainrepositoryinterfaces.ApproveUpdateMouItemTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (moudomainrepositoryinterfaces.ApproveUpdateMouRepository, error) {
 	approveUpdateMouRepo := &approveUpdateMouRepository{
 		approveUpdateMouTransactionComponent,
 		mouDataSource,
 		approveUpdateMouItemComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 		"ApproveUpdateMouRepository",
 	}
@@ -97,5 +103,32 @@ func (approveUpdateMouRepo *approveUpdateMouRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.Mou), err
+
+	approvedMou := output.(*model.Mou)
+	go func() {
+		notificationToCreate := &model.InternalCreateNotification{
+			NotificationCategory: model.NotificationCategoryMouApproved,
+			PayloadOptions: &model.PayloadOptionsInput{
+				MouPayload: &model.MouPayloadInput{
+					Mou: &model.MouForNotifPayloadInput{},
+				},
+			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &approvedMou.SecondParty.AccountInCharge.ID,
+			},
+		}
+
+		jsonTemp, _ := json.Marshal(approvedMou)
+		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MouPayload.Mou)
+
+		_, err = approveUpdateMouRepo.createNotificationComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			notificationToCreate,
+		)
+		if err != nil {
+			return
+		}
+	}()
+
+	return approvedMou, err
 }

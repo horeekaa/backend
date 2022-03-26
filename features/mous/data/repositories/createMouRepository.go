@@ -7,23 +7,27 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createMouRepository struct {
 	createMouTransactionComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent
 	createMouItemComponent        mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent
+	createNotificationComponent   notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction            mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateMouRepository(
 	createMouRepositoryTransactionComponent moudomainrepositoryinterfaces.CreateMouTransactionComponent,
 	createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (moudomainrepositoryinterfaces.CreateMouRepository, error) {
 	createMouRepo := &createMouRepository{
 		createMouRepositoryTransactionComponent,
 		createMouItemComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 	}
 
@@ -93,5 +97,32 @@ func (createMouRepo *createMouRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.Mou), nil
+	createdMou := (output).(*model.Mou)
+
+	go func() {
+		notificationToCreate := &model.InternalCreateNotification{
+			NotificationCategory: model.NotificationCategoryMouCreated,
+			PayloadOptions: &model.PayloadOptionsInput{
+				MouPayload: &model.MouPayloadInput{
+					Mou: &model.MouForNotifPayloadInput{},
+				},
+			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &createdMou.SecondParty.AccountInCharge.ID,
+			},
+		}
+
+		jsonTemp, _ := json.Marshal(createdMou)
+		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MouPayload.Mou)
+
+		_, err = createMouRepo.createNotificationComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			notificationToCreate,
+		)
+		if err != nil {
+			return
+		}
+	}()
+
+	return createdMou, nil
 }

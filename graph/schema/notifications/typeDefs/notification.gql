@@ -3,6 +3,10 @@ enum NotificationCategory {
   ORG_INVITATION_ACCEPTED
   ORG_APPROVAL
 
+  MOU_CREATED
+  MOU_UPDATED
+  MOU_APPROVED
+
   PURCHASE_ORDER_SUPPLY_BROADCAST
 
   INVOICE_CREATED
@@ -20,6 +24,7 @@ input PayloadOptionsInput {
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayloadInput
   invoiceCreatedPayload: InvoiceCreatedPayloadInput
   invoiceUpdatedPayload: InvoiceUpdatedPayloadInput
+  mouPayload: MouPayloadInput
 }
 
 type PayloadOptions {
@@ -28,6 +33,7 @@ type PayloadOptions {
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayload
   invoiceCreatedPayload: InvoiceCreatedPayload
   invoiceUpdatedPayload: InvoiceUpdatedPayload
+  mouPayload: MouPayload
 }
 
 input InternalCreateNotification {

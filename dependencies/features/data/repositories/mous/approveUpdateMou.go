@@ -9,6 +9,7 @@ import (
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositories "github.com/horeekaa/backend/features/mous/data/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 )
 
 type ApproveUpdateMouDependency struct{}
@@ -34,12 +35,14 @@ func (_ *ApproveUpdateMouDependency) Bind() {
 			trxComponent moudomainrepositoryinterfaces.ApproveUpdateMouTransactionComponent,
 			mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 			approveUpdateMouItemComponent mouitemdomainrepositoryinterfaces.ApproveUpdateMouItemTransactionComponent,
+			createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) moudomainrepositoryinterfaces.ApproveUpdateMouRepository {
 			approveUpdateMouRepo, _ := moudomainrepositories.NewApproveUpdateMouRepository(
 				trxComponent,
 				mouDataSource,
 				approveUpdateMouItemComponent,
+				createNotificationComponent,
 				mongoDBTransaction,
 			)
 			return approveUpdateMouRepo
