@@ -9,6 +9,7 @@ import (
 	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
 )
@@ -18,6 +19,7 @@ type proposeUpdateMouRepository struct {
 	proposeUpdateMouTransactionComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent
 	createMouItemComponent               mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent
 	proposeUpdateMouItemComponent        mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent
+	createNotificationComponent          notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                   mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                         string
 }
@@ -27,6 +29,7 @@ func NewProposeUpdateMouRepository(
 	proposeUpdateMouRepositoryTransactionComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent,
 	createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
 	proposeUpdateMouItemComponent mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (moudomainrepositoryinterfaces.ProposeUpdateMouRepository, error) {
 	proposeUpdateMouRepo := &proposeUpdateMouRepository{
@@ -34,6 +37,7 @@ func NewProposeUpdateMouRepository(
 		proposeUpdateMouRepositoryTransactionComponent,
 		createMouItemComponent,
 		proposeUpdateMouItemComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 		"ProposeUpdateMouRepository",
 	}
@@ -156,5 +160,55 @@ func (updateMouRepo *proposeUpdateMouRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.Mou), nil
+
+	updatedMou := output.(*model.Mou)
+	jsonTemp, _ := json.Marshal(updatedMou)
+	go func() {
+		notificationToCreate := &model.InternalCreateNotification{
+			NotificationCategory: model.NotificationCategoryMouUpdated,
+			PayloadOptions: &model.PayloadOptionsInput{
+				MouPayload: &model.MouPayloadInput{
+					Mou: &model.MouForNotifPayloadInput{},
+				},
+			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &updatedMou.SecondParty.AccountInCharge.ID,
+			},
+		}
+
+		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MouPayload.Mou)
+
+		_, err = updateMouRepo.createNotificationComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			notificationToCreate,
+		)
+		if err != nil {
+			return
+		}
+	}()
+	go func() {
+		notificationToCreate := &model.InternalCreateNotification{
+			NotificationCategory: model.NotificationCategoryMouUpdated,
+			PayloadOptions: &model.PayloadOptionsInput{
+				MouPayload: &model.MouPayloadInput{
+					Mou: &model.MouForNotifPayloadInput{},
+				},
+			},
+			RecipientAccount: &model.ObjectIDOnly{
+				ID: &updatedMou.FirstParty.AccountInCharge.ID,
+			},
+		}
+
+		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MouPayload.Mou)
+
+		_, err = updateMouRepo.createNotificationComponent.TransactionBody(
+			&mongodbcoretypes.OperationOptions{},
+			notificationToCreate,
+		)
+		if err != nil {
+			return
+		}
+	}()
+
+	return updatedMou, nil
 }

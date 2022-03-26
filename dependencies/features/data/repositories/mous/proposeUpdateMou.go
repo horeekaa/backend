@@ -10,6 +10,7 @@ import (
 	moudomainrepositories "github.com/horeekaa/backend/features/mous/data/repositories"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
 	moudomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories/utils"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 )
 
 type ProposeUpdateMouDependency struct{}
@@ -38,6 +39,7 @@ func (_ *ProposeUpdateMouDependency) Bind() {
 			trxComponent moudomainrepositoryinterfaces.ProposeUpdateMouTransactionComponent,
 			createMouItemComponent mouitemdomainrepositoryinterfaces.CreateMouItemTransactionComponent,
 			updateMouItemComponent mouitemdomainrepositoryinterfaces.ProposeUpdateMouItemTransactionComponent,
+			createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) moudomainrepositoryinterfaces.ProposeUpdateMouRepository {
 			proposeUpdateMouRepo, _ := moudomainrepositories.NewProposeUpdateMouRepository(
@@ -45,6 +47,7 @@ func (_ *ProposeUpdateMouDependency) Bind() {
 				trxComponent,
 				createMouItemComponent,
 				updateMouItemComponent,
+				createNotificationComponent,
 				mongoDBTransaction,
 			)
 			return proposeUpdateMouRepo

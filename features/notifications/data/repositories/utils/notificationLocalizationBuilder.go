@@ -113,6 +113,19 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
+	case model.NotificationCategoryMouUpdated:
+		titleText = localizer.Get(
+			"mous.mouUpdated.messages.mou_updated_notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"mouPublicId": input.PayloadOptions.MouPayload.Mou.PublicID,
+			},
+		)
+
+		titleText = localizer.Get(
+			"mous.mouUpdated.messages.mou_updated_notification_body",
+		)
+		break
+
 	}
 
 	(*output).Message = &model.NotificationMessage{
