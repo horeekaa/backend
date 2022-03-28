@@ -9,6 +9,7 @@ import (
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	databaseorganizationdatasourceinterfaces "github.com/horeekaa/backend/features/organizations/data/dataSources/databases/interfaces/sources"
 )
@@ -39,11 +40,13 @@ func (_ *ProposeUpdateMemberAccessDependency) Bind() {
 		func(
 			createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			trxComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent,
+			invitationPayloadLoader memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessRepository {
 			proposeUpdateMemberAccessRepo, _ := memberaccessdomainrepositories.NewProposeUpdateMemberAccessRepository(
 				createNotifComponent,
 				trxComponent,
+				invitationPayloadLoader,
 				mongoDBTransaction,
 			)
 			return proposeUpdateMemberAccessRepo

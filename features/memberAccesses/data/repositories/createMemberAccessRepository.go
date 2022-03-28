@@ -6,6 +6,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
@@ -13,17 +14,20 @@ import (
 type createMemberAccessRepository struct {
 	createNotifComponent                   notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	createMemberAccessTransactionComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessTransactionComponent
+	invitationPayloadLoader                memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader
 	mongoDBTransaction                     mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreateMemberAccessRepository(
 	createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	createMemberAccessRepositoryTransactionComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessTransactionComponent,
+	invitationPayloadLoader memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessdomainrepositoryinterfaces.CreateMemberAccessRepository, error) {
 	createMemberAccessRepo := &createMemberAccessRepository{
 		createNotifComponent,
 		createMemberAccessRepositoryTransactionComponent,
+		invitationPayloadLoader,
 		mongoDBTransaction,
 	}
 
@@ -35,27 +39,27 @@ func NewCreateMemberAccessRepository(
 	return createMemberAccessRepo, nil
 }
 
-func (createProdRepo *createMemberAccessRepository) SetValidation(
+func (createMemberAccessRepo *createMemberAccessRepository) SetValidation(
 	usecaseComponent memberaccessdomainrepositoryinterfaces.CreateMemberAccessUsecaseComponent,
 ) (bool, error) {
-	createProdRepo.createMemberAccessTransactionComponent.SetValidation(usecaseComponent)
+	createMemberAccessRepo.createMemberAccessTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (createProdRepo *createMemberAccessRepository) PreTransaction(
+func (createMemberAccessRepo *createMemberAccessRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return createProdRepo.createMemberAccessTransactionComponent.PreTransaction(
+	return createMemberAccessRepo.createMemberAccessTransactionComponent.PreTransaction(
 		input.(*model.InternalCreateMemberAccess),
 	)
 }
 
-func (createProdRepo *createMemberAccessRepository) TransactionBody(
+func (createMemberAccessRepo *createMemberAccessRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
 	memberAccessToCreate := input.(*model.InternalCreateMemberAccess)
-	createdMemberAccess, err := createProdRepo.createMemberAccessTransactionComponent.TransactionBody(
+	createdMemberAccess, err := createMemberAccessRepo.createMemberAccessTransactionComponent.TransactionBody(
 		operationOption,
 		memberAccessToCreate,
 	)
@@ -66,10 +70,10 @@ func (createProdRepo *createMemberAccessRepository) TransactionBody(
 	return createdMemberAccess, nil
 }
 
-func (createProdRepo *createMemberAccessRepository) RunTransaction(
+func (createMemberAccessRepo *createMemberAccessRepository) RunTransaction(
 	input *model.InternalCreateMemberAccess,
 ) (*model.MemberAccess, error) {
-	output, err := createProdRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := createMemberAccessRepo.mongoDBTransaction.RunTransaction(input)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +96,15 @@ func (createProdRepo *createMemberAccessRepository) RunTransaction(
 
 			jsonTemp, _ := json.Marshal(createdMemberAccess)
 			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
-			_, err := createProdRepo.createNotifComponent.TransactionBody(
+
+			_, err := createMemberAccessRepo.invitationPayloadLoader.Execute(
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+
+			_, err = createMemberAccessRepo.createNotifComponent.TransactionBody(
 				&mongodbcoretypes.OperationOptions{},
 				notificationToCreate,
 			)

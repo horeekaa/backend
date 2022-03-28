@@ -8,6 +8,7 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
@@ -16,6 +17,7 @@ type approveUpdateMemberAccessRepository struct {
 	memberAccessDataSource                        databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	createNotifComponent                          notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	approveUpdateMemberAccessTransactionComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent
+	invitationPayloadLoader                       memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                                  string
 }
@@ -24,12 +26,14 @@ func NewApproveUpdateMemberAccessRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	approveUpdateMemberAccessRepositoryTransactionComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent,
+	invitationPayloadLoader memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessRepository, error) {
 	approveUpdateMemberAccessRepo := &approveUpdateMemberAccessRepository{
 		memberAccessDataSource,
 		createNotifComponent,
 		approveUpdateMemberAccessRepositoryTransactionComponent,
+		invitationPayloadLoader,
 		mongoDBTransaction,
 		"ApproveUpdateMemberAccessRepository",
 	}
@@ -107,7 +111,14 @@ func (approveUpdateMmbAccRepo *approveUpdateMemberAccessRepository) RunTransacti
 			jsonTemp, _ := json.Marshal(updatedMemberAccess)
 			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
 
-			_, err := approveUpdateMmbAccRepo.createNotifComponent.TransactionBody(
+			_, err := approveUpdateMmbAccRepo.invitationPayloadLoader.Execute(
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+
+			_, err = approveUpdateMmbAccRepo.createNotifComponent.TransactionBody(
 				&mongodbcoretypes.OperationOptions{},
 				notificationToCreate,
 			)

@@ -6,6 +6,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
@@ -14,17 +15,20 @@ import (
 type proposeUpdateMemberAccessRepository struct {
 	createNotifComponent                          notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	proposeUpdateMemberAccessTransactionComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent
+	invitationPayloadLoader                       memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewProposeUpdateMemberAccessRepository(
 	createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	proposeUpdateMemberAccessRepositoryTransactionComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessTransactionComponent,
+	invitationPayloadLoader memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessRepository, error) {
 	proposeUpdateMemberAccessRepo := &proposeUpdateMemberAccessRepository{
 		createNotifComponent,
 		proposeUpdateMemberAccessRepositoryTransactionComponent,
+		invitationPayloadLoader,
 		mongoDBTransaction,
 	}
 
@@ -36,27 +40,27 @@ func NewProposeUpdateMemberAccessRepository(
 	return proposeUpdateMemberAccessRepo, nil
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRepository) SetValidation(
+func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) SetValidation(
 	usecaseComponent memberaccessdomainrepositoryinterfaces.ProposeUpdateMemberAccessUsecaseComponent,
 ) (bool, error) {
-	updateOrgRepo.proposeUpdateMemberAccessTransactionComponent.SetValidation(usecaseComponent)
+	proposeUpdateMemberAccessRepo.proposeUpdateMemberAccessTransactionComponent.SetValidation(usecaseComponent)
 	return true, nil
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRepository) PreTransaction(
+func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return updateOrgRepo.proposeUpdateMemberAccessTransactionComponent.PreTransaction(
+	return proposeUpdateMemberAccessRepo.proposeUpdateMemberAccessTransactionComponent.PreTransaction(
 		input.(*model.InternalUpdateMemberAccess),
 	)
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
+func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 	operationOption *mongodbcoretypes.OperationOptions,
 	input interface{},
 ) (interface{}, error) {
 	memberAccessToUpdate := input.(*model.InternalUpdateMemberAccess)
-	updatedMemberAccess, err := updateOrgRepo.proposeUpdateMemberAccessTransactionComponent.TransactionBody(
+	updatedMemberAccess, err := proposeUpdateMemberAccessRepo.proposeUpdateMemberAccessTransactionComponent.TransactionBody(
 		operationOption,
 		memberAccessToUpdate,
 	)
@@ -66,10 +70,10 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 	return updatedMemberAccess, nil
 }
 
-func (updateOrgRepo *proposeUpdateMemberAccessRepository) RunTransaction(
+func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) RunTransaction(
 	input *model.InternalUpdateMemberAccess,
 ) (*model.MemberAccess, error) {
-	output, err := updateOrgRepo.mongoDBTransaction.RunTransaction(input)
+	output, err := proposeUpdateMemberAccessRepo.mongoDBTransaction.RunTransaction(input)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +101,14 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) RunTransaction(
 			jsonTemp, _ := json.Marshal(updatedMemberAccess)
 			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
 
-			_, err := updateOrgRepo.createNotifComponent.TransactionBody(
+			_, err := proposeUpdateMemberAccessRepo.invitationPayloadLoader.Execute(
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+
+			_, err = proposeUpdateMemberAccessRepo.createNotifComponent.TransactionBody(
 				&mongodbcoretypes.OperationOptions{},
 				notificationToCreate,
 			)
