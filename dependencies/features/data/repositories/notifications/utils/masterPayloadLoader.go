@@ -5,7 +5,6 @@ import (
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryutilities "github.com/horeekaa/backend/features/notifications/data/repositories/utils"
 	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
-	notificationdomainrepositoryloaderutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils/payloadLoaders"
 )
 
 type MasterPayloadLoaderDependency struct{}
@@ -15,12 +14,10 @@ func (_ *MasterPayloadLoaderDependency) Bind() {
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-			invitationPayloadLoader notificationdomainrepositoryloaderutilityinterfaces.InvitationPayloadLoader,
 		) notificationdomainrepositoryutilityinterfaces.MasterPayloadLoader {
 			masterPayloadLoader, _ := notificationdomainrepositoryutilities.NewMasterPayloadLoader(
 				accountDataSource,
 				personDataSource,
-				invitationPayloadLoader,
 			)
 			return masterPayloadLoader
 		},

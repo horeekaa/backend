@@ -1,11 +1,11 @@
-package notificationdomainrepositoryloaderutilities
+package memberaccessdomainrepositoryutilities
 
 import (
 	"encoding/json"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
-	notificationdomainrepositoryloaderutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils/payloadLoaders"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -17,39 +17,26 @@ type invitationPayloadLoader struct {
 func NewInvitationPayloadLoader(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 	personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-) (notificationdomainrepositoryloaderutilityinterfaces.InvitationPayloadLoader, error) {
+) (memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader, error) {
 	return &invitationPayloadLoader{
 		accountDataSource: accountDataSource,
 		personDataSource:  personDataSource,
 	}, nil
 }
 
-func (invitationPyload *invitationPayloadLoader) TransactionBody(
-	operationOptions *mongodbcoretypes.OperationOptions,
-	notification *model.DatabaseCreateNotification,
+func (invitationPayload *invitationPayloadLoader) Execute(
+	notification *model.InternalCreateNotification,
 ) (bool, error) {
 	memberAccess := &model.MemberAccessForNotifPayloadInput{}
-	switch notification.NotificationCategory {
-	case model.NotificationCategoryOrgInvitationRequest:
-		memberAccess = notification.PayloadOptions.InvitationRequestPayload.MemberAccess
-		break
-
-	case model.NotificationCategoryOrgInvitationAccepted:
-		memberAccess = notification.PayloadOptions.InvitationAcceptedPayload.MemberAccess
-		break
-
-	default:
-		return false, nil
-	}
 
 	submittingAccountLoadedChan := make(chan bool)
 	invitedAccountLoadedChan := make(chan bool)
 	errChan := make(chan error)
 
 	go func() {
-		submittingAcc, err := invitationPyload.accountDataSource.GetMongoDataSource().FindByID(
+		submittingAcc, err := invitationPayload.accountDataSource.GetMongoDataSource().FindByID(
 			memberAccess.SubmittingAccount.ID,
-			operationOptions,
+			&mongodbcoretypes.OperationOptions{},
 		)
 		if err != nil {
 			errChan <- err
@@ -57,9 +44,9 @@ func (invitationPyload *invitationPayloadLoader) TransactionBody(
 		jsonTemp, _ := json.Marshal(submittingAcc)
 		json.Unmarshal(jsonTemp, &memberAccess.SubmittingAccount)
 
-		submittingPerson, err := invitationPyload.personDataSource.GetMongoDataSource().FindByID(
+		submittingPerson, err := invitationPayload.personDataSource.GetMongoDataSource().FindByID(
 			memberAccess.SubmittingAccount.Person.ID,
-			operationOptions,
+			&mongodbcoretypes.OperationOptions{},
 		)
 		if err != nil {
 			errChan <- err
@@ -72,9 +59,9 @@ func (invitationPyload *invitationPayloadLoader) TransactionBody(
 	}()
 
 	go func() {
-		invitedAcc, err := invitationPyload.accountDataSource.GetMongoDataSource().FindByID(
+		invitedAcc, err := invitationPayload.accountDataSource.GetMongoDataSource().FindByID(
 			memberAccess.Account.ID,
-			operationOptions,
+			&mongodbcoretypes.OperationOptions{},
 		)
 		if err != nil {
 			errChan <- err
@@ -82,9 +69,9 @@ func (invitationPyload *invitationPayloadLoader) TransactionBody(
 		jsonTemp, _ := json.Marshal(invitedAcc)
 		json.Unmarshal(jsonTemp, &memberAccess.Account)
 
-		invitedPerson, err := invitationPyload.personDataSource.GetMongoDataSource().FindByID(
+		invitedPerson, err := invitationPayload.personDataSource.GetMongoDataSource().FindByID(
 			memberAccess.Account.Person.ID,
-			operationOptions,
+			&mongodbcoretypes.OperationOptions{},
 		)
 		if err != nil {
 			errChan <- err
