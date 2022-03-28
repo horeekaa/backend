@@ -1,7 +1,7 @@
-input InvitationAcceptedPayloadInput {
+input MemberAccessInvitationPayloadInput {
   memberAccess: MemberAccessForNotifPayloadInput!
 }
 
-type InvitationAcceptedPayload {
+type MemberAccessInvitationPayload {
   memberAccess: MemberAccessForNotifPayload!
 }

@@ -5,26 +5,33 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type approveUpdateMemberAccessRepository struct {
+	memberAccessDataSource                        databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	createNotifComponent                          notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	approveUpdateMemberAccessTransactionComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent
 	mongoDBTransaction                            mongodbcoretransactioninterfaces.MongoRepoTransaction
+	pathIdentity                                  string
 }
 
 func NewApproveUpdateMemberAccessRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	approveUpdateMemberAccessRepositoryTransactionComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessRepository, error) {
 	approveUpdateMemberAccessRepo := &approveUpdateMemberAccessRepository{
+		memberAccessDataSource,
 		createNotifComponent,
 		approveUpdateMemberAccessRepositoryTransactionComponent,
 		mongoDBTransaction,
+		"ApproveUpdateMemberAccessRepository",
 	}
 
 	mongoDBTransaction.SetTransaction(
@@ -55,50 +62,59 @@ func (approveUpdateMmbAccRepo *approveUpdateMemberAccessRepository) TransactionB
 	input interface{},
 ) (interface{}, error) {
 	memberAccessToUpdate := input.(*model.InternalUpdateMemberAccess)
-	updatedMemberAccess, err := approveUpdateMmbAccRepo.approveUpdateMemberAccessTransactionComponent.TransactionBody(
+	return approveUpdateMmbAccRepo.approveUpdateMemberAccessTransactionComponent.TransactionBody(
 		operationOption,
 		memberAccessToUpdate,
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
-		updatedMemberAccess.Account.ID.Hex() != updatedMemberAccess.SubmittingAccount.ID.Hex() &&
-		*memberAccessToUpdate.ProposalStatus == model.EntityProposalStatusApproved &&
-		!updatedMemberAccess.InvitationAccepted {
-		notificationToCreate := &model.InternalCreateNotification{
-			NotificationCategory: model.NotificationCategoryOrgInvitationRequest,
-			PayloadOptions: &model.PayloadOptionsInput{
-				InvitationRequestPayload: &model.InvitationRequestPayloadInput{
-					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
-				},
-			},
-			RecipientAccount: &model.ObjectIDOnly{
-				ID: &updatedMemberAccess.Account.ID,
-			},
-		}
-
-		jsonTemp, _ := json.Marshal(updatedMemberAccess)
-		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.InvitationRequestPayload.MemberAccess)
-
-		_, err := approveUpdateMmbAccRepo.createNotifComponent.TransactionBody(
-			operationOption,
-			notificationToCreate,
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return updatedMemberAccess, nil
 }
 
 func (approveUpdateMmbAccRepo *approveUpdateMemberAccessRepository) RunTransaction(
 	input *model.InternalUpdateMemberAccess,
 ) (*model.MemberAccess, error) {
+	existingMemberAccess, err := approveUpdateMmbAccRepo.memberAccessDataSource.GetMongoDataSource().FindByID(
+		input.ID,
+		&mongodbcoretypes.OperationOptions{},
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			approveUpdateMmbAccRepo.pathIdentity,
+			err,
+		)
+	}
+
 	output, err := approveUpdateMmbAccRepo.mongoDBTransaction.RunTransaction(input)
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.MemberAccess), nil
+
+	updatedMemberAccess := (output).(*model.MemberAccess)
+	go func() {
+		if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
+			*input.ProposalStatus == model.EntityProposalStatusApproved &&
+			!existingMemberAccess.InvitationAccepted {
+			notificationToCreate := &model.InternalCreateNotification{
+				NotificationCategory: model.NotificationCategoryMemberAccessInvitationRequest,
+				PayloadOptions: &model.PayloadOptionsInput{
+					MemberAccessInvitationPayload: &model.MemberAccessInvitationPayloadInput{
+						MemberAccess: &model.MemberAccessForNotifPayloadInput{},
+					},
+				},
+				RecipientAccount: &model.ObjectIDOnly{
+					ID: &updatedMemberAccess.Account.ID,
+				},
+			}
+
+			jsonTemp, _ := json.Marshal(updatedMemberAccess)
+			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
+
+			_, err := approveUpdateMmbAccRepo.createNotifComponent.TransactionBody(
+				&mongodbcoretypes.OperationOptions{},
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+		}
+	}()
+	return updatedMemberAccess, nil
 }

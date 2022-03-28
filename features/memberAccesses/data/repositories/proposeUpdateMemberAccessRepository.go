@@ -63,37 +63,6 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) TransactionBody(
 	if err != nil {
 		return nil, err
 	}
-
-	if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
-		updatedMemberAccess.Account.ID.Hex() != memberAccessToUpdate.SubmittingAccount.ID.Hex() &&
-		updatedMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved &&
-		(funk.GetOrElse(
-			memberAccessToUpdate.InvitationAccepted,
-			false,
-		)).(bool) {
-		notificationToCreate := &model.InternalCreateNotification{
-			NotificationCategory: model.NotificationCategoryOrgInvitationAccepted,
-			PayloadOptions: &model.PayloadOptionsInput{
-				InvitationAcceptedPayload: &model.InvitationAcceptedPayloadInput{
-					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
-				},
-			},
-			RecipientAccount: &model.ObjectIDOnly{
-				ID: &updatedMemberAccess.SubmittingAccount.ID,
-			},
-		}
-
-		jsonTemp, _ := json.Marshal(updatedMemberAccess)
-		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.InvitationAcceptedPayload.MemberAccess)
-
-		_, err := updateOrgRepo.createNotifComponent.TransactionBody(
-			operationOption,
-			notificationToCreate,
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
 	return updatedMemberAccess, nil
 }
 
@@ -104,5 +73,38 @@ func (updateOrgRepo *proposeUpdateMemberAccessRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.MemberAccess), nil
+
+	updatedMemberAccess := (output).(*model.MemberAccess)
+	go func() {
+		if updatedMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
+			updatedMemberAccess.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved &&
+			(funk.GetOrElse(
+				input.InvitationAccepted,
+				false,
+			)).(bool) {
+			notificationToCreate := &model.InternalCreateNotification{
+				NotificationCategory: model.NotificationCategoryMemberAccessInvitationAccepted,
+				PayloadOptions: &model.PayloadOptionsInput{
+					MemberAccessInvitationPayload: &model.MemberAccessInvitationPayloadInput{
+						MemberAccess: &model.MemberAccessForNotifPayloadInput{},
+					},
+				},
+				RecipientAccount: &model.ObjectIDOnly{
+					ID: &updatedMemberAccess.SubmittingAccount.ID,
+				},
+			}
+
+			jsonTemp, _ := json.Marshal(updatedMemberAccess)
+			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
+
+			_, err := updateOrgRepo.createNotifComponent.TransactionBody(
+				&mongodbcoretypes.OperationOptions{},
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+		}
+	}()
+	return updatedMemberAccess, nil
 }

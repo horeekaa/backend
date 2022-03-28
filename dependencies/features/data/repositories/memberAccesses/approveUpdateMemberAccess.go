@@ -31,11 +31,13 @@ func (_ *ApproveUpdateMemberAccessDependency) Bind() {
 
 	container.Transient(
 		func(
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			trxComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessRepository {
 			approveUpdateMemberAccessRepo, _ := memberaccessdomainrepositories.NewApproveUpdateMemberAccessRepository(
+				memberAccessDataSource,
 				createNotifComponent,
 				trxComponent,
 				mongoDBTransaction,

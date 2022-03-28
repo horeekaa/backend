@@ -63,32 +63,6 @@ func (createProdRepo *createMemberAccessRepository) TransactionBody(
 		return nil, err
 	}
 
-	if createdMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
-		createdMemberAccess.Account.ID.Hex() != createdMemberAccess.SubmittingAccount.ID.Hex() &&
-		createdMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
-		notificationToCreate := &model.InternalCreateNotification{
-			NotificationCategory: model.NotificationCategoryOrgInvitationRequest,
-			PayloadOptions: &model.PayloadOptionsInput{
-				InvitationRequestPayload: &model.InvitationRequestPayloadInput{
-					MemberAccess: &model.MemberAccessForNotifPayloadInput{},
-				},
-			},
-			RecipientAccount: &model.ObjectIDOnly{
-				ID: &createdMemberAccess.Account.ID,
-			},
-		}
-
-		jsonTemp, _ := json.Marshal(createdMemberAccess)
-		json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.InvitationRequestPayload.MemberAccess)
-		_, err := createProdRepo.createNotifComponent.TransactionBody(
-			operationOption,
-			notificationToCreate,
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return createdMemberAccess, nil
 }
 
@@ -99,5 +73,33 @@ func (createProdRepo *createMemberAccessRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.MemberAccess), nil
+
+	createdMemberAccess := (output).(*model.MemberAccess)
+	go func() {
+		if createdMemberAccess.MemberAccessRefType == model.MemberAccessRefTypeOrganizationsBased &&
+			createdMemberAccess.ProposalStatus == model.EntityProposalStatusApproved {
+			notificationToCreate := &model.InternalCreateNotification{
+				NotificationCategory: model.NotificationCategoryMemberAccessInvitationRequest,
+				PayloadOptions: &model.PayloadOptionsInput{
+					MemberAccessInvitationPayload: &model.MemberAccessInvitationPayloadInput{
+						MemberAccess: &model.MemberAccessForNotifPayloadInput{},
+					},
+				},
+				RecipientAccount: &model.ObjectIDOnly{
+					ID: &createdMemberAccess.Account.ID,
+				},
+			}
+
+			jsonTemp, _ := json.Marshal(createdMemberAccess)
+			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.MemberAccessInvitationPayload.MemberAccess)
+			_, err := createProdRepo.createNotifComponent.TransactionBody(
+				&mongodbcoretypes.OperationOptions{},
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+		}
+	}()
+	return createdMemberAccess, nil
 }

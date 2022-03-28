@@ -34,28 +34,28 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 	titleText := ""
 	bodyText := ""
 	switch input.NotificationCategory {
-	case model.NotificationCategoryOrgInvitationAccepted:
+	case model.NotificationCategoryMemberAccessInvitationAccepted:
 		titleText = localizer.Get(
-			"organizations.invitationAccepted.messages.invitation_accepted_notification_title",
+			"memberAccesses.invitationAccepted.messages.invitation_accepted_notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"personName": input.PayloadOptions.InvitationAcceptedPayload.MemberAccess.Account.Person.FirstName,
+				"personName": input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.Account.Person.FirstName,
 			},
 		)
 		bodyText = localizer.Get(
-			"organizations.invitationAccepted.messages.invitation_accepted_notification_body",
+			"memberAccesses.invitationAccepted.messages.invitation_accepted_notification_body",
 		)
 		break
 
-	case model.NotificationCategoryOrgInvitationRequest:
+	case model.NotificationCategoryMemberAccessInvitationRequest:
 		titleText = localizer.Get(
-			"organizations.invitationRequest.messages.invitation_request_notification_title",
+			"memberAccesses.invitationRequest.messages.invitation_request_notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"submitterName": input.PayloadOptions.InvitationRequestPayload.MemberAccess.SubmittingAccount.Person.FirstName,
-				"orgName":       input.PayloadOptions.InvitationRequestPayload.MemberAccess.Organization.Name,
+				"submitterName": input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.SubmittingAccount.Person.FirstName,
+				"orgName":       input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.Organization.Name,
 			},
 		)
 		bodyText = localizer.Get(
-			"organizations.invitationRequest.messages.invitation_request_notification_body",
+			"memberAccesses.invitationRequest.messages.invitation_request_notification_body",
 		)
 		break
 

@@ -1,6 +1,6 @@
 enum NotificationCategory {
-  ORG_INVITATION_REQUEST
-  ORG_INVITATION_ACCEPTED
+  MEMBER_ACCESS_INVITATION_REQUEST
+  MEMBER_ACCESS_INVITATION_ACCEPTED
   ORG_APPROVAL
 
   MOU_CREATED
@@ -19,8 +19,7 @@ type NotificationMessage {
 }
 
 input PayloadOptionsInput {
-  invitationRequestPayload: InvitationRequestPayloadInput
-  invitationAcceptedPayload: InvitationAcceptedPayloadInput
+  memberAccessInvitationPayload: MemberAccessInvitationPayloadInput
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayloadInput
   invoiceCreatedPayload: InvoiceCreatedPayloadInput
   invoiceUpdatedPayload: InvoiceUpdatedPayloadInput
@@ -28,8 +27,7 @@ input PayloadOptionsInput {
 }
 
 type PayloadOptions {
-  invitationRequestPayload: InvitationRequestPayload
-  invitationAcceptedPayload: InvitationAcceptedPayload
+  memberAccessInvitationPayload: MemberAccessInvitationPayload
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayload
   invoiceCreatedPayload: InvoiceCreatedPayload
   invoiceUpdatedPayload: InvoiceUpdatedPayload
