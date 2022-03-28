@@ -80,10 +80,10 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		}
 		photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 			return &s
-		}(*photoToCreate.ProposalStatus)
+		}(*input.ProposalStatus)
 		photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 			return &m
-		}(*photoToCreate.SubmittingAccount)
+		}(*input.SubmittingAccount)
 		descriptivePhoto, err := createSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
 			&mongodbcoretypes.OperationOptions{},
 			photoToCreate,
