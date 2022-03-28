@@ -203,12 +203,12 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 							ID: &memberAccess.Account.ID,
 						},
 						PayloadOptions: &model.PayloadOptionsInput{
-							InvoiceCreatedPayload: &model.InvoiceCreatedPayloadInput{
+							InvoicePayload: &model.InvoicePayloadInput{
 								Invoice: &model.InvoiceForNotifPayloadInput{},
 							},
 						},
 					}
-					json.Unmarshal(jsonInvPayload, &notifToCreate.PayloadOptions.InvoiceCreatedPayload.Invoice)
+					json.Unmarshal(jsonInvPayload, &notifToCreate.PayloadOptions.InvoicePayload.Invoice)
 					_, err := createInvoiceRepo.createNotificationComponent.TransactionBody(
 						&mongodbcoretypes.OperationOptions{},
 						notifToCreate,

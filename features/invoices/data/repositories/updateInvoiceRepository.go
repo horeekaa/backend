@@ -91,12 +91,12 @@ func (updateInvoiceRepo *updateInvoiceRepository) RunTransaction(
 					ID: &memberAccess.Account.ID,
 				},
 				PayloadOptions: &model.PayloadOptionsInput{
-					InvoiceUpdatedPayload: &model.InvoiceUpdatedPayloadInput{
+					InvoicePayload: &model.InvoicePayloadInput{
 						Invoice: &model.InvoiceForNotifPayloadInput{},
 					},
 				},
 			}
-			json.Unmarshal(jsonInvPayload, &notifToCreate.PayloadOptions.InvoiceUpdatedPayload.Invoice)
+			json.Unmarshal(jsonInvPayload, &notifToCreate.PayloadOptions.InvoicePayload.Invoice)
 			_, err := updateInvoiceRepo.createNotificationComponent.TransactionBody(
 				&mongodbcoretypes.OperationOptions{},
 				notifToCreate,

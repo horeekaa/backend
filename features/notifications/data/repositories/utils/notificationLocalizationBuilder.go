@@ -71,7 +71,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 	case model.NotificationCategoryInvoiceCreated:
-		formattedDueDate := input.PayloadOptions.InvoiceCreatedPayload.Invoice.PaymentDueDate.Format(
+		formattedDueDate := input.PayloadOptions.InvoicePayload.Invoice.PaymentDueDate.Format(
 			"02/01/2006",
 		)
 		titleText = localizer.Get(
@@ -86,7 +86,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		break
 
 	case model.NotificationCategoryInvoiceUpdated:
-		formattedDueDate := input.PayloadOptions.InvoiceUpdatedPayload.Invoice.PaymentDueDate.Format(
+		formattedDueDate := input.PayloadOptions.InvoicePayload.Invoice.PaymentDueDate.Format(
 			"02/01/2006",
 		)
 		titleText = localizer.Get(

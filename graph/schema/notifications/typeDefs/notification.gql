@@ -21,16 +21,14 @@ type NotificationMessage {
 input PayloadOptionsInput {
   memberAccessInvitationPayload: MemberAccessInvitationPayloadInput
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayloadInput
-  invoiceCreatedPayload: InvoiceCreatedPayloadInput
-  invoiceUpdatedPayload: InvoiceUpdatedPayloadInput
+  invoicePayload: InvoicePayloadInput
   mouPayload: MouPayloadInput
 }
 
 type PayloadOptions {
   memberAccessInvitationPayload: MemberAccessInvitationPayload
   purchaseOrderToSupplyBroadcastPayload: PurchaseOrderToSupplyBroadcastPayload
-  invoiceCreatedPayload: InvoiceCreatedPayload
-  invoiceUpdatedPayload: InvoiceUpdatedPayload
+  invoicePayload: InvoicePayload
   mouPayload: MouPayload
 }
 
