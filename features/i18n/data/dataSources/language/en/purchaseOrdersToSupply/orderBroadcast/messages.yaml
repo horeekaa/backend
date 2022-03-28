@@ -1,2 +1,2 @@
-purchase_order_supply_broadcast_notification_title: "There is new order for category {{.tagName}}"
-purchase_order_supply_broadcast_notification_body: "Click here to view details and request a supply order"
+notification_title: "There is new order for category {{.tagName}}"
+notification_body: "Click here to view details and request a supply order"

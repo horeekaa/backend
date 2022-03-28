@@ -1,2 +1,0 @@
-invoice_updated_notification_title: "Faktur dgn jatuh tempo {{.formattedDueDate}} sudah di perbarukan"
-invoice_updated_notification_body: "Klik disini untuk melihat detil faktur nya"

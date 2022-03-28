@@ -1,2 +1,2 @@
-invitation_request_notification_title: "{{.submitterName}} invites you to organization {{.orgName}}"
-invitation_request_notification_body: "Click here to accept the invitation"
+notification_title: "{{.submitterName}} invites you to organization {{.orgName}}"
+notification_body: "Click here to accept the invitation"

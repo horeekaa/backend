@@ -1,2 +1,2 @@
-invitation_request_notification_title: "{{.submitterName}} mengundang masuk ke organisasi {{.orgName}}"
-invitation_request_notification_body: "Klik disini untuk menerima undangan Anda"
+notification_title: "{{.submitterName}} mengundang masuk ke organisasi {{.orgName}}"
+notification_body: "Klik disini untuk menerima undangan Anda"

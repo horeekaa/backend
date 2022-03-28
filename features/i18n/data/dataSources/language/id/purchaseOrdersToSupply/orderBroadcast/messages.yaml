@@ -1,2 +1,2 @@
-purchase_order_supply_broadcast_notification_title: "Ada pesanan baru untuk kategori {{.tagName}}"
-purchase_order_supply_broadcast_notification_body: "Klik disini untuk melihat detail dan memenuhi pesanan tersebut"
+notification_title: "Ada pesanan baru untuk kategori {{.tagName}}"
+notification_body: "Klik disini untuk melihat detail dan memenuhi pesanan tersebut"
