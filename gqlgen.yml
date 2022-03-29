@@ -369,6 +369,8 @@ models:
         resolver: true
   SupplyOrderItem:
     fields:
+      supplyOrder:
+        resolver: true
       photos:
         resolver: true
       submittingAccount:
@@ -379,6 +381,8 @@ models:
         resolver: true
   SupplyOrderItemProposed:
     fields:
+      supplyOrder:
+        resolver: true
       photos:
         resolver: true
       submittingAccount:

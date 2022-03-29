@@ -11,9 +11,20 @@ import (
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	supplyorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
+
+func (r *supplyOrderItemProposedResolver) SupplyOrder(ctx context.Context, obj *model.SupplyOrderItemProposed) (*model.SupplyOrder, error) {
+	var getSupplyOrderUsecase supplyorderpresentationusecaseinterfaces.GetSupplyOrderUsecase
+	container.Make(&getSupplyOrderUsecase)
+	return getSupplyOrderUsecase.Execute(
+		&model.SupplyOrderFilterFields{
+			ID: &obj.SupplyOrder.ID,
+		},
+	)
+}
 
 func (r *supplyOrderItemProposedResolver) Photos(ctx context.Context, obj *model.SupplyOrderItemProposed) ([]*model.DescriptivePhoto, error) {
 	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
