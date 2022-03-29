@@ -27,7 +27,7 @@ func NewInvitationPayloadLoader(
 func (invitationPayload *invitationPayloadLoader) Execute(
 	notification *model.InternalCreateNotification,
 ) (bool, error) {
-	memberAccess := &model.MemberAccessForNotifPayloadInput{}
+	memberAccess := notification.PayloadOptions.MemberAccessInvitationPayload.MemberAccess
 
 	submittingAccountLoadedChan := make(chan bool)
 	invitedAccountLoadedChan := make(chan bool)
