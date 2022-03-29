@@ -1,7 +1,0 @@
-input InvoiceCreatedPayloadInput {
-  invoice: InvoiceForNotifPayloadInput!
-}
-
-type InvoiceCreatedPayload {
-  invoice: InvoiceForNotifPayload!
-}

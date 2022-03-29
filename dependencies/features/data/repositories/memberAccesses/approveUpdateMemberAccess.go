@@ -8,6 +8,7 @@ import (
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	memberaccessdomainrepositories "github.com/horeekaa/backend/features/memberAccesses/data/repositories"
 	memberaccessdomainrepositoryinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories"
+	memberaccessdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/memberAccesses/domain/repositories/utils"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 )
 
@@ -31,13 +32,17 @@ func (_ *ApproveUpdateMemberAccessDependency) Bind() {
 
 	container.Transient(
 		func(
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			createNotifComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			trxComponent memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessTransactionComponent,
+			invitationPayloadLoader memberaccessdomainrepositoryutilityinterfaces.InvitationPayloadLoader,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) memberaccessdomainrepositoryinterfaces.ApproveUpdateMemberAccessRepository {
 			approveUpdateMemberAccessRepo, _ := memberaccessdomainrepositories.NewApproveUpdateMemberAccessRepository(
+				memberAccessDataSource,
 				createNotifComponent,
 				trxComponent,
+				invitationPayloadLoader,
 				mongoDBTransaction,
 			)
 			return approveUpdateMemberAccessRepo

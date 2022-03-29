@@ -34,108 +34,108 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 	titleText := ""
 	bodyText := ""
 	switch input.NotificationCategory {
-	case model.NotificationCategoryOrgInvitationAccepted:
+	case model.NotificationCategoryMemberAccessInvitationAccepted:
 		titleText = localizer.Get(
-			"organizations.invitationAccepted.messages.invitation_accepted_notification_title",
+			"memberAccesses.invitationAccepted.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"personName": input.PayloadOptions.InvitationAcceptedPayload.MemberAccess.Account.Person.FirstName,
+				"personName": input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.Account.Person.FirstName,
 			},
 		)
 		bodyText = localizer.Get(
-			"organizations.invitationAccepted.messages.invitation_accepted_notification_body",
+			"memberAccesses.invitationAccepted.messages.notification_body",
 		)
 		break
 
-	case model.NotificationCategoryOrgInvitationRequest:
+	case model.NotificationCategoryMemberAccessInvitationRequest:
 		titleText = localizer.Get(
-			"organizations.invitationRequest.messages.invitation_request_notification_title",
+			"memberAccesses.invitationRequest.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"submitterName": input.PayloadOptions.InvitationRequestPayload.MemberAccess.SubmittingAccount.Person.FirstName,
-				"orgName":       input.PayloadOptions.InvitationRequestPayload.MemberAccess.Organization.Name,
+				"submitterName": input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.SubmittingAccount.Person.FirstName,
+				"orgName":       input.PayloadOptions.MemberAccessInvitationPayload.MemberAccess.Organization.Name,
 			},
 		)
 		bodyText = localizer.Get(
-			"organizations.invitationRequest.messages.invitation_request_notification_body",
+			"memberAccesses.invitationRequest.messages.notification_body",
 		)
 		break
 
 	case model.NotificationCategoryPurchaseOrderSupplyBroadcast:
 		titleText = localizer.Get(
-			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_title",
+			"purchaseOrdersToSupply.orderBroadcast.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
 				"tagName": input.PayloadOptions.PurchaseOrderToSupplyBroadcastPayload.BroadcastedByTag.Name,
 			},
 		)
 		bodyText = localizer.Get(
-			"purchaseOrdersToSupply.orderBroadcast.messages.purchase_order_supply_broadcast_notification_body",
+			"purchaseOrdersToSupply.orderBroadcast.messages.notification_body",
 		)
 		break
 	case model.NotificationCategoryInvoiceCreated:
-		formattedDueDate := input.PayloadOptions.InvoiceCreatedPayload.Invoice.PaymentDueDate.Format(
+		formattedDueDate := input.PayloadOptions.InvoicePayload.Invoice.PaymentDueDate.Format(
 			"02/01/2006",
 		)
 		titleText = localizer.Get(
-			"invoices.invoiceCreated.messages.invoice_created_notification_title",
+			"invoices.created.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
 				"formattedDueDate": formattedDueDate,
 			},
 		)
 		bodyText = localizer.Get(
-			"invoices.invoiceCreated.messages.invoice_created_notification_body",
+			"invoices.created.messages.notification_body",
 		)
 		break
 
 	case model.NotificationCategoryInvoiceUpdated:
-		formattedDueDate := input.PayloadOptions.InvoiceUpdatedPayload.Invoice.PaymentDueDate.Format(
+		formattedDueDate := input.PayloadOptions.InvoicePayload.Invoice.PaymentDueDate.Format(
 			"02/01/2006",
 		)
 		titleText = localizer.Get(
-			"invoices.invoiceUpdated.messages.invoice_updated_notification_title",
+			"invoices.updated.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
 				"formattedDueDate": formattedDueDate,
 			},
 		)
 		bodyText = localizer.Get(
-			"invoices.invoiceUpdated.messages.invoice_updated_notification_body",
+			"invoices.updated.messages.notification_body",
 		)
 		break
 
 	case model.NotificationCategoryMouCreated:
 		titleText = localizer.Get(
-			"mous.mouCreated.messages.mou_created_notification_title",
+			"mous.created.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": input.PayloadOptions.MouPayload.Mou.PublicID,
+				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
 			},
 		)
 
 		titleText = localizer.Get(
-			"mous.mouCreated.messages.mou_created_notification_body",
+			"mous.created.messages.notification_body",
 		)
 		break
 
 	case model.NotificationCategoryMouUpdated:
 		titleText = localizer.Get(
-			"mous.mouUpdated.messages.mou_updated_notification_title",
+			"mous.updated.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": input.PayloadOptions.MouPayload.Mou.PublicID,
+				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
 			},
 		)
 
 		titleText = localizer.Get(
-			"mous.mouUpdated.messages.mou_updated_notification_body",
+			"mous.updated.messages.notification_body",
 		)
 		break
 
 	case model.NotificationCategoryMouApproved:
 		titleText = localizer.Get(
-			"mous.mouApproved.messages.mou_approved_notification_title",
+			"mous.approved.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": input.PayloadOptions.MouPayload.Mou.PublicID,
+				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
 			},
 		)
 
 		titleText = localizer.Get(
-			"mous.mouApproved.messages.mou_approved_notification_body",
+			"mous.approved.messages.notification_body",
 		)
 		break
 

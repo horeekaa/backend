@@ -1,0 +1,2 @@
+notification_title: "Update to MoU {{.mouPublicId}} has been approved"
+notification_body: "Click here to view the details of the MoU"

@@ -1,2 +1,0 @@
-invoice_created_notification_title: "New invoice due on {{.formattedDueDate}} has been available"
-invoice_created_notification_body: "Click here to view the details of the invoice"

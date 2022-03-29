@@ -10,13 +10,13 @@ import (
 	loggingdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/loggings"
 	memberaccessrefdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccessRefs"
 	memberaccessdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses"
+	memberaccessdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/memberAccesses/utils"
 	mouitemdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mouItems"
 	mouitemdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mouItems/utils"
 	moudomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mous"
 	moudomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/mous/utils"
 	notificationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications"
 	notificationdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils"
-	notificationdomainrepositoryloaderutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/notifications/utils/payloadLoaders"
 	organizationdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/organizations"
 	paymentdomainrepositorydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/payments"
 	paymentdomainrepositoryutilitydependencies "github.com/horeekaa/backend/dependencies/features/data/repositories/payments/utils"
@@ -67,6 +67,7 @@ func (_ *RepositoriesDependency) Bind() {
 
 		&loggingdomainrepositorydependencies.GetLoggingDependency{},
 
+		&memberaccessdomainrepositoryutilitydependencies.InvitationPayloadLoaderDependency{},
 		&memberaccessdomainrepositorydependencies.CreateMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAccountMemberAccessDependency{},
 		&memberaccessdomainrepositorydependencies.GetAllMemberAccessDependency{},
@@ -140,7 +141,6 @@ func (_ *RepositoriesDependency) Bind() {
 		&tagdomainrepositorydependencies.GetAllTagDependency{},
 		&tagdomainrepositorydependencies.GetTagDependency{},
 
-		&notificationdomainrepositoryloaderutilitydependencies.InvitationPayloadLoaderDependency{},
 		&notificationdomainrepositoryutilitydependencies.MasterPayloadLoaderDependency{},
 		&notificationdomainrepositoryutilitydependencies.NotificationLocalizationBuilderDependency{},
 		&notificationdomainrepositorydependencies.CreateNotificationDependency{},

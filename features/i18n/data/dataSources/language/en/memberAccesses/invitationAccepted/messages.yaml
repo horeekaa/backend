@@ -1,0 +1,2 @@
+notification_title: "{{.personName}} has accepted your organization invitation"
+notification_body: "Click here to view your organization membership right now"

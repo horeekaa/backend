@@ -1,0 +1,2 @@
+notification_title: "{{.submitterName}} invites you to organization {{.orgName}}"
+notification_body: "Click here to accept the invitation"
