@@ -19,10 +19,14 @@ import (
 func (r *productVariantProposedResolver) Photo(ctx context.Context, obj *model.ProductVariantProposed) (*model.DescriptivePhoto, error) {
 	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
 	container.Make(&getDescriptivePhotoUsecase)
+
+	var filterFields *model.DescriptivePhotoFilterFields
+	if obj.Photo != nil {
+		filterFields = &model.DescriptivePhotoFilterFields{}
+		filterFields.ID = &obj.Photo.ID
+	}
 	return getDescriptivePhotoUsecase.Execute(
-		&model.DescriptivePhotoFilterFields{
-			ID: &obj.Photo.ID,
-		},
+		filterFields,
 	)
 }
 
