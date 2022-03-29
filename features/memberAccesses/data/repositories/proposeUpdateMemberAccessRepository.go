@@ -60,14 +60,10 @@ func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) Transa
 	input interface{},
 ) (interface{}, error) {
 	memberAccessToUpdate := input.(*model.InternalUpdateMemberAccess)
-	updatedMemberAccess, err := proposeUpdateMemberAccessRepo.proposeUpdateMemberAccessTransactionComponent.TransactionBody(
+	return proposeUpdateMemberAccessRepo.proposeUpdateMemberAccessTransactionComponent.TransactionBody(
 		operationOption,
 		memberAccessToUpdate,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return updatedMemberAccess, nil
 }
 
 func (proposeUpdateMemberAccessRepo *proposeUpdateMemberAccessRepository) RunTransaction(

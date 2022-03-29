@@ -59,15 +59,10 @@ func (createMemberAccessRepo *createMemberAccessRepository) TransactionBody(
 	input interface{},
 ) (interface{}, error) {
 	memberAccessToCreate := input.(*model.InternalCreateMemberAccess)
-	createdMemberAccess, err := createMemberAccessRepo.createMemberAccessTransactionComponent.TransactionBody(
+	return createMemberAccessRepo.createMemberAccessTransactionComponent.TransactionBody(
 		operationOption,
 		memberAccessToCreate,
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	return createdMemberAccess, nil
 }
 
 func (createMemberAccessRepo *createMemberAccessRepository) RunTransaction(
