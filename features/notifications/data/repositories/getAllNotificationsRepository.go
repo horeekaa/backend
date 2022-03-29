@@ -63,7 +63,11 @@ func (getAllNotificationRepo *getAllNotificationRepository) Execute(
 		jsonTemp, _ := json.Marshal(notif)
 		json.Unmarshal(jsonTemp, notification)
 
-		getAllNotificationRepo.notifLocalizationBuilder.Execute(notif, notification)
+		getAllNotificationRepo.notifLocalizationBuilder.Execute(
+			notif,
+			notification,
+			input.Language,
+		)
 
 		notifications = append(notifications, notification)
 	}

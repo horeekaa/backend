@@ -126,7 +126,7 @@ func (updateMmbAccessUcase *updateMemberAccessUsecase) Execute(input memberacces
 		}
 
 		memberAccessToUpdate.SubmittingAccount = &model.ObjectIDOnly{
-			ID: &existingMemberAcc.SubmittingAccount.ID,
+			ID: &account.ID,
 		}
 		memberAccessToUpdate.ProposalStatus = &existingMemberAcc.ProposalStatus
 		updateMemberAccessOutput, err := updateMmbAccessUcase.proposeUpdateMemberAccessRepo.RunTransaction(

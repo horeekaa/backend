@@ -3,6 +3,7 @@ package graphqlroutes
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/go-chi/chi"
 
@@ -27,6 +28,7 @@ func Route(r chi.Router) {
 		if errors.As(e, &myErr) {
 			err.Message = myErr.Code
 		}
+		log.Println(err)
 
 		return err
 	})

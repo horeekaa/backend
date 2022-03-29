@@ -81,7 +81,11 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 	notificationToOutput := &model.Notification{}
 	json.Unmarshal(jsonTemp, notificationToOutput)
 
-	createNotifTrx.notifLocalizationBuilder.Execute(createdNotification, notificationToOutput)
+	createNotifTrx.notifLocalizationBuilder.Execute(
+		createdNotification,
+		notificationToOutput,
+		createdNotification.RecipientAccount.Language.String(),
+	)
 
 	payloadJson, _ := json.Marshal(notificationToCreate.PayloadOptions)
 	_, err = createNotifTrx.firebaseMessaging.SendMulticastMessage(

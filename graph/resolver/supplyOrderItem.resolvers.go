@@ -13,6 +13,7 @@ import (
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
 	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
+	supplyorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -36,6 +37,16 @@ func (r *queryResolver) SupplyOrderItems(ctx context.Context, filterFields model
 			Context:       ctx,
 			FilterFields:  &filterFields,
 			PaginationOps: paginationOpt,
+		},
+	)
+}
+
+func (r *supplyOrderItemResolver) SupplyOrder(ctx context.Context, obj *model.SupplyOrderItem) (*model.SupplyOrder, error) {
+	var getSupplyOrderUsecase supplyorderpresentationusecaseinterfaces.GetSupplyOrderUsecase
+	container.Make(&getSupplyOrderUsecase)
+	return getSupplyOrderUsecase.Execute(
+		&model.SupplyOrderFilterFields{
+			ID: &obj.SupplyOrder.ID,
 		},
 	)
 }
