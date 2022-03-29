@@ -101,6 +101,7 @@ func (getAllNotificationUcase *getAllNotificationUsecase) Execute(
 		notificationdomainrepositorytypes.GetAllNotificationInput{
 			FilterFields:  validatedInput.FilterFields,
 			PaginationOpt: validatedInput.PaginationOps,
+			Language:      account.Language.String(),
 		},
 	)
 	if err != nil {

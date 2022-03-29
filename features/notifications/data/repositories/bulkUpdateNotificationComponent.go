@@ -66,7 +66,11 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		jsonOutput, _ := json.Marshal(databaseNotification)
 		json.Unmarshal(jsonOutput, notification)
 
-		bulkUpdateNotificationComp.notifLocalizationBuilder.Execute(databaseNotification, notification)
+		bulkUpdateNotificationComp.notifLocalizationBuilder.Execute(
+			databaseNotification,
+			notification,
+			input.Language,
+		)
 
 		notifications = append(notifications, notification)
 	}

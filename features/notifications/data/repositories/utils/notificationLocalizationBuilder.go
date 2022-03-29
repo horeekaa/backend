@@ -24,9 +24,10 @@ func NewNotificationLocalizationBuilder(
 func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 	input *model.DatabaseNotification,
 	output *model.Notification,
+	language string,
 ) (bool, error) {
 	notifLocalBuilder.goLocalizeI18N.Initialize(
-		strings.ToLower(input.RecipientAccount.Language.String()),
+		strings.ToLower(language),
 		"id",
 	)
 	localizer, _ := notifLocalBuilder.goLocalizeI18N.GetLocalizer()

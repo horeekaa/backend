@@ -58,6 +58,7 @@ input InternalBulkUpdateNotification {
   notificationCategory: NotificationCategory
   recipientAccount: ObjectIDOnly
   readFlag: Boolean
+  language: String!
 }
 
 input DatabaseUpdateNotification {

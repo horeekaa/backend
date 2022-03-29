@@ -98,7 +98,8 @@ func (updateNotificationUcase *bulkUpdateNotificationUsecase) Execute(input noti
 	}
 
 	notificationToUpdate := &model.InternalBulkUpdateNotification{
-		IDs: validatedInput.BulkUpdateNotification.IDs,
+		IDs:      validatedInput.BulkUpdateNotification.IDs,
+		Language: account.Language.String(),
 	}
 	jsonTemp, _ := json.Marshal(validatedInput.BulkUpdateNotification)
 	json.Unmarshal(jsonTemp, notificationToUpdate)
