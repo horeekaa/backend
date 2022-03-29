@@ -11,7 +11,7 @@ input CreateSupplyOrderItem {
   unitPrice: Int!
   purchaseOrderToSupply: ObjectIDOnly!
   pickUpDetail: CreateSupplyOrderItemPickUp!
-  photos: [CreateDescriptivePhoto]
+  photos: [CreateDescriptivePhoto]!
 }
 
 input InternalCreateSupplyOrderItem {
@@ -24,7 +24,7 @@ input InternalCreateSupplyOrderItem {
   partnerAgreed: Boolean
   supplyOrder: ObjectIDOnly
   pickUpDetail: InternalCreateSupplyOrderItemPickUp!
-  photos: [InternalCreateDescriptivePhoto]
+  photos: [InternalCreateDescriptivePhoto]!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -43,7 +43,7 @@ input DatabaseCreateSupplyOrderItem {
   supplyOrder: ObjectIDOnly!
   pickUpDetail: DatabaseSupplyOrderItemPickUp!
   status: SupplyOrderItemStatus
-  photos: [ObjectIDOnly]
+  photos: [ObjectIDOnly]!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
