@@ -85,7 +85,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 			return &m
 		}(*input.SubmittingAccount)
 		descriptivePhoto, err := createSupplyOrderItemTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
+			session,
 			photoToCreate,
 		)
 		if err != nil {
