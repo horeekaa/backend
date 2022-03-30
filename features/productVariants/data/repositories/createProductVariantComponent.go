@@ -76,7 +76,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 			return &m
 		}(*input.SubmittingAccount)
 		descriptivePhoto, err := createProdVariantTrx.createDescriptivePhotoComponent.TransactionBody(
-			&mongodbcoretypes.OperationOptions{},
+			session,
 			input.Photo,
 		)
 		if err != nil {
