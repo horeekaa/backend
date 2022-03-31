@@ -558,6 +558,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 			ID: updatePurchaseOrderItem.SubmittingAccount.ID,
 		}
 		if *updatePurchaseOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonUpdate, _ := json.Marshal(fieldsToUpdatePurchaseOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
 		}
 	}

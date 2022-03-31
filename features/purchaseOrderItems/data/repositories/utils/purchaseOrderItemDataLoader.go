@@ -115,7 +115,7 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 				return
 			}
 			account, err := purcOrderItemLoader.accountDataSource.GetMongoDataSource().FindByID(
-				delivery.Courier.ID,
+				*delivery.Courier.ID,
 				session,
 			)
 			if err != nil {

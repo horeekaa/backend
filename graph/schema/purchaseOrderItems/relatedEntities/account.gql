@@ -1,5 +1,5 @@
 input AccountForPurchaseOrderItemInput {
-  _id: ObjectID!
+  _id: ObjectID
   email: String
   language: Language
   type: AccountType
@@ -12,7 +12,7 @@ input AccountForPurchaseOrderItemFilterFields {
 }
 
 type AccountForPurchaseOrderItem {
-  _id: ObjectID!
+  _id: ObjectID
   email: String
   language: Language
   type: AccountType
