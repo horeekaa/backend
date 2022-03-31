@@ -532,6 +532,7 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 			ID: updateSupplyOrderItem.SubmittingAccount.ID,
 		}
 		if *updateSupplyOrderItem.ProposalStatus == model.EntityProposalStatusApproved {
+			jsonUpdate, _ := json.Marshal(fieldsToUpdatesupplyOrderItem.ProposedChanges)
 			json.Unmarshal(jsonUpdate, fieldsToUpdatesupplyOrderItem)
 		}
 	}

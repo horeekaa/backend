@@ -103,7 +103,7 @@ func (supOrderItemLoader *supplyOrderItemLoader) TransactionBody(
 				return
 			}
 			account, err := supOrderItemLoader.accountDataSource.GetMongoDataSource().FindByID(
-				pickUp.Courier.ID,
+				*pickUp.Courier.ID,
 				session,
 			)
 			if err != nil {

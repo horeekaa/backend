@@ -1,5 +1,5 @@
 input AccountForSupplyOrderItemInput {
-  _id: ObjectID!
+  _id: ObjectID
   email: String
   language: Language
   type: AccountType
@@ -12,7 +12,7 @@ input AccountForSupplyOrderItemFilterFields {
 }
 
 type AccountForSupplyOrderItem {
-  _id: ObjectID!
+  _id: ObjectID
   email: String
   language: Language
   type: AccountType
