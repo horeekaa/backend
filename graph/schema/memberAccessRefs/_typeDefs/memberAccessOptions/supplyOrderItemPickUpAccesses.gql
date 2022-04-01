@@ -1,7 +1,9 @@
 input SupplyOrderItemPickUpAccessesInput {
   supplyOrderItemPickUpUpdate: Boolean
+  supplyOrderItemPickUpAssignDriver: Boolean
 }
 
 type SupplyOrderItemPickUpAccesses {
   supplyOrderItemPickUpUpdate: Boolean
+  supplyOrderItemPickUpAssignDriver: Boolean
 }
