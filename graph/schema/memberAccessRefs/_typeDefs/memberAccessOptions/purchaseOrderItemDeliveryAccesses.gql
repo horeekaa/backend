@@ -1,7 +1,9 @@
 input PurchaseOrderItemDeliveryAccessesInput {
   purchaseOrderItemDeliveryUpdate: Boolean
+  purchaseOrderItemDeliveryAssignDriver: Boolean
 }
 
 type PurchaseOrderItemDeliveryAccesses {
   purchaseOrderItemDeliveryUpdate: Boolean
+  purchaseOrderItemDeliveryAssignDriver: Boolean
 }
