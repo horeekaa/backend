@@ -35,6 +35,7 @@ func (_ *UsecasesDependency) Bind() {
 		&accountpresentationusecasedependencies.LoginUsecaseDependency{},
 		&accountpresentationusecasedependencies.LogoutUsecaseDependency{},
 		&accountpresentationusecasedependencies.GetAuthUserAndAttachToCtxUsecaseDependency{},
+		&accountpresentationusecasedependencies.UpdateAccountUsecaseDependency{},
 
 		&addresspresentationusecasedependencies.GetAddressUsecaseDependency{},
 
