@@ -47,6 +47,7 @@ func (_ *RepositoriesDependency) Bind() {
 		&accountdomainrepositorydependencies.GetAccountFromAuthDataDependency{},
 		&accountdomainrepositorydependencies.GetUserFromAuthHeaderDependency{},
 		&accountdomainrepositorydependencies.ManageAccountDeviceTokenDependency{},
+		&accountdomainrepositorydependencies.UpdateAccountDependency{},
 
 		&addressdomainrepositoryutilitydependencies.AddressLoaderDependency{},
 		&addressdomainrepositorydependencies.CreateAddressDependency{},
