@@ -32,6 +32,7 @@ var invalidInputError = map[string]bool{
 	horeekaacorefailureenums.SendEmailTypeNotExist:               true,
 	horeekaacorefailureenums.AccountIDNeededToRetrievePersonData: true,
 	horeekaacorefailureenums.AcceptInvitationNotAllowed:          true,
+	horeekaacorefailureenums.InvalidAccountPersonCredential:      true,
 
 	horeekaacorefailureenums.MemberAccessRefNotExist:                                   true,
 	horeekaacorefailureenums.OrganizationIDNeededToCreateOrganizationBasedMemberAccess: true,
