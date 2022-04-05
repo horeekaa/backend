@@ -47,6 +47,17 @@ func (r *mutationResolver) Logout(ctx context.Context, deviceToken string) (*mod
 	)
 }
 
+func (r *mutationResolver) UpdateAccount(ctx context.Context, updateAccount model.UpdateAccount) (*model.Account, error) {
+	var updateAccountUsecase accountpresentationusecaseinterfaces.UpdateAccountUsecase
+	container.Make(&updateAccountUsecase)
+	return updateAccountUsecase.Execute(
+		accountpresentationusecasetypes.UpdateAccountUsecaseInput{
+			Context:       ctx,
+			UpdateAccount: &updateAccount,
+		},
+	)
+}
+
 func (r *queryResolver) Account(ctx context.Context, filterFields model.AccountFilterFields) (*model.Account, error) {
 	var getAccountUsecase accountpresentationusecaseinterfaces.GetAccountUsecase
 	container.Make(&getAccountUsecase)
