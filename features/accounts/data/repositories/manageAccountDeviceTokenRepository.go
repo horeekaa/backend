@@ -62,7 +62,7 @@ func (mgsAccDevToken *manageAccountDeviceTokenRepository) Execute(input accountd
 		map[string]interface{}{
 			"_id": validatedInput.Account.ID,
 		},
-		&model.UpdateAccount{
+		&model.DatabaseUpdateAccount{
 			DeviceTokens: validatedInput.Account.DeviceTokens,
 		},
 		&mongodbcoretypes.OperationOptions{},

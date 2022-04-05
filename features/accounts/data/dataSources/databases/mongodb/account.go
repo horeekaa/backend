@@ -72,7 +72,7 @@ func (accDataSourceMongo *accountDataSourceMongo) Find(
 	return accounts, err
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.DatabaseCreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	_, err := accDataSourceMongo.setDefaultValuesWhenCreate(
 		input,
 	)
@@ -89,7 +89,7 @@ func (accDataSourceMongo *accountDataSourceMongo) Create(input *model.CreateAcco
 	return &outputModel, err
 }
 
-func (accDataSourceMongo *accountDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
+func (accDataSourceMongo *accountDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error) {
 	_, err := accDataSourceMongo.setDefaultValuesWhenUpdate(
 		updateCriteria,
 		updateData,
@@ -117,7 +117,7 @@ func (accDataSourceMongo *accountDataSourceMongo) Update(updateCriteria map[stri
 
 func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
-	input *model.UpdateAccount,
+	input *model.DatabaseUpdateAccount,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	defaultAccountType := model.AccountTypePerson
@@ -148,7 +148,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 }
 
 func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.CreateAccount,
+	input *model.DatabaseCreateAccount,
 ) (bool, error) {
 	defaultAccountStatus := model.AccountStatusActive
 	defaultAccountType := model.AccountTypePerson

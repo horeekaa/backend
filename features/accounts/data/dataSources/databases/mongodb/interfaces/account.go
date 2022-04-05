@@ -14,6 +14,6 @@ type AccountDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Account, error)
-	Create(input *model.CreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error)
-	Update(updateCriteria map[string]interface{}, updateData *model.UpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error)
+	Create(input *model.DatabaseCreateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdateAccount, operationOptions *mongodbcoretypes.OperationOptions) (*model.Account, error)
 }

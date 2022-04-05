@@ -14,6 +14,6 @@ type PersonDataSourceMongo interface {
 		paginationOpts *mongodbcoretypes.PaginationOptions,
 		operationOptions *mongodbcoretypes.OperationOptions,
 	) ([]*model.Person, error)
-	Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
-	Update(updateCriteria map[string]interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
+	Create(input *model.DatabaseCreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
+	Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error)
 }
