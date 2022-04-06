@@ -1,6 +1,7 @@
 extend type Mutation {
   login(deviceToken: String!): Account!
   logout(deviceToken: String!): Account!
+  updateAccount(updateAccount: UpdateAccount!): Account!
 }
 
 extend type Query {

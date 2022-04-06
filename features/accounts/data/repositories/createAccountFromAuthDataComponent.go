@@ -60,14 +60,12 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	if firstName == "" {
 		firstName = strings.Split(user.(*auth.UserRecord).Email, "@")[0]
 	}
-	defaultNoOfRecentTransaction := 15
 
 	person, err := createAccFromAuthDataCom.personDataSource.GetMongoDataSource().Create(
-		&model.CreatePerson{
-			FirstName:                   firstName,
-			LastName:                    lastName,
-			PhoneNumber:                 user.(*auth.UserRecord).PhoneNumber,
-			NoOfRecentTransactionToKeep: &defaultNoOfRecentTransaction,
+		&model.DatabaseCreatePerson{
+			FirstName:   firstName,
+			LastName:    lastName,
+			PhoneNumber: user.(*auth.UserRecord).PhoneNumber,
 		},
 		operationOption,
 	)
@@ -79,7 +77,7 @@ func (createAccFromAuthDataCom *createAccountFromAuthDataTransactionComponent) T
 	}
 
 	account, err := createAccFromAuthDataCom.accountDataSource.GetMongoDataSource().Create(
-		&model.CreateAccount{
+		&model.DatabaseCreateAccount{
 			Email: user.(*auth.UserRecord).Email,
 			Type:  model.AccountTypePerson,
 			Person: &model.ObjectIDOnly{

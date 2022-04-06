@@ -9,15 +9,17 @@ enum AccountType {
   SYSTEM_ENTITY
 }
 
-input UpdateOtherAccount {
-  _id: ObjectID!
+input InternalCreateAccount {
+  email: String!
   status: AccountStatus
   statusReason: String
-  type: AccountType
-  idCard: NewIDCard
+  language: Language!
+  type: AccountType!
+  person: ObjectIDOnly
+  deviceTokens: [String!]
 }
 
-input CreateAccount {
+input DatabaseCreateAccount {
   email: String!
   status: AccountStatus
   statusReason: String
@@ -30,6 +32,24 @@ input CreateAccount {
 }
 
 input UpdateAccount {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: UpdatePerson
+  deviceTokens: [String!]
+}
+
+input InternalUpdateAccount {
+  _id: ObjectID!
+  email: String
+  language: Language
+  type: AccountType
+  person: DatabaseUpdatePerson
+  deviceTokens: [String!]
+}
+
+input DatabaseUpdateAccount {
   _id: ObjectID!
   email: String
   language: Language

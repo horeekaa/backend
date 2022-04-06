@@ -3,23 +3,38 @@ enum Gender {
   FEMALE
 }
 
+input CreatePerson {
+  _id: ObjectID
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String!
+}
+
+input DatabaseCreatePerson {
+  _id: ObjectID
+  firstName: String!
+  lastName: String!
+  gender: Gender
+  phoneNumber: String!
+  createdAt: Time
+  updatedAt: Time
+}
+
 input UpdatePerson {
   _id: ObjectID!
   firstName: String
   lastName: String
   gender: Gender
   phoneNumber: String
-  noOfRecentTransactionToKeep: Int
-  updatedAt: Time
 }
 
-input CreatePerson {
-  firstName: String!
-  lastName: String!
+input DatabaseUpdatePerson {
+  _id: ObjectID!
+  firstName: String
+  lastName: String
   gender: Gender
-  phoneNumber: String!
-  noOfRecentTransactionToKeep: Int
-  createdAt: Time
+  phoneNumber: String
   updatedAt: Time
 }
 
@@ -30,7 +45,6 @@ type Person {
   gender: Gender
   phoneNumber: String
   idCard: IDCard
-  noOfRecentTransactionToKeep: Int!
   createdAt: Time!
   updatedAt: Time!
 }

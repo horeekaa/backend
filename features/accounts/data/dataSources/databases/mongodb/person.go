@@ -72,7 +72,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) Find(
 	return persons, err
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.DatabaseCreatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	_, err := prsnDataSourceMongo.setDefaultValuesWhenCreate(
 		input,
 	)
@@ -89,7 +89,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) Create(input *model.CreatePers
 	return &outputModel, err
 }
 
-func (prsnDataSourceMongo *personDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.UpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
+func (prsnDataSourceMongo *personDataSourceMongo) Update(updateCriteria map[string]interface{}, updateData *model.DatabaseUpdatePerson, operationOptions *mongodbcoretypes.OperationOptions) (*model.Person, error) {
 	_, err := prsnDataSourceMongo.setDefaultValuesWhenUpdate(
 		updateCriteria,
 		updateData,
@@ -117,11 +117,10 @@ func (prsnDataSourceMongo *personDataSourceMongo) Update(updateCriteria map[stri
 
 func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 	inputCriteria map[string]interface{},
-	input *model.UpdatePerson,
+	input *model.DatabaseUpdatePerson,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
 	var currentTime = time.Now()
-	defaultNoOfRecentTransactionToKeep := 15
 
 	existingObject, err := prsnDataSourceMongo.FindOne(inputCriteria, operationOptions)
 	if err != nil {
@@ -135,24 +134,16 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 		)
 	}
 
-	if &(*existingObject).NoOfRecentTransactionToKeep == nil {
-		input.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
-	}
 	input.UpdatedAt = &currentTime
 
 	return true, nil
 }
 
 func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenCreate(
-	input *model.CreatePerson,
+	input *model.DatabaseCreatePerson,
 ) (bool, error) {
-	defaultNoOfRecentTransactionToKeep := 15
-
 	var currentTime = time.Now()
 
-	if &input.NoOfRecentTransactionToKeep == nil {
-		input.NoOfRecentTransactionToKeep = &defaultNoOfRecentTransactionToKeep
-	}
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime
 

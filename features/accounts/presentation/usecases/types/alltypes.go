@@ -31,3 +31,8 @@ type GetAccountInput struct {
 	Context      context.Context
 	FilterFields *model.AccountFilterFields
 }
+
+type UpdateAccountUsecaseInput struct {
+	Context       context.Context
+	UpdateAccount *model.UpdateAccount
+}
