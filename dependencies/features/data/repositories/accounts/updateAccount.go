@@ -3,7 +3,6 @@ package accountdomainrepositorydependencies
 import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
-	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositories "github.com/horeekaa/backend/features/accounts/data/repositories"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
@@ -16,7 +15,6 @@ func (_ *UpdateAccountDependency) Bind() {
 		func(
 			accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
 			personDataSource databaseaccountdatasourceinterfaces.PersonDataSource,
-			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) accountdomainrepositoryinterfaces.UpdateAccountTransactionComponent {
 			updateAccountComponent, _ := accountdomainrepositories.NewUpdateAccountTransactionComponent(
 				accountDataSource,
