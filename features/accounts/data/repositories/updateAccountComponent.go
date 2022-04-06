@@ -30,9 +30,9 @@ func NewUpdateAccountTransactionComponent(
 }
 
 func (updateAccountTrx *updateAccountTransactionComponent) PreTransaction(
-	updateaccountInput *model.InternalUpdateAccount,
+	updateAccountInput *model.InternalUpdateAccount,
 ) (*model.InternalUpdateAccount, error) {
-	return updateaccountInput, nil
+	return updateAccountInput, nil
 }
 
 func (updateAccountTrx *updateAccountTransactionComponent) TransactionBody(

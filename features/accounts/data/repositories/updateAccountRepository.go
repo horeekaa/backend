@@ -8,16 +8,16 @@ import (
 )
 
 type updateAccountRepository struct {
-	proposeUpdateaccountTransactionComponent accountdomainrepositoryinterfaces.UpdateAccountTransactionComponent
+	updateAccountTransactionComponent accountdomainrepositoryinterfaces.UpdateAccountTransactionComponent
 	mongoDBTransaction                       mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewUpdateAccountRepository(
-	UpdateAccountRepositoryTraAsactionComponent accountdomainrepositoryinterfaces.UpdateAccountTransactionComponent,
+	updateAccountRepositoryTransactionComponent accountdomainrepositoryinterfaces.UpdateAccountTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (accountdomainrepositoryinterfaces.UpdateAccountRepository, error) {
 	updateAccountRepo := &updateAccountRepository{
-		UpdateAccountRepositoryTraAsactionComponent,
+		updateAccountRepositoryTransactionComponent,
 		mongoDBTransaction,
 	}
 
@@ -32,7 +32,7 @@ func NewUpdateAccountRepository(
 func (updateAccountRepo *updateAccountRepository) PreTransaction(
 	input interface{},
 ) (interface{}, error) {
-	return updateAccountRepo.proposeUpdateaccountTransactionComponent.PreTransaction(
+	return updateAccountRepo.updateAccountTransactionComponent.PreTransaction(
 		input.(*model.InternalUpdateAccount),
 	)
 }
@@ -43,7 +43,7 @@ func (updateAccountRepo *updateAccountRepository) TransactionBody(
 ) (interface{}, error) {
 	accountToUpdate := input.(*model.InternalUpdateAccount)
 
-	return updateAccountRepo.proposeUpdateaccountTransactionComponent.TransactionBody(
+	return updateAccountRepo.updateAccountTransactionComponent.TransactionBody(
 		operationOption,
 		accountToUpdate,
 	)
