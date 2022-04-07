@@ -1,0 +1,2 @@
+notification_title: "PO baru bernilai {{.value}} telah diterima"
+notification_body: "Klik disini untuk melihat detil PO tersebut"

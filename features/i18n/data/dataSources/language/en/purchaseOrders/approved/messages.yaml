@@ -1,0 +1,2 @@
+notification_title: "Update to PO {{.publicId}} has been entirely approved"
+notification_body: "Click here to view the details of the PO"

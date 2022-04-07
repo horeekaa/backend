@@ -1,0 +1,2 @@
+notification_title: "Pembaharuan PO Item {{.name}} telah disetujui oleh Customer"
+notification_body: "Klik disini untuk melihat detil PO Item tersebut"
