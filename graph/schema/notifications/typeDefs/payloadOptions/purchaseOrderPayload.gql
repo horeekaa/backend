@@ -1,0 +1,7 @@
+input PurchaseOrderPayloadInput {
+  purchaseOrder: PurchaseOrderForNotifPayloadInput
+}
+
+type PurchaseOrderPayload {
+  purchaseOrder: PurchaseOrderForNotifPayload
+}

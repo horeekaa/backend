@@ -1,0 +1,37 @@
+input PurchaseOrderItemForNotifPayloadInput {
+  _id: ObjectID!
+  quantity: Int
+  quantityFulfilled: Int
+  unitPrice: Int
+  subTotal: Int
+  salesAmount: Int
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  deliveryDetail: DatabasePurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
+  purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type PurchaseOrderItemForNotifPayload {
+  _id: ObjectID!
+  quantity: Int!
+  quantityFulfilled: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  salesAmount: Int!
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItem!
+  deliveryDetail: PurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus!
+  customerAgreed: Boolean!
+  purchaseOrderItemReturn: PurchaseOrderItemReturn
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
