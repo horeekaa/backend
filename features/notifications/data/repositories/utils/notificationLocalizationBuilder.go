@@ -140,6 +140,71 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
+	case model.NotificationCategoryPurchaseOrderApproved:
+		titleText = localizer.Get(
+			"purchaseOrders.approved.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"publicId": input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.PublicID,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrders.approved.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderCreated:
+		titleText = localizer.Get(
+			"purchaseOrders.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"value": input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.Total,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrders.created.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemApproved:
+		titleText = localizer.Get(
+			"purchaseOrderItems.approved.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.approved.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemCustomerAgreed:
+		titleText = localizer.Get(
+			"purchaseOrderItems.updated.customerAgreement.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.updated.customerAgreement.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemFulfilled:
+		titleText = localizer.Get(
+			"purchaseOrderItems.updated.fulfillment.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.updated.fulfillment.messages.notification_body",
+		)
+		break
+
 	}
 
 	(*output).Message = &model.NotificationMessage{
