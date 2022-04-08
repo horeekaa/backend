@@ -109,7 +109,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.created.messages.notification_body",
 		)
 		break
@@ -122,7 +122,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.updated.messages.notification_body",
 		)
 		break
@@ -135,7 +135,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.approved.messages.notification_body",
 		)
 		break
