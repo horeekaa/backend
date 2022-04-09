@@ -1,0 +1,2 @@
+notification_title: "PO Item baru {{.name}} telah ditambahkan ke po {{.publicId}}"
+notification_body: "Klik disini untuk melihat detil PO Item tersebut"
