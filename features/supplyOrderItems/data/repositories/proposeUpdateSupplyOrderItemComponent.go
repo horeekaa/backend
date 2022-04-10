@@ -78,7 +78,10 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 	}
 
 	if input.SupplyOrderItemReturn != nil {
-		savedPhotosReturn := existingSupplyOrderItem.SupplyOrderItemReturn.Photos
+		savedPhotosReturn := funk.GetOrElse(
+			funk.Get(existingSupplyOrderItem, "SupplyOrderItemReturn.Photos"),
+			[]*model.DescriptivePhoto{},
+		).([]*model.DescriptivePhoto)
 		for _, photoToUpdate := range input.SupplyOrderItemReturn.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
