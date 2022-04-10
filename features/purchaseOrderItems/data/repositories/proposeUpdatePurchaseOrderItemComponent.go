@@ -425,7 +425,6 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
 					"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
 					"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-					"status":                 model.PurchaseOrderToSupplyStatusOpen,
 				},
 				session,
 			)
