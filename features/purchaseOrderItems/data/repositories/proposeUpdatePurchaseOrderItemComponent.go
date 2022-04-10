@@ -77,7 +77,10 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 		)
 	}
 	if input.PurchaseOrderItemReturn != nil {
-		savedPhotosReturn := existingPurchaseOrderItem.PurchaseOrderItemReturn.Photos
+		savedPhotosReturn := funk.GetOrElse(
+			funk.Get(existingPurchaseOrderItem, "PurchaseOrderItemReturn.Photos"),
+			[]*model.DescriptivePhoto{},
+		).([]*model.DescriptivePhoto)
 		for _, photoToUpdate := range input.PurchaseOrderItemReturn.Photos {
 			if photoToUpdate.ID != nil {
 				if !funk.Contains(
@@ -425,7 +428,6 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 					"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
 					"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
 					"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-					"status":                 model.PurchaseOrderToSupplyStatusOpen,
 				},
 				session,
 			)
