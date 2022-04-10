@@ -64,7 +64,7 @@ type PurchaseOrderItemProposed {
   customerAgreed: Boolean!
   purchaseOrder: PurchaseOrder
   purchaseOrderToSupply: PurchaseOrderToSupply
-  purchaseOrderItemReturn: PurchaseOrderItemReturn!
+  purchaseOrderItemReturn: PurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!
