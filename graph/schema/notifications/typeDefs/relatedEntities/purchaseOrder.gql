@@ -1,4 +1,4 @@
-input PurchaseOrderForNotifPayloadInput {
+input PurchaseOrderForNotifProposedChangesInput {
   _id: ObjectID!
   publicId: String!
   total: Int
@@ -15,6 +15,41 @@ input PurchaseOrderForNotifPayloadInput {
   updatedAt: Time
 }
 
+input PurchaseOrderForNotifPayloadInput {
+  _id: ObjectID!
+  publicId: String!
+  total: Int
+  totalReturn: Int
+  finalSalesAmount: Int
+  type: PurchaseOrderType
+  status: PurchaseOrderStatus
+  organization: OrganizationForPurchaseOrderInput
+  receivingDateTime: Time
+  invoice: InvoiceForPurchaseOrderInput
+  proposedChanges: PurchaseOrderForNotifProposedChangesInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type PurchaseOrderForNotifProposedChanges {
+  _id: ObjectID!
+  publicId: String!
+  total: Int!
+  finalSalesAmount: Int!
+  totalReturn: Int!
+  type: PurchaseOrderType!
+  status: PurchaseOrderStatus!
+  organization: OrganizationForPurchaseOrder!
+  receivingDateTime: Time
+  invoice: InvoiceForPurchaseOrder
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
 type PurchaseOrderForNotifPayload {
   _id: ObjectID!
   publicId: String!
@@ -26,6 +61,7 @@ type PurchaseOrderForNotifPayload {
   organization: OrganizationForPurchaseOrder!
   receivingDateTime: Time
   invoice: InvoiceForPurchaseOrder
+  proposedChanges: PurchaseOrderForNotifProposedChanges
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   createdAt: Time!

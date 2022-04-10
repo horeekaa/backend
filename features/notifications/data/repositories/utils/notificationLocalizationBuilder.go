@@ -140,16 +140,17 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
-	case model.NotificationCategoryPurchaseOrderApproved:
+	case model.NotificationCategoryPurchaseOrderApproval:
 		titleText = localizer.Get(
-			"purchaseOrders.approved.messages.notification_title",
+			"purchaseOrders.approval.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"publicId": input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.PublicID,
+				"publicId":       input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.PublicID,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.ProposedChanges.ProposalStatus.String()),
 			},
 		)
 
 		bodyText = localizer.Get(
-			"purchaseOrders.approved.messages.notification_body",
+			"purchaseOrders.approval.messages.notification_body",
 		)
 		break
 
@@ -166,16 +167,31 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
-	case model.NotificationCategoryPurchaseOrderItemApproved:
+	case model.NotificationCategoryPurchaseOrderItemApproval:
 		titleText = localizer.Get(
-			"purchaseOrderItems.approved.messages.notification_title",
+			"purchaseOrderItems.approval.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"name":           input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProposedChanges.ProposalStatus.String()),
 			},
 		)
 
 		bodyText = localizer.Get(
-			"purchaseOrderItems.approved.messages.notification_body",
+			"purchaseOrderItems.approval.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemCreated:
+		titleText = localizer.Get(
+			"purchaseOrderItems.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":     input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"publicId": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.PurchaseOrder.PublicID,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.created.messages.notification_body",
 		)
 		break
 
@@ -196,7 +212,8 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		titleText = localizer.Get(
 			"purchaseOrderItems.updated.fulfillment.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"name":   input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"status": strings.ToLower(input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.Status.String()),
 			},
 		)
 
