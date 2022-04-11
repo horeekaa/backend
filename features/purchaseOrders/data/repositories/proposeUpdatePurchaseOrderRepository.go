@@ -342,7 +342,7 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) RunTransact
 		existingPurchaseOrderItem, err := updatePurchaseOrderRepo.purchaseOrderItemDataSource.GetMongoDataSource().FindOne(
 			map[string]interface{}{
 				"productVariant._id": purchaseOrderItemToUpdate.ProductVariant.ID,
-				"quantity":           purchaseOrderItemToUpdate.Quantity,
+				"purchaseOrder._id":  existingPurchaseOrder.ID,
 			},
 			&mongodbcoretypes.OperationOptions{},
 		)
@@ -351,6 +351,9 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) RunTransact
 				updatePurchaseOrderRepo.pathIdentity,
 				err,
 			)
+		}
+		if existingPurchaseOrderItem == nil {
+			continue
 		}
 
 		go func() {
