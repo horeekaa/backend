@@ -1,6 +1,7 @@
 package notificationdomainrepositoryutilities
 
 import (
+	"fmt"
 	"strings"
 
 	golocalizei18ncoreclientinterfaces "github.com/horeekaa/backend/core/i18n/go-localize/interfaces/init"
@@ -109,7 +110,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.created.messages.notification_body",
 		)
 		break
@@ -122,7 +123,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.updated.messages.notification_body",
 		)
 		break
@@ -135,8 +136,97 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 			},
 		)
 
-		titleText = localizer.Get(
+		bodyText = localizer.Get(
 			"mous.approved.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderApproval:
+		titleText = localizer.Get(
+			"purchaseOrders.approval.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"publicId":       input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.PublicID,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.ProposedChanges.ProposalStatus.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrders.approval.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderCreated:
+		flValue := float32(input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.Total)
+		fmtValue := fmt.Sprintf("IDR %3.0f", flValue)
+		if flValue > 1000.0 {
+			flValue = flValue / 1000
+			fmtValue = fmt.Sprintf("IDR %3.2fK", flValue)
+		}
+
+		titleText = localizer.Get(
+			"purchaseOrders.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"value": fmtValue,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrders.created.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemApproval:
+		titleText = localizer.Get(
+			"purchaseOrderItems.approval.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":           input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProposedChanges.ProposalStatus.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.approval.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemCreated:
+		titleText = localizer.Get(
+			"purchaseOrderItems.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":     input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"publicId": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.PurchaseOrder.PublicID,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.created.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemCustomerAgreed:
+		titleText = localizer.Get(
+			"purchaseOrderItems.updated.customerAgreement.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name": input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.updated.customerAgreement.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryPurchaseOrderItemFulfilled:
+		titleText = localizer.Get(
+			"purchaseOrderItems.updated.fulfillment.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":   input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.ProductVariant.Product.Name,
+				"status": strings.ToLower(input.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.Status.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrderItems.updated.fulfillment.messages.notification_body",
 		)
 		break
 

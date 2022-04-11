@@ -1,0 +1,81 @@
+input PurchaseOrderItemForNotifProposedChangesInput {
+  _id: ObjectID!
+  quantity: Int
+  quantityFulfilled: Int
+  unitPrice: Int
+  subTotal: Int
+  salesAmount: Int
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  deliveryDetail: DatabasePurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
+  purchaseOrder: PurchaseOrderForNotifPayloadInput
+  purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+input PurchaseOrderItemForNotifPayloadInput {
+  _id: ObjectID!
+  quantity: Int
+  quantityFulfilled: Int
+  unitPrice: Int
+  subTotal: Int
+  salesAmount: Int
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItemInput
+  deliveryDetail: DatabasePurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus
+  customerAgreed: Boolean
+  purchaseOrder: PurchaseOrderForNotifPayloadInput
+  purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
+  proposedChanges: PurchaseOrderItemForNotifProposedChangesInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type PurchaseOrderItemForNotifProposedChanges {
+  _id: ObjectID!
+  quantity: Int!
+  quantityFulfilled: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  salesAmount: Int!
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItem!
+  deliveryDetail: PurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus!
+  customerAgreed: Boolean!
+  purchaseOrder: PurchaseOrderForNotifPayload
+  purchaseOrderItemReturn: PurchaseOrderItemReturn
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type PurchaseOrderItemForNotifPayload {
+  _id: ObjectID!
+  quantity: Int!
+  quantityFulfilled: Int!
+  unitPrice: Int!
+  subTotal: Int!
+  salesAmount: Int!
+  note: String
+  productVariant: ProductVariantForPurchaseOrderItem!
+  deliveryDetail: PurchaseOrderItemDelivery
+  status: PurchaseOrderItemStatus!
+  customerAgreed: Boolean!
+  purchaseOrder: PurchaseOrderForNotifPayload
+  purchaseOrderItemReturn: PurchaseOrderItemReturn
+  proposedChanges: PurchaseOrderItemForNotifProposedChanges
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}

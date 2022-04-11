@@ -1,0 +1,2 @@
+notification_title: "Pembaharuan PO Item {{.name}} telah berstatus {{.proposalStatus}}"
+notification_body: "Klik disini untuk melihat detail PO Item tersebut"
