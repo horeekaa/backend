@@ -6,25 +6,33 @@ import (
 
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
 	"github.com/horeekaa/backend/model"
 )
 
 type createPurchaseOrderRepository struct {
+	memberAccessDataSource                  databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	createPurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderTransactionComponent
 	createPurchaseOrderItemComponent        purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
+	createNotificationComponent             notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                      mongodbcoretransactioninterfaces.MongoRepoTransaction
 }
 
 func NewCreatePurchaseOrderRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	createPurchaseOrderRepositoryTransactionComponent purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderTransactionComponent,
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.CreatePurchaseOrderRepository, error) {
 	createPurchaseOrderRepo := &createPurchaseOrderRepository{
+		memberAccessDataSource,
 		createPurchaseOrderRepositoryTransactionComponent,
 		createPurchaseOrderItemComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 	}
 
@@ -164,5 +172,51 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).([]*model.PurchaseOrder), nil
+
+	createdPurchaseOrdersOutput := (output).([]*model.PurchaseOrder)
+	go func() {
+		memberAccesses, err := createPurchaseOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+				"status":              model.MemberAccessStatusActive,
+				"proposalStatus":      model.EntityProposalStatusApproved,
+				"invitationAccepted":  true,
+				"organization.type":   model.OrganizationTypeInternal,
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return
+		}
+
+		for _, createdPurchaseOrder := range createdPurchaseOrdersOutput {
+			for _, memberAccess := range memberAccesses {
+				notificationToCreate := &model.InternalCreateNotification{
+					NotificationCategory: model.NotificationCategoryPurchaseOrderCreated,
+					PayloadOptions: &model.PayloadOptionsInput{
+						PurchaseOrderPayload: &model.PurchaseOrderPayloadInput{
+							PurchaseOrder: &model.PurchaseOrderForNotifPayloadInput{},
+						},
+					},
+					RecipientAccount: &model.ObjectIDOnly{
+						ID: &memberAccess.Account.ID,
+					},
+				}
+
+				jsonTemp, _ := json.Marshal(createdPurchaseOrder)
+				json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.PurchaseOrderPayload.PurchaseOrder)
+
+				_, err = createPurchaseOrderRepo.createNotificationComponent.TransactionBody(
+					&mongodbcoretypes.OperationOptions{},
+					notificationToCreate,
+				)
+				if err != nil {
+					return
+				}
+			}
+		}
+	}()
+
+	return createdPurchaseOrdersOutput, nil
 }

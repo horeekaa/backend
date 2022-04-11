@@ -9,6 +9,9 @@ import (
 	horeekaacorefailureenums "github.com/horeekaa/backend/core/errors/failures/enums"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	invoicedomainrepositoryinterfaces "github.com/horeekaa/backend/features/invoices/domain/repositories"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	databasepurchaseorderItemdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/data/dataSources/databases/interfaces/sources"
 	purchaseorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/domain/repositories"
 	databasepurchaseorderdatasourceinterfaces "github.com/horeekaa/backend/features/purchaseOrders/data/dataSources/databases/interfaces/sources"
 	purchaseorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/purchaseOrders/domain/repositories"
@@ -17,32 +20,41 @@ import (
 )
 
 type proposeUpdatePurchaseOrderRepository struct {
+	memberAccessDataSource                         databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	purchaseOrderDataSource                        databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource
+	purchaseOrderItemDataSource                    databasepurchaseorderItemdatasourceinterfaces.PurchaseOrderItemDataSource
 	proposeUpdatePurchaseOrderTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent
 	createPurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent
 	updatePurchaseOrderItemComponent               purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent
 	approvePurchaseOrderItemComponent              purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent
 	updateInvoiceTrxComponent                      invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent
+	createNotificationComponent                    notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                             mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                                   string
 }
 
 func NewProposeUpdatePurchaseOrderRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	purchaseOrderDataSource databasepurchaseorderdatasourceinterfaces.PurchaseOrderDataSource,
+	purchaseOrderItemDataSource databasepurchaseorderItemdatasourceinterfaces.PurchaseOrderItemDataSource,
 	proposeUpdatePurchaseOrderRepositoryTransactionComponent purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderTransactionComponent,
 	createPurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.CreatePurchaseOrderItemTransactionComponent,
 	updatePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderItemTransactionComponent,
 	approvePurchaseOrderItemComponent purchaseorderitemdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderItemTransactionComponent,
 	updateInvoiceTrxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository, error) {
 	proposeUpdatePurchaseOrderRepo := &proposeUpdatePurchaseOrderRepository{
+		memberAccessDataSource,
 		purchaseOrderDataSource,
+		purchaseOrderItemDataSource,
 		proposeUpdatePurchaseOrderRepositoryTransactionComponent,
 		createPurchaseOrderItemComponent,
 		updatePurchaseOrderItemComponent,
 		approvePurchaseOrderItemComponent,
 		updateInvoiceTrxComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 		"ProposeUpdatePurchaseOrderRepository",
 	}
@@ -214,5 +226,180 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) RunTransact
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.PurchaseOrder), nil
+	updatedPurchaseOrderOutput := (output).(*model.PurchaseOrder)
+
+	existingPurchaseOrder, err := updatePurchaseOrderRepo.purchaseOrderDataSource.GetMongoDataSource().FindByID(
+		input.ID,
+		&mongodbcoretypes.OperationOptions{},
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			updatePurchaseOrderRepo.pathIdentity,
+			err,
+		)
+	}
+
+	for _, purchaseOrderItemToUpdate := range input.Items {
+		if purchaseOrderItemToUpdate.ID != nil {
+			if !funk.Contains(
+				existingPurchaseOrder.Items,
+				func(mi *model.PurchaseOrderItem) bool {
+					return mi.ID == *purchaseOrderItemToUpdate.ID
+				},
+			) {
+				continue
+			}
+
+			existingPurchaseOrderItem, err := updatePurchaseOrderRepo.purchaseOrderItemDataSource.GetMongoDataSource().FindByID(
+				*purchaseOrderItemToUpdate.ID,
+				&mongodbcoretypes.OperationOptions{},
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					updatePurchaseOrderRepo.pathIdentity,
+					err,
+				)
+			}
+
+			memberAccessQuery := map[string]interface{}{}
+			var notifCategory model.NotificationCategory
+			if purchaseOrderItemToUpdate.ProposalStatus != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization._id":    existingPurchaseOrder.Organization.ID,
+				}
+				notifCategory = model.NotificationCategoryPurchaseOrderItemApproval
+			}
+
+			if purchaseOrderItemToUpdate.CustomerAgreed != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization.type":   model.OrganizationTypeInternal,
+				}
+				notifCategory = model.NotificationCategoryPurchaseOrderItemCustomerAgreed
+			}
+
+			if purchaseOrderItemToUpdate.QuantityFulfilled != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization._id":    existingPurchaseOrder.Organization.ID,
+				}
+				notifCategory = model.NotificationCategoryPurchaseOrderItemFulfilled
+			}
+
+			go func() {
+				memberAccesses, err := updatePurchaseOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+					memberAccessQuery,
+					&mongodbcoretypes.PaginationOptions{},
+					&mongodbcoretypes.OperationOptions{},
+				)
+				if err != nil {
+					return
+				}
+
+				for _, memberAccess := range memberAccesses {
+					notificationToCreate := &model.InternalCreateNotification{
+						NotificationCategory: notifCategory,
+						PayloadOptions: &model.PayloadOptionsInput{
+							PurchaseOrderItemPayload: &model.PurchaseOrderItemPayloadInput{
+								PurchaseOrderItem: &model.PurchaseOrderItemForNotifPayloadInput{
+									PurchaseOrder: &model.PurchaseOrderForNotifPayloadInput{},
+								},
+							},
+						},
+						RecipientAccount: &model.ObjectIDOnly{
+							ID: &memberAccess.Account.ID,
+						},
+					}
+
+					jsonPOItem, _ := json.Marshal(existingPurchaseOrderItem)
+					json.Unmarshal(jsonPOItem, &notificationToCreate.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem)
+
+					jsonPO, _ := json.Marshal(existingPurchaseOrder)
+					json.Unmarshal(jsonPO, &notificationToCreate.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.PurchaseOrder)
+
+					_, err = updatePurchaseOrderRepo.createNotificationComponent.TransactionBody(
+						&mongodbcoretypes.OperationOptions{},
+						notificationToCreate,
+					)
+					if err != nil {
+						return
+					}
+				}
+			}()
+			continue
+		}
+
+		existingPurchaseOrderItem, err := updatePurchaseOrderRepo.purchaseOrderItemDataSource.GetMongoDataSource().FindOne(
+			map[string]interface{}{
+				"productVariant._id": purchaseOrderItemToUpdate.ProductVariant.ID,
+				"quantity":           purchaseOrderItemToUpdate.Quantity,
+			},
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				updatePurchaseOrderRepo.pathIdentity,
+				err,
+			)
+		}
+
+		go func() {
+			memberAccesses, err := updatePurchaseOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+				map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization.type":   model.OrganizationTypeInternal,
+				},
+				&mongodbcoretypes.PaginationOptions{},
+				&mongodbcoretypes.OperationOptions{},
+			)
+			if err != nil {
+				return
+			}
+
+			for _, memberAccess := range memberAccesses {
+				notificationToCreate := &model.InternalCreateNotification{
+					NotificationCategory: model.NotificationCategoryPurchaseOrderItemCreated,
+					PayloadOptions: &model.PayloadOptionsInput{
+						PurchaseOrderItemPayload: &model.PurchaseOrderItemPayloadInput{
+							PurchaseOrderItem: &model.PurchaseOrderItemForNotifPayloadInput{
+								PurchaseOrder: &model.PurchaseOrderForNotifPayloadInput{},
+							},
+						},
+					},
+					RecipientAccount: &model.ObjectIDOnly{
+						ID: &memberAccess.Account.ID,
+					},
+				}
+
+				jsonPOItem, _ := json.Marshal(existingPurchaseOrderItem)
+				json.Unmarshal(jsonPOItem, &notificationToCreate.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem)
+
+				jsonPO, _ := json.Marshal(existingPurchaseOrder)
+				json.Unmarshal(jsonPO, &notificationToCreate.PayloadOptions.PurchaseOrderItemPayload.PurchaseOrderItem.PurchaseOrder)
+
+				_, err = updatePurchaseOrderRepo.createNotificationComponent.TransactionBody(
+					&mongodbcoretypes.OperationOptions{},
+					notificationToCreate,
+				)
+				if err != nil {
+					return
+				}
+			}
+		}()
+	}
+
+	return updatedPurchaseOrderOutput, nil
 }
