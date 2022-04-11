@@ -1,6 +1,7 @@
 package notificationdomainrepositoryutilities
 
 import (
+	"fmt"
 	"strings"
 
 	golocalizei18ncoreclientinterfaces "github.com/horeekaa/backend/core/i18n/go-localize/interfaces/init"
@@ -155,10 +156,17 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		break
 
 	case model.NotificationCategoryPurchaseOrderCreated:
+		flValue := float32(input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.Total)
+		fmtValue := fmt.Sprintf("IDR %3.0f", flValue)
+		if flValue > 1000.0 {
+			flValue = flValue / 1000
+			fmtValue = fmt.Sprintf("IDR %3.2fK", flValue)
+		}
+
 		titleText = localizer.Get(
 			"purchaseOrders.created.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"value": input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.Total,
+				"value": fmtValue,
 			},
 		)
 
