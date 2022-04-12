@@ -5,8 +5,9 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
-	databasesupplyOrderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	supplyorderdomainrepositories "github.com/horeekaa/backend/features/supplyOrders/data/repositories"
 	supplyorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrders/domain/repositories"
@@ -35,15 +36,19 @@ func (_ *ApproveUpdateSupplyOrderDependency) Bind() {
 
 	container.Transient(
 		func(
-			supplyOrderDataSource databasesupplyOrderdatasourceinterfaces.SupplyOrderDataSource,
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
+			supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
 			approveUpdatesupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent,
 			trxComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent,
+			createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 		) supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderRepository {
 			approveUpdatesupplyOrderRepo, _ := supplyorderdomainrepositories.NewApproveUpdateSupplyOrderRepository(
+				memberAccessDataSource,
 				supplyOrderDataSource,
 				approveUpdatesupplyOrderItemComponent,
 				trxComponent,
+				createNotificationComponent,
 				mongoDBTransaction,
 			)
 			return approveUpdatesupplyOrderRepo

@@ -1,9 +1,13 @@
 package supplyorderdomainrepositories
 
 import (
+	"encoding/json"
+
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	supplyorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrders/domain/repositories"
@@ -11,23 +15,29 @@ import (
 )
 
 type approveUpdateSupplyOrderRepository struct {
+	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
 	approveUpdatesupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent
 	approveUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent
+	createNotificationComponent                  notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                           mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                                 string
 }
 
 func NewApproveUpdateSupplyOrderRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
 	approveUpdatesupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent,
 	approveUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderRepository, error) {
 	approveUpdateSupplyOrderRepo := &approveUpdateSupplyOrderRepository{
+		memberAccessDataSource,
 		supplyOrderDataSource,
 		approveUpdatesupplyOrderItemComponent,
 		approveUpdateSupplyOrderTransactionComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 		"ApproveUpdateSupplyOrderRepository",
 	}
@@ -98,5 +108,49 @@ func (approveUpdateSupplyOrderRepo *approveUpdateSupplyOrderRepository) RunTrans
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.SupplyOrder), err
+
+	approvedSupplyOrder := (output).(*model.SupplyOrder)
+	go func() {
+		memberAccesses, err := approveUpdateSupplyOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+			map[string]interface{}{
+				"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+				"status":              model.MemberAccessStatusActive,
+				"proposalStatus":      model.EntityProposalStatusApproved,
+				"invitationAccepted":  true,
+				"organization._id":    approvedSupplyOrder.Organization.ID,
+			},
+			&mongodbcoretypes.PaginationOptions{},
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return
+		}
+
+		for _, memberAccess := range memberAccesses {
+			notificationToCreate := &model.InternalCreateNotification{
+				NotificationCategory: model.NotificationCategorySupplyOrderApproval,
+				PayloadOptions: &model.PayloadOptionsInput{
+					SupplyOrderPayload: &model.SupplyOrderPayloadInput{
+						SupplyOrder: &model.SupplyOrderForNotifPayloadInput{},
+					},
+				},
+				RecipientAccount: &model.ObjectIDOnly{
+					ID: &memberAccess.Account.ID,
+				},
+			}
+
+			jsonTemp, _ := json.Marshal(approvedSupplyOrder)
+			json.Unmarshal(jsonTemp, &notificationToCreate.PayloadOptions.SupplyOrderPayload.SupplyOrder)
+
+			_, err = approveUpdateSupplyOrderRepo.createNotificationComponent.TransactionBody(
+				&mongodbcoretypes.OperationOptions{},
+				notificationToCreate,
+			)
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	return approvedSupplyOrder, err
 }
