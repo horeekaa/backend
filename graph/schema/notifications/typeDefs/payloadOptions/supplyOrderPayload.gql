@@ -1,0 +1,7 @@
+input SupplyOrderPayloadInput {
+  supplyOrder: SupplyOrderForNotifPayloadInput
+}
+
+type SupplyOrderPayload {
+  supplyOrder: SupplyOrderForNotifPayload
+}

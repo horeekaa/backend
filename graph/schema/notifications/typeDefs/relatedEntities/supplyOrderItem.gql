@@ -1,0 +1,81 @@
+input SupplyOrderItemForNotifProposedChangesInput {
+  _id: ObjectID!
+  quantityOffered: Int
+  quantityAccepted: Int
+  note: String
+  unitPrice: Int
+  subTotal: Int
+  salesAmount: Int
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
+  partnerAgreed: Boolean
+  supplyOrder: SupplyOrderForNotifPayloadInput
+  pickUpDetail: DatabaseSupplyOrderItemPickUp
+  status: SupplyOrderItemStatus
+  supplyOrderItemReturn: DatabaseUpdateSupplyOrderItemReturn
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+input SupplyOrderItemForNotifPayloadInput {
+  _id: ObjectID!
+  quantityOffered: Int
+  quantityAccepted: Int
+  note: String
+  unitPrice: Int
+  subTotal: Int
+  salesAmount: Int
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
+  partnerAgreed: Boolean
+  supplyOrder: SupplyOrderForNotifPayloadInput
+  pickUpDetail: DatabaseSupplyOrderItemPickUp
+  status: SupplyOrderItemStatus
+  supplyOrderItemReturn: DatabaseUpdateSupplyOrderItemReturn
+  proposedChanges: SupplyOrderItemForNotifProposedChangesInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type SupplyOrderItemForNotifProposedChanges {
+  _id: ObjectID!
+  quantityOffered: Int!
+  quantityAccepted: Int!
+  note: String
+  unitPrice: Int!
+  subTotal: Int!
+  salesAmount: Int!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItem!
+  partnerAgreed: Boolean!
+  supplyOrder: SupplyOrderForNotifPayload!
+  pickUpDetail: SupplyOrderItemPickUp!
+  status: SupplyOrderItemStatus!
+  supplyOrderItemReturn: SupplyOrderItemReturn
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type SupplyOrderItemForNotifPayload {
+  _id: ObjectID!
+  quantityOffered: Int!
+  quantityAccepted: Int!
+  note: String
+  unitPrice: Int!
+  subTotal: Int!
+  salesAmount: Int!
+  purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItem!
+  partnerAgreed: Boolean!
+  supplyOrder: SupplyOrderForNotifPayload!
+  pickUpDetail: SupplyOrderItemPickUp!
+  status: SupplyOrderItemStatus!
+  supplyOrderItemReturn: SupplyOrderItemReturn
+  proposedChanges: SupplyOrderItemForNotifProposedChanges
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}

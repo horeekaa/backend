@@ -19,6 +19,14 @@ enum NotificationCategory {
   PURCHASE_ORDER_ITEM_CUSTOMER_AGREED
   PURCHASE_ORDER_ITEM_FULFILLED
   PURCHASE_ORDER_ITEM_APPROVAL
+
+  SUPPLY_ORDER_CREATED
+  SUPPLY_ORDER_APPROVAL
+
+  SUPPLY_ORDER_ITEM_CREATED
+  SUPPLY_ORDER_ITEM_PARTNER_AGREED
+  SUPPLY_ORDER_ITEM_ACCEPTED
+  SUPPLY_ORDER_ITEM_APPROVAL
 }
 
 type NotificationMessage {
@@ -33,6 +41,8 @@ input PayloadOptionsInput {
   mouPayload: MouPayloadInput
   purchaseOrderPayload: PurchaseOrderPayloadInput
   purchaseOrderItemPayload: PurchaseOrderItemPayloadInput
+  supplyOrderPayload: SupplyOrderPayloadInput
+  supplyOrderItemPayload: SupplyOrderItemPayloadInput
 }
 
 type PayloadOptions {
@@ -42,6 +52,8 @@ type PayloadOptions {
   mouPayload: MouPayload
   purchaseOrderPayload: PurchaseOrderPayload
   purchaseOrderItemPayload: PurchaseOrderItemPayload
+  supplyOrderPayload: SupplyOrderPayload
+  supplyOrderItemPayload: SupplyOrderItemPayload
 }
 
 input InternalCreateNotification {
