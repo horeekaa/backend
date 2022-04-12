@@ -230,6 +230,95 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
+	case model.NotificationCategorySupplyOrderApproval:
+		titleText = localizer.Get(
+			"supplyOrders.approval.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"publicId":       input.PayloadOptions.SupplyOrderPayload.SupplyOrder.PublicID,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.SupplyOrderPayload.SupplyOrder.ProposedChanges.ProposalStatus.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrders.approval.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategorySupplyOrderCreated:
+		flValue := float32(input.PayloadOptions.SupplyOrderPayload.SupplyOrder.Total)
+		fmtValue := fmt.Sprintf("IDR %3.0f", flValue)
+		if flValue > 1000.0 {
+			flValue = flValue / 1000
+			fmtValue = fmt.Sprintf("IDR %3.2fK", flValue)
+		}
+
+		titleText = localizer.Get(
+			"supplyOrders.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"value": fmtValue,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrders.created.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategorySupplyOrderItemApproval:
+		titleText = localizer.Get(
+			"supplyOrderItems.approval.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":           input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.PurchaseOrderToSupply.ProductVariant.Product.Name,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.ProposedChanges.ProposalStatus.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrderItems.approval.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategorySupplyOrderItemCreated:
+		titleText = localizer.Get(
+			"supplyOrderItems.created.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":     input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.PurchaseOrderToSupply.ProductVariant.Product.Name,
+				"publicId": input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.SupplyOrder.PublicID,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrderItems.created.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategorySupplyOrderItemPartnerAgreed:
+		titleText = localizer.Get(
+			"supplyOrderItems.updated.partnerAgreement.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name": input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.PurchaseOrderToSupply.ProductVariant.Product.Name,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrderItems.updated.partnerAgreement.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategorySupplyOrderItemAccepted:
+		titleText = localizer.Get(
+			"supplyOrderItems.updated.acceptance.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"name":   input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.PurchaseOrderToSupply.ProductVariant.Product.Name,
+				"status": strings.ToLower(input.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.Status.String()),
+			},
+		)
+
+		bodyText = localizer.Get(
+			"supplyOrderItems.updated.acceptance.messages.notification_body",
+		)
+		break
+
 	}
 
 	(*output).Message = &model.NotificationMessage{
