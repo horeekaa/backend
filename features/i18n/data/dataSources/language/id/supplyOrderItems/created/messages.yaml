@@ -1,0 +1,2 @@
+notification_title: "SO Item baru {{.name}} telah ditambahkan ke {{.publicId}}"
+notification_body: "Klik disini untuk melihat detil SO Item tersebut"

@@ -1,0 +1,2 @@
+notification_title: "Update to {{.publicId}} has been entirely {{.proposalStatus}}"
+notification_body: "Click here to view the details of the SO"

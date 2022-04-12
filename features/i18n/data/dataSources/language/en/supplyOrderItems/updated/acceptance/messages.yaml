@@ -1,0 +1,2 @@
+notification_title: "SO Item {{.name}} has been {{.status}}"
+notification_body: "Click here to view the details of the SO Item"
