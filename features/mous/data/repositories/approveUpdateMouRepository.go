@@ -107,7 +107,7 @@ func (approveUpdateMouRepo *approveUpdateMouRepository) RunTransaction(
 	approvedMou := output.(*model.Mou)
 	go func() {
 		notificationToCreate := &model.InternalCreateNotification{
-			NotificationCategory: model.NotificationCategoryMouApproved,
+			NotificationCategory: model.NotificationCategoryMouApproval,
 			PayloadOptions: &model.PayloadOptionsInput{
 				MouPayload: &model.MouPayloadInput{
 					Mou: &model.MouForNotifPayloadInput{},

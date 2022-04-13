@@ -106,7 +106,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		titleText = localizer.Get(
 			"mous.created.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
+				"publicId": input.PayloadOptions.MouPayload.Mou.PublicID,
 			},
 		)
 
@@ -119,7 +119,7 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		titleText = localizer.Get(
 			"mous.updated.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
+				"publicId": input.PayloadOptions.MouPayload.Mou.PublicID,
 			},
 		)
 
@@ -128,16 +128,17 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
-	case model.NotificationCategoryMouApproved:
+	case model.NotificationCategoryMouApproval:
 		titleText = localizer.Get(
-			"mous.approved.messages.notification_title",
+			"mous.approval.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
-				"mouPublicId": *input.PayloadOptions.MouPayload.Mou.PublicID,
+				"publicId":       input.PayloadOptions.MouPayload.Mou.PublicID,
+				"proposalStatus": strings.ToLower(input.PayloadOptions.MouPayload.Mou.ProposedChanges.ProposalStatus.String()),
 			},
 		)
 
 		bodyText = localizer.Get(
-			"mous.approved.messages.notification_body",
+			"mous.approval.messages.notification_body",
 		)
 		break
 
