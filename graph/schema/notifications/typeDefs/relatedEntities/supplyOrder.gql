@@ -1,0 +1,57 @@
+input SupplyOrderForNotifProposedChangesInput {
+  _id: ObjectID!
+  publicId: String!
+  total: Int
+  paidAmount: Int
+  totalReturn: Int
+  finalSalesAmount: Int
+  organization: OrganizationForSupplyOrderInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+input SupplyOrderForNotifPayloadInput {
+  _id: ObjectID!
+  publicId: String!
+  total: Int
+  paidAmount: Int
+  totalReturn: Int
+  finalSalesAmount: Int
+  organization: OrganizationForSupplyOrderInput
+  proposedChanges: SupplyOrderForNotifProposedChangesInput
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+  createdAt: Time
+  updatedAt: Time
+}
+
+type SupplyOrderForNotifProposedChanges {
+  _id: ObjectID!
+  publicId: String!
+  total: Int!
+  paidAmount: Int!
+  totalReturn: Int!
+  finalSalesAmount: Int!
+  organization: OrganizationForSupplyOrder!
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type SupplyOrderForNotifPayload {
+  _id: ObjectID!
+  publicId: String!
+  total: Int!
+  paidAmount: Int!
+  totalReturn: Int!
+  finalSalesAmount: Int!
+  organization: OrganizationForSupplyOrder!
+  proposedChanges: SupplyOrderForNotifProposedChanges
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}

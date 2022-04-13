@@ -1,0 +1,2 @@
+notification_title: "Update to SO Item {{.name}} has been agreed by Partner"
+notification_body: "Click here to view the details of the SO Item"

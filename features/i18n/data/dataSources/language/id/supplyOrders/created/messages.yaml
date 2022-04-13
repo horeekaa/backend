@@ -1,0 +1,2 @@
+notification_title: "SO baru bernilai {{.value}} telah diterima"
+notification_body: "Klik disini untuk melihat detil SO tersebut"

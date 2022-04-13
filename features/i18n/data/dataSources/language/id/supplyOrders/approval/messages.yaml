@@ -1,0 +1,2 @@
+notification_title: "Pembaharuan {{.publicId}} telah sepenuhnya berstatus {{.proposalStatus}}"
+notification_body: "Klik disini untuk melihat detail SO tersebut"

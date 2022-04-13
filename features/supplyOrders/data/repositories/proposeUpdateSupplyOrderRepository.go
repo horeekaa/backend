@@ -6,6 +6,9 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
+	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	supplyorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrders/domain/repositories"
@@ -14,29 +17,38 @@ import (
 )
 
 type proposeUpdateSupplyOrderRepository struct {
+	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
+	supplyOrderItemDataSource                    databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
 	proposeUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent
 	createSupplyOrderItemComponent               supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent
 	proposeUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent
 	approveUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent
+	createNotificationComponent                  notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
 	mongoDBTransaction                           mongodbcoretransactioninterfaces.MongoRepoTransaction
 	pathIdentity                                 string
 }
 
 func NewProposeUpdateSupplyOrderRepository(
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
+	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
 	proposeUpdateSupplyOrderRepositoryTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent,
 	createSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent,
 	proposeUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent,
 	approveUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent,
+	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
 	mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
 ) (supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderRepository, error) {
 	proposeUpdateSupplyOrderRepo := &proposeUpdateSupplyOrderRepository{
+		memberAccessDataSource,
+		supplyOrderItemDataSource,
 		supplyOrderDataSource,
 		proposeUpdateSupplyOrderRepositoryTransactionComponent,
 		createSupplyOrderItemComponent,
 		proposeUpdateSupplyOrderItemComponent,
 		approveUpdateSupplyOrderItemComponent,
+		createNotificationComponent,
 		mongoDBTransaction,
 		"ProposeUpdateSupplyOrderRepository",
 	}
@@ -168,5 +180,184 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) RunTransaction(
 	if err != nil {
 		return nil, err
 	}
-	return (output).(*model.SupplyOrder), nil
+
+	updatedSupplyOrderOutput := (output).(*model.SupplyOrder)
+
+	existingSupplyOrder, err := updateSupplyOrderRepo.supplyOrderDataSource.GetMongoDataSource().FindByID(
+		input.ID,
+		&mongodbcoretypes.OperationOptions{},
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			updateSupplyOrderRepo.pathIdentity,
+			err,
+		)
+	}
+
+	for _, supplyOrderItemToUpdate := range input.Items {
+		if supplyOrderItemToUpdate.ID != nil {
+			if !funk.Contains(
+				existingSupplyOrder.Items,
+				func(mi *model.SupplyOrderItem) bool {
+					return mi.ID == *supplyOrderItemToUpdate.ID
+				},
+			) {
+				continue
+			}
+
+			existingSupplyOrderItem, err := updateSupplyOrderRepo.supplyOrderItemDataSource.GetMongoDataSource().FindByID(
+				*supplyOrderItemToUpdate.ID,
+				&mongodbcoretypes.OperationOptions{},
+			)
+			if err != nil {
+				return nil, horeekaacoreexceptiontofailure.ConvertException(
+					updateSupplyOrderRepo.pathIdentity,
+					err,
+				)
+			}
+
+			memberAccessQuery := map[string]interface{}{}
+			var notifCategory model.NotificationCategory
+			if supplyOrderItemToUpdate.ProposalStatus != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization._id":    existingSupplyOrder.Organization.ID,
+				}
+				notifCategory = model.NotificationCategorySupplyOrderItemApproval
+			}
+
+			if supplyOrderItemToUpdate.PartnerAgreed != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization.type":   model.OrganizationTypeInternal,
+				}
+				notifCategory = model.NotificationCategorySupplyOrderItemPartnerAgreed
+			}
+
+			if supplyOrderItemToUpdate.QuantityAccepted != nil {
+				memberAccessQuery = map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization._id":    existingSupplyOrder.Organization.ID,
+				}
+				notifCategory = model.NotificationCategorySupplyOrderItemAccepted
+			}
+
+			go func() {
+				memberAccesses, err := updateSupplyOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+					memberAccessQuery,
+					&mongodbcoretypes.PaginationOptions{},
+					&mongodbcoretypes.OperationOptions{},
+				)
+				if err != nil {
+					return
+				}
+
+				for _, memberAccess := range memberAccesses {
+					notificationToCreate := &model.InternalCreateNotification{
+						NotificationCategory: notifCategory,
+						PayloadOptions: &model.PayloadOptionsInput{
+							SupplyOrderItemPayload: &model.SupplyOrderItemPayloadInput{
+								SupplyOrderItem: &model.SupplyOrderItemForNotifPayloadInput{
+									SupplyOrder: &model.SupplyOrderForNotifPayloadInput{},
+								},
+							},
+						},
+						RecipientAccount: &model.ObjectIDOnly{
+							ID: &memberAccess.Account.ID,
+						},
+					}
+
+					jsonPOItem, _ := json.Marshal(existingSupplyOrderItem)
+					json.Unmarshal(jsonPOItem, &notificationToCreate.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem)
+
+					jsonPO, _ := json.Marshal(existingSupplyOrder)
+					json.Unmarshal(jsonPO, &notificationToCreate.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.SupplyOrder)
+
+					_, err = updateSupplyOrderRepo.createNotificationComponent.TransactionBody(
+						&mongodbcoretypes.OperationOptions{},
+						notificationToCreate,
+					)
+					if err != nil {
+						return
+					}
+				}
+			}()
+			continue
+		}
+
+		existingSupplyOrderItem, err := updateSupplyOrderRepo.supplyOrderItemDataSource.GetMongoDataSource().FindOne(
+			map[string]interface{}{
+				"purchaseOrderToSupply._id": supplyOrderItemToUpdate.PurchaseOrderToSupply.ID,
+				"supplyOrder._id":           existingSupplyOrder.ID,
+			},
+			&mongodbcoretypes.OperationOptions{},
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				updateSupplyOrderRepo.pathIdentity,
+				err,
+			)
+		}
+		if existingSupplyOrderItem == nil {
+			continue
+		}
+
+		go func() {
+			memberAccesses, err := updateSupplyOrderRepo.memberAccessDataSource.GetMongoDataSource().Find(
+				map[string]interface{}{
+					"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+					"status":              model.MemberAccessStatusActive,
+					"proposalStatus":      model.EntityProposalStatusApproved,
+					"invitationAccepted":  true,
+					"organization.type":   model.OrganizationTypeInternal,
+				},
+				&mongodbcoretypes.PaginationOptions{},
+				&mongodbcoretypes.OperationOptions{},
+			)
+			if err != nil {
+				return
+			}
+
+			for _, memberAccess := range memberAccesses {
+				notificationToCreate := &model.InternalCreateNotification{
+					NotificationCategory: model.NotificationCategorySupplyOrderItemCreated,
+					PayloadOptions: &model.PayloadOptionsInput{
+						SupplyOrderItemPayload: &model.SupplyOrderItemPayloadInput{
+							SupplyOrderItem: &model.SupplyOrderItemForNotifPayloadInput{
+								SupplyOrder: &model.SupplyOrderForNotifPayloadInput{},
+							},
+						},
+					},
+					RecipientAccount: &model.ObjectIDOnly{
+						ID: &memberAccess.Account.ID,
+					},
+				}
+
+				jsonPOItem, _ := json.Marshal(existingSupplyOrderItem)
+				json.Unmarshal(jsonPOItem, &notificationToCreate.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem)
+
+				jsonPO, _ := json.Marshal(existingSupplyOrder)
+				json.Unmarshal(jsonPO, &notificationToCreate.PayloadOptions.SupplyOrderItemPayload.SupplyOrderItem.SupplyOrder)
+
+				_, err = updateSupplyOrderRepo.createNotificationComponent.TransactionBody(
+					&mongodbcoretypes.OperationOptions{},
+					notificationToCreate,
+				)
+				if err != nil {
+					return
+				}
+			}
+		}()
+	}
+
+	return updatedSupplyOrderOutput, nil
 }
