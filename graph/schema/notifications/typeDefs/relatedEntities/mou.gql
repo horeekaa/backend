@@ -1,11 +1,85 @@
+input MouForNotifProposedChangesInput {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  remainingCreditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int!
+  paymentCompletionLimitInDays: Int!
+  maximumDispatchTimeInDaysAfterConfirmation: Int!
+  firstParty: InternalPartyInput
+  secondParty: InternalPartyInput
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
 input MouForNotifPayloadInput {
   _id: ObjectID!
-  publicId: String
-  title: String
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  remainingCreditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int!
+  paymentCompletionLimitInDays: Int!
+  maximumDispatchTimeInDaysAfterConfirmation: Int!
+  firstParty: InternalPartyInput
+  secondParty: InternalPartyInput
+  proposedChanges: MouForNotifProposedChangesInput
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type MouForNotifProposedChanges {
+  _id: ObjectID!
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  remainingCreditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int!
+  paymentCompletionLimitInDays: Int!
+  maximumDispatchTimeInDaysAfterConfirmation: Int!
+  firstParty: Party
+  secondParty: Party
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type MouForNotifPayload {
   _id: ObjectID!
-  publicId: String
-  title: String
+  publicId: String!
+  title: String!
+  description: String
+  startDate: Time!
+  endDate: Time!
+  isActive: Boolean!
+  creditLimit: Int!
+  remainingCreditLimit: Int!
+  minimumOrderValueBeforeDelivery: Int!
+  paymentCompletionLimitInDays: Int!
+  maximumDispatchTimeInDaysAfterConfirmation: Int!
+  firstParty: Party
+  secondParty: Party
+  proposedChanges: MouForNotifProposedChanges
+  proposalStatus: EntityProposalStatus!
+  proposalStatusReason: String
+  createdAt: Time!
+  updatedAt: Time!
 }
