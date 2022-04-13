@@ -1,2 +1,2 @@
-notification_title: "MoU {{.mouPublicId}} telah diperbaharui"
+notification_title: "MoU {{.publicId}} telah diperbaharui"
 notification_body: "Klik disini untuk melihat detail mou tersebut"
