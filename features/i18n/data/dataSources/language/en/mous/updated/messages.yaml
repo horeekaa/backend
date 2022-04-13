@@ -1,2 +1,2 @@
-notification_title: "MoU {{.mouPublicId}} has been updated"
+notification_title: "MoU {{.publicId}} has been updated"
 notification_body: "Click here to view the details of the MoU"
