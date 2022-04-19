@@ -1,0 +1,2 @@
+notification_title: "Your invoice {{.publicId}} has due. Please make immediate payment"
+notification_body: "Click here to view the details of the invoice"

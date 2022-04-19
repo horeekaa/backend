@@ -21,3 +21,7 @@ type UpdateInvoiceRepository interface {
 		updateInvoiceInput *model.InternalUpdateInvoice,
 	) (*model.Invoice, error)
 }
+
+type UpdateDueInvoiceRepository interface {
+	RunTransaction() ([]*model.Invoice, error)
+}

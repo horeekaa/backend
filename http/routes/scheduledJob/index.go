@@ -8,5 +8,6 @@ import (
 
 func Route(r chi.Router) {
 	r.Get("/createInvoice", invoicescheduledjobroutes.CreateInvoiceHandler())
+	r.Get("/updateDueInvoice", invoicescheduledjobroutes.UpdateDueInvoiceHandler())
 	r.Get("/processPOToSupply", purchaseordertosupplyscheduledjobroutes.ProcessPOToSupplyHandler())
 }

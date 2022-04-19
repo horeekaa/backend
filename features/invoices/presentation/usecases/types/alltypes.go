@@ -13,8 +13,9 @@ type CreateInvoiceUsecaseInput struct {
 }
 
 type UpdateInvoiceUsecaseInput struct {
-	Context       context.Context
-	UpdateInvoice *model.UpdateInvoice
+	Context           context.Context
+	UpdateInvoice     *model.UpdateInvoice
+	CronAuthenticated bool
 }
 
 type GetAllInvoiceUsecaseInput struct {

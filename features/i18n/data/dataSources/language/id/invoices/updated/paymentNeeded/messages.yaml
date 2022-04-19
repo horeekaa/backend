@@ -1,0 +1,2 @@
+notification_title: "Faktur {{.publicId}} telah jatuh tempo. Segera lakukan pembayaran"
+notification_body: "Klik disini untuk melihat detil faktur nya"

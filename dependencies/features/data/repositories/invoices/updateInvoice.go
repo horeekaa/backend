@@ -49,4 +49,23 @@ func (_ *UpdateInvoiceDependency) Bind() {
 			return updateInvoiceRepo
 		},
 	)
+
+	container.Transient(
+		func(
+			invoiceDataSource databaseinvoicedatasourceinterfaces.InvoiceDataSource,
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
+			trxComponent invoicedomainrepositoryinterfaces.UpdateInvoiceTransactionComponent,
+			createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
+			mongoDBTransaction mongodbcoretransactioninterfaces.MongoRepoTransaction,
+		) invoicedomainrepositoryinterfaces.UpdateDueInvoiceRepository {
+			updateDueInvoiceRepo, _ := invoicedomainrepositories.NewUpdateDueInvoiceRepository(
+				invoiceDataSource,
+				memberAccessDataSource,
+				trxComponent,
+				createNotificationComponent,
+				mongoDBTransaction,
+			)
+			return updateDueInvoiceRepo
+		},
+	)
 }

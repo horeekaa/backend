@@ -87,18 +87,30 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
-	case model.NotificationCategoryInvoiceUpdated:
+	case model.NotificationCategoryInvoiceUpdatedPlain:
 		formattedDueDate := input.PayloadOptions.InvoicePayload.Invoice.PaymentDueDate.Format(
 			"02/01/2006",
 		)
 		titleText = localizer.Get(
-			"invoices.updated.messages.notification_title",
+			"invoices.updated.plain.messages.notification_title",
 			&golocalizei18ncoretypes.LocalizerReplacement{
 				"formattedDueDate": formattedDueDate,
 			},
 		)
 		bodyText = localizer.Get(
-			"invoices.updated.messages.notification_body",
+			"invoices.updated.plain.messages.notification_body",
+		)
+		break
+
+	case model.NotificationCategoryInvoiceUpdatedPaymentNeeded:
+		titleText = localizer.Get(
+			"invoices.updated.paymentNeeded.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"publicId": input.PayloadOptions.InvoicePayload.Invoice.PublicID,
+			},
+		)
+		bodyText = localizer.Get(
+			"invoices.updated.paymentNeeded.messages.notification_body",
 		)
 		break
 
