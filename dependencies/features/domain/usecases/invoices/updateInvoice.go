@@ -17,11 +17,13 @@ func (_ *UpdateInvoiceUsecaseDependency) Bind() {
 			getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			updateInvoiceRepo invoicedomainrepositoryinterfaces.UpdateInvoiceRepository,
+			updateDueInvoiceRepo invoicedomainrepositoryinterfaces.UpdateDueInvoiceRepository,
 		) invoicepresentationusecaseinterfaces.UpdateInvoiceUsecase {
 			updateInvoiceUsecase, _ := invoicepresentationusecases.NewUpdateInvoiceUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				updateInvoiceRepo,
+				updateDueInvoiceRepo,
 			)
 			return updateInvoiceUsecase
 		},

@@ -20,6 +20,7 @@ type updateInvoiceUsecase struct {
 	getAccountFromAuthDataRepo  accountdomainrepositoryinterfaces.GetAccountFromAuthData
 	getAccountMemberAccessRepo  memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	updateInvoiceRepo           invoicedomainrepositoryinterfaces.UpdateInvoiceRepository
+	updateDueInvoiceRepo        invoicedomainrepositoryinterfaces.UpdateDueInvoiceRepository
 	updateInvoiceAccessIdentity *model.MemberAccessRefOptionsInput
 	pathIdentity                string
 }
@@ -28,11 +29,13 @@ func NewUpdateInvoiceUsecase(
 	getAccountFromAuthDataRepo accountdomainrepositoryinterfaces.GetAccountFromAuthData,
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	updateInvoiceRepo invoicedomainrepositoryinterfaces.UpdateInvoiceRepository,
+	updateDueInvoiceRepo invoicedomainrepositoryinterfaces.UpdateDueInvoiceRepository,
 ) (invoicepresentationusecaseinterfaces.UpdateInvoiceUsecase, error) {
 	return &updateInvoiceUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		updateInvoiceRepo,
+		updateDueInvoiceRepo,
 		&model.MemberAccessRefOptionsInput{
 			InvoiceAccesses: &model.InvoiceAccessesInput{
 				InvoiceUpdate: func(b bool) *bool { return &b }(true),
@@ -61,55 +64,65 @@ func (updateInvoiceUcase *updateInvoiceUsecase) Execute(input invoicepresentatio
 		return nil, err
 	}
 
-	account, err := updateInvoiceUcase.getAccountFromAuthDataRepo.Execute(
-		accountdomainrepositorytypes.GetAccountFromAuthDataInput{
-			Context: validatedInput.Context,
-		},
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			updateInvoiceUcase.pathIdentity,
-			err,
-		)
-	}
-	if account == nil {
-		return nil, horeekaacoreerror.NewErrorObject(
-			horeekaacoreerrorenums.AuthenticationError,
-			updateInvoiceUcase.pathIdentity,
-			nil,
-		)
-	}
-
-	memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
-	_, err = updateInvoiceUcase.getAccountMemberAccessRepo.Execute(
-		memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
-			MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
-				Account:             &model.ObjectIDOnly{ID: &account.ID},
-				MemberAccessRefType: &memberAccessRefTypeOrgBased,
-				Access:              updateInvoiceUcase.updateInvoiceAccessIdentity,
+	if !validatedInput.CronAuthenticated {
+		account, err := updateInvoiceUcase.getAccountFromAuthDataRepo.Execute(
+			accountdomainrepositorytypes.GetAccountFromAuthDataInput{
+				Context: validatedInput.Context,
 			},
-		},
-	)
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				updateInvoiceUcase.pathIdentity,
+				err,
+			)
+		}
+		if account == nil {
+			return nil, horeekaacoreerror.NewErrorObject(
+				horeekaacoreerrorenums.AuthenticationError,
+				updateInvoiceUcase.pathIdentity,
+				nil,
+			)
+		}
+
+		memberAccessRefTypeOrgBased := model.MemberAccessRefTypeOrganizationsBased
+		_, err = updateInvoiceUcase.getAccountMemberAccessRepo.Execute(
+			memberaccessdomainrepositorytypes.GetAccountMemberAccessInput{
+				MemberAccessFilterFields: &model.InternalMemberAccessFilterFields{
+					Account:             &model.ObjectIDOnly{ID: &account.ID},
+					MemberAccessRefType: &memberAccessRefTypeOrgBased,
+					Access:              updateInvoiceUcase.updateInvoiceAccessIdentity,
+				},
+			},
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				updateInvoiceUcase.pathIdentity,
+				err,
+			)
+		}
+
+		invoiceToUpdate := &model.InternalUpdateInvoice{}
+		jsonTemp, _ := json.Marshal(validatedInput.UpdateInvoice)
+		json.Unmarshal(jsonTemp, invoiceToUpdate)
+
+		updateInvoiceOutput, err := updateInvoiceUcase.updateInvoiceRepo.RunTransaction(
+			invoiceToUpdate,
+		)
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				updateInvoiceUcase.pathIdentity,
+				err,
+			)
+		}
+		return updateInvoiceOutput, nil
+	}
+
+	updatedInvoices, err := updateInvoiceUcase.updateDueInvoiceRepo.RunTransaction()
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			updateInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
-
-	invoiceToUpdate := &model.InternalUpdateInvoice{}
-	jsonTemp, _ := json.Marshal(validatedInput.UpdateInvoice)
-	json.Unmarshal(jsonTemp, invoiceToUpdate)
-
-	updateInvoiceOutput, err := updateInvoiceUcase.updateInvoiceRepo.RunTransaction(
-		invoiceToUpdate,
-	)
-	if err != nil {
-		return nil, horeekaacorefailuretoerror.ConvertFailure(
-			updateInvoiceUcase.pathIdentity,
-			err,
-		)
-	}
-
-	return updateInvoiceOutput, nil
+	return updatedInvoices[0], nil
 }
