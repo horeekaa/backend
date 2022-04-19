@@ -86,7 +86,7 @@ func (updateInvoiceRepo *updateInvoiceRepository) RunTransaction(
 		jsonInvPayload, _ := json.Marshal(updatedInvoice)
 		for _, memberAccess := range memberAccessesToNotify {
 			notifToCreate := &model.InternalCreateNotification{
-				NotificationCategory: model.NotificationCategoryInvoiceUpdated,
+				NotificationCategory: model.NotificationCategoryInvoiceUpdatedPlain,
 				RecipientAccount: &model.ObjectIDOnly{
 					ID: &memberAccess.Account.ID,
 				},
