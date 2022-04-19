@@ -5,5 +5,9 @@ cron:
   timezone: Asia/Jakarta
 - description: "create-invoice"
   url: /scheduledJob/v1/createInvoice
+  schedule: every day 05:00
+  timezone: Asia/Jakarta
+- description: "update-due-invoice"
+  url: /scheduledJob/v1/updateDueInvoice
   schedule: every day 06:00
   timezone: Asia/Jakarta
