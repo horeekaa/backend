@@ -343,6 +343,8 @@ models:
         resolver: true
       photosAfterReceived:
         resolver: true
+      courier:
+        resolver: true
   PurchaseOrderToSupply:
     fields:
       purchaseOrderItems:
@@ -394,7 +396,9 @@ models:
   SupplyOrderItemPickUp:
     fields:
       photos:
-        resolver: true        
+        resolver: true
+      courier:
+        resolver: true 
   Tag:
     fields:
       submittingAccount:

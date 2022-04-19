@@ -34,6 +34,18 @@ func (r *supplyOrderItemPickUpResolver) Photos(ctx context.Context, obj *model.S
 	return descriptivePhotos, nil
 }
 
+func (r *supplyOrderItemPickUpResolver) Courier(ctx context.Context, obj *model.SupplyOrderItemPickUp) (*model.AccountForSupplyOrderItem, error) {
+	if obj.Courier == nil {
+		return nil, nil
+	}
+
+	if obj.Courier.ID == nil {
+		return nil, nil
+	}
+
+	return obj.Courier, nil
+}
+
 // SupplyOrderItemPickUp returns generated.SupplyOrderItemPickUpResolver implementation.
 func (r *Resolver) SupplyOrderItemPickUp() generated.SupplyOrderItemPickUpResolver {
 	return &supplyOrderItemPickUpResolver{r}
