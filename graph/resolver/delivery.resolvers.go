@@ -56,6 +56,18 @@ func (r *purchaseOrderItemDeliveryResolver) Photos(ctx context.Context, obj *mod
 	return descriptivePhotos, nil
 }
 
+func (r *purchaseOrderItemDeliveryResolver) Courier(ctx context.Context, obj *model.PurchaseOrderItemDelivery) (*model.AccountForPurchaseOrderItem, error) {
+	if obj.Courier == nil {
+		return nil, nil
+	}
+
+	if obj.Courier.ID == nil {
+		return nil, nil
+	}
+
+	return obj.Courier, nil
+}
+
 // PurchaseOrderItemDelivery returns generated.PurchaseOrderItemDeliveryResolver implementation.
 func (r *Resolver) PurchaseOrderItemDelivery() generated.PurchaseOrderItemDeliveryResolver {
 	return &purchaseOrderItemDeliveryResolver{r}
