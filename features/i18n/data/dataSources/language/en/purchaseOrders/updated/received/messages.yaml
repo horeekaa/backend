@@ -1,0 +1,2 @@
+notification_title: "PO {{.publicId}} has been automatically marked as received"
+notification_body: "Click here to view the details of the PO"
