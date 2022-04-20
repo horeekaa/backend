@@ -117,12 +117,12 @@ func (updateInvoiceUcase *updateInvoiceUsecase) Execute(input invoicepresentatio
 		return updateInvoiceOutput, nil
 	}
 
-	updatedInvoices, err := updateInvoiceUcase.updateDueInvoiceRepo.RunTransaction()
+	_, err = updateInvoiceUcase.updateDueInvoiceRepo.RunTransaction()
 	if err != nil {
 		return nil, horeekaacorefailuretoerror.ConvertFailure(
 			updateInvoiceUcase.pathIdentity,
 			err,
 		)
 	}
-	return updatedInvoices[0], nil
+	return nil, nil
 }
