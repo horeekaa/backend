@@ -109,7 +109,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 
 	updateSupplyOrderItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateSupplyOrderItem.UpdatedAt = &currentTime
 
 	if updateSupplyOrderItem.SupplyOrderItemReturn != nil {

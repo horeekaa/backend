@@ -45,7 +45,7 @@ func NewUpdatePurchaseOrderByCronRepository(
 }
 
 func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTransaction() ([]*model.PurchaseOrder, error) {
-	currentDateTime := time.Now()
+	currentDateTime := time.Now().UTC()
 	futureDateOnly := time.Date(
 		currentDateTime.Year(),
 		currentDateTime.Month(),

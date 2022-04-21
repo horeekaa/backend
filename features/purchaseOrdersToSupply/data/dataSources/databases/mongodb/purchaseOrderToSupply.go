@@ -142,7 +142,7 @@ func (purcOrderSupplyDataSourceMongo *purchaseOrderToSupplyDataSourceMongo) setD
 func (purcOrderSupplyDataSourceMongo *purchaseOrderToSupplyDataSourceMongo) setDefaultValuesWhenCreate(
 	input *model.DatabaseCreatePurchaseOrderToSupply,
 ) (bool, error) {
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	defaultStatus := model.PurchaseOrderToSupplyStatusCummulating
 
 	input.CreatedAt = currentTime

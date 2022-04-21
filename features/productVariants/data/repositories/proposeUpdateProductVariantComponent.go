@@ -156,7 +156,7 @@ func (updateProdVariantTrx *proposeUpdateProductVariantTransactionComponent) Tra
 	}
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateProductVariant.UpdatedAt = &currentTime
 
 	fieldsToUpdateProductVariant := &model.DatabaseUpdateProductVariant{

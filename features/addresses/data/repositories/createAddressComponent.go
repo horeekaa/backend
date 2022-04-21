@@ -110,7 +110,7 @@ func (createAddrTrx *createAddressTransactionComponent) TransactionBody(
 	if *addressToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		addressToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: addressToCreate.SubmittingAccount.ID}
 	}
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	addressToCreate.CreatedAt = currentTime
 	addressToCreate.UpdatedAt = currentTime
 

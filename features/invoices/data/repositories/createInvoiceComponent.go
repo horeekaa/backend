@@ -104,7 +104,7 @@ func (createInvoiceTrx *createInvoiceTransactionComponent) TransactionBody(
 	invoiceToCreate.TotalPayable = totalPrice - totalDiscounted
 	invoiceToCreate.PaymentDueDate = input.PurchaseOrdersToInvoice[0].PaymentDueDate
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	defaultStatus := model.InvoiceStatusAvailable
 	if invoiceToCreate.Status == nil {
 		invoiceToCreate.Status = &defaultStatus

@@ -105,7 +105,7 @@ func (createMouItemTrx *createMouItemTransactionComponent) TransactionBody(
 		mouItemToCreate.IsActive = &defaultIsActive
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	mouItemToCreate.CreatedAt = &currentTime
 	mouItemToCreate.UpdatedAt = &currentTime
 

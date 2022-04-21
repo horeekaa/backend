@@ -113,7 +113,7 @@ func (approveSupplyOrderTrx *approveUpdateSupplyOrderTransactionComponent) Trans
 
 	updateSupplyOrder.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateSupplyOrder.UpdatedAt = &currentTime
 
 	fieldsToUpdatesupplyOrder := &model.DatabaseUpdateSupplyOrder{

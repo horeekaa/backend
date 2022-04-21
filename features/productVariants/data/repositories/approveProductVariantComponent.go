@@ -105,7 +105,7 @@ func (approveProdVarTrx *approveUpdateProductVariantTransactionComponent) Transa
 
 	updateProductVariant.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateProductVariant.UpdatedAt = &currentTime
 
 	fieldsToUpdateProductVariant := &model.DatabaseUpdateProductVariant{

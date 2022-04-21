@@ -100,7 +100,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	}
 	updatePayment.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updatePayment.UpdatedAt = &currentTime
 
 	fieldsToUpdatePayment := &model.DatabaseUpdatePayment{

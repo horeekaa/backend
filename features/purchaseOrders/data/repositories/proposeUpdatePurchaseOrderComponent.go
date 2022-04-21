@@ -240,7 +240,7 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	}
 	updatePurchaseOrder.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updatePurchaseOrder.UpdatedAt = &currentTime
 
 	fieldsToUpdatePurchaseOrder := &model.DatabaseUpdatePurchaseOrder{

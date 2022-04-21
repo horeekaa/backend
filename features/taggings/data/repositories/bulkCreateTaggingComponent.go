@@ -171,7 +171,7 @@ func (bulkCreateTaggingTrx *bulkCreateTaggingTransactionComponent) TransactionBo
 		}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	for _, taggingToCreate := range taggingsToCreate {
 		newDocumentJson, _ := json.Marshal(*taggingToCreate)
 		generatedObjectID := bulkCreateTaggingTrx.GetCurrentObjectID()

@@ -107,7 +107,7 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 		mouToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: mouToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	mouToCreate.CreatedAt = &currentTime
 	mouToCreate.UpdatedAt = &currentTime
 

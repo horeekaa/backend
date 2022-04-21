@@ -123,7 +123,7 @@ func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenUpdate(
 	input *model.UpdateLogging,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	existingObject, err := logDataSourceMongo.FindOne(inputCriteria, operationOptions)
 	if err != nil {
 		return false, err
@@ -143,7 +143,7 @@ func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenUpdate(
 func (logDataSourceMongo *loggingDataSourceMongo) setDefaultValuesWhenCreate(
 	input *model.CreateLogging,
 ) (bool, error) {
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	input.CreatedAt = &currentTime
 
 	return true, nil

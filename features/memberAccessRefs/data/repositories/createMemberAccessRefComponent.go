@@ -83,7 +83,7 @@ func (createMemberAccessRefTrx *createMemberAccessRefTransactionComponent) Trans
 	if *memberAccessRefToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		memberAccessRefToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: memberAccessRefToCreate.SubmittingAccount.ID}
 	}
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 	defaultProposalStatus := model.EntityProposalStatusProposed
 
 	if memberAccessRefToCreate.ProposalStatus == nil {

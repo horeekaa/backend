@@ -124,7 +124,7 @@ func (purchaseOrderDataSourceMongo *purchaseOrderDataSourceMongo) UpdateAll(
 	updateData *model.DatabaseUpdatePurchaseOrder,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateData.UpdatedAt = &currentTime
 
 	_, err := purchaseOrderDataSourceMongo.basicOperation.UpdateAll(

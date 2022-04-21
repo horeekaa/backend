@@ -109,7 +109,7 @@ func (createDescPhotoTrx *createDescriptivePhotoTransactionComponent) Transactio
 	if *descPhotoToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		descPhotoToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: descPhotoToCreate.SubmittingAccount.ID}
 	}
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	descPhotoToCreate.CreatedAt = &currentTime
 	descPhotoToCreate.UpdatedAt = &currentTime
 

@@ -106,7 +106,7 @@ func (approveDescPhotoTrx *approveUpdateDescriptivePhotoTransactionComponent) Tr
 
 	updateDescriptivePhoto.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateDescriptivePhoto.UpdatedAt = &currentTime
 
 	fieldsToUpdateDescriptivePhoto := &model.DatabaseUpdateDescriptivePhoto{

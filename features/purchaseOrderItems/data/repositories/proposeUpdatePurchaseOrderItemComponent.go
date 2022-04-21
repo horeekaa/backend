@@ -531,7 +531,7 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 	}
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updatePurchaseOrderItem.UpdatedAt = &currentTime
 	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
 		if existingPurchaseOrderItem.PurchaseOrderItemReturn == nil {

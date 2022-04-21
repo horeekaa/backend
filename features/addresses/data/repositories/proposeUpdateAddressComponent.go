@@ -109,7 +109,7 @@ func (updateAddrTrx *proposeUpdateAddressTransactionComponent) TransactionBody(
 	}
 	updateAddress.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateAddress.UpdatedAt = &currentTime
 
 	fieldsToUpdateAddress := &model.DatabaseUpdateAddress{

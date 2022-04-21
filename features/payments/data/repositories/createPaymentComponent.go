@@ -109,7 +109,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 		paymentToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: paymentToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	paymentToCreate.CreatedAt = &currentTime
 	paymentToCreate.UpdatedAt = &currentTime
 

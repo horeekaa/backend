@@ -45,7 +45,7 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		notificationToUpdate := &model.DatabaseUpdateNotification{}
 		json.Unmarshal(jsonTemp, notificationToUpdate)
 
-		currentTime := time.Now()
+		currentTime := time.Now().UTC()
 		notificationToUpdate.UpdatedAt = &currentTime
 
 		databaseNotification, err := bulkUpdateNotificationComp.notificationDataSource.GetMongoDataSource().Update(

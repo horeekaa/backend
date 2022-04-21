@@ -97,7 +97,7 @@ func (updateMouItemTrx *proposeUpdateMouItemTransactionComponent) TransactionBod
 	}
 	updateMouItem.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateMouItem.UpdatedAt = &currentTime
 
 	fieldsToUpdateMouItem := &model.DatabaseUpdateMouItem{
