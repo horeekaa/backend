@@ -11,3 +11,7 @@ cron:
   url: /scheduledJob/v1/updateDueInvoice
   schedule: every day 06:00
   timezone: Asia/Jakarta
+- description: "update-received-purchase-order"
+  url: /scheduledJob/v1/updateReceivedPurchaseOrder
+  schedule: every day 05:00
+  timezone: Asia/Jakarta
