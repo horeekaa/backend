@@ -14,6 +14,7 @@ type CreatePurchaseOrderUsecaseInput struct {
 type UpdatePurchaseOrderUsecaseInput struct {
 	Context             context.Context
 	UpdatePurchaseOrder *model.UpdatePurchaseOrder
+	CronAuthenticated   bool
 }
 
 type GetAllPurchaseOrderUsecaseInput struct {
