@@ -1,0 +1,2 @@
+notification_title: "PO {{.publicId}} telah diselesaikan secara otomatis"
+notification_body: "Klik disini untuk melihat detil PO tersebut"

@@ -188,6 +188,19 @@ func (notifLocalBuilder *notificationLocalizationBuilder) Execute(
 		)
 		break
 
+	case model.NotificationCategoryPurchaseOrderUpdatedReceived:
+		titleText = localizer.Get(
+			"purchaseOrders.updated.received.messages.notification_title",
+			&golocalizei18ncoretypes.LocalizerReplacement{
+				"publicId": input.PayloadOptions.PurchaseOrderPayload.PurchaseOrder.PublicID,
+			},
+		)
+
+		bodyText = localizer.Get(
+			"purchaseOrders.updated.received.messages.notification_body",
+		)
+		break
+
 	case model.NotificationCategoryPurchaseOrderItemApproval:
 		titleText = localizer.Get(
 			"purchaseOrderItems.approval.messages.notification_title",

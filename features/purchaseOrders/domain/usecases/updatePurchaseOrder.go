@@ -22,6 +22,7 @@ type updatePurchaseOrderUsecase struct {
 	getAccountMemberAccessRepo        memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository
 	proposeUpdatePurchaseOrderRepo    purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository
 	approveUpdatePurchaseOrderRepo    purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository
+	updatePurchaseOrderByCronRepo     purchaseorderdomainrepositoryinterfaces.UpdatePurchaseOrderByCronRepository
 	updatePurchaseOrderAccessIdentity *model.MemberAccessRefOptionsInput
 	pathIdentity                      string
 }
@@ -31,12 +32,14 @@ func NewUpdatePurchaseOrderUsecase(
 	getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 	proposeUpdatePurchaseOrderRepo purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository,
 	approveUpdatePurchaseOrderRepo purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository,
+	updatePurchaseOrderByCronRepo purchaseorderdomainrepositoryinterfaces.UpdatePurchaseOrderByCronRepository,
 ) (purchaseorderpresentationusecaseinterfaces.UpdatePurchaseOrderUsecase, error) {
 	return &updatePurchaseOrderUsecase{
 		getAccountFromAuthDataRepo,
 		getAccountMemberAccessRepo,
 		proposeUpdatePurchaseOrderRepo,
 		approveUpdatePurchaseOrderRepo,
+		updatePurchaseOrderByCronRepo,
 		&model.MemberAccessRefOptionsInput{
 			PurchaseOrderAccesses: &model.PurchaseOrderAccessesInput{
 				PurchaseOrderUpdate: func(b bool) *bool { return &b }(true),
@@ -64,6 +67,12 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	if err != nil {
 		return nil, err
 	}
+
+	if validatedInput.CronAuthenticated {
+		_, _ = updatePurchaseOrderUcase.updatePurchaseOrderByCronRepo.RunTransaction()
+		return nil, nil
+	}
+
 	purchaseOrderToUpdate := &model.InternalUpdatePurchaseOrder{}
 	jsonTemp, _ := json.Marshal(validatedInput.UpdatePurchaseOrder)
 	json.Unmarshal(jsonTemp, purchaseOrderToUpdate)

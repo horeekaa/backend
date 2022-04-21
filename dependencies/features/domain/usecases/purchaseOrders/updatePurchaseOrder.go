@@ -18,12 +18,14 @@ func (_ *UpdatePurchaseOrderUsecaseDependency) Bind() {
 			getAccountMemberAccessRepo memberaccessdomainrepositoryinterfaces.GetAccountMemberAccessRepository,
 			proposeUpdatepurchaseOrderRepo purchaseorderdomainrepositoryinterfaces.ProposeUpdatePurchaseOrderRepository,
 			approveUpdatepurchaseOrderRepo purchaseorderdomainrepositoryinterfaces.ApproveUpdatePurchaseOrderRepository,
+			updatePurchaseOrderByCronRepo purchaseorderdomainrepositoryinterfaces.UpdatePurchaseOrderByCronRepository,
 		) purchaseorderpresentationusecaseinterfaces.UpdatePurchaseOrderUsecase {
 			updatePurchaseOrderUsecase, _ := purchaseorderpresentationusecases.NewUpdatePurchaseOrderUsecase(
 				getAccountFromAuthDataRepo,
 				getAccountMemberAccessRepo,
 				proposeUpdatepurchaseOrderRepo,
 				approveUpdatepurchaseOrderRepo,
+				updatePurchaseOrderByCronRepo,
 			)
 			return updatePurchaseOrderUsecase
 		},
