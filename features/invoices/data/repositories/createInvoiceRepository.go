@@ -77,7 +77,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 		futureDateOnly := time.Date(
 			currentTime.Year(),
 			currentTime.Month(),
-			currentTime.Day()+7,
+			currentTime.Day()-7,
 			0, 0, 0, 0,
 			currentTime.Location(),
 		)
