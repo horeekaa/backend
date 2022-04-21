@@ -345,6 +345,10 @@ models:
         resolver: true
       courier:
         resolver: true
+  PurchaseOrderItemReturn:
+    fields:
+      photos:
+        resolver: true
   PurchaseOrderToSupply:
     fields:
       purchaseOrderItems:
@@ -398,7 +402,11 @@ models:
       photos:
         resolver: true
       courier:
-        resolver: true 
+        resolver: true
+  SupplyOrderItemReturn:
+    fields:
+      photos:
+        resolver: true
   Tag:
     fields:
       submittingAccount:
