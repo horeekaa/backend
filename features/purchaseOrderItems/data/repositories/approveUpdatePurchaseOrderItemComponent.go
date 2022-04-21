@@ -110,7 +110,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 
 	updatePurchaseOrderItem.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updatePurchaseOrderItem.UpdatedAt = &currentTime
 	if updatePurchaseOrderItem.PurchaseOrderItemReturn != nil {
 		if existingPurchaseOrderItem.PurchaseOrderItemReturn == nil {

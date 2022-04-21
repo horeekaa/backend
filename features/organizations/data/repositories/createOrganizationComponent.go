@@ -99,7 +99,7 @@ func (createOrganizationTrx *createOrganizationTransactionComponent) Transaction
 	if *organizationToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		organizationToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: organizationToCreate.SubmittingAccount.ID}
 	}
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	organizationToCreate.CreatedAt = &currentTime
 	organizationToCreate.UpdatedAt = &currentTime
 

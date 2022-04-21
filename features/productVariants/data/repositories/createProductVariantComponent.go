@@ -117,7 +117,7 @@ func (createProdVariantTrx *createProductVariantTransactionComponent) Transactio
 		productVariantToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productVariantToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	productVariantToCreate.CreatedAt = &currentTime
 	productVariantToCreate.UpdatedAt = &currentTime
 

@@ -95,7 +95,7 @@ func (updateMemberAccessRefTrx *proposeUpdateMemberAccessRefTransactionComponent
 	}
 	updateMemberAccessRef.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 	updateMemberAccessRef.UpdatedAt = &currentTime
 
 	fieldsToUpdateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{

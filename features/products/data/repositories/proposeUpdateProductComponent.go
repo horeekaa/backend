@@ -95,7 +95,7 @@ func (updateProdTrx *proposeUpdateProductTransactionComponent) TransactionBody(
 	}
 	updateProduct.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateProduct.UpdatedAt = &currentTime
 
 	fieldsToUpdateProduct := &model.DatabaseUpdateProduct{

@@ -120,7 +120,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 	input *model.DatabaseUpdatePerson,
 	operationOptions *mongodbcoretypes.OperationOptions,
 ) (bool, error) {
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 
 	existingObject, err := prsnDataSourceMongo.FindOne(inputCriteria, operationOptions)
 	if err != nil {
@@ -142,7 +142,7 @@ func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenUpdate(
 func (prsnDataSourceMongo *personDataSourceMongo) setDefaultValuesWhenCreate(
 	input *model.DatabaseCreatePerson,
 ) (bool, error) {
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 
 	input.CreatedAt = &currentTime
 	input.UpdatedAt = &currentTime

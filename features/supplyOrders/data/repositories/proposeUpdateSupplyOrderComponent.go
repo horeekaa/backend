@@ -134,7 +134,7 @@ func (updateSupplyOrderTrx *proposeUpdateSupplyOrderTransactionComponent) Transa
 	}
 	updateSupplyOrder.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateSupplyOrder.UpdatedAt = &currentTime
 
 	fieldsToUpdatesupplyOrder := &model.DatabaseUpdateSupplyOrder{

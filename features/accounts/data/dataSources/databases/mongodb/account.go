@@ -122,7 +122,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenUpdate(
 ) (bool, error) {
 	defaultAccountType := model.AccountTypePerson
 	defaultLanguage := model.LanguageID
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 
 	existingObject, err := accDataSourceMongo.FindOne(inputCriteria, operationOptions)
 	if err != nil {
@@ -152,7 +152,7 @@ func (accDataSourceMongo *accountDataSourceMongo) setDefaultValuesWhenCreate(
 ) (bool, error) {
 	defaultAccountStatus := model.AccountStatusActive
 	defaultAccountType := model.AccountTypePerson
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 
 	if input.Status == nil {
 		input.Status = &defaultAccountStatus

@@ -100,7 +100,7 @@ func (createTagTrx *createTagTransactionComponent) TransactionBody(
 		tagToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: tagToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	tagToCreate.CreatedAt = &currentTime
 	tagToCreate.UpdatedAt = &currentTime
 

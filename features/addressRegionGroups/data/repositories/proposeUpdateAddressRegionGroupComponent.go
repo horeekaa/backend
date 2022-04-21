@@ -83,7 +83,7 @@ func (updateAddressRegionGroupTrx *proposeUpdateAddressRegionGroupTransactionCom
 	}
 	updateAddressRegionGroup.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateAddressRegionGroup.UpdatedAt = &currentTime
 
 	fieldsToUpdateAddressRegionGroup := &model.DatabaseUpdateAddressRegionGroup{

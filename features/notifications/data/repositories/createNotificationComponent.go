@@ -63,7 +63,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 			err,
 		)
 	}
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	notificationToCreate.CreatedAt = &currentTime
 	notificationToCreate.UpdatedAt = &currentTime
 

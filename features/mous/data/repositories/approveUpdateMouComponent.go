@@ -98,7 +98,7 @@ func (approveMouTrx *approveUpdateMouTransactionComponent) TransactionBody(
 
 	updateMou.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateMou.UpdatedAt = &currentTime
 	updateMou.RemainingCreditLimit = func(i int) *int {
 		return &i

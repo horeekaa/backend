@@ -100,7 +100,7 @@ func (createProductTrx *createProductTransactionComponent) TransactionBody(
 		productToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: productToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	productToCreate.CreatedAt = &currentTime
 	productToCreate.UpdatedAt = &currentTime
 

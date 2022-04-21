@@ -203,7 +203,7 @@ func (createMemberAccessTrx *createMemberAccessTransactionComponent) Transaction
 		memberAccessToCreate.InvitationAccepted = func(b bool) *bool { return &b }(false)
 	}
 
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 	memberAccessToCreate.CreatedAt = &currentTime
 	memberAccessToCreate.UpdatedAt = &currentTime
 

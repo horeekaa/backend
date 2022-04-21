@@ -109,7 +109,7 @@ func (approveProdTrx *approveUpdateMemberAccessRefTransactionComponent) Transact
 
 	updateMemberAccessRef.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	var currentTime = time.Now()
+	var currentTime = time.Now().UTC()
 	updateMemberAccessRef.UpdatedAt = &currentTime
 
 	fieldsToUpdateMemberAccessRef := &model.DatabaseUpdateMemberAccessRef{

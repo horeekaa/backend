@@ -101,7 +101,7 @@ func (createAddressRegionGroupTrx *createAddressRegionGroupTransactionComponent)
 	if *addressRegionGroupToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		addressRegionGroupToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: addressRegionGroupToCreate.SubmittingAccount.ID}
 	}
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	addressRegionGroupToCreate.CreatedAt = &currentTime
 	addressRegionGroupToCreate.UpdatedAt = &currentTime
 

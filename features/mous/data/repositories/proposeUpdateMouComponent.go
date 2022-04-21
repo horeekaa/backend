@@ -88,7 +88,7 @@ func (updateMouTrx *proposeUpdateMouTransactionComponent) TransactionBody(
 	}
 	updateMou.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateMou.UpdatedAt = &currentTime
 	if updateMou.CreditLimit != nil {
 		updateMou.RemainingCreditLimit = func(i int) *int {

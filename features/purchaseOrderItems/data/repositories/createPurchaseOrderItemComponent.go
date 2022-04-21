@@ -126,7 +126,7 @@ func (createPurchaseOrderItemTrx *createPurchaseOrderItemTransactionComponent) T
 		purchaseOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: purchaseOrderItemToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	purchaseOrderItemToCreate.CreatedAt = &currentTime
 	purchaseOrderItemToCreate.UpdatedAt = &currentTime
 

@@ -109,7 +109,7 @@ func (approveProdTrx *approveUpdateOrganizationTransactionComponent) Transaction
 
 	updateOrganization.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateOrganization.UpdatedAt = &currentTime
 
 	fieldsToUpdateOrganization := &model.DatabaseUpdateOrganization{

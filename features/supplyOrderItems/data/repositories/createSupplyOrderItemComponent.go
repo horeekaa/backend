@@ -143,7 +143,7 @@ func (createSupplyOrderItemTrx *createSupplyOrderItemTransactionComponent) Trans
 		supplyOrderItemToCreate.RecentApprovingAccount = &model.ObjectIDOnly{ID: supplyOrderItemToCreate.SubmittingAccount.ID}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	supplyOrderItemToCreate.CreatedAt = &currentTime
 	supplyOrderItemToCreate.UpdatedAt = &currentTime
 

@@ -72,7 +72,8 @@ func (createInvoiceRepo *createInvoiceRepository) TransactionBody(
 func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 	input *model.InternalCreateInvoice,
 ) ([]*model.Invoice, error) {
-	currentTime := time.Now()
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	currentTime := time.Now().In(loc)
 	if input.PaymentDueDate == nil {
 		futureDateOnly := time.Date(
 			currentTime.Year(),

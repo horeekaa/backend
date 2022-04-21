@@ -120,7 +120,7 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		}
 	}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	jsonTemp, _ := json.Marshal(input)
 	for _, id := range input.IDs {
 		taggingToUpdate := &model.DatabaseUpdateTagging{

@@ -113,7 +113,7 @@ func (approveTagTrx *approveUpdateTagTransactionComponent) TransactionBody(
 
 	updateTag.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateTag.UpdatedAt = &currentTime
 
 	fieldsToUpdateTag := &model.DatabaseUpdateTag{

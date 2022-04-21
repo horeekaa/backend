@@ -98,7 +98,7 @@ func (updateTagTrx *proposeUpdateTagTransactionComponent) TransactionBody(
 	}
 	updateTag.RecentLog = &model.ObjectIDOnly{ID: &loggingOutput.ID}
 
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	updateTag.UpdatedAt = &currentTime
 
 	fieldsToUpdateTag := &model.DatabaseUpdateTag{

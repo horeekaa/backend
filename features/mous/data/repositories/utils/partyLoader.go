@@ -36,7 +36,7 @@ func (partyLoader *partyLoader) TransactionBody(
 	output *model.InternalPartyInput,
 ) (bool, error) {
 	if input != nil {
-		currentTime := time.Now()
+		currentTime := time.Now().UTC()
 		output.CreatedAt = &currentTime
 		output.UpdatedAt = &currentTime
 		organizationLoadedChan := make(chan bool)
@@ -104,7 +104,7 @@ func (partyLoader *partyLoader) TransactionBody(
 			signatureId := partyLoader.organizationDataSource.GetMongoDataSource().GenerateObjectID()
 			output.Signature = &model.InternalSignatureInput{
 				ID:        &signatureId,
-				CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
+				CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now().UTC()),
 			}
 
 			account, err := partyLoader.accountDataSource.GetMongoDataSource().FindByID(
