@@ -122,10 +122,12 @@ func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTra
 				0, 0,
 				*existingMou.PaymentCompletionLimitInDays,
 			)
+
+			paymentDay := paymentDueDate.Day() + 15 - (paymentDueDate.Day() % 15)
 			paymentDueDate = time.Date(
 				paymentDueDate.Year(),
-				paymentDueDate.Month()+1,
-				1, 0, 0, 0, 0,
+				paymentDueDate.Month(),
+				paymentDay, 0, 0, 0, 0,
 				paymentDueDate.Location(),
 			).UTC()
 
