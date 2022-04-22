@@ -69,7 +69,13 @@ func (updatePurchaseOrderUcase *updatePurchaseOrderUsecase) Execute(input purcha
 	}
 
 	if validatedInput.CronAuthenticated {
-		_, _ = updatePurchaseOrderUcase.updatePurchaseOrderByCronRepo.RunTransaction()
+		_, err := updatePurchaseOrderUcase.updatePurchaseOrderByCronRepo.RunTransaction()
+		if err != nil {
+			return nil, horeekaacorefailuretoerror.ConvertFailure(
+				updatePurchaseOrderUcase.pathIdentity,
+				err,
+			)
+		}
 		return nil, nil
 	}
 
