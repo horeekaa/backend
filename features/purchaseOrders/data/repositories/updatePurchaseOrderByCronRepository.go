@@ -2,6 +2,7 @@ package purchaseorderdomainrepositories
 
 import (
 	"encoding/json"
+	"math"
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -125,11 +126,22 @@ func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTra
 				*existingMou.PaymentCompletionLimitInDays,
 			)
 
-			paymentDay := paymentDueDate.Day() + 15 - (paymentDueDate.Day() % 15)
+			lastDateOfMonth := time.Date(
+				paymentDueDate.Year(),
+				paymentDueDate.Month()+1,
+				1, 0, 0, 0, 0,
+				paymentDueDate.Location(),
+			).AddDate(0, 0, -1)
+
+			paymentDay := math.Min(
+				float64(paymentDueDate.Day()+15-(paymentDueDate.Day()%15)+1),
+				float64(lastDateOfMonth.Day()),
+			)
+
 			paymentDueDate = time.Date(
 				paymentDueDate.Year(),
 				paymentDueDate.Month(),
-				paymentDay, 0, 0, 0, 0,
+				int(paymentDay), 0, 0, 0, 0,
 				paymentDueDate.Location(),
 			).UTC()
 
