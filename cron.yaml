@@ -13,5 +13,5 @@ cron:
   timezone: Asia/Jakarta
 - description: "update-received-purchase-order"
   url: /scheduledJob/v1/updateReceivedPurchaseOrder
-  schedule: every day 05:00
+  schedule: every day 11:59
   timezone: Asia/Jakarta
