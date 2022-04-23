@@ -78,10 +78,10 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 		futureDateOnly := time.Date(
 			currentTime.Year(),
 			currentTime.Month(),
-			currentTime.Day()-7,
+			currentTime.Day()+7,
 			0, 0, 0, 0,
 			currentTime.Location(),
-		)
+		).UTC()
 		input.PaymentDueDate = &futureDateOnly
 	} else {
 		dateOnly := time.Date(
@@ -90,7 +90,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 			input.PaymentDueDate.Day(),
 			0, 0, 0, 0,
 			input.PaymentDueDate.Location(),
-		)
+		).UTC()
 		input.PaymentDueDate = &dateOnly
 	}
 
@@ -108,7 +108,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 				input.StartInvoiceDate.Day(),
 				0, 0, 0, 0,
 				input.StartInvoiceDate.Location(),
-			),
+			).UTC(),
 		)
 		input.EndInvoiceDate = func(t time.Time) *time.Time { return &t }(
 			time.Date(
@@ -117,7 +117,7 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 				input.EndInvoiceDate.Day(),
 				0, 0, 0, 0,
 				input.EndInvoiceDate.Location(),
-			),
+			).UTC(),
 		)
 		delete(query, "paymentDueDate")
 		query["$and"] = []map[string]interface{}{

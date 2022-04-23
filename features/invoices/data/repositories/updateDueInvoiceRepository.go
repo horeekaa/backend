@@ -68,12 +68,10 @@ func (updateDueInvoiceRepo *updateDueInvoiceRepository) TransactionBody(
 }
 
 func (updateDueInvoiceRepo *updateDueInvoiceRepository) RunTransaction() ([]*model.Invoice, error) {
-	loc, _ := time.LoadLocation("Asia/Bangkok")
-
 	invoices, err := updateDueInvoiceRepo.invoiceDataSource.GetMongoDataSource().Find(
 		map[string]interface{}{
 			"paymentDueDate": map[string]interface{}{
-				"$lte": time.Now().In(loc),
+				"$lte": time.Now().UTC(),
 			},
 			"status": model.InvoiceStatusAvailable,
 		},
