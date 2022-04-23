@@ -71,7 +71,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			invoiceToUpdate.PaymentDueDate.Day()+7,
 			0, 0, 0, 0,
 			invoiceToUpdate.PaymentDueDate.Location(),
-		)
+		).UTC()
 		invoiceToUpdate.PaymentDueDate = &dateOnly
 		query := map[string]interface{}{
 			"status":         model.PurchaseOrderStatusWaitingForInvoice,
@@ -99,7 +99,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 				invoiceToUpdate.StartInvoiceDate.Day(),
 				0, 0, 0, 0,
 				invoiceToUpdate.StartInvoiceDate.Location(),
-			),
+			).UTC(),
 		)
 		invoiceToUpdate.EndInvoiceDate = func(t time.Time) *time.Time { return &t }(
 			time.Date(
@@ -108,7 +108,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 				invoiceToUpdate.EndInvoiceDate.Day(),
 				0, 0, 0, 0,
 				invoiceToUpdate.EndInvoiceDate.Location(),
-			),
+			).UTC(),
 		)
 
 		query := map[string]interface{}{
