@@ -23,7 +23,6 @@ input InternalCreatePurchaseOrderToSupply {
   timeSlot: DeliveryTimeSlot!
   expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupplyInput]
-  purchaseOrderItems: [InternalCreatePurchaseOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
 }
@@ -37,6 +36,7 @@ input DatabaseCreatePurchaseOrderToSupply {
   expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [ObjectIDOnly]
+  supplyOrderItems: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput!
   status: PurchaseOrderToSupplyStatus
   createdAt: Time!
@@ -53,6 +53,7 @@ input UpdatePurchaseOrderToSupply {
   expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [UpdatePurchaseOrderItem]
+  supplyOrderItems: [UpdateSupplyOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
 }
@@ -67,6 +68,7 @@ input InternalUpdatePurchaseOrderToSupply {
   expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [InternalUpdatePurchaseOrderItem]
+  supplyOrderItems: [InternalUpdateSupplyOrderItem]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
 }
@@ -81,6 +83,7 @@ input DatabaseUpdatePurchaseOrderToSupply {
   expectedArrivalDate: Time
   tags: [TagForPurchaseOrderToSupplyInput]
   purchaseOrderItems: [ObjectIDOnly]
+  supplyOrderItems: [ObjectIDOnly]
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyInput
   status: PurchaseOrderToSupplyStatus
   updatedAt: Time
@@ -96,6 +99,7 @@ input PurchaseOrderToSupplyFilterFields {
   expectedArrivalDate: TimeFilterField
   tags: ObjectIDOnlyFilterField
   purchaseOrderItems: ObjectIDOnlyFilterField
+  supplyOrderItems: ObjectIDOnlyFilterField
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupplyFilterFields
   status: StringFilterField
   createdAt: TimeFilterField
@@ -112,6 +116,7 @@ type PurchaseOrderToSupply {
   expectedArrivalDate: Time!
   tags: [TagForPurchaseOrderToSupply]!
   purchaseOrderItems: [PurchaseOrderItem]!
+  supplyOrderItems: [SupplyOrderItem]!
   addressRegionGroup: AddressRegionGroupForPurchaseOrderToSupply!
   status: PurchaseOrderToSupplyStatus
   createdAt: Time!

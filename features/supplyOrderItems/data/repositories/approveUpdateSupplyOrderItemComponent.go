@@ -13,6 +13,7 @@ import (
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type approveUpdateSupplyOrderItemTransactionComponent struct {
@@ -161,6 +162,26 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 					poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusOpen)
 					if quantityFulfilled >= existingPOToSupply.QuantityRequested {
 						poToSupplyToUpdate.Status = func(s model.PurchaseOrderToSupplyStatus) *model.PurchaseOrderToSupplyStatus { return &s }(model.PurchaseOrderToSupplyStatusFulfilled)
+					}
+
+					if !funk.Contains(
+						funk.Map(existingPOToSupply.SupplyOrderItems,
+							func(m *model.SupplyOrderItem) string { return m.ID.Hex() },
+						),
+						existingSupplyOrderItem.ID.Hex(),
+					) {
+						poToSupplyToUpdate.SupplyOrderItems = append(
+							funk.Map(existingPOToSupply.SupplyOrderItems,
+								func(m *model.SupplyOrderItem) *model.ObjectIDOnly {
+									return &model.ObjectIDOnly{
+										ID: &m.ID,
+									}
+								},
+							).([]*model.ObjectIDOnly),
+							&model.ObjectIDOnly{
+								ID: &existingSupplyOrderItem.ID,
+							},
+						)
 					}
 					_, err = approveSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 						map[string]interface{}{
