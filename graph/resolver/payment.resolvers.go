@@ -9,6 +9,7 @@ import (
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
+	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	invoicepresentationusecaseinterfaces "github.com/horeekaa/backend/features/invoices/presentation/usecases"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
@@ -36,6 +37,20 @@ func (r *mutationResolver) UpdatePayment(ctx context.Context, updatePayment mode
 			Context:       ctx,
 			UpdatePayment: &updatePayment,
 		},
+	)
+}
+
+func (r *paymentResolver) Photo(ctx context.Context, obj *model.Payment) (*model.DescriptivePhoto, error) {
+	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
+	container.Make(&getDescriptivePhotoUsecase)
+
+	var filterFields *model.DescriptivePhotoFilterFields
+	if obj.Photo != nil {
+		filterFields = &model.DescriptivePhotoFilterFields{}
+		filterFields.ID = &obj.Photo.ID
+	}
+	return getDescriptivePhotoUsecase.Execute(
+		filterFields,
 	)
 }
 
