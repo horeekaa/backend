@@ -10,6 +10,7 @@ import (
 	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
 	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 	purchaseordertosupplypresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases/types"
+	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -34,6 +35,28 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 		}
 	}
 	return purchaseOrderItems, nil
+}
+
+func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, obj *model.PurchaseOrderToSupply) ([]*model.SupplyOrderItem, error) {
+	var getSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase
+	container.Make(&getSupplyOrderItemUsecase)
+
+	supplyOrderItems := []*model.SupplyOrderItem{}
+	if obj.SupplyOrderItems != nil {
+		for _, item := range obj.SupplyOrderItems {
+			supplyOrderItem, err := getSupplyOrderItemUsecase.Execute(
+				&model.SupplyOrderItemFilterFields{
+					ID: &item.ID,
+				},
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			supplyOrderItems = append(supplyOrderItems, supplyOrderItem)
+		}
+	}
+	return supplyOrderItems, nil
 }
 
 func (r *queryResolver) PurchaseOrdersToSupply(ctx context.Context, filterFields model.PurchaseOrderToSupplyFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.PurchaseOrderToSupply, error) {

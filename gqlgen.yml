@@ -223,6 +223,8 @@ models:
         resolver: true
   Payment:
     fields:
+      photo:
+        resolver: true
       invoice:
         resolver: true
       submittingAccount:
@@ -233,6 +235,8 @@ models:
         resolver: true
   PaymentProposed:
     fields:
+      photo:
+        resolver: true
       invoice:
         resolver: true
       submittingAccount:
@@ -353,8 +357,12 @@ models:
     fields:
       purchaseOrderItems:
         resolver: true
+      supplyOrderItems:
+        resolver: true
   SupplyOrder:
     fields:
+      paymentProofPhoto:
+        resolver: true
       items:
         resolver: true
       submittingAccount:
@@ -365,6 +373,8 @@ models:
         resolver: true
   SupplyOrderProposed:
     fields:
+      paymentProofPhoto:
+        resolver: true
       items:
         resolver: true
       submittingAccount:

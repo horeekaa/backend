@@ -119,6 +119,10 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		}
 	}
 
+	if validatedInput.UpdateSupplyOrder.PaymentProofPhoto != nil {
+		supplyOrderToUpdate.PaymentProofPhoto.Photo.File = validatedInput.UpdateSupplyOrder.PaymentProofPhoto.Photo.File
+	}
+
 	// if user is only going to approve proposal
 	if supplyOrderToUpdate.ProposalStatus != nil {
 		if accMemberAccess.Access.SupplyOrderAccesses.SupplyOrderApproval == nil {
