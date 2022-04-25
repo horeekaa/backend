@@ -6,6 +6,7 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
+	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
@@ -20,6 +21,8 @@ type proposeUpdateSupplyOrderRepository struct {
 	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	supplyOrderItemDataSource                    databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
+	createDescriptivePhotoComponent              descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
+	proposeUpdateDescriptivePhotoComponent       descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
 	proposeUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent
 	createSupplyOrderItemComponent               supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent
 	proposeUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent
@@ -33,6 +36,8 @@ func NewProposeUpdateSupplyOrderRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
+	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
+	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
 	proposeUpdateSupplyOrderRepositoryTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent,
 	createSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent,
 	proposeUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent,
@@ -44,6 +49,8 @@ func NewProposeUpdateSupplyOrderRepository(
 		memberAccessDataSource,
 		supplyOrderItemDataSource,
 		supplyOrderDataSource,
+		createDescriptivePhotoComponent,
+		proposeUpdateDescriptivePhotoComponent,
 		proposeUpdateSupplyOrderRepositoryTransactionComponent,
 		createSupplyOrderItemComponent,
 		proposeUpdateSupplyOrderItemComponent,
@@ -83,6 +90,53 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			updateSupplyOrderRepo.pathIdentity,
 			err,
 		)
+	}
+
+	if supplyOrderToUpdate.PaymentProofPhoto != nil {
+		if supplyOrderToUpdate.PaymentProofPhoto.ID != nil {
+			supplyOrderToUpdate.PaymentProofPhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*supplyOrderToUpdate.ProposalStatus)
+			supplyOrderToUpdate.PaymentProofPhoto.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*supplyOrderToUpdate.SubmittingAccount)
+
+			_, err := updateSupplyOrderRepo.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+				operationOption,
+				supplyOrderToUpdate.PaymentProofPhoto,
+			)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			photoToCreate := &model.InternalCreateDescriptivePhoto{}
+			jsonTemp, _ := json.Marshal(supplyOrderToUpdate.PaymentProofPhoto)
+			json.Unmarshal(jsonTemp, photoToCreate)
+			if supplyOrderToUpdate.PaymentProofPhoto.Photo != nil {
+				photoToCreate.Photo.File = supplyOrderToUpdate.PaymentProofPhoto.Photo.File
+			}
+			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderPaymentProof
+			photoToCreate.Object = &model.ObjectIDOnly{
+				ID: &existingsupplyOrder.ID,
+			}
+			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*supplyOrderToUpdate.ProposalStatus)
+			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*supplyOrderToUpdate.SubmittingAccount)
+
+			savedPhoto, err := updateSupplyOrderRepo.createDescriptivePhotoComponent.TransactionBody(
+				operationOption,
+				photoToCreate,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			jsonTemp, _ = json.Marshal(savedPhoto)
+			json.Unmarshal(jsonTemp, &supplyOrderToUpdate.PaymentProofPhoto)
+		}
 	}
 
 	if supplyOrderToUpdate.Items != nil {
