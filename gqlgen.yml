@@ -353,6 +353,8 @@ models:
     fields:
       purchaseOrderItems:
         resolver: true
+      supplyOrderItems:
+        resolver: true
   SupplyOrder:
     fields:
       items:
