@@ -54,7 +54,7 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 	paymentToCreate := input.(*model.InternalCreatePayment)
 	generatedObjectID := createPaymentRepo.createPaymentTransactionComponent.GenerateNewObjectID()
 	if paymentToCreate.Photo != nil {
-		paymentToCreate.Photo.Category = model.DescriptivePhotoCategoryPaymentProof
+		paymentToCreate.Photo.Category = model.DescriptivePhotoCategoryPurchaseOrderPaymentProof
 		paymentToCreate.Photo.Object = &model.ObjectIDOnly{
 			ID: &generatedObjectID,
 		}
