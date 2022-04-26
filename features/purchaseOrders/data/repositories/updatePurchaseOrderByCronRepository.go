@@ -79,7 +79,7 @@ func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTra
 				"_id": map[string]interface{}{
 					"$in": funk.Map(
 						purchaseOrder.Items,
-						func(po *model.ObjectIDOnly) interface{} {
+						func(po *model.PurchaseOrderItem) interface{} {
 							return po.ID
 						},
 					),
