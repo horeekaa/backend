@@ -422,26 +422,22 @@ func (updatePurchaseOrderItemTrx *proposeUpdatePurchaseOrderItemTransactionCompo
 
 	if updatePurchaseOrderItem.QuantityFulfilled != nil {
 		if *updatePurchaseOrderItem.QuantityFulfilled > 0 {
-			existingPurchaseOrderToSupply, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
-				map[string]interface{}{
-					"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
-					"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
-					"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
-					"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-				},
+			if existingPurchaseOrderItem.PurchaseOrderToSupply == nil {
+				return nil, horeekaacorefailure.NewFailureObject(
+					horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
+					updatePurchaseOrderItemTrx.pathIdentity,
+					nil,
+				)
+			}
+
+			existingPurchaseOrderToSupply, err := updatePurchaseOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
+				existingPurchaseOrderItem.PurchaseOrderToSupply.ID,
 				session,
 			)
 			if err != nil {
 				return nil, horeekaacoreexceptiontofailure.ConvertException(
 					updatePurchaseOrderItemTrx.pathIdentity,
 					err,
-				)
-			}
-			if existingPurchaseOrderToSupply == nil {
-				return nil, horeekaacorefailure.NewFailureObject(
-					horeekaacorefailureenums.UnapprovedPONotAllowedToFulfill,
-					updatePurchaseOrderItemTrx.pathIdentity,
-					nil,
 				)
 			}
 			if *updatePurchaseOrderItem.QuantityFulfilled < existingPurchaseOrderItem.Quantity {
