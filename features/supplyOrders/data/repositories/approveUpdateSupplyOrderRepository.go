@@ -76,22 +76,24 @@ func (approveUpdateSupplyOrderRepo *approveUpdateSupplyOrderRepository) Transact
 		)
 	}
 	if existingSupplyOrder.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
-		updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
-			ID: &existingSupplyOrder.PaymentProofPhoto.ID,
-		}
-		updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-			return &m
-		}(*supplyOrderToApprove.RecentApprovingAccount)
-		updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-			return &s
-		}(*supplyOrderToApprove.ProposalStatus)
+		if existingSupplyOrder.ProposedChanges.PaymentProofPhoto != nil {
+			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+				ID: &existingSupplyOrder.ProposedChanges.PaymentProofPhoto.ID,
+			}
+			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*supplyOrderToApprove.RecentApprovingAccount)
+			updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*supplyOrderToApprove.ProposalStatus)
 
-		_, err := approveUpdateSupplyOrderRepo.approveUpdateDescriptivePhotoComponent.TransactionBody(
-			operationOption,
-			updateDescriptivePhoto,
-		)
-		if err != nil {
-			return nil, err
+			_, err := approveUpdateSupplyOrderRepo.approveUpdateDescriptivePhotoComponent.TransactionBody(
+				operationOption,
+				updateDescriptivePhoto,
+			)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		if existingSupplyOrder.ProposedChanges.Items != nil {

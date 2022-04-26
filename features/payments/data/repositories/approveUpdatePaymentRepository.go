@@ -66,22 +66,24 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 		)
 	}
 	if existingPayment.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
-		updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
-			ID: &existingPayment.Photo.ID,
-		}
-		updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-			return &m
-		}(*paymentToApprove.RecentApprovingAccount)
-		updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-			return &s
-		}(*paymentToApprove.ProposalStatus)
+		if existingPayment.ProposedChanges.Photo != nil {
+			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
+				ID: &existingPayment.ProposedChanges.Photo.ID,
+			}
+			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*paymentToApprove.RecentApprovingAccount)
+			updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*paymentToApprove.ProposalStatus)
 
-		_, err := approveUpdatePaymentRepo.approveUpdateDescriptivePhotoComponent.TransactionBody(
-			operationOption,
-			updateDescriptivePhoto,
-		)
-		if err != nil {
-			return nil, err
+			_, err := approveUpdatePaymentRepo.approveUpdateDescriptivePhotoComponent.TransactionBody(
+				operationOption,
+				updateDescriptivePhoto,
+			)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
