@@ -140,24 +140,23 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			json.Unmarshal(jsonUpdate, fieldsToUpdatePurchaseOrderItem)
 
 			if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.CustomerAgreed {
-				existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
-					map[string]interface{}{
-						"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
-						"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
-						"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
-						"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
-						"status":                 model.PurchaseOrderToSupplyStatusCummulating,
-					},
-					session,
-				)
-				if err != nil {
-					return nil, horeekaacoreexceptiontofailure.ConvertException(
-						approvePOItemTrx.pathIdentity,
-						err,
-					)
-				}
-
 				if existingPurchaseOrderItem.Status == model.PurchaseOrderItemStatusPendingConfirmation {
+					existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindOne(
+						map[string]interface{}{
+							"productVariant._id":     existingPurchaseOrderItem.ProductVariant.ID,
+							"timeSlot":               existingPurchaseOrderItem.DeliveryDetail.TimeSlot,
+							"expectedArrivalDate":    existingPurchaseOrderItem.DeliveryDetail.ExpectedArrivalDate,
+							"addressRegionGroup._id": existingPurchaseOrderItem.DeliveryDetail.Address.AddressRegionGroup.ID,
+							"status":                 model.PurchaseOrderToSupplyStatusCummulating,
+						},
+						session,
+					)
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							approvePOItemTrx.pathIdentity,
+							err,
+						)
+					}
 					if existingPurchaseOrderToSupply == nil {
 						poToSupplyToCreate := &model.DatabaseCreatePurchaseOrderToSupply{
 							ProductVariant:      &model.ProductVariantForPurchaseOrderItemInput{},
@@ -241,6 +240,16 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 				}
 
 				if *fieldsToUpdatePurchaseOrderItem.ProposedChanges.QuantityFulfilled > 0 {
+					existingPurchaseOrderToSupply, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().FindByID(
+						existingPurchaseOrderItem.PurchaseOrderToSupply.ID,
+						session,
+					)
+					if err != nil {
+						return nil, horeekaacoreexceptiontofailure.ConvertException(
+							approvePOItemTrx.pathIdentity,
+							err,
+						)
+					}
 					quantityDistributed := existingPurchaseOrderToSupply.QuantityDistributed +
 						(existingPurchaseOrderItem.ProposedChanges.QuantityFulfilled - existingPurchaseOrderItem.QuantityFulfilled)
 
@@ -255,7 +264,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 							return &s
 						}(model.PurchaseOrderToSupplyStatusDistributed)
 					}
-					_, err := approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
+					_, err = approvePOItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 						map[string]interface{}{
 							"_id": existingPurchaseOrderToSupply.ID,
 						},
