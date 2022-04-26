@@ -156,6 +156,9 @@ func (createInvoiceRepo *createInvoiceRepository) RunTransaction(
 			mouStringID = po.Mou.ID.Hex()
 		}
 
+		if groupedPurchaseOrderByOrganization[orgStringID] == nil {
+			groupedPurchaseOrderByOrganization[orgStringID] = map[string][]*model.PurchaseOrder{}
+		}
 		if groupedPurchaseOrderByOrganization[orgStringID][mouStringID] == nil {
 			groupedPurchaseOrderByOrganization[orgStringID][mouStringID] = []*model.PurchaseOrder{}
 		}
