@@ -68,13 +68,12 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		dateOnly := time.Date(
 			invoiceToUpdate.PaymentDueDate.Year(),
 			invoiceToUpdate.PaymentDueDate.Month(),
-			invoiceToUpdate.PaymentDueDate.Day()+7,
+			invoiceToUpdate.PaymentDueDate.Day(),
 			0, 0, 0, 0,
 			invoiceToUpdate.PaymentDueDate.Location(),
 		).UTC()
 		invoiceToUpdate.PaymentDueDate = &dateOnly
 		query := map[string]interface{}{
-			"status":         model.PurchaseOrderStatusWaitingForInvoice,
 			"paymentDueDate": dateOnly,
 		}
 
@@ -111,9 +110,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			).UTC(),
 		)
 
-		query := map[string]interface{}{
-			"status": model.PurchaseOrderStatusWaitingForInvoice,
-		}
+		query := map[string]interface{}{}
 		query["$and"] = []map[string]interface{}{
 			{
 				"paymentDueDate": map[string]interface{}{
@@ -242,7 +239,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 	}
 
-	totalPaidAmount := 0
+	totalPaidAmount := existingInvoice.TotalPaidAmount
 	if len(invoiceToUpdate.Payments) > 0 {
 		duplicatedPaymentIDsToAttach := append(
 			funk.Map(
@@ -352,27 +349,30 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			}
 		}
 	}
-	jsonInv, _ := json.Marshal(updatedInvoice)
-	json.Unmarshal(jsonInv, &updatePO.Invoice)
-	_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
-		map[string]interface{}{
-			"_id": map[string]interface{}{
-				"$in": funk.Map(
-					purchaseOrders,
-					func(po *model.PurchaseOrder) interface{} {
-						return po.ID
-					},
-				),
+
+	if len(purchaseOrders) > 0 {
+		jsonInv, _ := json.Marshal(updatedInvoice)
+		json.Unmarshal(jsonInv, &updatePO.Invoice)
+		_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
+			map[string]interface{}{
+				"_id": map[string]interface{}{
+					"$in": funk.Map(
+						purchaseOrders,
+						func(po *model.PurchaseOrder) interface{} {
+							return po.ID
+						},
+					),
+				},
 			},
-		},
-		updatePO,
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			updateInvoiceTrx.pathIdentity,
-			err,
+			updatePO,
+			session,
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				updateInvoiceTrx.pathIdentity,
+				err,
+			)
+		}
 	}
 
 	return updatedInvoice, nil
