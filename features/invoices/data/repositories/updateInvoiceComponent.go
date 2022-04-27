@@ -288,23 +288,6 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		json.Unmarshal(jsonTemp, invoiceToUpdate)
 	}
 
-	currentTime := time.Now().UTC()
-	invoiceToUpdate.UpdatedAt = &currentTime
-
-	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(
-		map[string]interface{}{
-			"_id": invoiceToUpdate.ID,
-		},
-		invoiceToUpdate,
-		session,
-	)
-	if err != nil {
-		return nil, horeekaacoreexceptiontofailure.ConvertException(
-			updateInvoiceTrx.pathIdentity,
-			err,
-		)
-	}
-
 	updatePO := &model.DatabaseUpdatePurchaseOrder{
 		Status: func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
 			return &m
@@ -348,6 +331,23 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 				)
 			}
 		}
+	}
+
+	currentTime := time.Now().UTC()
+	invoiceToUpdate.UpdatedAt = &currentTime
+
+	updatedInvoice, err := updateInvoiceTrx.invoiceDataSource.GetMongoDataSource().Update(
+		map[string]interface{}{
+			"_id": invoiceToUpdate.ID,
+		},
+		invoiceToUpdate,
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			updateInvoiceTrx.pathIdentity,
+			err,
+		)
 	}
 
 	jsonInv, _ := json.Marshal(updatedInvoice)
