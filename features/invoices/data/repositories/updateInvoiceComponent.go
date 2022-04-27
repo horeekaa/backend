@@ -350,29 +350,27 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 	}
 
-	if len(purchaseOrders) > 0 {
-		jsonInv, _ := json.Marshal(updatedInvoice)
-		json.Unmarshal(jsonInv, &updatePO.Invoice)
-		_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
-			map[string]interface{}{
-				"_id": map[string]interface{}{
-					"$in": funk.Map(
-						purchaseOrders,
-						func(po *model.PurchaseOrder) interface{} {
-							return po.ID
-						},
-					),
-				},
+	jsonInv, _ := json.Marshal(updatedInvoice)
+	json.Unmarshal(jsonInv, &updatePO.Invoice)
+	_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
+		map[string]interface{}{
+			"_id": map[string]interface{}{
+				"$in": funk.Map(
+					updatedInvoice.PurchaseOrders,
+					func(po *model.PurchaseOrder) interface{} {
+						return po.ID
+					},
+				),
 			},
-			updatePO,
-			session,
+		},
+		updatePO,
+		session,
+	)
+	if err != nil {
+		return nil, horeekaacoreexceptiontofailure.ConvertException(
+			updateInvoiceTrx.pathIdentity,
+			err,
 		)
-		if err != nil {
-			return nil, horeekaacoreexceptiontofailure.ConvertException(
-				updateInvoiceTrx.pathIdentity,
-				err,
-			)
-		}
 	}
 
 	return updatedInvoice, nil
