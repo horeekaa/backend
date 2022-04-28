@@ -97,7 +97,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 			if funk.Get(paymentToUpdate, "Photo.Photo") != nil {
 				photoToCreate.Photo.File = paymentToUpdate.Photo.Photo.File
 			}
-			photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderPaymentProof
+			photoToCreate.Category = model.DescriptivePhotoCategoryPaymentProof
 			photoToCreate.Object = &model.ObjectIDOnly{
 				ID: &existingPayment.ID,
 			}
