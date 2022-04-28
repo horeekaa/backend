@@ -31,7 +31,7 @@ input DatabaseCreateSupplyOrder {
 input UpdateSupplyOrder {
   _id: ObjectID!
   items: [UpdateSupplyOrderItem]
-  payment: UpdatePayment
+  payment: UpdatePaymentForSupplyOrder
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
 }
