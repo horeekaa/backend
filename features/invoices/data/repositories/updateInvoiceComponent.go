@@ -264,6 +264,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 						},
 					),
 				},
+				"proposalStatus": model.EntityProposalStatusApproved,
 			},
 			&mongodbcoretypes.PaginationOptions{},
 			session,

@@ -122,20 +122,18 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 	}
 
 	if paymentToUpdate.ProposalStatus != nil {
-		if *paymentToUpdate.ProposalStatus == model.EntityProposalStatusApproved {
-			if paymentToUpdate.Invoice != nil {
-				_, err := updatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
-					operationOption,
-					&model.InternalUpdateInvoice{
-						ID: *paymentToUpdate.Invoice.ID,
-						Payments: []*model.ObjectIDOnly{
-							{ID: &existingPayment.ID},
-						},
+		if paymentToUpdate.Invoice != nil {
+			_, err := updatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+				operationOption,
+				&model.InternalUpdateInvoice{
+					ID: *paymentToUpdate.Invoice.ID,
+					Payments: []*model.ObjectIDOnly{
+						{ID: &existingPayment.ID},
 					},
-				)
-				if err != nil {
-					return nil, err
-				}
+				},
+			)
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
