@@ -11,6 +11,7 @@ import (
 	databasepaymentdatasourceinterfaces "github.com/horeekaa/backend/features/payments/data/dataSources/databases/interfaces/sources"
 	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type proposeUpdatePaymentRepository struct {
@@ -93,7 +94,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 			photoToCreate := &model.InternalCreateDescriptivePhoto{}
 			jsonTemp, _ := json.Marshal(paymentToUpdate.Photo)
 			json.Unmarshal(jsonTemp, photoToCreate)
-			if paymentToUpdate.Photo.Photo != nil {
+			if funk.Get(paymentToUpdate, "Photo.Photo") != nil {
 				photoToCreate.Photo.File = paymentToUpdate.Photo.Photo.File
 			}
 			photoToCreate.Category = model.DescriptivePhotoCategoryPurchaseOrderPaymentProof
@@ -122,17 +123,19 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 
 	if paymentToUpdate.ProposalStatus != nil {
 		if *paymentToUpdate.ProposalStatus == model.EntityProposalStatusApproved {
-			_, err := updatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
-				operationOption,
-				&model.InternalUpdateInvoice{
-					ID: existingPayment.Invoice.ID,
-					Payments: []*model.ObjectIDOnly{
-						{ID: &existingPayment.ID},
+			if paymentToUpdate.Invoice != nil {
+				_, err := updatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+					operationOption,
+					&model.InternalUpdateInvoice{
+						ID: *paymentToUpdate.Invoice.ID,
+						Payments: []*model.ObjectIDOnly{
+							{ID: &existingPayment.ID},
+						},
 					},
-				},
-			)
-			if err != nil {
-				return nil, err
+				)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	}

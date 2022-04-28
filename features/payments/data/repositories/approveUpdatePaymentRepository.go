@@ -92,7 +92,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 			_, err := approveUpdatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
 				operationOption,
 				&model.InternalUpdateInvoice{
-					ID: existingPayment.Invoice.ID,
+					ID: existingPayment.ProposedChanges.Invoice.ID,
 					Payments: []*model.ObjectIDOnly{
 						{ID: &existingPayment.ID},
 					},

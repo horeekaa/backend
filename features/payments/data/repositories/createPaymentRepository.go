@@ -75,6 +75,14 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 		json.Unmarshal(jsonTemp, &paymentToCreate.Photo)
 	}
 
+	createdPayment, err := createPaymentRepo.createPaymentTransactionComponent.TransactionBody(
+		operationOption,
+		paymentToCreate,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	if *paymentToCreate.ProposalStatus == model.EntityProposalStatusApproved {
 		_, err := createPaymentRepo.updateInvoiceTrxComponent.TransactionBody(
 			operationOption,
@@ -90,10 +98,7 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 		}
 	}
 
-	return createPaymentRepo.createPaymentTransactionComponent.TransactionBody(
-		operationOption,
-		paymentToCreate,
-	)
+	return createdPayment, nil
 }
 
 func (createPaymentRepo *createPaymentRepository) RunTransaction(
