@@ -119,6 +119,10 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 		paymentToCreate.ProposalStatus = &defaultProposalStatus
 	}
 
+	if paymentToCreate.Type == "" {
+		paymentToCreate.Type = model.PaymentTypeDebitPaymentFromCustomer
+	}
+
 	jsonTemp, _ = json.Marshal(paymentToCreate)
 	json.Unmarshal(jsonTemp, &paymentToCreate.ProposedChanges)
 
