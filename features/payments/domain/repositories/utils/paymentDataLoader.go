@@ -9,6 +9,7 @@ type PaymentLoader interface {
 	TransactionBody(
 		session *mongodbcoretypes.OperationOptions,
 		invoice *model.InvoiceForPaymentInput,
+		supplyOrder *model.SupplyOrderForPaymentInput,
 		organization *model.OrganizationForPaymentInput,
 	) (bool, error)
 }

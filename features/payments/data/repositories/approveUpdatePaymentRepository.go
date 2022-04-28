@@ -56,7 +56,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 ) (interface{}, error) {
 	paymentToApprove := input.(*model.InternalUpdatePayment)
 	existingPayment, err := approveUpdatePaymentRepo.paymentDataSource.GetMongoDataSource().FindByID(
-		paymentToApprove.ID,
+		*paymentToApprove.ID,
 		operationOption,
 	)
 	if err != nil {

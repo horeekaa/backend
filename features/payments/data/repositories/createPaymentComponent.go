@@ -70,6 +70,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	_, err := createPaymentTrx.paymentDataLoader.TransactionBody(
 		session,
 		paymentToCreate.Invoice,
+		paymentToCreate.SupplyOrder,
 		paymentToCreate.Organization,
 	)
 	if err != nil {
