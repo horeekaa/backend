@@ -4,10 +4,10 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
-	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyOrderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
@@ -43,8 +43,8 @@ func (_ *ProposeUpdateSupplyOrderDependency) Bind() {
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 			supplyOrderDataSource databasesupplyOrderdatasourceinterfaces.SupplyOrderDataSource,
-			createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-			proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
+			createPaymentComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent,
+			proposeUpdatePaymentComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent,
 			trxComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent,
 			createSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent,
 			proposeUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent,
@@ -56,8 +56,8 @@ func (_ *ProposeUpdateSupplyOrderDependency) Bind() {
 				memberAccessDataSource,
 				supplyOrderItemDataSource,
 				supplyOrderDataSource,
-				createDescriptivePhotoComponent,
-				proposeUpdateDescriptivePhotoComponent,
+				createPaymentComponent,
+				proposeUpdatePaymentComponent,
 				trxComponent,
 				createSupplyOrderItemComponent,
 				proposeUpdateSupplyOrderItemComponent,

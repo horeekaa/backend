@@ -4,10 +4,10 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	coreutilityinterfaces "github.com/horeekaa/backend/core/utilities/interfaces"
-	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	supplyorderdomainrepositories "github.com/horeekaa/backend/features/supplyOrders/data/repositories"
@@ -39,7 +39,7 @@ func (_ *ApproveUpdateSupplyOrderDependency) Bind() {
 		func(
 			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
-			approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
+			approveUpdatePaymentComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent,
 			approveUpdatesupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent,
 			trxComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent,
 			createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
@@ -48,7 +48,7 @@ func (_ *ApproveUpdateSupplyOrderDependency) Bind() {
 			approveUpdatesupplyOrderRepo, _ := supplyorderdomainrepositories.NewApproveUpdateSupplyOrderRepository(
 				memberAccessDataSource,
 				supplyOrderDataSource,
-				approveUpdateDescriptivePhotoComponent,
+				approveUpdatePaymentComponent,
 				approveUpdatesupplyOrderItemComponent,
 				trxComponent,
 				createNotificationComponent,
