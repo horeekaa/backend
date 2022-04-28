@@ -320,7 +320,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 				&model.DatabaseUpdateMou{
 					RemainingCreditLimit: func(i int) *int {
 						return &i
-					}(existingMou.RemainingCreditLimit + existingInvoice.TotalPayable),
+					}(existingMou.RemainingCreditLimit + existingInvoice.TotalValue),
 				},
 				session,
 			)
