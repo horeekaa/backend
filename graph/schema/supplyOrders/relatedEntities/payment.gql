@@ -1,0 +1,14 @@
+"""
+Note: ID is optional in here. (a) If present, an update will occur when submitting the request.
+(b) If not present, the request will create new object.
+"""
+input UpdatePaymentForSupplyOrder {
+  _id: ObjectID
+  amount: Int
+  note: String
+  photo: UpdateDescriptivePhoto
+  invoice: ObjectIDOnly
+  supplyOrder: ObjectIDOnly
+  proposalStatus: EntityProposalStatus
+  proposalStatusReason: String
+}

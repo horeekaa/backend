@@ -42,7 +42,7 @@ input DatabaseCreatePayment {
 }
 
 input UpdatePayment {
-  _id: ObjectID
+  _id: ObjectID!
   amount: Int
   note: String
   photo: UpdateDescriptivePhoto
