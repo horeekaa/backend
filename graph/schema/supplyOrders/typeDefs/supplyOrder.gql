@@ -31,7 +31,7 @@ input DatabaseCreateSupplyOrder {
 input UpdateSupplyOrder {
   _id: ObjectID!
   items: [UpdateSupplyOrderItem]
-  paymentProofPhoto: UpdateDescriptivePhoto
+  payment: UpdatePayment
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
 }
@@ -40,7 +40,7 @@ input InternalUpdateSupplyOrder {
   _id: ObjectID!
   memberAccess: MemberAccessForSupplyOrderInput!
   items: [InternalUpdateSupplyOrderItem]
-  paymentProofPhoto: InternalUpdateDescriptivePhoto
+  payment: InternalUpdatePayment
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -56,7 +56,7 @@ input DatabaseUpdateSupplyOrder {
   finalSalesAmount: Int
   organization: OrganizationForSupplyOrderInput
   items: [ObjectIDOnly]
-  paymentProofPhoto: ObjectIDOnly
+  payment: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
   submittingAccount: ObjectIDOnly
@@ -94,7 +94,7 @@ type SupplyOrder {
   finalSalesAmount: Int!
   organization: OrganizationForSupplyOrder!
   items: [SupplyOrderItem]!
-  paymentProofPhoto: DescriptivePhoto
+  payment: Payment
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
   submittingAccount: Account!

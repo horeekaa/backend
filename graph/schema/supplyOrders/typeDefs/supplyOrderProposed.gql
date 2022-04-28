@@ -6,7 +6,7 @@ input SupplyOrderProposedInput {
   totalReturn: Int
   finalSalesAmount: Int
   organization: OrganizationForSupplyOrderInput
-  paymentProofPhoto: ObjectIDOnly
+  payment: ObjectIDOnly
   items: [ObjectIDOnly]
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -43,7 +43,7 @@ type SupplyOrderProposed {
   totalReturn: Int!
   finalSalesAmount: Int!
   organization: OrganizationForSupplyOrder!
-  paymentProofPhoto: DescriptivePhoto
+  payment: Payment
   items: [SupplyOrderItem]!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
