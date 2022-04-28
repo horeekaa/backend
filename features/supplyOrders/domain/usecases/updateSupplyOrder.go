@@ -15,6 +15,7 @@ import (
 	supplyorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases"
 	supplyorderpresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type updateSupplyOrderUsecase struct {
@@ -119,8 +120,8 @@ func (updateSupplyOrderUcase *updateSupplyOrderUsecase) Execute(input supplyorde
 		}
 	}
 
-	if validatedInput.UpdateSupplyOrder.PaymentProofPhoto != nil {
-		supplyOrderToUpdate.PaymentProofPhoto.Photo.File = validatedInput.UpdateSupplyOrder.PaymentProofPhoto.Photo.File
+	if funk.Get(validatedInput.UpdateSupplyOrder, "Payment.Photo.Photo") != nil {
+		supplyOrderToUpdate.Payment.Photo.Photo.File = validatedInput.UpdateSupplyOrder.Payment.Photo.Photo.File
 	}
 
 	// if user is only going to approve proposal

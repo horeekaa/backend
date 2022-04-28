@@ -65,6 +65,7 @@ func (updatePaymentTrx *proposeUpdatePaymentTransactionComponent) TransactionBod
 	_, err = updatePaymentTrx.paymentDataLoader.TransactionBody(
 		session,
 		updatePayment.Invoice,
+		updatePayment.SupplyOrder,
 		updatePayment.Organization,
 	)
 	if err != nil {

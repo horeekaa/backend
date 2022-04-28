@@ -15,6 +15,7 @@ import (
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	paymentpresentationusecasetypes "github.com/horeekaa/backend/features/payments/presentation/usecases/types"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
 )
 
 type updatePaymentUsecase struct {
@@ -107,7 +108,7 @@ func (updatePaymentUcase *updatePaymentUsecase) Execute(input paymentpresentatio
 	jsonTemp, _ = json.Marshal(accMemberAccess)
 	json.Unmarshal(jsonTemp, &paymentToUpdate.MemberAccess)
 
-	if validatedInput.UpdatePayment.Photo != nil {
+	if funk.Get(validatedInput.UpdatePayment, "Photo.Photo") != nil {
 		paymentToUpdate.Photo.Photo.File = validatedInput.UpdatePayment.Photo.Photo.File
 	}
 

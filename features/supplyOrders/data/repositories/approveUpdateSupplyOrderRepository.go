@@ -6,9 +6,9 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
 	supplyorderdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrders/domain/repositories"
@@ -18,7 +18,7 @@ import (
 type approveUpdateSupplyOrderRepository struct {
 	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
-	approveUpdateDescriptivePhotoComponent       descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent
+	approveUpdatePaymentComponent                paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent
 	approveUpdatesupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent
 	approveUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent
 	createNotificationComponent                  notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent
@@ -29,7 +29,7 @@ type approveUpdateSupplyOrderRepository struct {
 func NewApproveUpdateSupplyOrderRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
-	approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
+	approveUpdatePaymentComponent paymentdomainrepositoryinterfaces.ApproveUpdatePaymentTransactionComponent,
 	approveUpdatesupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ApproveUpdateSupplyOrderItemTransactionComponent,
 	approveUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ApproveUpdateSupplyOrderTransactionComponent,
 	createNotificationComponent notificationdomainrepositoryinterfaces.CreateNotificationTransactionComponent,
@@ -38,7 +38,7 @@ func NewApproveUpdateSupplyOrderRepository(
 	approveUpdateSupplyOrderRepo := &approveUpdateSupplyOrderRepository{
 		memberAccessDataSource,
 		supplyOrderDataSource,
-		approveUpdateDescriptivePhotoComponent,
+		approveUpdatePaymentComponent,
 		approveUpdatesupplyOrderItemComponent,
 		approveUpdateSupplyOrderTransactionComponent,
 		createNotificationComponent,
@@ -76,20 +76,20 @@ func (approveUpdateSupplyOrderRepo *approveUpdateSupplyOrderRepository) Transact
 		)
 	}
 	if existingSupplyOrder.ProposedChanges.ProposalStatus == model.EntityProposalStatusProposed {
-		if existingSupplyOrder.ProposedChanges.PaymentProofPhoto != nil {
-			updateDescriptivePhoto := &model.InternalUpdateDescriptivePhoto{
-				ID: &existingSupplyOrder.ProposedChanges.PaymentProofPhoto.ID,
+		if existingSupplyOrder.ProposedChanges.Payment != nil {
+			updatePayment := &model.InternalUpdatePayment{
+				ID: &existingSupplyOrder.ProposedChanges.Payment.ID,
 			}
-			updateDescriptivePhoto.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			updatePayment.RecentApprovingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*supplyOrderToApprove.RecentApprovingAccount)
-			updateDescriptivePhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			updatePayment.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
 			}(*supplyOrderToApprove.ProposalStatus)
 
-			_, err := approveUpdateSupplyOrderRepo.approveUpdateDescriptivePhotoComponent.TransactionBody(
+			_, err := approveUpdateSupplyOrderRepo.approveUpdatePaymentComponent.TransactionBody(
 				operationOption,
-				updateDescriptivePhoto,
+				updatePayment,
 			)
 			if err != nil {
 				return nil, err

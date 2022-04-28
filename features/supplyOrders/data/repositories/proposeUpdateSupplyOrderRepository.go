@@ -6,9 +6,9 @@ import (
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
-	descriptivephotodomainrepositoryinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/domain/repositories"
 	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
+	paymentdomainrepositoryinterfaces "github.com/horeekaa/backend/features/payments/domain/repositories"
 	databasesupplyorderitemdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/data/dataSources/databases/interfaces/sources"
 	supplyorderitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/domain/repositories"
 	databasesupplyorderdatasourceinterfaces "github.com/horeekaa/backend/features/supplyOrders/data/dataSources/databases/interfaces/sources"
@@ -21,8 +21,8 @@ type proposeUpdateSupplyOrderRepository struct {
 	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	supplyOrderItemDataSource                    databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
-	createDescriptivePhotoComponent              descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent
-	proposeUpdateDescriptivePhotoComponent       descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent
+	createPaymentComponent                       paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent
+	proposeUpdatePaymentComponent                paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent
 	proposeUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent
 	createSupplyOrderItemComponent               supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent
 	proposeUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent
@@ -36,8 +36,8 @@ func NewProposeUpdateSupplyOrderRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
-	createDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.CreateDescriptivePhotoTransactionComponent,
-	proposeUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
+	createPaymentComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent,
+	proposeUpdatePaymentComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent,
 	proposeUpdateSupplyOrderRepositoryTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent,
 	createSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent,
 	proposeUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent,
@@ -49,8 +49,8 @@ func NewProposeUpdateSupplyOrderRepository(
 		memberAccessDataSource,
 		supplyOrderItemDataSource,
 		supplyOrderDataSource,
-		createDescriptivePhotoComponent,
-		proposeUpdateDescriptivePhotoComponent,
+		createPaymentComponent,
+		proposeUpdatePaymentComponent,
 		proposeUpdateSupplyOrderRepositoryTransactionComponent,
 		createSupplyOrderItemComponent,
 		proposeUpdateSupplyOrderItemComponent,
@@ -92,50 +92,52 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 		)
 	}
 
-	if supplyOrderToUpdate.PaymentProofPhoto != nil {
-		if supplyOrderToUpdate.PaymentProofPhoto.ID != nil {
-			supplyOrderToUpdate.PaymentProofPhoto.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+	if supplyOrderToUpdate.Payment != nil {
+		if supplyOrderToUpdate.Payment.ID != nil {
+			supplyOrderToUpdate.Payment.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
 			}(*supplyOrderToUpdate.ProposalStatus)
-			supplyOrderToUpdate.PaymentProofPhoto.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			supplyOrderToUpdate.Payment.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*supplyOrderToUpdate.SubmittingAccount)
 
-			_, err := updateSupplyOrderRepo.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+			_, err := updateSupplyOrderRepo.proposeUpdatePaymentComponent.TransactionBody(
 				operationOption,
-				supplyOrderToUpdate.PaymentProofPhoto,
+				supplyOrderToUpdate.Payment,
 			)
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			photoToCreate := &model.InternalCreateDescriptivePhoto{}
-			jsonTemp, _ := json.Marshal(supplyOrderToUpdate.PaymentProofPhoto)
-			json.Unmarshal(jsonTemp, photoToCreate)
-			if supplyOrderToUpdate.PaymentProofPhoto.Photo != nil {
-				photoToCreate.Photo.File = supplyOrderToUpdate.PaymentProofPhoto.Photo.File
+			paymentToCreate := &model.InternalCreatePayment{}
+			jsonTemp, _ := json.Marshal(supplyOrderToUpdate.Payment)
+			json.Unmarshal(jsonTemp, paymentToCreate)
+			if funk.Get(supplyOrderToUpdate.Payment, "Photo.Photo") != nil {
+				paymentToCreate.Photo.Photo.File = supplyOrderToUpdate.Payment.Photo.Photo.File
 			}
-			photoToCreate.Category = model.DescriptivePhotoCategorySupplyOrderPaymentProof
-			photoToCreate.Object = &model.ObjectIDOnly{
+			paymentToCreate.Type = func(m model.PaymentType) *model.PaymentType {
+				return &m
+			}(model.PaymentTypeCreditPaymentToPartner)
+			paymentToCreate.SupplyOrder = &model.ObjectIDOnly{
 				ID: &existingsupplyOrder.ID,
 			}
-			photoToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+			paymentToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
 			}(*supplyOrderToUpdate.ProposalStatus)
-			photoToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+			paymentToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
 				return &m
 			}(*supplyOrderToUpdate.SubmittingAccount)
 
-			savedPhoto, err := updateSupplyOrderRepo.createDescriptivePhotoComponent.TransactionBody(
+			savedPhoto, err := updateSupplyOrderRepo.createPaymentComponent.TransactionBody(
 				operationOption,
-				photoToCreate,
+				paymentToCreate,
 			)
 			if err != nil {
 				return nil, err
 			}
 
 			jsonTemp, _ = json.Marshal(savedPhoto)
-			json.Unmarshal(jsonTemp, &supplyOrderToUpdate.PaymentProofPhoto)
+			json.Unmarshal(jsonTemp, &supplyOrderToUpdate.Payment)
 		}
 	}
 

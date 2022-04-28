@@ -227,6 +227,8 @@ models:
         resolver: true
       invoice:
         resolver: true
+      supplyOrder:
+        resolver: true
       submittingAccount:
         resolver: true
       recentApprovingAccount:
@@ -238,6 +240,8 @@ models:
       photo:
         resolver: true
       invoice:
+        resolver: true
+      supplyOrder:
         resolver: true
       submittingAccount:
         resolver: true
@@ -361,7 +365,7 @@ models:
         resolver: true
   SupplyOrder:
     fields:
-      paymentProofPhoto:
+      payment:
         resolver: true
       items:
         resolver: true
@@ -373,7 +377,7 @@ models:
         resolver: true
   SupplyOrderProposed:
     fields:
-      paymentProofPhoto:
+      payment:
         resolver: true
       items:
         resolver: true

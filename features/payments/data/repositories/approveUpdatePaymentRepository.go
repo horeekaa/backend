@@ -56,7 +56,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 ) (interface{}, error) {
 	paymentToApprove := input.(*model.InternalUpdatePayment)
 	existingPayment, err := approveUpdatePaymentRepo.paymentDataSource.GetMongoDataSource().FindByID(
-		paymentToApprove.ID,
+		*paymentToApprove.ID,
 		operationOption,
 	)
 	if err != nil {
@@ -92,7 +92,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 			_, err := approveUpdatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
 				operationOption,
 				&model.InternalUpdateInvoice{
-					ID: existingPayment.Invoice.ID,
+					ID: existingPayment.ProposedChanges.Invoice.ID,
 					Payments: []*model.ObjectIDOnly{
 						{ID: &existingPayment.ID},
 					},

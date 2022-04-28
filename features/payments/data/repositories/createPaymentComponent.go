@@ -70,6 +70,7 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	_, err := createPaymentTrx.paymentDataLoader.TransactionBody(
 		session,
 		paymentToCreate.Invoice,
+		paymentToCreate.SupplyOrder,
 		paymentToCreate.Organization,
 	)
 	if err != nil {
@@ -116,6 +117,10 @@ func (createPaymentTrx *createPaymentTransactionComponent) TransactionBody(
 	defaultProposalStatus := model.EntityProposalStatusProposed
 	if paymentToCreate.ProposalStatus == nil {
 		paymentToCreate.ProposalStatus = &defaultProposalStatus
+	}
+
+	if paymentToCreate.Type == "" {
+		paymentToCreate.Type = model.PaymentTypeDebitPaymentFromCustomer
 	}
 
 	jsonTemp, _ = json.Marshal(paymentToCreate)
