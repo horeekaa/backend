@@ -9,23 +9,23 @@ import (
 	container "github.com/golobby/container/v2"
 	accountpresentationusecaseinterfaces "github.com/horeekaa/backend/features/accounts/presentation/usecases"
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
-	descriptivephotopresentationusecaseinterfaces "github.com/horeekaa/backend/features/descriptivePhotos/presentation/usecases"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
+	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
 
-func (r *supplyOrderProposedResolver) PaymentProofPhoto(ctx context.Context, obj *model.SupplyOrderProposed) (*model.DescriptivePhoto, error) {
-	var getDescriptivePhotoUsecase descriptivephotopresentationusecaseinterfaces.GetDescriptivePhotoUsecase
-	container.Make(&getDescriptivePhotoUsecase)
+func (r *supplyOrderProposedResolver) Payment(ctx context.Context, obj *model.SupplyOrderProposed) (*model.Payment, error) {
+	var getPaymentUsecase paymentpresentationusecaseinterfaces.GetPaymentUsecase
+	container.Make(&getPaymentUsecase)
 
-	var filterFields *model.DescriptivePhotoFilterFields
-	if obj.PaymentProofPhoto != nil {
-		filterFields = &model.DescriptivePhotoFilterFields{}
-		filterFields.ID = &obj.PaymentProofPhoto.ID
+	var filterFields *model.PaymentFilterFields
+	if obj.Payment != nil {
+		filterFields = &model.PaymentFilterFields{}
+		filterFields.ID = &obj.Payment.ID
 	}
-	return getDescriptivePhotoUsecase.Execute(
+	return getPaymentUsecase.Execute(
 		filterFields,
 	)
 }

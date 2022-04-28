@@ -14,6 +14,7 @@ import (
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	paymentpresentationusecasetypes "github.com/horeekaa/backend/features/payments/presentation/usecases/types"
+	supplyorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
@@ -58,10 +59,27 @@ func (r *paymentResolver) Invoice(ctx context.Context, obj *model.Payment) (*mod
 	var getInvoiceUsecase invoicepresentationusecaseinterfaces.GetInvoiceUsecase
 	container.Make(&getInvoiceUsecase)
 
+	var filterFields *model.InvoiceFilterFields
+	if obj.Invoice != nil {
+		filterFields = &model.InvoiceFilterFields{}
+		filterFields.ID = &obj.Invoice.ID
+	}
 	return getInvoiceUsecase.Execute(
-		&model.InvoiceFilterFields{
-			ID: &obj.Invoice.ID,
-		},
+		filterFields,
+	)
+}
+
+func (r *paymentResolver) SupplyOrder(ctx context.Context, obj *model.Payment) (*model.SupplyOrder, error) {
+	var getSupplyOrderUsecase supplyorderpresentationusecaseinterfaces.GetSupplyOrderUsecase
+	container.Make(&getSupplyOrderUsecase)
+
+	var filterFields *model.SupplyOrderFilterFields
+	if obj.SupplyOrder != nil {
+		filterFields = &model.SupplyOrderFilterFields{}
+		filterFields.ID = &obj.SupplyOrder.ID
+	}
+	return getSupplyOrderUsecase.Execute(
+		filterFields,
 	)
 }
 
