@@ -1,0 +1,14 @@
+input SupplyOrderForPaymentInput {
+  _id: ObjectID!
+  publicId: String
+}
+
+input SupplyOrderForPaymentFilterFields {
+  _id: ObjectID
+  publicId: StringFilterField
+}
+
+type SupplyOrderForPayment {
+  _id: ObjectID!
+  publicId: String
+}

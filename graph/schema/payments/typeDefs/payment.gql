@@ -1,6 +1,6 @@
 enum PaymentType {
-  CREDIT
-  DEBIT
+  CREDIT_PAYMENT_TO_PARTNER
+  DEBIT_PAYMENT_FROM_CUSTOMER
 }
 
 input CreatePayment {
@@ -13,8 +13,10 @@ input CreatePayment {
 input InternalCreatePayment {
   amount: Int!
   note: String
+  type: PaymentType
   photo: InternalCreateDescriptivePhoto!
-  invoice: ObjectIDOnly!
+  invoice: ObjectIDOnly
+  supplyOrder: ObjectIDOnly
   memberAccess: MemberAccessForPaymentInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -27,7 +29,8 @@ input DatabaseCreatePayment {
   note: String
   type: PaymentType!
   photo: ObjectIDOnly!
-  invoice: InvoiceForPaymentInput!
+  invoice: InvoiceForPaymentInput
+  supplyOrder: SupplyOrderForPaymentInput
   organization: OrganizationForPaymentInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
@@ -39,21 +42,23 @@ input DatabaseCreatePayment {
 }
 
 input UpdatePayment {
-  _id: ObjectID!
+  _id: ObjectID
   amount: Int
   note: String
   photo: UpdateDescriptivePhoto
   invoice: ObjectIDOnly
+  supplyOrder: ObjectIDOnly
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
 }
 
 input InternalUpdatePayment {
-  _id: ObjectID!
+  _id: ObjectID
   amount: Int
   note: String
   photo: InternalUpdateDescriptivePhoto
   invoice: ObjectIDOnly
+  supplyOrder: ObjectIDOnly
   memberAccess: MemberAccessForPaymentInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -68,6 +73,7 @@ input DatabaseUpdatePayment {
   type: PaymentType
   photo: ObjectIDOnly
   invoice: InvoiceForPaymentInput
+  supplyOrder: SupplyOrderForPaymentInput
   organization: OrganizationForPaymentInput
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -84,6 +90,7 @@ input PaymentFilterFields {
   note: StringFilterField
   type: StringFilterField
   invoice: InvoiceForPaymentFilterFields
+  supplyOrder: SupplyOrderForPaymentFilterFields
   organization: OrganizationForPaymentFilterFields
   proposalStatus: StringFilterField
   submittingAccount: ObjectIDOnly
@@ -99,7 +106,8 @@ type Payment {
   note: String
   type: PaymentType!
   photo: DescriptivePhoto!
-  invoice: Invoice!
+  invoice: Invoice
+  supplyOrder: SupplyOrder
   organization: Organization!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
