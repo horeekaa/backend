@@ -185,6 +185,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 	}
 
+	totalPrice := existingInvoice.TotalValue
 	if len(purchaseOrders) > 0 {
 		_, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().UpdateAll(
 			map[string]interface{}{
@@ -216,28 +217,28 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		})
 		json.Unmarshal(jsonTemp, invoiceToUpdate)
 
-		totalPrice := 0
+		totalPrice = 0
 		for _, item := range purchaseOrders {
 			totalPrice += item.FinalSalesAmount
 		}
 		invoiceToUpdate.TotalValue = &totalPrice
-
-		totalDiscounted := existingInvoice.TotalDiscounted
-		if invoiceToUpdate.TotalDiscounted != nil {
-			totalDiscounted = *invoiceToUpdate.TotalDiscounted
-		}
-
-		discountInPercent := existingInvoice.DiscountInPercent
-		if invoiceToUpdate.DiscountInPercent != nil {
-			discountInPercent = *invoiceToUpdate.DiscountInPercent
-		}
-
-		if discountInPercent > 0 {
-			totalDiscounted = (discountInPercent / 100.0) * totalPrice
-		}
-		invoiceToUpdate.TotalDiscounted = &totalDiscounted
-		invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 	}
+
+	totalDiscounted := existingInvoice.TotalDiscounted
+	if invoiceToUpdate.TotalDiscounted != nil {
+		totalDiscounted = *invoiceToUpdate.TotalDiscounted
+	}
+
+	discountInPercent := existingInvoice.DiscountInPercent
+	if invoiceToUpdate.DiscountInPercent != nil {
+		discountInPercent = *invoiceToUpdate.DiscountInPercent
+	}
+
+	if discountInPercent > 0 {
+		totalDiscounted = (discountInPercent / 100.0) * totalPrice
+	}
+	invoiceToUpdate.TotalDiscounted = &totalDiscounted
+	invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
 
 	totalPaidAmount := existingInvoice.TotalPaidAmount
 	if len(invoiceToUpdate.Payments) > 0 {
@@ -263,6 +264,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 						},
 					),
 				},
+				"proposalStatus": model.EntityProposalStatusApproved,
 			},
 			&mongodbcoretypes.PaginationOptions{},
 			session,
