@@ -2,7 +2,6 @@ package invoicedomainrepositories
 
 import (
 	"encoding/json"
-	"math"
 	"time"
 
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
@@ -236,7 +235,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 	}
 
 	if discountInPercent > 0 {
-		totalDiscounted = int(math.Round(float64(discountInPercent / 100.0 * totalPrice)))
+		totalDiscounted = discountInPercent / 100.0 * totalPrice
 	}
 	invoiceToUpdate.TotalDiscounted = &totalDiscounted
 	invoiceToUpdate.TotalPayable = func(i int) *int { return &i }(totalPrice - totalDiscounted)
