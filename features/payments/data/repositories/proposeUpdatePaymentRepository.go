@@ -108,7 +108,7 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 				return &m
 			}(*paymentToUpdate.SubmittingAccount)
 
-			savedPhoto, err := updatePaymentRepo.createDescriptivePhotoComponent.TransactionBody(
+			createdDescriptivePhoto, err := updatePaymentRepo.createDescriptivePhotoComponent.TransactionBody(
 				operationOption,
 				photoToCreate,
 			)
@@ -116,8 +116,27 @@ func (updatePaymentRepo *proposeUpdatePaymentRepository) TransactionBody(
 				return nil, err
 			}
 
-			jsonTemp, _ = json.Marshal(savedPhoto)
-			json.Unmarshal(jsonTemp, &paymentToUpdate.Photo)
+			if existingPayment.Photo != nil {
+				_, err = updatePaymentRepo.proposeUpdateDescriptivePhotoComponent.TransactionBody(
+					operationOption,
+					&model.InternalUpdateDescriptivePhoto{
+						ID:       &existingPayment.Photo.ID,
+						IsActive: func(b bool) *bool { return &b }(false),
+						SubmittingAccount: func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+							return &m
+						}(*paymentToUpdate.SubmittingAccount),
+						ProposalStatus: func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+							return &s
+						}(*paymentToUpdate.ProposalStatus),
+					},
+				)
+				if err != nil {
+					return nil, err
+				}
+			}
+			paymentToUpdate.Photo = &model.InternalUpdateDescriptivePhoto{
+				ID: &createdDescriptivePhoto.ID,
+			}
 		}
 	}
 
