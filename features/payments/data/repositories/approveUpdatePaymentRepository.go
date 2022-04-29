@@ -87,11 +87,19 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 		}
 	}
 
+	approvedPayment, err := approveUpdatePaymentRepo.approveUpdatePaymentTransactionComponent.TransactionBody(
+		operationOption,
+		paymentToApprove,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	if paymentToApprove.ProposalStatus != nil {
 		_, err := approveUpdatePaymentRepo.updateInvoiceTrxComponent.TransactionBody(
 			operationOption,
 			&model.InternalUpdateInvoice{
-				ID: existingPayment.ProposedChanges.Invoice.ID,
+				ID: approvedPayment.ProposedChanges.Invoice.ID,
 				Payments: []*model.ObjectIDOnly{
 					{ID: &existingPayment.ID},
 				},
@@ -102,10 +110,7 @@ func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) TransactionBody(
 		}
 	}
 
-	return approveUpdatePaymentRepo.approveUpdatePaymentTransactionComponent.TransactionBody(
-		operationOption,
-		paymentToApprove,
-	)
+	return approvedPayment, nil
 }
 
 func (approveUpdatePaymentRepo *approveUpdatePaymentRepository) RunTransaction(
