@@ -158,7 +158,7 @@ func (bscOperation *basicOperation) Find(
 	if paginationOpt.LastObjectID != nil {
 		data, err = bson.Marshal(
 			bson.M{
-				"_id": bson.M{"$gt": *paginationOpt.LastObjectID},
+				"_id": bson.M{"$lt": *paginationOpt.LastObjectID},
 			},
 		)
 		if err != nil {
@@ -174,7 +174,7 @@ func (bscOperation *basicOperation) Find(
 	opts := &options.FindOptions{}
 	opts.SetLimit(int64(10))
 	if paginationOpt.QueryLimit != nil {
-		opts.SetSort(bson.M{"_id": 1})
+		opts.SetSort(bson.M{"_id": -1})
 		opts.SetLimit(int64(*paginationOpt.QueryLimit))
 	}
 
