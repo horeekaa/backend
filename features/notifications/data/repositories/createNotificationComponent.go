@@ -96,7 +96,8 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 				Body:  notificationToOutput.Message.Body,
 			},
 			Data: map[string]string{
-				"payloadOptions": string(payloadJson),
+				"payload":  string(payloadJson),
+				"category": createdNotification.NotificationCategory.String(),
 			},
 			Tokens: createdNotification.RecipientAccount.DeviceTokens,
 		},
