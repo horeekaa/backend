@@ -115,6 +115,7 @@ type DatabaseNotification {
 
 type Notification {
   _id: ObjectID!
+  payloadOptions: PayloadOptions
   message: NotificationMessage!
   notificationCategory: NotificationCategory!
   recipientAccount: AccountForNotifRecipient!

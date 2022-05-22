@@ -1,4 +1,5 @@
 input MemberAccessForNotifPayloadInput {
+  _id: ObjectID!
   account: AccountForNotifPayloadInput!
   organization: OrganizationForNotifPayloadInput!
   organizationMembershipRole: OrganizationMembershipRole!
@@ -6,6 +7,7 @@ input MemberAccessForNotifPayloadInput {
 }
 
 type MemberAccessForNotifPayload {
+  _id: ObjectID!
   account: AccountForNotifPayload!
   organization: OrganizationForNotifPayload!
   organizationMembershipRole: OrganizationMembershipRole!
