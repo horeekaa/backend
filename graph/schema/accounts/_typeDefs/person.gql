@@ -12,7 +12,6 @@ input CreatePerson {
 }
 
 input DatabaseCreatePerson {
-  _id: ObjectID
   firstName: String!
   lastName: String!
   gender: Gender
