@@ -16,3 +16,8 @@ type BulkUpdateNotificationUsecaseInput struct {
 	Context                context.Context
 	BulkUpdateNotification *model.BulkUpdateNotification
 }
+
+type CreateNotificationMessageUsecaseInput struct {
+	Context      context.Context
+	Notification *model.Notification
+}

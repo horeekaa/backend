@@ -9,6 +9,7 @@ import (
 	container "github.com/golobby/container/v2"
 	notificationpresentationusecaseinterfaces "github.com/horeekaa/backend/features/notifications/presentation/usecases"
 	notificationpresentationusecasetypes "github.com/horeekaa/backend/features/notifications/presentation/usecases/types"
+	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 )
 
@@ -19,6 +20,17 @@ func (r *mutationResolver) BulkUpdateNotification(ctx context.Context, bulkUpdat
 		notificationpresentationusecasetypes.BulkUpdateNotificationUsecaseInput{
 			Context:                ctx,
 			BulkUpdateNotification: &bulkUpdateNotification,
+		},
+	)
+}
+
+func (r *notificationResolver) Message(ctx context.Context, obj *model.Notification) (*model.NotificationMessage, error) {
+	var CreateNotificationMessage notificationpresentationusecaseinterfaces.CreateNotificationMessage
+	container.Make(&CreateNotificationMessage)
+	return CreateNotificationMessage.Execute(
+		notificationpresentationusecasetypes.CreateNotificationMessageUsecaseInput{
+			Context:      ctx,
+			Notification: obj,
 		},
 	)
 }
@@ -34,3 +46,8 @@ func (r *queryResolver) Notifications(ctx context.Context, filterFields model.No
 		},
 	)
 }
+
+// Notification returns generated.NotificationResolver implementation.
+func (r *Resolver) Notification() generated.NotificationResolver { return &notificationResolver{r} }
+
+type notificationResolver struct{ *Resolver }
