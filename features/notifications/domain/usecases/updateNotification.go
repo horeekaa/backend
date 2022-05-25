@@ -35,7 +35,7 @@ func NewBulkUpdateNotificationUsecase(
 		bulkUpdateNotificationRepo,
 		&model.MemberAccessRefOptionsInput{
 			AccountAccesses: &model.AccountAccessesInput{
-				AccountUpdate: func(b bool) *bool { return &b }(true),
+				AccountUpdateOwned: func(b bool) *bool { return &b }(true),
 			},
 		},
 		"BulkUpdateNotificationUsecase",
