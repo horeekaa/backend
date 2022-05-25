@@ -87,6 +87,7 @@ func (_ *UsecasesDependency) Bind() {
 
 		&notificationpresentationusecasedependencies.GetAllNotificationUsecaseDependency{},
 		&notificationpresentationusecasedependencies.BulkUpdateNotificationUsecaseDependency{},
+		&notificationpresentationusecasedependencies.CreateNotificationMessageUsecaseDependency{},
 
 		&moupresentationusecasedependencies.CreateMouUsecaseDependency{},
 		&moupresentationusecasedependencies.GetAllMouUsecaseDependency{},

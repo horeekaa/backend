@@ -9,25 +9,21 @@ import (
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
 	notificationdomainrepositorytypes "github.com/horeekaa/backend/features/notifications/domain/repositories/types"
-	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
 type getAllNotificationRepository struct {
-	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
-	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
-	mongoQueryBuilder        mongodbcorequerybuilderinterfaces.MongoQueryBuilder
-	pathIdentity             string
+	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource
+	mongoQueryBuilder      mongodbcorequerybuilderinterfaces.MongoQueryBuilder
+	pathIdentity           string
 }
 
 func NewGetAllNotificationRepository(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
-	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 	mongoQueryBuilder mongodbcorequerybuilderinterfaces.MongoQueryBuilder,
 ) (notificationdomainrepositoryinterfaces.GetAllNotificationRepository, error) {
 	return &getAllNotificationRepository{
 		notificationDataSource,
-		notifLocalizationBuilder,
 		mongoQueryBuilder,
 		"GetAllNotificationRepository",
 	}, nil
@@ -62,12 +58,6 @@ func (getAllNotificationRepo *getAllNotificationRepository) Execute(
 		notification := &model.Notification{}
 		jsonTemp, _ := json.Marshal(notif)
 		json.Unmarshal(jsonTemp, notification)
-
-		getAllNotificationRepo.notifLocalizationBuilder.Execute(
-			notif,
-			notification,
-			input.Language,
-		)
 
 		notifications = append(notifications, notification)
 	}

@@ -8,24 +8,20 @@ import (
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databasenotificationdatasourceinterfaces "github.com/horeekaa/backend/features/notifications/data/dataSources/databases/interfaces/sources"
 	notificationdomainrepositoryinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories"
-	notificationdomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/notifications/domain/repositories/utils"
 	"github.com/horeekaa/backend/model"
 )
 
 type bulkUpdateNotificationTransactionComponent struct {
-	notificationDataSource   databasenotificationdatasourceinterfaces.NotificationDataSource
-	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder
-	pathIdentity             string
+	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource
+	pathIdentity           string
 }
 
 func NewBulkUpdateNotificationTransactionComponent(
 	notificationDataSource databasenotificationdatasourceinterfaces.NotificationDataSource,
-	notifLocalizationBuilder notificationdomainrepositoryutilityinterfaces.NotificationLocalizationBuilder,
 ) (notificationdomainrepositoryinterfaces.BulkUpdateNotificationTransactionComponent, error) {
 	return &bulkUpdateNotificationTransactionComponent{
-		notificationDataSource:   notificationDataSource,
-		notifLocalizationBuilder: notifLocalizationBuilder,
-		pathIdentity:             "BulkUpdateNotificationComponent",
+		notificationDataSource: notificationDataSource,
+		pathIdentity:           "BulkUpdateNotificationComponent",
 	}, nil
 }
 
@@ -65,12 +61,6 @@ func (bulkUpdateNotificationComp *bulkUpdateNotificationTransactionComponent) Tr
 		notification := &model.Notification{}
 		jsonOutput, _ := json.Marshal(databaseNotification)
 		json.Unmarshal(jsonOutput, notification)
-
-		bulkUpdateNotificationComp.notifLocalizationBuilder.Execute(
-			databaseNotification,
-			notification,
-			input.Language,
-		)
 
 		notifications = append(notifications, notification)
 	}
