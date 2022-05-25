@@ -193,6 +193,10 @@ models:
         resolver: true
       recentLog:
         resolver: true
+  Notification:
+    fields:
+      message:
+        resolver: true
   Organization:
     fields:
       profilePhotos:
