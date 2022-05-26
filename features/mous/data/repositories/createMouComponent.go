@@ -8,6 +8,7 @@ import (
 	mongodbcoretypes "github.com/horeekaa/backend/core/databaseClient/mongodb/types"
 	horeekaacoreexceptiontofailure "github.com/horeekaa/backend/core/errors/failures/exceptionToFailure"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositoryinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories"
 	moudomainrepositoryutilityinterfaces "github.com/horeekaa/backend/features/mous/domain/repositories/utils"
@@ -16,23 +17,26 @@ import (
 )
 
 type createMouTransactionComponent struct {
-	mouDataSource     databasemoudatasourceinterfaces.MouDataSource
-	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource
-	partyLoader       moudomainrepositoryutilityinterfaces.PartyLoader
-	generatedObjectID *primitive.ObjectID
-	pathIdentity      string
+	mouDataSource          databasemoudatasourceinterfaces.MouDataSource
+	loggingDataSource      databaseloggingdatasourceinterfaces.LoggingDataSource
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource
+	partyLoader            moudomainrepositoryutilityinterfaces.PartyLoader
+	generatedObjectID      *primitive.ObjectID
+	pathIdentity           string
 }
 
 func NewCreateMouTransactionComponent(
 	mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 	loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	partyLoader moudomainrepositoryutilityinterfaces.PartyLoader,
 ) (moudomainrepositoryinterfaces.CreateMouTransactionComponent, error) {
 	return &createMouTransactionComponent{
-		mouDataSource:     mouDataSource,
-		loggingDataSource: loggingDataSource,
-		partyLoader:       partyLoader,
-		pathIdentity:      "CreateMouComponent",
+		mouDataSource:          mouDataSource,
+		loggingDataSource:      loggingDataSource,
+		memberAccessDataSource: memberAccessDataSource,
+		partyLoader:            partyLoader,
+		pathIdentity:           "CreateMouComponent",
 	}, nil
 }
 
@@ -132,6 +136,26 @@ func (createMouTrx *createMouTransactionComponent) TransactionBody(
 			createMouTrx.pathIdentity,
 			err,
 		)
+	}
+
+	if input.SecondParty.AccountInCharge == nil {
+		ownerMemberAccess, err := createMouTrx.memberAccessDataSource.GetMongoDataSource().FindOne(
+			map[string]interface{}{
+				"organization._id":           input.SecondParty.Organization.ID,
+				"organizationMembershipRole": model.OrganizationMembershipRoleOwner,
+			},
+			session,
+		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				createMouTrx.pathIdentity,
+				err,
+			)
+		}
+
+		input.SecondParty.AccountInCharge = &model.ObjectIDOnly{
+			ID: &ownerMemberAccess.Account.ID,
+		}
 	}
 	_, err = createMouTrx.partyLoader.TransactionBody(
 		session,

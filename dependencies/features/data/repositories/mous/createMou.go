@@ -4,6 +4,7 @@ import (
 	"github.com/golobby/container/v2"
 	mongodbcoretransactioninterfaces "github.com/horeekaa/backend/core/databaseClient/mongodb/interfaces/transaction"
 	databaseloggingdatasourceinterfaces "github.com/horeekaa/backend/features/loggings/data/dataSources/databases/interfaces"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	mouitemdomainrepositoryinterfaces "github.com/horeekaa/backend/features/mouItems/domain/repositories"
 	databasemoudatasourceinterfaces "github.com/horeekaa/backend/features/mous/data/dataSources/databases/interfaces/sources"
 	moudomainrepositories "github.com/horeekaa/backend/features/mous/data/repositories"
@@ -19,11 +20,13 @@ func (_ *CreateMouDependency) Bind() {
 		func(
 			mouDataSource databasemoudatasourceinterfaces.MouDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
+			memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 			partyLoader moudomainrepositoryutilityinterfaces.PartyLoader,
 		) moudomainrepositoryinterfaces.CreateMouTransactionComponent {
 			createmouComponent, _ := moudomainrepositories.NewCreateMouTransactionComponent(
 				mouDataSource,
 				loggingDataSource,
+				memberAccessDataSource,
 				partyLoader,
 			)
 			return createmouComponent
