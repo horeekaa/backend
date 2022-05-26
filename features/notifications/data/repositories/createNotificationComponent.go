@@ -96,6 +96,7 @@ func (createNotifTrx *createNotificationTransactionComponent) TransactionBody(
 				Body:  notificationToOutput.Message.Body,
 			},
 			Data: map[string]string{
+				"_id":      createdNotification.ID.Hex(),
 				"payload":  string(payloadJson),
 				"category": createdNotification.NotificationCategory.String(),
 			},
