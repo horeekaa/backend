@@ -106,6 +106,12 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 			},
 			&mongodbcoretypes.OperationOptions{},
 		)
+		if err != nil {
+			return nil, horeekaacoreexceptiontofailure.ConvertException(
+				getAccFromAuthDataRepo.pathIdentity,
+				err,
+			)
+		}
 	}
 	return account, nil
 }
