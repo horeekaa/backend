@@ -13,21 +13,25 @@ import (
 	databaseaccountdatasourceinterfaces "github.com/horeekaa/backend/features/accounts/data/dataSources/databases/interfaces/sources"
 	accountdomainrepositoryinterfaces "github.com/horeekaa/backend/features/accounts/domain/repositories"
 	accountdomainrepositorytypes "github.com/horeekaa/backend/features/accounts/domain/repositories/types"
+	databasememberaccessdatasourceinterfaces "github.com/horeekaa/backend/features/memberAccesses/data/dataSources/databases/interfaces/sources"
 	"github.com/horeekaa/backend/model"
 )
 
 type getAccountFromAuthDataRepository struct {
-	accountDataSource  databaseaccountdatasourceinterfaces.AccountDataSource
-	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo
-	pathIdentity       string
+	accountDataSource      databaseaccountdatasourceinterfaces.AccountDataSource
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource
+	firebaseDataSource     firebaseauthdatasourceinterfaces.FirebaseAuthRepo
+	pathIdentity           string
 }
 
 func NewGetAccountFromAuthDataRepository(
 	accountDataSource databaseaccountdatasourceinterfaces.AccountDataSource,
+	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	firebaseDataSource firebaseauthdatasourceinterfaces.FirebaseAuthRepo,
 ) (accountdomainrepositoryinterfaces.GetAccountFromAuthData, error) {
 	return &getAccountFromAuthDataRepository{
 		accountDataSource,
+		memberAccessDataSource,
 		firebaseDataSource,
 		"GetAccountFromAuthDataRepository",
 	}, nil
@@ -89,6 +93,19 @@ func (getAccFromAuthDataRepo *getAccountFromAuthDataRepository) Execute(
 				err,
 			)
 		}
+
+		_, err = getAccFromAuthDataRepo.memberAccessDataSource.GetMongoDataSource().Update(
+			map[string]interface{}{
+				"account._id":         account.ID,
+				"memberAccessRefType": model.MemberAccessRefTypeOrganizationsBased,
+			},
+			&model.DatabaseUpdateMemberAccess{
+				Status: func(s model.MemberAccessStatus) *model.MemberAccessStatus {
+					return &s
+				}(model.MemberAccessStatusInactive),
+			},
+			&mongodbcoretypes.OperationOptions{},
+		)
 	}
 	return account, nil
 }
