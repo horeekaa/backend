@@ -93,14 +93,7 @@ func (addrLoader *addressLoader) Execute(
 		}
 	}
 
-	regionGroupKeyword := *resolvedGeocodingToLoad.Municipality
-	splitMunicipality := strings.Split(*resolvedGeocodingToLoad.Municipality, " ")
-	if splitMunicipality[0] == "Kota" || splitMunicipality[0] == "Kabupaten" {
-		regionGroupKeyword = strings.Join(
-			splitMunicipality[1:],
-			" ",
-		)
-	}
+	regionGroupKeyword := strings.ReplaceAll(*resolvedGeocodingToLoad.Municipality, " ", "_")
 	addressRegion, err := addrLoader.addressRegionDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
 			"cities": strings.ToUpper(regionGroupKeyword),
