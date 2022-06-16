@@ -94,9 +94,13 @@ func (addrLoader *addressLoader) Execute(
 	}
 
 	regionGroupKeyword := strings.ReplaceAll(*resolvedGeocodingToLoad.Municipality, " ", "_")
+	regionGroupKeyword = strings.ReplaceAll(regionGroupKeyword, "-", "_")
 	addressRegion, err := addrLoader.addressRegionDataSource.GetMongoDataSource().FindOne(
 		map[string]interface{}{
-			"cities": strings.ToUpper(regionGroupKeyword),
+			"cities": map[string]interface{}{
+				"$regex":   regionGroupKeyword,
+				"$options": "i",
+			},
 		},
 		operationOptions,
 	)
