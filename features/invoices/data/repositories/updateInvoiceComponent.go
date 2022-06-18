@@ -276,6 +276,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			)
 		}
 
+		totalPaidAmount = 0
 		for _, payment := range payments {
 			if payment.ProposalStatus != model.EntityProposalStatusApproved {
 				continue
