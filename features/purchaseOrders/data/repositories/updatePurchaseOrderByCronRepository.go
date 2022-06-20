@@ -47,10 +47,10 @@ func NewUpdatePurchaseOrderByCronRepository(
 
 func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTransaction() ([]*model.PurchaseOrder, error) {
 	currentDateTime := time.Now().UTC()
-	futureDateOnly := time.Date(
+	pastDateOnly := time.Date(
 		currentDateTime.Year(),
 		currentDateTime.Month(),
-		currentDateTime.Day()-3,
+		currentDateTime.Day()-2,
 		0, 0, 0, 0,
 		currentDateTime.Location(),
 	)
@@ -59,7 +59,7 @@ func (updatePurchaseOrderByCronRepo *updatePurchaseOrderByCronRepository) RunTra
 		map[string]interface{}{
 			"status": model.PurchaseOrderStatusProcessed,
 			"updatedAt": map[string]interface{}{
-				"$lte": futureDateOnly,
+				"$lte": pastDateOnly,
 			},
 		},
 		&mongodbcoretypes.PaginationOptions{},
