@@ -112,6 +112,9 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			paymentToCreate := &model.InternalCreatePayment{}
 			jsonTemp, _ := json.Marshal(supplyOrderToUpdate.Payment)
 			json.Unmarshal(jsonTemp, paymentToCreate)
+
+			jsonMemberAcc, _ := json.Marshal(supplyOrderToUpdate.MemberAccess)
+			json.Unmarshal(jsonMemberAcc, &paymentToCreate.MemberAccess)
 			if funk.Get(supplyOrderToUpdate.Payment, "Photo.Photo") != nil {
 				paymentToCreate.Photo.Photo.File = supplyOrderToUpdate.Payment.Photo.Photo.File
 			}
