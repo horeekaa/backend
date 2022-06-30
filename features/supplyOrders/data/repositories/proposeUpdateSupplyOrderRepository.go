@@ -231,6 +231,10 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) RunTransaction(
 			jsonTemp, _ = json.Marshal(savedPayment)
 			json.Unmarshal(jsonTemp, &input.Payment)
 		}
+
+		if input.Payment.Amount != nil {
+			input.PaidAmount = input.Payment.Amount
+		}
 	}
 
 	output, err := updateSupplyOrderRepo.mongoDBTransaction.RunTransaction(input)
