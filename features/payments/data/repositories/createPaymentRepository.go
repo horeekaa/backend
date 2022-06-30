@@ -83,17 +83,19 @@ func (createPaymentRepo *createPaymentRepository) TransactionBody(
 		return nil, err
 	}
 
-	_, err = createPaymentRepo.updateInvoiceTrxComponent.TransactionBody(
-		operationOption,
-		&model.InternalUpdateInvoice{
-			ID: *paymentToCreate.Invoice.ID,
-			Payments: []*model.ObjectIDOnly{
-				{ID: &generatedObjectID},
+	if paymentToCreate.Invoice != nil {
+		_, err = createPaymentRepo.updateInvoiceTrxComponent.TransactionBody(
+			operationOption,
+			&model.InternalUpdateInvoice{
+				ID: *paymentToCreate.Invoice.ID,
+				Payments: []*model.ObjectIDOnly{
+					{ID: &generatedObjectID},
+				},
 			},
-		},
-	)
-	if err != nil {
-		return nil, err
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return createdPayment, nil

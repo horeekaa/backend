@@ -39,6 +39,7 @@ input UpdateSupplyOrder {
 input InternalUpdateSupplyOrder {
   _id: ObjectID!
   memberAccess: MemberAccessForSupplyOrderInput!
+  paidAmount: Int
   items: [InternalUpdateSupplyOrderItem]
   payment: InternalUpdatePayment
   proposalStatus: EntityProposalStatus
