@@ -21,8 +21,8 @@ type proposeUpdateSupplyOrderRepository struct {
 	memberAccessDataSource                       databasememberaccessdatasourceinterfaces.MemberAccessDataSource
 	supplyOrderItemDataSource                    databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource
 	supplyOrderDataSource                        databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource
-	createPaymentComponent                       paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent
-	proposeUpdatePaymentComponent                paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent
+	createPaymentRepository                      paymentdomainrepositoryinterfaces.CreatePaymentRepository
+	proposeUpdatePaymentRepository               paymentdomainrepositoryinterfaces.ProposeUpdatePaymentRepository
 	proposeUpdateSupplyOrderTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent
 	createSupplyOrderItemComponent               supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent
 	proposeUpdateSupplyOrderItemComponent        supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent
@@ -36,8 +36,8 @@ func NewProposeUpdateSupplyOrderRepository(
 	memberAccessDataSource databasememberaccessdatasourceinterfaces.MemberAccessDataSource,
 	supplyOrderItemDataSource databasesupplyorderitemdatasourceinterfaces.SupplyOrderItemDataSource,
 	supplyOrderDataSource databasesupplyorderdatasourceinterfaces.SupplyOrderDataSource,
-	createPaymentComponent paymentdomainrepositoryinterfaces.CreatePaymentTransactionComponent,
-	proposeUpdatePaymentComponent paymentdomainrepositoryinterfaces.ProposeUpdatePaymentTransactionComponent,
+	createPaymentRepository paymentdomainrepositoryinterfaces.CreatePaymentRepository,
+	proposeUpdatePaymentRepository paymentdomainrepositoryinterfaces.ProposeUpdatePaymentRepository,
 	proposeUpdateSupplyOrderRepositoryTransactionComponent supplyorderdomainrepositoryinterfaces.ProposeUpdateSupplyOrderTransactionComponent,
 	createSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.CreateSupplyOrderItemTransactionComponent,
 	proposeUpdateSupplyOrderItemComponent supplyorderitemdomainrepositoryinterfaces.ProposeUpdateSupplyOrderItemTransactionComponent,
@@ -49,8 +49,8 @@ func NewProposeUpdateSupplyOrderRepository(
 		memberAccessDataSource,
 		supplyOrderItemDataSource,
 		supplyOrderDataSource,
-		createPaymentComponent,
-		proposeUpdatePaymentComponent,
+		createPaymentRepository,
+		proposeUpdatePaymentRepository,
 		proposeUpdateSupplyOrderRepositoryTransactionComponent,
 		createSupplyOrderItemComponent,
 		proposeUpdateSupplyOrderItemComponent,
@@ -90,58 +90,6 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			updateSupplyOrderRepo.pathIdentity,
 			err,
 		)
-	}
-
-	if supplyOrderToUpdate.Payment != nil {
-		if supplyOrderToUpdate.Payment.ID != nil {
-			supplyOrderToUpdate.Payment.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-				return &s
-			}(*supplyOrderToUpdate.ProposalStatus)
-			supplyOrderToUpdate.Payment.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-				return &m
-			}(*supplyOrderToUpdate.SubmittingAccount)
-
-			_, err := updateSupplyOrderRepo.proposeUpdatePaymentComponent.TransactionBody(
-				operationOption,
-				supplyOrderToUpdate.Payment,
-			)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			paymentToCreate := &model.InternalCreatePayment{}
-			jsonTemp, _ := json.Marshal(supplyOrderToUpdate.Payment)
-			json.Unmarshal(jsonTemp, paymentToCreate)
-
-			jsonMemberAcc, _ := json.Marshal(supplyOrderToUpdate.MemberAccess)
-			json.Unmarshal(jsonMemberAcc, &paymentToCreate.MemberAccess)
-			if funk.Get(supplyOrderToUpdate.Payment, "Photo.Photo") != nil {
-				paymentToCreate.Photo.Photo.File = supplyOrderToUpdate.Payment.Photo.Photo.File
-			}
-			paymentToCreate.Type = func(m model.PaymentType) *model.PaymentType {
-				return &m
-			}(model.PaymentTypeCreditPaymentToPartner)
-			paymentToCreate.SupplyOrder = &model.ObjectIDOnly{
-				ID: &existingsupplyOrder.ID,
-			}
-			paymentToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
-				return &s
-			}(*supplyOrderToUpdate.ProposalStatus)
-			paymentToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
-				return &m
-			}(*supplyOrderToUpdate.SubmittingAccount)
-
-			savedPhoto, err := updateSupplyOrderRepo.createPaymentComponent.TransactionBody(
-				operationOption,
-				paymentToCreate,
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			jsonTemp, _ = json.Marshal(savedPhoto)
-			json.Unmarshal(jsonTemp, &supplyOrderToUpdate.Payment)
-		}
 	}
 
 	if supplyOrderToUpdate.Items != nil {
@@ -235,6 +183,56 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) RunTransaction(
 	input *model.InternalUpdateSupplyOrder,
 ) (*model.SupplyOrder, error) {
+	if input.Payment != nil {
+		if input.Payment.ID != nil {
+			input.Payment.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*input.ProposalStatus)
+			input.Payment.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*input.SubmittingAccount)
+
+			_, err := updateSupplyOrderRepo.proposeUpdatePaymentRepository.RunTransaction(
+				input.Payment,
+			)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			paymentToCreate := &model.InternalCreatePayment{}
+			jsonTemp, _ := json.Marshal(input.Payment)
+			json.Unmarshal(jsonTemp, paymentToCreate)
+
+			jsonMemberAcc, _ := json.Marshal(input.MemberAccess)
+			json.Unmarshal(jsonMemberAcc, &paymentToCreate.MemberAccess)
+			if funk.Get(input.Payment, "Photo.Photo") != nil {
+				paymentToCreate.Photo.Photo.File = input.Payment.Photo.Photo.File
+			}
+			paymentToCreate.Type = func(m model.PaymentType) *model.PaymentType {
+				return &m
+			}(model.PaymentTypeCreditPaymentToPartner)
+			paymentToCreate.SupplyOrder = &model.ObjectIDOnly{
+				ID: &input.ID,
+			}
+			paymentToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &s
+			}(*input.ProposalStatus)
+			paymentToCreate.SubmittingAccount = func(m model.ObjectIDOnly) *model.ObjectIDOnly {
+				return &m
+			}(*input.SubmittingAccount)
+
+			savedPayment, err := updateSupplyOrderRepo.createPaymentRepository.RunTransaction(
+				paymentToCreate,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			jsonTemp, _ = json.Marshal(savedPayment)
+			json.Unmarshal(jsonTemp, &input.Payment)
+		}
+	}
+
 	output, err := updateSupplyOrderRepo.mongoDBTransaction.RunTransaction(input)
 	if err != nil {
 		return nil, err
