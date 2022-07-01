@@ -34,10 +34,13 @@ func (r *paymentProposedResolver) Invoice(ctx context.Context, obj *model.Paymen
 	var getInvoiceUsecase invoicepresentationusecaseinterfaces.GetInvoiceUsecase
 	container.Make(&getInvoiceUsecase)
 
+	var filterFields *model.InvoiceFilterFields
+	if obj.Invoice != nil {
+		filterFields = &model.InvoiceFilterFields{}
+		filterFields.ID = &obj.Invoice.ID
+	}
 	return getInvoiceUsecase.Execute(
-		&model.InvoiceFilterFields{
-			ID: &obj.Invoice.ID,
-		},
+		filterFields,
 	)
 }
 
