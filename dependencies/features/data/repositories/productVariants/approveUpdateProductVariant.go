@@ -17,13 +17,13 @@ func (_ *ApproveUpdateProductVariantDependency) Bind() {
 		func(
 			productVariantDataSource databaseproductvariantdatasourceinterfaces.ProductVariantDataSource,
 			loggingDataSource databaseloggingdatasourceinterfaces.LoggingDataSource,
-			updateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ProposeUpdateDescriptivePhotoTransactionComponent,
+			approveUpdateDescriptivePhotoComponent descriptivephotodomainrepositoryinterfaces.ApproveUpdateDescriptivePhotoTransactionComponent,
 			mapProcessorUtility coreutilityinterfaces.MapProcessorUtility,
 		) productvariantdomainrepositoryinterfaces.ApproveUpdateProductVariantTransactionComponent {
 			approveUpdateProductVariantComponent, _ := productvariantdomainrepositories.NewApproveUpdateProductVariantTransactionComponent(
 				productVariantDataSource,
 				loggingDataSource,
-				updateDescriptivePhotoComponent,
+				approveUpdateDescriptivePhotoComponent,
 				mapProcessorUtility,
 			)
 			return approveUpdateProductVariantComponent
