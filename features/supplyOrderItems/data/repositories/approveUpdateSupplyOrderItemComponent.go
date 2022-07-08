@@ -66,7 +66,7 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 			err,
 		)
 	}
-	if existingSupplyOrderItem.ProposedChanges.ProposalStatus != model.EntityProposalStatusProposed {
+	if existingSupplyOrderItem.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved {
 		return existingSupplyOrderItem, nil
 	}
 
