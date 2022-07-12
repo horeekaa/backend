@@ -183,7 +183,9 @@ func (bulkApproveUpdateTaggingComp *bulkApproveUpdateTaggingTransactionComponent
 		taggingToUpdate.RecentLog = &model.ObjectIDOnly{ID: &createdLog.ID}
 		taggingToUpdate.UpdatedAt = &currentTime
 
-		fieldsToUpdateTagging := &model.DatabaseUpdateTagging{}
+		fieldsToUpdateTagging := &model.DatabaseUpdateTagging{
+			ID: taggingToUpdate.ID,
+		}
 		jsonExisting, _ := json.Marshal(existingTagging.ProposedChanges)
 		json.Unmarshal(jsonExisting, &fieldsToUpdateTagging.ProposedChanges)
 

@@ -66,7 +66,7 @@ func (approvePOItemTrx *approveUpdatePurchaseOrderItemTransactionComponent) Tran
 			err,
 		)
 	}
-	if existingPurchaseOrderItem.ProposedChanges.ProposalStatus != model.EntityProposalStatusProposed {
+	if existingPurchaseOrderItem.ProposedChanges.ProposalStatus == model.EntityProposalStatusApproved {
 		return existingPurchaseOrderItem, nil
 	}
 
