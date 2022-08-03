@@ -32,13 +32,14 @@ func (r *purchaseOrderProposedResolver) Items(ctx context.Context, obj *model.Pu
 							Operation: model.ObjectIDOperationIn,
 							Values: funk.Map(
 								obj.Items,
-								func(poItem *model.PurchaseOrderItem) interface{} {
-									return poItem.ID
+								func(poItem *model.PurchaseOrderItem) *primitive.ObjectID {
+									return &poItem.ID
 								},
 							).([]*primitive.ObjectID),
 						},
 					},
 				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {

@@ -34,13 +34,14 @@ func (r *mouResolver) Items(ctx context.Context, obj *model.Mou) ([]*model.MouIt
 							Operation: model.ObjectIDOperationIn,
 							Values: funk.Map(
 								obj.Items,
-								func(item *model.MouItem) interface{} {
+								func(item *model.MouItem) *primitive.ObjectID {
 									return &item.ID
 								},
 							).([]*primitive.ObjectID),
 						},
 					},
 				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {

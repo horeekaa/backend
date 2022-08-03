@@ -33,13 +33,14 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 							Operation: model.ObjectIDOperationIn,
 							Values: funk.Map(
 								obj.PurchaseOrderItems,
-								func(poItem *model.PurchaseOrderItem) interface{} {
-									return poItem.ID
+								func(poItem *model.PurchaseOrderItem) *primitive.ObjectID {
+									return &poItem.ID
 								},
 							).([]*primitive.ObjectID),
 						},
 					},
 				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {
@@ -64,13 +65,14 @@ func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, ob
 							Operation: model.ObjectIDOperationIn,
 							Values: funk.Map(
 								obj.SupplyOrderItems,
-								func(soItem *model.SupplyOrderItem) interface{} {
-									return soItem.ID
+								func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
+									return &soItem.ID
 								},
 							).([]*primitive.ObjectID),
 						},
 					},
 				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {

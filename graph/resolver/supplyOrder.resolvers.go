@@ -69,13 +69,14 @@ func (r *supplyOrderResolver) Items(ctx context.Context, obj *model.SupplyOrder)
 							Operation: model.ObjectIDOperationIn,
 							Values: funk.Map(
 								obj.Items,
-								func(soItem *model.SupplyOrderItem) interface{} {
-									return soItem.ID
+								func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
+									return &soItem.ID
 								},
 							).([]*primitive.ObjectID),
 						},
 					},
 				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {
