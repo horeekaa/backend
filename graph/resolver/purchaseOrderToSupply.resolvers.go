@@ -8,33 +8,45 @@ import (
 
 	container "github.com/golobby/container/v2"
 	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
+	purchaseorderitempresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases/types"
 	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 	purchaseordertosupplypresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases/types"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, obj *model.PurchaseOrderToSupply) ([]*model.PurchaseOrderItem, error) {
-	var getPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetPurchaseOrderItemUsecase
-	container.Make(&getPurchaseOrderItemUsecase)
+	var getAllPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetAllPurchaseOrderItemUsecase
+	container.Make(&getAllPurchaseOrderItemUsecase)
 
-	purchaseOrderItems := []*model.PurchaseOrderItem{}
 	if obj.PurchaseOrderItems != nil {
-		for _, item := range obj.PurchaseOrderItems {
-			purchaseOrderItem, err := getPurchaseOrderItemUsecase.Execute(
-				&model.PurchaseOrderItemFilterFields{
-					ID: &item.ID,
+		purchaseOrderItems, err := getAllPurchaseOrderItemUsecase.Execute(
+			purchaseorderitempresentationusecasetypes.GetAllPurchaseOrderItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.PurchaseOrderItemFilterFields{
+					ID: &model.ObjectIDOnlyFilterField{
+						ID: &model.ObjectIDFilterField{
+							Operation: model.ObjectIDOperationIn,
+							Values: funk.Map(
+								obj.PurchaseOrderItems,
+								func(poItem *model.PurchaseOrderItem) interface{} {
+									return poItem.ID
+								},
+							).([]*primitive.ObjectID),
+						},
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			purchaseOrderItems = append(purchaseOrderItems, purchaseOrderItem)
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return purchaseOrderItems, nil
 	}
-	return purchaseOrderItems, nil
+	return []*model.PurchaseOrderItem{}, nil
 }
 
 func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, obj *model.PurchaseOrderToSupply) ([]*model.SupplyOrderItem, error) {
