@@ -12,6 +12,7 @@ import (
 	purchaseordertosupplypresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases"
 	purchaseordertosupplypresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrdersToSupply/presentation/usecases/types"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
+	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
 	"github.com/thoas/go-funk"
@@ -50,25 +51,34 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 }
 
 func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, obj *model.PurchaseOrderToSupply) ([]*model.SupplyOrderItem, error) {
-	var getSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase
-	container.Make(&getSupplyOrderItemUsecase)
+	var getAllSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase
+	container.Make(&getAllSupplyOrderItemUsecase)
 
-	supplyOrderItems := []*model.SupplyOrderItem{}
 	if obj.SupplyOrderItems != nil {
-		for _, item := range obj.SupplyOrderItems {
-			supplyOrderItem, err := getSupplyOrderItemUsecase.Execute(
-				&model.SupplyOrderItemFilterFields{
-					ID: &item.ID,
+		supplyOrderItems, err := getAllSupplyOrderItemUsecase.Execute(
+			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.SupplyOrderItemFilterFields{
+					ID: &model.ObjectIDOnlyFilterField{
+						ID: &model.ObjectIDFilterField{
+							Operation: model.ObjectIDOperationIn,
+							Values: funk.Map(
+								obj.SupplyOrderItems,
+								func(soItem *model.SupplyOrderItem) interface{} {
+									return soItem.ID
+								},
+							).([]*primitive.ObjectID),
+						},
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			supplyOrderItems = append(supplyOrderItems, supplyOrderItem)
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return supplyOrderItems, nil
 	}
-	return supplyOrderItems, nil
+	return []*model.SupplyOrderItem{}, nil
 }
 
 func (r *queryResolver) PurchaseOrdersToSupply(ctx context.Context, filterFields model.PurchaseOrderToSupplyFilterFields, paginationOpt *model.PaginationOptionInput) ([]*model.PurchaseOrderToSupply, error) {
