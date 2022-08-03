@@ -120,7 +120,7 @@ input DatabaseUpdatePurchaseOrderItem {
 }
 
 input PurchaseOrderItemFilterFields {
-  _id: ObjectID
+  _id: ObjectIDOnlyFilterField
   quantity: IntFilterField
   quantityFulfilled: IntFilterField
   unitPrice: IntFilterField

@@ -11,32 +11,44 @@ import (
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	mouitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/mouItems/presentation/usecases"
+	mouitempresentationusecasetypes "github.com/horeekaa/backend/features/mouItems/presentation/usecases/types"
 	moupresentationusecaseinterfaces "github.com/horeekaa/backend/features/mous/presentation/usecases"
 	moupresentationusecasetypes "github.com/horeekaa/backend/features/mous/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *mouResolver) Items(ctx context.Context, obj *model.Mou) ([]*model.MouItem, error) {
-	var getMouItemUsecase mouitempresentationusecaseinterfaces.GetMouItemUsecase
-	container.Make(&getMouItemUsecase)
+	var getAllMouItemUsecase mouitempresentationusecaseinterfaces.GetAllMouItemUsecase
+	container.Make(&getAllMouItemUsecase)
 
-	mouItems := []*model.MouItem{}
 	if obj.Items != nil {
-		for _, item := range obj.Items {
-			mouItem, err := getMouItemUsecase.Execute(
-				&model.MouItemFilterFields{
-					ID: &item.ID,
+		mouItems, err := getAllMouItemUsecase.Execute(
+			mouitempresentationusecasetypes.GetAllMouItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.MouItemFilterFields{
+					ID: &model.ObjectIDOnlyFilterField{
+						ID: &model.ObjectIDFilterField{
+							Operation: model.ObjectIDOperationIn,
+							Values: funk.Map(
+								obj.Items,
+								func(item *model.MouItem) interface{} {
+									return &item.ID
+								},
+							).([]*primitive.ObjectID),
+						},
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			mouItems = append(mouItems, mouItem)
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return mouItems, nil
 	}
-	return mouItems, nil
+	return []*model.MouItem{}, nil
 }
 
 func (r *mouResolver) SubmittingAccount(ctx context.Context, obj *model.Mou) (*model.Account, error) {

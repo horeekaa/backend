@@ -11,30 +11,42 @@ import (
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
+	purchaseorderitempresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *purchaseOrderProposedResolver) Items(ctx context.Context, obj *model.PurchaseOrderProposed) ([]*model.PurchaseOrderItem, error) {
-	var getPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetPurchaseOrderItemUsecase
-	container.Make(&getPurchaseOrderItemUsecase)
+	var getAllPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetAllPurchaseOrderItemUsecase
+	container.Make(&getAllPurchaseOrderItemUsecase)
 
-	purchaseOrderItems := []*model.PurchaseOrderItem{}
 	if obj.Items != nil {
-		for _, item := range obj.Items {
-			purchaseOrderItem, err := getPurchaseOrderItemUsecase.Execute(
-				&model.PurchaseOrderItemFilterFields{
-					ID: &item.ID,
+		purchaseOrderItems, err := getAllPurchaseOrderItemUsecase.Execute(
+			purchaseorderitempresentationusecasetypes.GetAllPurchaseOrderItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.PurchaseOrderItemFilterFields{
+					ID: &model.ObjectIDOnlyFilterField{
+						ID: &model.ObjectIDFilterField{
+							Operation: model.ObjectIDOperationIn,
+							Values: funk.Map(
+								obj.Items,
+								func(poItem *model.PurchaseOrderItem) interface{} {
+									return poItem.ID
+								},
+							).([]*primitive.ObjectID),
+						},
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			purchaseOrderItems = append(purchaseOrderItems, purchaseOrderItem)
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return purchaseOrderItems, nil
 	}
-	return purchaseOrderItems, nil
+	return []*model.PurchaseOrderItem{}, nil
 }
 
 func (r *purchaseOrderProposedResolver) SubmittingAccount(ctx context.Context, obj *model.PurchaseOrderProposed) (*model.Account, error) {

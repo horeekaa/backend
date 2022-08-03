@@ -12,10 +12,13 @@ import (
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
+	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
 	supplyorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases"
 	supplyorderpresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrders/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *mutationResolver) CreateSupplyOrder(ctx context.Context, createSupplyOrder model.CreateSupplyOrder) (*model.SupplyOrder, error) {
@@ -53,25 +56,34 @@ func (r *queryResolver) SupplyOrders(ctx context.Context, filterFields model.Sup
 }
 
 func (r *supplyOrderResolver) Items(ctx context.Context, obj *model.SupplyOrder) ([]*model.SupplyOrderItem, error) {
-	var getSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase
-	container.Make(&getSupplyOrderItemUsecase)
+	var getAllSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase
+	container.Make(&getAllSupplyOrderItemUsecase)
 
-	supplyOrderItems := []*model.SupplyOrderItem{}
 	if obj.Items != nil {
-		for _, item := range obj.Items {
-			supplyOrderItem, err := getSupplyOrderItemUsecase.Execute(
-				&model.SupplyOrderItemFilterFields{
-					ID: &item.ID,
+		supplyOrderItems, err := getAllSupplyOrderItemUsecase.Execute(
+			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.SupplyOrderItemFilterFields{
+					ID: &model.ObjectIDOnlyFilterField{
+						ID: &model.ObjectIDFilterField{
+							Operation: model.ObjectIDOperationIn,
+							Values: funk.Map(
+								obj.Items,
+								func(soItem *model.SupplyOrderItem) interface{} {
+									return soItem.ID
+								},
+							).([]*primitive.ObjectID),
+						},
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			supplyOrderItems = append(supplyOrderItems, supplyOrderItem)
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return supplyOrderItems, nil
 	}
-	return supplyOrderItems, nil
+	return []*model.SupplyOrderItem{}, nil
 }
 
 func (r *supplyOrderResolver) Payment(ctx context.Context, obj *model.SupplyOrder) (*model.Payment, error) {

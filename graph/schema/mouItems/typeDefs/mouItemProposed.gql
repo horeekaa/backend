@@ -15,7 +15,7 @@ input MouItemProposedInput {
 }
 
 input MouItemProposedFilterFields {
-  _id: ObjectID
+  _id: ObjectIDOnlyFilterField
   product: ObjectIDOnlyFilterField
   agreedProduct: AgreedProductFilterFields
   isActive: Boolean
