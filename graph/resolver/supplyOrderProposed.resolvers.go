@@ -12,11 +12,8 @@ import (
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
-	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
-	"github.com/thoas/go-funk"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *supplyOrderProposedResolver) Payment(ctx context.Context, obj *model.SupplyOrderProposed) (*model.Payment, error) {
@@ -34,34 +31,25 @@ func (r *supplyOrderProposedResolver) Payment(ctx context.Context, obj *model.Su
 }
 
 func (r *supplyOrderProposedResolver) Items(ctx context.Context, obj *model.SupplyOrderProposed) ([]*model.SupplyOrderItem, error) {
-	var getAllSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase
-	container.Make(&getAllSupplyOrderItemUsecase)
+	var getSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase
+	container.Make(&getSupplyOrderItemUsecase)
 
+	supplyOrderItems := []*model.SupplyOrderItem{}
 	if obj.Items != nil {
-		supplyOrderItems, err := getAllSupplyOrderItemUsecase.Execute(
-			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
-				Context: ctx,
-				FilterFields: &model.SupplyOrderItemFilterFields{
-					ID: &model.ObjectIDOnlyFilterField{
-						ID: &model.ObjectIDFilterField{
-							Operation: model.ObjectIDOperationIn,
-							Values: funk.Map(
-								obj.Items,
-								func(soItem *model.SupplyOrderItem) interface{} {
-									return soItem.ID
-								},
-							).([]*primitive.ObjectID),
-						},
-					},
+		for _, item := range obj.Items {
+			supplyOrderItem, err := getSupplyOrderItemUsecase.Execute(
+				&model.SupplyOrderItemFilterFields{
+					ID: &item.ID,
 				},
-			},
-		)
-		if err != nil {
-			return nil, err
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			supplyOrderItems = append(supplyOrderItems, supplyOrderItem)
 		}
-		return supplyOrderItems, nil
 	}
-	return []*model.SupplyOrderItem{}, nil
+	return supplyOrderItems, nil
 }
 
 func (r *supplyOrderProposedResolver) SubmittingAccount(ctx context.Context, obj *model.SupplyOrderProposed) (*model.Account, error) {

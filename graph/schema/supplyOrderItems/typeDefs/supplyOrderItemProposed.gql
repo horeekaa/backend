@@ -23,7 +23,7 @@ input SupplyOrderItemProposedInput {
 }
 
 input SupplyOrderItemProposedFilterFields {
-  _id: ObjectIDOnlyFilterField
+  _id: ObjectID
   quantityOffered: IntFilterField
   quantityAccepted: IntFilterField
   note: StringFilterField
