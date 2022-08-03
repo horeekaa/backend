@@ -24,7 +24,7 @@ input PurchaseOrderItemProposedInput {
 }
 
 input PurchaseOrderItemProposedFilterFields {
-  _id: ObjectIDOnlyFilterField
+  _id: ObjectID
   quantity: IntFilterField
   quantityFulfilled: IntFilterField
   unitPrice: IntFilterField

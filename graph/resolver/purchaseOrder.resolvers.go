@@ -11,13 +11,10 @@ import (
 	accountpresentationusecasetypes "github.com/horeekaa/backend/features/accounts/presentation/usecases/types"
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	purchaseorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases"
-	purchaseorderitempresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrderItems/presentation/usecases/types"
 	purchaseorderpresentationusecaseinterfaces "github.com/horeekaa/backend/features/purchaseOrders/presentation/usecases"
 	purchaseorderpresentationusecasetypes "github.com/horeekaa/backend/features/purchaseOrders/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
-	"github.com/thoas/go-funk"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *mutationResolver) CreatePurchaseOrder(ctx context.Context, createPurchaseOrder model.CreatePurchaseOrder) ([]*model.PurchaseOrder, error) {
@@ -43,34 +40,25 @@ func (r *mutationResolver) UpdatePurchaseOrder(ctx context.Context, updatePurcha
 }
 
 func (r *purchaseOrderResolver) Items(ctx context.Context, obj *model.PurchaseOrder) ([]*model.PurchaseOrderItem, error) {
-	var getAllPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetAllPurchaseOrderItemUsecase
-	container.Make(&getAllPurchaseOrderItemUsecase)
+	var getPurchaseOrderItemUsecase purchaseorderitempresentationusecaseinterfaces.GetPurchaseOrderItemUsecase
+	container.Make(&getPurchaseOrderItemUsecase)
 
+	purchaseOrderItems := []*model.PurchaseOrderItem{}
 	if obj.Items != nil {
-		purchaseOrderItems, err := getAllPurchaseOrderItemUsecase.Execute(
-			purchaseorderitempresentationusecasetypes.GetAllPurchaseOrderItemUsecaseInput{
-				Context: ctx,
-				FilterFields: &model.PurchaseOrderItemFilterFields{
-					ID: &model.ObjectIDOnlyFilterField{
-						ID: &model.ObjectIDFilterField{
-							Operation: model.ObjectIDOperationIn,
-							Values: funk.Map(
-								obj.Items,
-								func(poItem *model.PurchaseOrderItem) interface{} {
-									return poItem.ID
-								},
-							).([]*primitive.ObjectID),
-						},
-					},
+		for _, item := range obj.Items {
+			purchaseOrderItem, err := getPurchaseOrderItemUsecase.Execute(
+				&model.PurchaseOrderItemFilterFields{
+					ID: &item.ID,
 				},
-			},
-		)
-		if err != nil {
-			return nil, err
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			purchaseOrderItems = append(purchaseOrderItems, purchaseOrderItem)
 		}
-		return purchaseOrderItems, nil
 	}
-	return []*model.PurchaseOrderItem{}, nil
+	return purchaseOrderItems, nil
 }
 
 func (r *purchaseOrderResolver) SubmittingAccount(ctx context.Context, obj *model.PurchaseOrder) (*model.Account, error) {
