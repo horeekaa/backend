@@ -38,7 +38,9 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 						).([]*primitive.ObjectID),
 					},
 				},
-				PaginationOps: &model.PaginationOptionInput{},
+				PaginationOps: &model.PaginationOptionInput{
+					QueryLimit: func(i int) *int { return &i }(999),
+				},
 			},
 		)
 		if err != nil {
@@ -68,7 +70,9 @@ func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, ob
 						).([]*primitive.ObjectID),
 					},
 				},
-				PaginationOps: &model.PaginationOptionInput{},
+				PaginationOps: &model.PaginationOptionInput{
+					QueryLimit: func(i int) *int { return &i }(999),
+				},
 			},
 		)
 		if err != nil {

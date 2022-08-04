@@ -39,7 +39,9 @@ func (r *mouResolver) Items(ctx context.Context, obj *model.Mou) ([]*model.MouIt
 						).([]*primitive.ObjectID),
 					},
 				},
-				PaginationOps: &model.PaginationOptionInput{},
+				PaginationOps: &model.PaginationOptionInput{
+					QueryLimit: func(i int) *int { return &i }(999),
+				},
 			},
 		)
 		if err != nil {
