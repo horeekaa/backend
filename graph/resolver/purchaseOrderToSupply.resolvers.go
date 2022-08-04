@@ -58,16 +58,14 @@ func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, ob
 			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
 				Context: ctx,
 				FilterFields: &model.SupplyOrderItemFilterFields{
-					ID: &model.ObjectIDOnlyFilterField{
-						ID: &model.ObjectIDFilterField{
-							Operation: model.ObjectIDOperationIn,
-							Values: funk.Map(
-								obj.SupplyOrderItems,
-								func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
-									return &soItem.ID
-								},
-							).([]*primitive.ObjectID),
-						},
+					ID: &model.ObjectIDFilterField{
+						Operation: model.ObjectIDOperationIn,
+						Values: funk.Map(
+							obj.SupplyOrderItems,
+							func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
+								return &soItem.ID
+							},
+						).([]*primitive.ObjectID),
 					},
 				},
 				PaginationOps: &model.PaginationOptionInput{},

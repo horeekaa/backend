@@ -42,16 +42,14 @@ func (r *supplyOrderProposedResolver) Items(ctx context.Context, obj *model.Supp
 			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
 				Context: ctx,
 				FilterFields: &model.SupplyOrderItemFilterFields{
-					ID: &model.ObjectIDOnlyFilterField{
-						ID: &model.ObjectIDFilterField{
-							Operation: model.ObjectIDOperationIn,
-							Values: funk.Map(
-								obj.Items,
-								func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
-									return &soItem.ID
-								},
-							).([]*primitive.ObjectID),
-						},
+					ID: &model.ObjectIDFilterField{
+						Operation: model.ObjectIDOperationIn,
+						Values: funk.Map(
+							obj.Items,
+							func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
+								return &soItem.ID
+							},
+						).([]*primitive.ObjectID),
 					},
 				},
 				PaginationOps: &model.PaginationOptionInput{},
