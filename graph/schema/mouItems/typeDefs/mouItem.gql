@@ -72,7 +72,7 @@ input DatabaseUpdateMouItem {
 }
 
 input MouItemFilterFields {
-  _id: ObjectIDOnlyFilterField
+  _id: ObjectIDFilterField
   product: ObjectIDOnlyFilterField
   agreedProduct: AgreedProductFilterFields
   isActive: Boolean
