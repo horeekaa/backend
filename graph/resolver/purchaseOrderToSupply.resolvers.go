@@ -28,16 +28,14 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 			purchaseorderitempresentationusecasetypes.GetAllPurchaseOrderItemUsecaseInput{
 				Context: ctx,
 				FilterFields: &model.PurchaseOrderItemFilterFields{
-					ID: &model.ObjectIDOnlyFilterField{
-						ID: &model.ObjectIDFilterField{
-							Operation: model.ObjectIDOperationIn,
-							Values: funk.Map(
-								obj.PurchaseOrderItems,
-								func(poItem *model.PurchaseOrderItem) *primitive.ObjectID {
-									return &poItem.ID
-								},
-							).([]*primitive.ObjectID),
-						},
+					ID: &model.ObjectIDFilterField{
+						Operation: model.ObjectIDOperationIn,
+						Values: funk.Map(
+							obj.PurchaseOrderItems,
+							func(poItem *model.PurchaseOrderItem) *primitive.ObjectID {
+								return &poItem.ID
+							},
+						).([]*primitive.ObjectID),
 					},
 				},
 				PaginationOps: &model.PaginationOptionInput{},
