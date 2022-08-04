@@ -174,6 +174,9 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 			updatePurchaseOrder.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
 				return &m
 			}(model.PurchaseOrderStatusWaitingForInvoice)
+			updatePurchaseOrder.ProposalStatus = func(m model.EntityProposalStatus) *model.EntityProposalStatus {
+				return &m
+			}(model.EntityProposalStatusApproved)
 
 			if existingPurchaseOrder.Type == model.PurchaseOrderTypeMouBased {
 				existingMou, err := updatePurchaseOrderTrx.mouDataSource.GetMongoDataSource().FindByID(
