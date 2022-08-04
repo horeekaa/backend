@@ -12,8 +12,11 @@ import (
 	loggingpresentationusecaseinterfaces "github.com/horeekaa/backend/features/loggings/presentation/usecases"
 	paymentpresentationusecaseinterfaces "github.com/horeekaa/backend/features/payments/presentation/usecases"
 	supplyorderitempresentationusecaseinterfaces "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases"
+	supplyorderitempresentationusecasetypes "github.com/horeekaa/backend/features/supplyOrderItems/presentation/usecases/types"
 	"github.com/horeekaa/backend/graph/generated"
 	"github.com/horeekaa/backend/model"
+	"github.com/thoas/go-funk"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *supplyOrderProposedResolver) Payment(ctx context.Context, obj *model.SupplyOrderProposed) (*model.Payment, error) {
@@ -31,25 +34,35 @@ func (r *supplyOrderProposedResolver) Payment(ctx context.Context, obj *model.Su
 }
 
 func (r *supplyOrderProposedResolver) Items(ctx context.Context, obj *model.SupplyOrderProposed) ([]*model.SupplyOrderItem, error) {
-	var getSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetSupplyOrderItemUsecase
-	container.Make(&getSupplyOrderItemUsecase)
+	var getAllSupplyOrderItemUsecase supplyorderitempresentationusecaseinterfaces.GetAllSupplyOrderItemUsecase
+	container.Make(&getAllSupplyOrderItemUsecase)
 
-	supplyOrderItems := []*model.SupplyOrderItem{}
 	if obj.Items != nil {
-		for _, item := range obj.Items {
-			supplyOrderItem, err := getSupplyOrderItemUsecase.Execute(
-				&model.SupplyOrderItemFilterFields{
-					ID: &item.ID,
+		supplyOrderItems, err := getAllSupplyOrderItemUsecase.Execute(
+			supplyorderitempresentationusecasetypes.GetAllSupplyOrderItemUsecaseInput{
+				Context: ctx,
+				FilterFields: &model.SupplyOrderItemFilterFields{
+					ID: &model.ObjectIDFilterField{
+						Operation: model.ObjectIDOperationIn,
+						Values: funk.Map(
+							obj.Items,
+							func(soItem *model.SupplyOrderItem) *primitive.ObjectID {
+								return &soItem.ID
+							},
+						).([]*primitive.ObjectID),
+					},
 				},
-			)
-			if err != nil {
-				return nil, err
-			}
-
-			supplyOrderItems = append(supplyOrderItems, supplyOrderItem)
+				PaginationOps: &model.PaginationOptionInput{
+					QueryLimit: func(i int) *int { return &i }(999),
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
 		}
+		return supplyOrderItems, nil
 	}
-	return supplyOrderItems, nil
+	return []*model.SupplyOrderItem{}, nil
 }
 
 func (r *supplyOrderProposedResolver) SubmittingAccount(ctx context.Context, obj *model.SupplyOrderProposed) (*model.Account, error) {

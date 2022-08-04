@@ -121,7 +121,7 @@ input DatabaseUpdateSupplyOrderItem {
 }
 
 input SupplyOrderItemFilterFields {
-  _id: ObjectID
+  _id: ObjectIDFilterField
   quantityOffered: IntFilterField
   quantityAccepted: IntFilterField
   note: StringFilterField
