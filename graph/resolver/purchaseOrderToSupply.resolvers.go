@@ -44,7 +44,7 @@ func (r *purchaseOrderToSupplyResolver) PurchaseOrderItems(ctx context.Context, 
 			},
 		)
 		if err != nil {
-			return nil, err
+			return []*model.PurchaseOrderItem{}, nil
 		}
 		return purchaseOrderItems, nil
 	}
@@ -76,7 +76,7 @@ func (r *purchaseOrderToSupplyResolver) SupplyOrderItems(ctx context.Context, ob
 			},
 		)
 		if err != nil {
-			return nil, err
+			return []*model.SupplyOrderItem{}, nil
 		}
 		return supplyOrderItems, nil
 	}
