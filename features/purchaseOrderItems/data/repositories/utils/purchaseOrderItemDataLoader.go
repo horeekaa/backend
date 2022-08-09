@@ -70,13 +70,16 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			return
 		}
 		if delivery.ExpectedArrivalDate != nil {
+			*delivery.ExpectedArrivalDate = delivery.ExpectedArrivalDate.UTC()
+
 			*delivery.ExpectedArrivalDate = time.Date(
 				delivery.ExpectedArrivalDate.Year(),
 				delivery.ExpectedArrivalDate.Month(),
 				delivery.ExpectedArrivalDate.Day(),
-				0, 0, 0, 0,
+				delivery.ExpectedArrivalDate.Hour(),
+				0, 0, 0,
 				delivery.ExpectedArrivalDate.Location(),
-			).UTC()
+			)
 		}
 
 		addressLoadedChan := make(chan bool)
