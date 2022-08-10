@@ -22,7 +22,7 @@ input InternalCreateSupplyOrderItem {
   note: String
   purchaseOrderToSupply: ObjectIDOnly!
   partnerAgreed: Boolean
-  supplyOrder: ObjectIDOnly
+  supplyOrder: SupplyOrderForSupplyOrderItemInput
   pickUpDetail: InternalCreateSupplyOrderItemPickUp!
   photos: [InternalCreateDescriptivePhoto]!
   proposalStatus: EntityProposalStatus
@@ -40,7 +40,7 @@ input DatabaseCreateSupplyOrderItem {
   salesAmount: Int!
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput!
   partnerAgreed: Boolean!
-  supplyOrder: ObjectIDOnly!
+  supplyOrder: SupplyOrderForSupplyOrderItemInput!
   pickUpDetail: DatabaseSupplyOrderItemPickUp!
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]!
@@ -86,7 +86,7 @@ input InternalUpdateSupplyOrderItem {
   subTotal: Int
   purchaseOrderToSupply: ObjectIDOnly
   partnerAgreed: Boolean
-  supplyOrder: ObjectIDOnly
+  supplyOrder: SupplyOrderForSupplyOrderItemInput
   pickUpDetail: InternalUpdateSupplyOrderItemPickUp
   photos: [InternalUpdateDescriptivePhoto]
   supplyOrderItemReturn: InternalSupplyOrderItemReturn
@@ -106,7 +106,7 @@ input DatabaseUpdateSupplyOrderItem {
   salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
-  supplyOrder: ObjectIDOnly
+  supplyOrder: SupplyOrderForSupplyOrderItemInput
   pickUpDetail: DatabaseSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
@@ -130,7 +130,7 @@ input SupplyOrderItemFilterFields {
   salesAmount: IntFilterField
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemFilterFields
   partnerAgreed: BooleanFilterField
-  supplyOrder: ObjectIDOnlyFilterField
+  supplyOrder: SupplyOrderForSupplyOrderItemFilterFields
   pickUpDetail: SupplyOrderItemPickUpFilterFields
   status: StringFilterField
   supplyOrderItemReturn: SupplyOrderItemReturnFilterFields

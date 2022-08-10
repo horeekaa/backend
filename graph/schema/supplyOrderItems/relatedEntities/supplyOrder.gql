@@ -1,0 +1,14 @@
+input SupplyOrderForSupplyOrderItemInput {
+  _id: ObjectID!
+  organization: ObjectIDOnly!
+}
+
+input SupplyOrderForSupplyOrderItemFilterFields {
+  _id: ObjectID
+  organization: ObjectIDOnlyFilterField
+}
+
+type SupplyOrderForSupplyOrderItem {
+  _id: ObjectID!
+  organization: ObjectIDOnlyOutput!
+}
