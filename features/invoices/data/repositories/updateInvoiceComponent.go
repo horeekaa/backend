@@ -66,13 +66,17 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 
 	purchaseOrders := []*model.PurchaseOrder{}
 	if invoiceToUpdate.PaymentDueDate != nil {
+		invoiceToUpdate.PaymentDueDate = func(t time.Time) *time.Time { return &t }(
+			invoiceToUpdate.PaymentDueDate.UTC(),
+		)
 		dateOnly := time.Date(
 			invoiceToUpdate.PaymentDueDate.Year(),
 			invoiceToUpdate.PaymentDueDate.Month(),
 			invoiceToUpdate.PaymentDueDate.Day(),
-			0, 0, 0, 0,
+			invoiceToUpdate.PaymentDueDate.Hour(),
+			0, 0, 0,
 			invoiceToUpdate.PaymentDueDate.Location(),
-		).UTC()
+		)
 		invoiceToUpdate.PaymentDueDate = &dateOnly
 		query := map[string]interface{}{
 			"paymentDueDate": dateOnly,
@@ -93,22 +97,31 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 
 	if invoiceToUpdate.StartInvoiceDate != nil && invoiceToUpdate.EndInvoiceDate != nil {
 		invoiceToUpdate.StartInvoiceDate = func(t time.Time) *time.Time { return &t }(
+			invoiceToUpdate.StartInvoiceDate.UTC(),
+		)
+		invoiceToUpdate.StartInvoiceDate = func(t time.Time) *time.Time { return &t }(
 			time.Date(
 				invoiceToUpdate.StartInvoiceDate.Year(),
 				invoiceToUpdate.StartInvoiceDate.Month(),
 				invoiceToUpdate.StartInvoiceDate.Day(),
-				0, 0, 0, 0,
+				invoiceToUpdate.StartInvoiceDate.Hour(),
+				0, 0, 0,
 				invoiceToUpdate.StartInvoiceDate.Location(),
-			).UTC(),
+			),
+		)
+
+		invoiceToUpdate.EndInvoiceDate = func(t time.Time) *time.Time { return &t }(
+			invoiceToUpdate.EndInvoiceDate.UTC(),
 		)
 		invoiceToUpdate.EndInvoiceDate = func(t time.Time) *time.Time { return &t }(
 			time.Date(
 				invoiceToUpdate.EndInvoiceDate.Year(),
 				invoiceToUpdate.EndInvoiceDate.Month(),
 				invoiceToUpdate.EndInvoiceDate.Day(),
-				0, 0, 0, 0,
+				invoiceToUpdate.EndInvoiceDate.Hour(),
+				0, 0, 0,
 				invoiceToUpdate.EndInvoiceDate.Location(),
-			).UTC(),
+			),
 		)
 
 		query := map[string]interface{}{}
