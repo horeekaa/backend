@@ -86,7 +86,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 		if existingInvoice.Mou != nil {
 			query["mou"] = map[string]interface{}{
-				"_id": existingInvoice.Mou.ID.Hex(),
+				"_id": existingInvoice.Mou.ID,
 			}
 		}
 
@@ -139,7 +139,7 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		}
 		if existingInvoice.Mou != nil {
 			query["mou"] = map[string]interface{}{
-				"_id": existingInvoice.Mou.ID.Hex(),
+				"_id": existingInvoice.Mou.ID,
 			}
 		}
 		query["$and"] = []map[string]interface{}{
