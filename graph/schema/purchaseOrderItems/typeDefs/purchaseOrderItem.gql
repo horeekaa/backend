@@ -23,7 +23,7 @@ input InternalCreatePurchaseOrderItem {
   productVariant: ObjectIDOnly!
   deliveryDetail: InternalCreatePurchaseOrderItemDelivery!
   customerAgreed: Boolean
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -42,7 +42,7 @@ input DatabaseCreatePurchaseOrderItem {
   deliveryDetail: DatabasePurchaseOrderItemDelivery!
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean!
-  purchaseOrder: ObjectIDOnly!
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput!
   proposalStatus: EntityProposalStatus
   submittingAccount: ObjectIDOnly
   recentApprovingAccount: ObjectIDOnly
@@ -70,7 +70,7 @@ input UpdatePurchaseOrderItem {
   productVariant: ObjectIDOnly
   deliveryDetail: UpdatePurchaseOrderItemDelivery
   customerAgreed: Boolean
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput
   purchaseOrderItemReturn: UpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -86,7 +86,7 @@ input InternalUpdatePurchaseOrderItem {
   productVariant: ObjectIDOnly
   deliveryDetail: InternalUpdatePurchaseOrderItemDelivery
   customerAgreed: Boolean
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput
   purchaseOrderItemReturn: InternalPurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
   proposalStatusReason: String
@@ -107,7 +107,7 @@ input DatabaseUpdatePurchaseOrderItem {
   deliveryDetail: DatabasePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput
   purchaseOrderToSupply: ObjectIDOnly
   purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
@@ -133,7 +133,7 @@ input PurchaseOrderItemFilterFields {
   deliveryDetail: PurchaseOrderItemDeliveryFilterFields
   status: StringFilterField
   customerAgreed: BooleanFilterField
-  purchaseOrder: ObjectIDOnlyFilterField
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemFilterFields
   purchaseOrderToSupply: ObjectIDOnlyFilterField
   purchaseOrderItemReturn: PurchaseOrderItemReturnFilterFields
   proposalStatus: StringFilterField

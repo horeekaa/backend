@@ -141,8 +141,11 @@ func (updateSupplyOrderRepo *proposeUpdateSupplyOrderRepository) TransactionBody
 			supplyOrderItemToCreate := &model.InternalCreateSupplyOrderItem{}
 			jsonTemp, _ := json.Marshal(supplyOrderItemToUpdate)
 			json.Unmarshal(jsonTemp, supplyOrderItemToCreate)
-			supplyOrderItemToCreate.SupplyOrder = &model.ObjectIDOnly{
-				ID: &existingsupplyOrder.ID,
+			supplyOrderItemToCreate.SupplyOrder = &model.SupplyOrderForSupplyOrderItemInput{
+				ID: existingsupplyOrder.ID,
+				Organization: &model.ObjectIDOnly{
+					ID: supplyOrderToUpdate.MemberAccess.Organization.ID,
+				},
 			}
 			supplyOrderItemToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s

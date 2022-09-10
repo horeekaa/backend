@@ -114,6 +114,14 @@ func (getAllSOItemUcase *getAllSupplyOrderItemUsecase) Execute(
 		if accessible := funk.GetOrElse(
 			funk.Get(memberAccess, "Access.SupplyOrderAccesses.SupplyOrderReadOwned"), false,
 		).(bool); accessible {
+			validatedInput.FilterFields.SupplyOrder = &model.SupplyOrderForSupplyOrderItemFilterFields{
+				Organization: &model.ObjectIDOnlyFilterField{
+					ID: &model.ObjectIDFilterField{
+						Value:     &memberAccess.Organization.ID,
+						Operation: model.ObjectIDOperationEqual,
+					},
+				},
+			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
 				getAllSOItemUcase.pathIdentity,

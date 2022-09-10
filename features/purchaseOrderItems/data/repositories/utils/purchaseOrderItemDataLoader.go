@@ -70,13 +70,15 @@ func (purcOrderItemLoader *purchaseOrderItemLoader) TransactionBody(
 			return
 		}
 		if delivery.ExpectedArrivalDate != nil {
-			loc, _ := time.LoadLocation("Asia/Bangkok")
+			*delivery.ExpectedArrivalDate = delivery.ExpectedArrivalDate.UTC()
+
 			*delivery.ExpectedArrivalDate = time.Date(
 				delivery.ExpectedArrivalDate.Year(),
 				delivery.ExpectedArrivalDate.Month(),
 				delivery.ExpectedArrivalDate.Day(),
-				0, 0, 0, 0,
-				loc,
+				delivery.ExpectedArrivalDate.Hour(),
+				0, 0, 0,
+				delivery.ExpectedArrivalDate.Location(),
 			)
 		}
 

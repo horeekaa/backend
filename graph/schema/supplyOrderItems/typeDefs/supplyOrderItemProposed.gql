@@ -8,7 +8,7 @@ input SupplyOrderItemProposedInput {
   salesAmount: Int
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemInput
   partnerAgreed: Boolean
-  supplyOrder: ObjectIDOnly
+  supplyOrder: SupplyOrderForSupplyOrderItemInput
   pickUpDetail: DatabaseSupplyOrderItemPickUp
   status: SupplyOrderItemStatus
   photos: [ObjectIDOnly]
@@ -32,7 +32,7 @@ input SupplyOrderItemProposedFilterFields {
   salesAmount: IntFilterField
   purchaseOrderToSupply: PurchaseOrderToSupplyForSupplyOrderItemFilterFields
   partnerAgreed: BooleanFilterField
-  supplyOrder: ObjectIDOnlyFilterField
+  supplyOrder: SupplyOrderForSupplyOrderItemFilterFields
   pickUpDetail: SupplyOrderItemPickUpFilterFields
   status: StringFilterField
   supplyOrderItemReturn: SupplyOrderItemReturnFilterFields

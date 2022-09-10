@@ -172,7 +172,7 @@ func (bscOperation *basicOperation) Find(
 	}
 
 	opts := &options.FindOptions{}
-	opts.SetLimit(int64(10))
+	opts.SetLimit(int64(99))
 	if paginationOpt.QueryLimit != nil {
 		opts.SetSort(bson.M{"_id": -1})
 		opts.SetLimit(int64(*paginationOpt.QueryLimit))

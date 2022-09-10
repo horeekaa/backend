@@ -64,8 +64,11 @@ func (createSupplyOrderRepo *createSupplyOrderRepository) TransactionBody(
 			if *supplyOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypePartner {
 				supplyOrderItem.PartnerAgreed = func(b bool) *bool { return &b }(true)
 			}
-			supplyOrderItem.SupplyOrder = &model.ObjectIDOnly{
-				ID: &generatedObjectID,
+			supplyOrderItem.SupplyOrder = &model.SupplyOrderForSupplyOrderItemInput{
+				ID: generatedObjectID,
+				Organization: &model.ObjectIDOnly{
+					ID: supplyOrderToCreate.MemberAccess.Organization.ID,
+				},
 			}
 			supplyOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s

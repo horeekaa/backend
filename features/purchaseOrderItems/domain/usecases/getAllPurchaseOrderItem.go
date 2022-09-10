@@ -114,6 +114,14 @@ func (getAllPOItemUcase *getAllPurchaseOrderItemUsecase) Execute(
 		if accessible := funk.GetOrElse(
 			funk.Get(memberAccess, "Access.PurchaseOrderAccesses.PurchaseOrderReadOwned"), false,
 		).(bool); accessible {
+			validatedInput.FilterFields.PurchaseOrder = &model.PurchaseOrderForPurchaseOrderItemFilterFields{
+				Organization: &model.ObjectIDOnlyFilterField{
+					ID: &model.ObjectIDFilterField{
+						Value:     &memberAccess.Organization.ID,
+						Operation: model.ObjectIDOperationEqual,
+					},
+				},
+			}
 		} else {
 			return nil, horeekaacorefailuretoerror.ConvertFailure(
 				getAllPOItemUcase.pathIdentity,

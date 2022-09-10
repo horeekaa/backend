@@ -444,6 +444,25 @@ func (updateSupplyOrderItemTrx *proposeUpdateSupplyOrderItemTransactionComponent
 						return &s
 					}(model.PurchaseOrderToSupplyStatusFulfilled)
 				}
+				if !funk.Contains(
+					funk.Map(existingPOToSupply.SupplyOrderItems,
+						func(m *model.SupplyOrderItem) string { return m.ID.Hex() },
+					),
+					existingSupplyOrderItem.ID.Hex(),
+				) {
+					poToSupplyToUpdate.SupplyOrderItems = append(
+						funk.Map(existingPOToSupply.SupplyOrderItems,
+							func(m *model.SupplyOrderItem) *model.ObjectIDOnly {
+								return &model.ObjectIDOnly{
+									ID: &m.ID,
+								}
+							},
+						).([]*model.ObjectIDOnly),
+						&model.ObjectIDOnly{
+							ID: &existingSupplyOrderItem.ID,
+						},
+					)
+				}
 				_, err = updateSupplyOrderItemTrx.purchaseOrderToSupplyDataSource.GetMongoDataSource().Update(
 					map[string]interface{}{
 						"_id": existingPOToSupply.ID,

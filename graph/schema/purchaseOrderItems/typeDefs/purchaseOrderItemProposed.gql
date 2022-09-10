@@ -11,7 +11,7 @@ input PurchaseOrderItemProposedInput {
   deliveryDetail: DatabasePurchaseOrderItemDelivery
   status: PurchaseOrderItemStatus
   customerAgreed: Boolean
-  purchaseOrder: ObjectIDOnly
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemInput
   purchaseOrderToSupply: ObjectIDOnly
   purchaseOrderItemReturn: DatabaseUpdatePurchaseOrderItemReturn
   proposalStatus: EntityProposalStatus
@@ -37,7 +37,7 @@ input PurchaseOrderItemProposedFilterFields {
   deliveryDetail: PurchaseOrderItemDeliveryFilterFields
   status: StringFilterField
   customerAgreed: BooleanFilterField
-  purchaseOrder: ObjectIDOnlyFilterField
+  purchaseOrder: PurchaseOrderForPurchaseOrderItemFilterFields
   purchaseOrderToSupply: ObjectIDOnlyFilterField
   purchaseOrderItemReturn: PurchaseOrderItemReturnFilterFields
   proposalStatus: StringFilterField

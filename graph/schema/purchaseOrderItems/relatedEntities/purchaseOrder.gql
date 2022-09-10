@@ -1,0 +1,14 @@
+input PurchaseOrderForPurchaseOrderItemInput {
+  _id: ObjectID!
+  organization: ObjectIDOnly!
+}
+
+input PurchaseOrderForPurchaseOrderItemFilterFields {
+  _id: ObjectID
+  organization: ObjectIDOnlyFilterField
+}
+
+type PurchaseOrderForPurchaseOrderItem {
+  _id: ObjectID!
+  organization: ObjectIDOnlyOutput!
+}
