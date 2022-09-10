@@ -74,9 +74,7 @@ func (r *supplyOrderResolver) Items(ctx context.Context, obj *model.SupplyOrder)
 						).([]*primitive.ObjectID),
 					},
 				},
-				PaginationOps: &model.PaginationOptionInput{
-					QueryLimit: func(i int) *int { return &i }(999),
-				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {
