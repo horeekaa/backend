@@ -148,8 +148,11 @@ func (updatePurchaseOrderRepo *proposeUpdatePurchaseOrderRepository) Transaction
 			purchaseOrderItemToCreate := &model.InternalCreatePurchaseOrderItem{}
 			jsonTemp, _ := json.Marshal(purchaseOrderItemToUpdate)
 			json.Unmarshal(jsonTemp, purchaseOrderItemToCreate)
-			purchaseOrderItemToCreate.PurchaseOrder = &model.ObjectIDOnly{
-				ID: &existingPurchaseOrder.ID,
+			purchaseOrderItemToCreate.PurchaseOrder = &model.PurchaseOrderForPurchaseOrderItemInput{
+				ID: existingPurchaseOrder.ID,
+				Organization: &model.ObjectIDOnly{
+					ID: purchaseOrderToUpdate.MemberAccess.Organization.ID,
+				},
 			}
 			purchaseOrderItemToCreate.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s

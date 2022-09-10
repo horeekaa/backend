@@ -153,8 +153,12 @@ func (approveSupplyOrderItemTrx *approveUpdateSupplyOrderItemTransactionComponen
 						)
 					}
 
+					newQuantityFulfilled := existingSupplyOrderItem.ProposedChanges.QuantityAccepted
+					if updateSupplyOrderItem.QuantityAccepted != nil {
+						newQuantityFulfilled = *updateSupplyOrderItem.QuantityAccepted
+					}
 					quantityFulfilled := existingPOToSupply.QuantityFulfilled +
-						(existingSupplyOrderItem.ProposedChanges.QuantityAccepted -
+						(newQuantityFulfilled -
 							existingSupplyOrderItem.QuantityAccepted)
 					poToSupplyToUpdate := &model.DatabaseUpdatePurchaseOrderToSupply{
 						QuantityFulfilled: &quantityFulfilled,

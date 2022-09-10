@@ -70,8 +70,11 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			if *purchaseOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
 				purchaseOrderItem.CustomerAgreed = func(b bool) *bool { return &b }(true)
 			}
-			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
-				ID: &generatedObjectID,
+			purchaseOrderItem.PurchaseOrder = &model.PurchaseOrderForPurchaseOrderItemInput{
+				ID: generatedObjectID,
+				Organization: &model.ObjectIDOnly{
+					ID: purchaseOrderToCreate.MemberAccess.Organization.ID,
+				},
 			}
 			purchaseOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s
@@ -128,8 +131,11 @@ func (createPurchaseOrderRepo *createPurchaseOrderRepository) TransactionBody(
 			if *purchaseOrderToCreate.MemberAccess.Organization.Type == model.OrganizationTypeCustomer {
 				purchaseOrderItem.CustomerAgreed = func(b bool) *bool { return &b }(true)
 			}
-			purchaseOrderItem.PurchaseOrder = &model.ObjectIDOnly{
-				ID: &generatedObjectID,
+			purchaseOrderItem.PurchaseOrder = &model.PurchaseOrderForPurchaseOrderItemInput{
+				ID: generatedObjectID,
+				Organization: &model.ObjectIDOnly{
+					ID: purchaseOrderToCreate.MemberAccess.Organization.ID,
+				},
 			}
 			purchaseOrderItem.ProposalStatus = func(s model.EntityProposalStatus) *model.EntityProposalStatus {
 				return &s

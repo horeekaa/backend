@@ -52,9 +52,7 @@ func (r *supplyOrderProposedResolver) Items(ctx context.Context, obj *model.Supp
 						).([]*primitive.ObjectID),
 					},
 				},
-				PaginationOps: &model.PaginationOptionInput{
-					QueryLimit: func(i int) *int { return &i }(999),
-				},
+				PaginationOps: &model.PaginationOptionInput{},
 			},
 		)
 		if err != nil {

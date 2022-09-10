@@ -36,7 +36,7 @@ type PaymentProposed {
   note: String
   type: PaymentType!
   photo: DescriptivePhoto!
-  invoice: Invoice!
+  invoice: Invoice
   organization: Organization!
   proposalStatus: EntityProposalStatus!
   proposalStatusReason: String
