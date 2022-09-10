@@ -80,6 +80,14 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 		invoiceToUpdate.PaymentDueDate = &dateOnly
 		query := map[string]interface{}{
 			"paymentDueDate": dateOnly,
+			"mou": map[string]interface{}{
+				"$exists": false,
+			},
+		}
+		if existingInvoice.Mou != nil {
+			query["mou"] = map[string]interface{}{
+				"_id": existingInvoice.Mou.ID.Hex(),
+			}
 		}
 
 		purchaseOrders, err = updateInvoiceTrx.purchaseOrderDataSource.GetMongoDataSource().Find(
@@ -124,7 +132,16 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			),
 		)
 
-		query := map[string]interface{}{}
+		query := map[string]interface{}{
+			"mou": map[string]interface{}{
+				"$exists": false,
+			},
+		}
+		if existingInvoice.Mou != nil {
+			query["mou"] = map[string]interface{}{
+				"_id": existingInvoice.Mou.ID.Hex(),
+			}
+		}
 		query["$and"] = []map[string]interface{}{
 			{
 				"paymentDueDate": map[string]interface{}{
