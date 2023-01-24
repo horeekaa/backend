@@ -102,7 +102,9 @@ func (updatePurchaseOrderTrx *proposeUpdatePurchaseOrderTransactionComponent) Tr
 	totalPrice := 0
 	totalReturn := 0
 	for _, item := range purchaseOrderItems {
-		if !item.CustomerAgreed {
+		if !item.CustomerAgreed ||
+			(item.ProposalStatus == model.EntityProposalStatusProposed &&
+				item.ProposedChanges.ProposalStatus == model.EntityProposalStatusRejected) {
 			continue
 		}
 		totalPrice += item.SubTotal
