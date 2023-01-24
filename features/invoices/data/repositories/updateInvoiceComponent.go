@@ -326,7 +326,8 @@ func (updateInvoiceTrx *updateInvoiceTransactionComponent) TransactionBody(
 			return &m
 		}(model.PurchaseOrderStatusInvoiced),
 	}
-	if totalPaidAmount >= existingInvoice.TotalPayable {
+	if totalPaidAmount >= existingInvoice.TotalPayable &&
+		*existingInvoice.Status != model.InvoiceStatusPaid {
 		updatePO.Status = func(m model.PurchaseOrderStatus) *model.PurchaseOrderStatus {
 			return &m
 		}(model.PurchaseOrderStatusPaid)
